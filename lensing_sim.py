@@ -4,10 +4,7 @@ from astropy.cosmology import Planck15
 from units import *
 
 import sys, os
-if os.environ['DIFF']: # Whether to use Theano version of lensing gradients
-    from profiles_theano import *
-else:
-    from profiles import *
+from profiles import *
 
 class LensingSim():
     def __init__(self, lenses_list=[{}], 
@@ -17,7 +14,6 @@ class LensingSim():
         """
         Class for simulation of strong lensing images
         """        
-
 
         self.lenses_list = lenses_list
         self.sources_list = sources_list
@@ -53,8 +49,9 @@ class LensingSim():
         self.A_iso = self.observation_dict['A_iso'] 
 
         # x/y-coordinates of grid and pixel area in arcsec**2
-        self.x_coords = (self.xlims[1] - self.xlims[0]) * np.outer(np.ones(self.ny), np.arange(self.nx)) / float(self.nx-1) + self.xlims[0]
-        self.y_coords = (self.ylims[1] - self.ylims[0]) * np.outer(np.arange(self.ny), np.ones(self.nx)) / float(self.ny-1) + self.ylims[0]
+
+        self.y_coords, self.x_coords = torch.meshgrid([torch.linspace(self.xlims[0],self.xlims[1], self.nx, dtype=torch.double), torch.linspace(self.ylims[0],self.ylims[1], self.ny, dtype=torch.double)])
+
         self.pixarea = ((self.xlims[1] - self.xlims[0])/self.nx)*((self.ylims[1] - self.ylims[0])/self.ny)
 
     def lensed_image(self):
@@ -63,17 +60,10 @@ class LensingSim():
 
         # Get lensing potential gradients
 
-        xg, yg = np.zeros((self.nx, self.ny)), np.zeros((self.nx, self.ny))
+        xg, yg = torch.zeros((self.nx, self.ny), dtype=torch.double), torch.zeros((self.nx, self.ny), dtype=torch.double)
         
         for lens_dict in self.lenses_list:
-            if lens_dict['profile'] == 'nfw':
-                self.theta_x_sub = lens_dict['theta_x']
-                self.theta_y_sub = lens_dict['theta_y']
-                self.M_sub = lens_dict['M200']
-                _xg, _yg = deflection_nfw(self.x_coords, self.y_coords, x0=self.theta_x_sub, y0=self.theta_y_sub, M=self.M_sub, D_s=self.D_s, D_l=self.D_l)
-                xg += _xg
-                yg += _yg
-            elif lens_dict['profile'] == 'sis':
+            if lens_dict['profile'] == 'sis':
                 self.theta_x_hst = lens_dict['theta_x'] 
                 self.theta_y_hst = lens_dict['theta_y'] 
                 self.theta_E_hst = lens_dict['theta_E'] 
@@ -85,7 +75,7 @@ class LensingSim():
 
         # Get lensed image
 
-        self.i_lens = np.zeros((self.nx, self.ny)) 
+        self.i_lens = torch.zeros((self.nx, self.ny), dtype=torch.double) 
     
         for source_dict in self.sources_list:
             if source_dict['profile'] == 'sersic':
@@ -96,7 +86,7 @@ class LensingSim():
             else:
                 raise Exception('Unknown source profile specification!')
 
-        self.i_iso = self.A_iso*np.ones_like(self.i_lens) # Isotropic background
+        self.i_iso = self.A_iso*torch.ones((self.nx, self.ny), dtype=torch.double) # Isotropic background
         self.i_tot = (self.i_lens + self.i_iso)*self.exposure*self.pixarea # Total lensed image
 
-        return self.i_tot
+        return (self.i_tot.type(torch.FloatTensor))
