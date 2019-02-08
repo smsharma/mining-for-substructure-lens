@@ -10,7 +10,7 @@ from units import *
 from lensing_sim import LensingSim
 
 
-class LensingSimulator:
+class SubhaloSimulator:
     def __init__(
         self,
         resolution=52,
@@ -45,8 +45,8 @@ class LensingSimulator:
         self.observation_dict = {
             "nx": resolution,
             "ny": resolution,
-            "xlims": coordinate_limit,
-            "ylims": coordinate_limit,
+            "xlims": (-coordinate_limit, coordinate_limit),
+            "ylims": (-coordinate_limit, coordinate_limit),
             "exposure": exposure,
             "A_iso": A_iso,
         }
@@ -63,7 +63,7 @@ class LensingSimulator:
         }
 
         # Autograd
-        self._d_simulate = ag.grad_and_aux(self._simulate_step)
+        self.d_simulate = ag.grad_and_aux(self.simulate)
 
     def simulate(self, params, params_eval):
         """
@@ -81,7 +81,7 @@ class LensingSimulator:
         betas_eval = [beta] + [param[1] for param in params_eval]
 
         # Joint likelihood
-        log_p_xz_eval = [0.0 for _ in alpha_eval]
+        log_p_xz_eval = [0.0 for _ in alphas_eval]
 
         # Poisson mean for number of subhalos
         n_sub_mean = -alpha * M_s / (beta + 1) * (self.m_sub_min / M_s) ** (1.0 + beta)
@@ -151,15 +151,16 @@ class LensingSimulator:
 
         for i_sim in range(n_images):
             try:
+                assert len(alpha) == n_images
                 this_alpha = alpha[i_sim]
-                this_beta = beta[i_sim]
             except TypeError:
                 this_alpha = alpha
+            try:
+                assert len(beta) == n_images
+                this_beta = beta[i_sim]
+            except TypeError:
                 this_beta = beta
-            except IndexError:
-                this_alpha = alpha[0]
-                this_beta = beta[0]
-            params = np.array(this_alpha, this_beta)
+            params = np.array([this_alpha, this_beta])
 
             logging.debug(
                 "Simulating image %s/%s with alpha = %s, beta = %s",
@@ -187,31 +188,27 @@ class LensingSimulator:
 
             # Prepare parameters
             try:
+                assert len(alpha) == n_images
                 this_alpha = alpha[i_sim]
             except TypeError:
                 this_alpha = alpha
-            except IndexError:
-                this_alpha = alpha[0]
             try:
+                assert len(beta) == n_images
                 this_beta = beta[i_sim]
             except TypeError:
                 this_beta = beta
-            except IndexError:
-                this_beta = beta[0]
             try:
+                assert len(alpha_ref) == n_images
                 this_alpha_ref = alpha_ref[i_sim]
             except TypeError:
                 this_alpha_ref = alpha_ref
-            except IndexError:
-                this_alpha_ref = alpha_ref[0]
             try:
+                assert len(beta_ref) == n_images
                 this_beta_ref = beta_ref[i_sim]
             except TypeError:
                 this_beta_ref = beta_ref
-            except IndexError:
-                this_beta_ref = beta_ref[0]
-            params = np.array(this_alpha, this_beta)
-            params_ref = np.array(this_alpha_ref, this_beta_ref)
+            params = np.array([this_alpha, this_beta])
+            params_ref = np.array([this_alpha_ref, this_beta_ref])
 
             logging.debug(
                 "Simulating image %s/%s with alpha = %s, beta = %s; also evaluating probability for alpha = %s, beta = %s",
@@ -223,7 +220,7 @@ class LensingSimulator:
                 this_beta_ref,
             )
 
-            t_xz, (image, log_p_xzs, latents) = self.simulate(params, [params_ref])
+            t_xz, (image, log_p_xzs, latents) = self.d_simulate(params, [params_ref])
             log_r_xz = log_p_xzs[0] - log_p_xzs[1]
 
             n_subhalos = latents[0]
