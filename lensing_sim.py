@@ -50,7 +50,7 @@ class LensingSim():
 
         # x/y-coordinates of grid and pixel area in arcsec**2
 
-        self.y_coords, self.x_coords = torch.meshgrid([torch.linspace(self.xlims[0],self.xlims[1], self.nx, dtype=torch.double), torch.linspace(self.ylims[0],self.ylims[1], self.ny, dtype=torch.double)])
+        self.x_coords, self.y_coords = np.meshgrid(np.linspace(self.xlims[0],self.xlims[1], self.nx), np.linspace(self.ylims[0],self.ylims[1], self.ny))
 
         self.pixarea = ((self.xlims[1] - self.xlims[0])/self.nx)*((self.ylims[1] - self.ylims[0])/self.ny)
 
@@ -60,7 +60,7 @@ class LensingSim():
 
         # Get lensing potential gradients
 
-        xg, yg = torch.zeros((self.nx, self.ny), dtype=torch.double), torch.zeros((self.nx, self.ny), dtype=torch.double)
+        xg, yg = np.zeros((self.nx, self.ny)), np.zeros((self.nx, self.ny))
         
         for lens_dict in self.lenses_list:
             if lens_dict['profile'] == 'sis':
@@ -70,12 +70,20 @@ class LensingSim():
                 _xg, _yg = deflection_sis(self.x_coords, self.y_coords, x0=self.theta_x_hst, y0=self.theta_y_hst, b=self.theta_E_hst)
                 xg += _xg
                 yg += _yg
+            elif lens_dict['profile'] == 'nfw':
+                self.theta_x_sub = lens_dict['theta_x']
+                self.theta_y_sub = lens_dict['theta_y']
+                self.M_sub = lens_dict['M200']
+                _xg, _yg = deflection_nfw(self.x_coords, self.y_coords, x0=self.theta_x_sub, y0=self.theta_y_sub, M=self.M_sub, D_s=self.D_s, D_l=self.D_l)
+                xg += _xg
+                yg += _yg
+
             else:
                 raise Exception('Unknown lens profile specification!')
 
         # Get lensed image
 
-        self.i_lens = torch.zeros((self.nx, self.ny), dtype=torch.double) 
+        self.i_lens = np.zeros((self.nx, self.ny)) 
     
         for source_dict in self.sources_list:
             if source_dict['profile'] == 'sersic':
@@ -86,7 +94,7 @@ class LensingSim():
             else:
                 raise Exception('Unknown source profile specification!')
 
-        self.i_iso = self.A_iso*torch.ones((self.nx, self.ny), dtype=torch.double) # Isotropic background
+        self.i_iso = self.A_iso*np.ones((self.nx, self.ny)) # Isotropic background
         self.i_tot = (self.i_lens + self.i_iso)*self.exposure*self.pixarea # Total lensed image
 
-        return (self.i_tot.type(torch.FloatTensor))
+        return self.i_tot
