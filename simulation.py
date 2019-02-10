@@ -267,3 +267,71 @@ class SubhaloSimulator:
             all_log_r_xz.append(log_r_xz)
 
         return all_images, all_t_xz, all_log_r_xz
+
+    def rvs_score_ratio_to_evidence(self, alpha, beta, alpha_mean, alpha_std, beta_mean, beta_std, n_images, n_theta_samples):
+        all_images = []
+        all_t_xz = []
+        all_log_r_xz = []
+        all_log_r_xz_uncertainties = []
+
+        for i_sim in range(n_images):
+
+            # Prepare parameters
+            try:
+                assert len(alpha) == n_images
+                this_alpha = alpha[i_sim]
+            except TypeError:
+                this_alpha = alpha
+            try:
+                assert len(beta) == n_images
+                this_beta = beta[i_sim]
+            except TypeError:
+                this_beta = beta
+            params = np.array([this_alpha, this_beta])
+
+            # Draw samples from prior
+            alphas = np.random.normal(loc=alpha_mean, scale=alpha_std, size=n_theta_samples)
+            betas = np.random.normal(loc=beta_mean, scale=beta_std, size=n_theta_samples)
+
+            params_prior = np.vstack((alphas, betas)).T
+
+            # Run simulator
+            logging.debug(
+                "Simulating image %s/%s with alpha = %s, beta = %s; also evaluating probability for %s samples drawn from prior",
+                i_sim + 1,
+                n_images,
+                this_alpha,
+                this_beta,
+                n_theta_samples,
+            )
+
+            t_xz, (image, log_p_xzs, latents) = self.d_simulate(params, params_prior)
+
+            # Evaluate likelihood ratio wrt evidence
+            inverse_r_xz = 0.
+            for i_theta in range(n_theta_samples):
+                inverse_r_xz += np.exp(log_p_xzs[i_theta + 1] - log_p_xzs[0])
+            inverse_r_xz /= float(n_theta_samples)
+            log_r_xz = - np.log(inverse_r_xz)
+
+            # TODO: estimate uncertainty of this integral
+            log_r_xz_uncertainty = 0.
+
+            try:
+                t_xz = t_xz._value
+            except AttributeError:
+                pass
+            try:
+                log_r_xz = log_r_xz._value
+            except AttributeError:
+                pass
+
+            n_subhalos = latents[0]
+            logging.debug("Image generated with %s subhalos", n_subhalos)
+
+            all_images.append(image)
+            all_t_xz.append(t_xz)
+            all_log_r_xz.append(log_r_xz)
+            all_log_r_xz_uncertainties.append(log_r_xz_uncertainty)
+
+        return all_images, all_t_xz, all_log_r_xz, all_log_r_xz_uncertainties
