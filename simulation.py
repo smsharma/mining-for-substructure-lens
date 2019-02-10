@@ -6,7 +6,14 @@ import logging
 import autograd.numpy as np
 import autograd as ag
 
-from units import M_s, erg, Centimeter, Angstrom, Sec, radtoasc  # Don't import * since that will overwrite np
+from units import (
+    M_s,
+    erg,
+    Centimeter,
+    Angstrom,
+    Sec,
+    radtoasc,
+)  # Don't import * since that will overwrite np
 from lensing_sim import LensingSim
 
 
@@ -84,7 +91,9 @@ class SubhaloSimulator:
         log_p_xz_eval = [0.0 for _ in alphas_eval]
 
         # Poisson mean for number of subhalos
-        n_sub_mean = -alpha * M_s / (beta + 1.) * (self.m_sub_min / M_s) ** (1.0 + beta)
+        n_sub_mean = (
+            -alpha * M_s / (beta + 1.0) * (self.m_sub_min / M_s) ** (1.0 + beta)
+        )
 
         # Avoid issues from autograd ArrayBox objects
         try:
@@ -268,7 +277,17 @@ class SubhaloSimulator:
 
         return all_images, all_t_xz, all_log_r_xz
 
-    def rvs_score_ratio_to_evidence(self, alpha, beta, alpha_mean, alpha_std, beta_mean, beta_std, n_images, n_theta_samples):
+    def rvs_score_ratio_to_evidence(
+        self,
+        alpha,
+        beta,
+        alpha_mean,
+        alpha_std,
+        beta_mean,
+        beta_std,
+        n_images,
+        n_theta_samples,
+    ):
         all_images = []
         all_t_xz = []
         all_log_r_xz = []
@@ -290,14 +309,19 @@ class SubhaloSimulator:
             params = np.array([this_alpha, this_beta])
 
             # Draw samples from prior
-            alphas = np.random.normal(loc=alpha_mean, scale=alpha_std, size=n_theta_samples)
-            betas = np.random.normal(loc=beta_mean, scale=beta_std, size=n_theta_samples)
+            alphas = np.random.normal(
+                loc=alpha_mean, scale=alpha_std, size=n_theta_samples
+            )
+            betas = np.random.normal(
+                loc=beta_mean, scale=beta_std, size=n_theta_samples
+            )
 
             params_prior = np.vstack((alphas, betas)).T
 
             # Run simulator
             logging.debug(
-                "Simulating image %s/%s with alpha = %s, beta = %s; also evaluating probability for %s samples drawn from prior",
+                "Simulating image %s/%s with alpha = %s, beta = %s; also evaluating probability for %s samples drawn "
+                "from prior",
                 i_sim + 1,
                 n_images,
                 this_alpha,
@@ -307,24 +331,32 @@ class SubhaloSimulator:
 
             t_xz, (image, log_p_xzs, latents) = self.d_simulate(params, params_prior)
 
-            # Evaluate likelihood ratio wrt evidence
-            inverse_r_xz = 0.
-            for i_theta in range(n_theta_samples):
-                inverse_r_xz += np.exp(log_p_xzs[i_theta + 1] - log_p_xzs[0])
-            inverse_r_xz /= float(n_theta_samples)
-            log_r_xz = - np.log(inverse_r_xz)
-
-            # TODO: estimate uncertainty of this integral
-            log_r_xz_uncertainty = 0.
-
+            # Clean up
             try:
                 t_xz = t_xz._value
             except AttributeError:
                 pass
-            try:
-                log_r_xz = log_r_xz._value
-            except AttributeError:
-                pass
+            for i, log_p_xz in enumerate(log_p_xzs):
+                try:
+                    log_p_xzs[i] = log_p_xz._value
+                except AttributeError:
+                    pass
+
+            # Evaluate likelihood ratio wrt evidence
+            inverse_r_xz = 0.0
+            for i_theta in range(n_theta_samples):
+                inverse_r_xz += np.exp(log_p_xzs[i_theta + 1] - log_p_xzs[0])
+            inverse_r_xz /= float(n_theta_samples)
+            log_r_xz = -np.log(inverse_r_xz)
+
+            # Estimate uncertainty of log r from MC sampling
+            inverse_r_xz_uncertainty = 0.0
+            for i_theta in range(n_theta_samples):
+                inverse_r_xz_uncertainty += (
+                    np.exp(log_p_xzs[i_theta + 1] - log_p_xzs[0]) - inverse_r_xz
+                ) ** 2.0
+            inverse_r_xz_uncertainty /= float(n_theta_samples)
+            log_r_xz_uncertainty = inverse_r_xz_uncertainty / inverse_r_xz
 
             n_subhalos = latents[0]
             logging.debug("Image generated with %s subhalos", n_subhalos)
