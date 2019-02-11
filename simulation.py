@@ -355,7 +355,7 @@ class SubhaloSimulator:
                 inverse_r_xz_uncertainty += (
                     np.exp(log_p_xzs[i_theta + 1] - log_p_xzs[0]) - inverse_r_xz
                 ) ** 2.0
-            inverse_r_xz_uncertainty /= float(n_theta_samples)
+            inverse_r_xz_uncertainty /= float(n_theta_samples) * (float(n_theta_samples) - 1.)
             log_r_xz_uncertainty = inverse_r_xz_uncertainty / inverse_r_xz
 
             n_subhalos = latents[0]
