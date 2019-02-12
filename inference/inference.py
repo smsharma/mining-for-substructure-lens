@@ -392,7 +392,7 @@ class Estimator:
     def evaluate_ratio(
         self,
         x,
-        theta0_filename=None,
+        theta0,
         test_all_combinations=True,
         evaluate_score=False,
         return_grad_x=False,
@@ -404,13 +404,10 @@ class Estimator:
         Parameters
         ----------
         x : str or ndarray
-            Sample of observations, or path to numpy file with observations, as saved by the
-            `madminer.sampling.SampleAugmenter` functions.
+            Sample of observations, or path to numpy file with observations.
 
-        theta0_filename : str or None, optional
-            Path to an unweighted sample of numerator parameters, as saved by the `madminer.sampling.SampleAugmenter`
-            functions. Required if the estimator was trained with the 'alice', 'alice2', 'alices', 'alices2', 'carl',
-            'carl2', 'nde', 'rascal', 'rascal2', 'rolr', 'rolr2', or 'scandal' method. Default value: None.
+        theta0 : str or None, optional
+            Sample of parameter points, or path to numpy file with parameter points.
 
         test_all_combinations : bool, optional
             If method is not 'sally' and not 'sallino': If False, the number of samples in the observable and theta
@@ -419,8 +416,7 @@ class Estimator:
             are evaluated. Default value: True.
 
         evaluate_score : bool, optional
-            If method is not 'sally' and not 'sallino', this sets whether in addition to the likelihood ratio the score
-            is evaluated. Default value: False.
+            Whether in addition to the likelihood ratio the score is evaluated. Default value: False.
 
         return_grad_x : bool, optional
             If True, `grad_x log r(x)` or `grad_x t(x)` (for 'sally' or 'sallino' estimators) are returned in addition
@@ -458,13 +454,18 @@ class Estimator:
         if self.model is None:
             raise ValueError("No model -- train or load model before evaluating it!")
 
-        # Load training data
+        # Load evaluation data
         logger.debug("Loading evaluation data")
 
-        theta0s = load_and_check(theta0_filename)
+        if isinstance(theta0, six.string_types):
+            theta0 = load_and_check(theta0)
 
         if isinstance(x, six.string_types):
             x = load_and_check(x)
+
+        # Clean up input data
+        x = sanitize_array(x, replace_inf=1.e6, replace_nan=1.e6, max_value=1.e6, min_value=0.).astype(np.float64)
+        theta0 = sanitize_array(theta0, replace_inf=1.e6, replace_nan=1.e6, max_value=1.e6, min_value=1.e-6).astype(np.float64)
 
         # Rescale pixel values
         x /= self.pixel_norm
@@ -477,30 +478,21 @@ class Estimator:
         if test_all_combinations:
             logger.debug("Starting ratio evaluation for all combinations")
 
-            for i, theta0 in enumerate(theta0s):
+            for i, theta0 in enumerate(theta0):
                 logger.debug(
                     "Starting ratio evaluation for thetas %s / %s: %s",
                     i + 1,
-                    len(theta0s),
+                    len(theta0),
                     theta0,
                 )
 
-                if return_grad_x:
-                    _, log_r_hat, t_hat0, x_gradient = evaluate_ratio_model(
-                        model=self.model,
-                        theta0s=[theta0],
-                        xs=x,
-                        evaluate_score=evaluate_score,
-                        return_grad_x=True,
-                    )
-                else:
-                    _, log_r_hat, t_hat0 = evaluate_ratio_model(
-                        model=self.model,
-                        theta0s=[theta0],
-                        xs=x,
-                        evaluate_score=evaluate_score,
-                    )
-                    x_gradient = None
+                _, log_r_hat, t_hat0, x_gradient = evaluate_ratio_model(
+                    model=self.model,
+                    theta0s=[theta0],
+                    xs=x,
+                    evaluate_score=evaluate_score,
+                    return_grad_x=True,
+                )
 
                 all_log_r_hat.append(log_r_hat)
                 all_t_hat0.append(t_hat0)
@@ -513,22 +505,13 @@ class Estimator:
 
         else:
             logger.debug("Starting ratio evaluation")
-            if return_grad_x:
-                _, all_log_r_hat, all_t_hat0, all_x_gradients = evaluate_ratio_model(
-                    model=self.model,
-                    theta0s=theta0s,
-                    xs=x,
-                    evaluate_score=evaluate_score,
-                    return_grad_x=True,
-                )
-            else:
-                _, all_log_r_hat, all_t_hat0 = evaluate_ratio_model(
-                    model=self.model,
-                    theta0s=theta0s,
-                    xs=x,
-                    evaluate_score=evaluate_score,
-                )
-                all_x_gradients = None
+            _, all_log_r_hat, all_t_hat0, all_x_gradients = evaluate_ratio_model(
+                model=self.model,
+                theta0s=theta0,
+                xs=x,
+                evaluate_score=evaluate_score,
+                return_grad_x=True,
+            )
 
         logger.debug("Evaluation done")
 
@@ -536,8 +519,37 @@ class Estimator:
             return all_log_r_hat, all_t_hat0, all_x_gradients
         return all_log_r_hat, all_t_hat0
 
-    def save(self, filename, save_model=False):
+    def evaluate_posterior(self, xs, thetas_eval, thetas_from_prior):
+        """
+        Estimates the prior p(theta | xs) for a series of observations xs, and a list of evaluation parameter
+        points theta in thetas_eval.
 
+        Parameters
+        ----------
+        xs : ndarray
+            Observations with shape (n_observations, resolution_x, resolution_y).
+
+        thetas_eval : ndarray
+            Parameter points to be evaluated with shape (n_evaluations, n_parameters).
+
+        thetas_from_prior : ndarray
+            Parameter points drawn from the prior with shape (n_theta_samples, n_parameters).
+
+        Returns
+        -------
+        posteerior : ndarray
+            Estimated posterior probabilities with shape (n_evaluations,).
+
+        """
+
+        posteriors = []
+
+        for theta_eval in thetas_eval:
+            pass
+
+
+
+    def save(self, filename, save_model=False):
         """
         Saves the trained model to four files: a JSON file with the settings, a pickled pyTorch state dict
         file, and numpy files for the mean and variance of the inputs (used for input scaling).
@@ -550,6 +562,7 @@ class Estimator:
         save_model : bool, optional
             If True, the whole model is saved in addition to the state dict. This is not necessary for loading it
             again with MLForge.load(), but can be useful for debugging, for instance to plot the computational graph.
+            Default value: False.
 
         Returns
         -------

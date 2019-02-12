@@ -16,6 +16,8 @@ from units import (
 )  # Don't import * since that will overwrite np
 from lensing_sim import LensingSim
 
+logger = logging.getLogger(__name__)
+
 
 class SubhaloSimulator:
     def __init__(
@@ -105,28 +107,28 @@ class SubhaloSimulator:
         except AttributeError:
             pass
 
-        logging.debug("Poisson mean: %s", n_sub_mean)
+        logger.debug("Poisson mean: %s", n_sub_mean)
 
         # Draw number of subhalos
         n_sub = np.random.poisson(n_sub_mean)
 
-        logging.debug("Number of subhalos: %s", n_sub)
+        logger.debug("Number of subhalos: %s", n_sub)
 
         # Evaluate likelihoods of numbers of subhalos
         for i_eval, (alpha_eval, beta_eval) in enumerate(zip(alphas_eval, betas_eval)):
             n_sub_mean_eval = -alpha_eval / (beta_eval + 1) * self.m_sub_min ** (1.0 + beta_eval)
-            logging.debug("Eval subhalo mean: %s", n_sub_mean_eval)
+            logger.debug("Eval subhalo mean: %s", n_sub_mean_eval)
             log_p_xz_eval[i_eval] += (
                 n_sub * np.log(n_sub_mean_eval) - n_sub_mean_eval
             )  # Can ignore constant term
 
-        logging.debug("Log p: %s", log_p_xz_eval)
+        logger.debug("Log p: %s", log_p_xz_eval)
 
         # Draw subhalo masses
         u = np.random.uniform(0, 1, size=n_sub)
         m_sub = (self.m_sub_min) * (1 - u) ** (1.0 / (beta + 1.0))
 
-        logging.debug("Subhalo masses: %s", m_sub)
+        logger.debug("Subhalo masses: %s", m_sub)
 
         # Evaluate likelihoods of subhalo masses
         for i_eval, (alpha_eval, beta_eval) in enumerate(zip(alphas_eval, betas_eval)):
@@ -135,7 +137,7 @@ class SubhaloSimulator:
                     m_sub[i_sub] / self.m_sub_min
                 )
 
-        logging.debug("Log p: %s", log_p_xz_eval)
+        logger.debug("Log p: %s", log_p_xz_eval)
 
         # Avoid issues from autograd ArrayBox objects
         try:
@@ -151,8 +153,8 @@ class SubhaloSimulator:
             low=-self.coordinate_limit, high=self.coordinate_limit, size=n_sub
         )
 
-        logging.debug("Subhalo x: %s", x_sub)
-        logging.debug("Subhalo y: %s", y_sub)
+        logger.debug("Subhalo x: %s", x_sub)
+        logger.debug("Subhalo y: %s", y_sub)
 
         # Lensing simulation
         lens_list = [self.hst_param_dict]
@@ -170,12 +172,12 @@ class SubhaloSimulator:
         )
         image_mean = lsi.lensed_image()
 
-        logging.debug("Image mean: %s", image_mean)
+        logger.debug("Image mean: %s", image_mean)
 
         # Observed lensed image
         image = np.random.poisson(image_mean)
 
-        logging.debug("Image: %s", image)
+        logger.debug("Image: %s", image)
 
         # Returns
         latent_variables = (n_sub, m_sub, x_sub, y_sub, image_mean, image)
@@ -184,7 +186,13 @@ class SubhaloSimulator:
     def rvs(self, alpha, beta, n_images):
         all_images = []
 
+        n_verbose = max(1, n_images // 20)
+
         for i_sim in range(n_images):
+
+            if (i_sim + 1) % n_verbose == 0:
+                logger.info("Simulating image %s / %s", i_sim + 1, n_images)
+
             try:
                 assert len(alpha) == n_images
                 this_alpha = alpha[i_sim]
@@ -197,7 +205,7 @@ class SubhaloSimulator:
                 this_beta = beta
             params = np.array([this_alpha, this_beta])
 
-            logging.info(
+            logger.debug(
                 "Simulating image %s/%s with alpha = %s, beta = %s",
                 i_sim + 1,
                 n_images,
@@ -208,7 +216,7 @@ class SubhaloSimulator:
             _, (image, _, latents) = self.simulate(params, [])
 
             n_subhalos = latents[0]
-            logging.info("Image generated with %s subhalos", n_subhalos)
+            logger.debug("Image generated with %s subhalos", n_subhalos)
 
             all_images.append(image)
 
@@ -222,7 +230,12 @@ class SubhaloSimulator:
         all_log_r_xz = []
         all_latents = []
 
+        n_verbose = max(1, n_images // 20)
+
         for i_sim in range(n_images):
+
+            if (i_sim + 1) % n_verbose == 0:
+                logger.info("Simulating image %s / %s", i_sim + 1, n_images)
 
             # Prepare parameters
             try:
@@ -248,7 +261,7 @@ class SubhaloSimulator:
             params = np.array([this_alpha, this_beta])
             params_ref = np.array([this_alpha_ref, this_beta_ref])
 
-            logging.debug(
+            logger.debug(
                 "Simulating image %s/%s with alpha = %s, beta = %s; also evaluating probability for alpha = %s, beta = %s",
                 i_sim + 1,
                 n_images,
@@ -271,7 +284,7 @@ class SubhaloSimulator:
                 pass
 
             n_subhalos = latents[0]
-            logging.debug("Image generated with %s subhalos", n_subhalos)
+            logger.debug("Image generated with %s subhalos", n_subhalos)
 
             all_images.append(image)
             all_t_xz.append(t_xz)
@@ -306,7 +319,7 @@ class SubhaloSimulator:
         for i_sim in range(n_images):
 
             if (i_sim + 1) % n_verbose == 0:
-                logging.info("Simulating image %s / %s", i_sim + 1, n_images)
+                logger.info("Simulating image %s / %s", i_sim + 1, n_images)
 
             # Prepare parameters
             try:
@@ -332,7 +345,7 @@ class SubhaloSimulator:
             params_prior = np.vstack((alphas, betas)).T
 
             # Run simulator
-            logging.debug(
+            logger.debug(
                 "Simulating image %s/%s with alpha = %s, beta = %s; also evaluating probability for %s samples drawn "
                 "from prior",
                 i_sim + 1,
@@ -372,7 +385,7 @@ class SubhaloSimulator:
             log_r_xz_uncertainty = inverse_r_xz_uncertainty / inverse_r_xz
 
             n_subhalos = latents[0]
-            logging.debug("Image generated with %s subhalos", n_subhalos)
+            logger.debug("Image generated with %s subhalos", n_subhalos)
 
             all_images.append(image)
             all_t_xz.append(t_xz)
