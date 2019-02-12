@@ -213,12 +213,15 @@ class SubhaloSimulator:
 
             all_images.append(image)
 
+        all_images = np.array(all_images)
+
         return all_images
 
     def rvs_score_ratio(self, alpha, beta, alpha_ref, beta_ref, n_images):
         all_images = []
         all_t_xz = []
         all_log_r_xz = []
+        all_latents = []
 
         for i_sim in range(n_images):
 
@@ -274,8 +277,13 @@ class SubhaloSimulator:
             all_images.append(image)
             all_t_xz.append(t_xz)
             all_log_r_xz.append(log_r_xz)
+            all_latents.append(latents)
 
-        return all_images, all_t_xz, all_log_r_xz
+        all_images = np.array(all_images)
+        all_t_xz = np.array(all_t_xz)
+        all_log_r_xz = np.array(all_log_r_xz)
+
+        return all_images, all_t_xz, all_log_r_xz, all_latents
 
     def rvs_score_ratio_to_evidence(
         self,
@@ -292,8 +300,12 @@ class SubhaloSimulator:
         all_t_xz = []
         all_log_r_xz = []
         all_log_r_xz_uncertainties = []
+        all_latents = []
 
         for i_sim in range(n_images):
+
+            if (i_sim + 1) % (n_images // 20) == 0:
+                logging.info("Simulating image %s / %s", i_sim + 1, n_images)
 
             # Prepare parameters
             try:
@@ -365,5 +377,11 @@ class SubhaloSimulator:
             all_t_xz.append(t_xz)
             all_log_r_xz.append(log_r_xz)
             all_log_r_xz_uncertainties.append(log_r_xz_uncertainty)
+            all_latents.append(latents)
 
-        return all_images, all_t_xz, all_log_r_xz, all_log_r_xz_uncertainties
+        all_images = np.array(all_images)
+        all_t_xz = np.array(all_t_xz)
+        all_log_r_xz = np.array(all_log_r_xz)
+        all_log_r_xz_uncertainties = np.array(all_log_r_xz_uncertainties)
+
+        return all_images, all_t_xz, all_log_r_xz, all_log_r_xz_uncertainties, all_latents
