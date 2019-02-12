@@ -10,7 +10,12 @@ import torch
 from inference import losses
 from inference.models import Conv2DRatioEstimator
 from inference.trainer import train_ratio_model, evaluate_ratio_model
-from inference.utils import create_missing_folders, load_and_check, shuffle, sanitize_array
+from inference.utils import (
+    create_missing_folders,
+    load_and_check,
+    shuffle,
+    sanitize_array,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -248,13 +253,43 @@ class Estimator:
         calculate_model_score = method in ["rascal", "cascal", "alices"]
 
         # Clean up input data
-        x = sanitize_array(x, replace_inf=1.e6, replace_nan=1.e6, max_value=1.e6, min_value=0.).astype(np.float64)
-        theta0 = sanitize_array(theta0, replace_inf=1.e6, replace_nan=1.e6, max_value=1.e6, min_value=1.e-6).astype(np.float64)
-        y = sanitize_array(y, replace_inf=0., replace_nan=0., max_value=1., min_value=0.).astype(np.float64).reshape((-1, 1))
+        x = sanitize_array(
+            x, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=0.0
+        ).astype(np.float64)
+        theta0 = sanitize_array(
+            theta0,
+            replace_inf=1.0e6,
+            replace_nan=1.0e6,
+            max_value=1.0e6,
+            min_value=1.0e-6,
+        ).astype(np.float64)
+        y = (
+            sanitize_array(
+                y, replace_inf=0.0, replace_nan=0.0, max_value=1.0, min_value=0.0
+            )
+            .astype(np.float64)
+            .reshape((-1, 1))
+        )
         if r_xz is not None:
-            r_xz = sanitize_array(r_xz, replace_inf=1.e6, replace_nan=1.e6, max_value=1.e6, min_value=1.e-6).astype(np.float64).reshape((-1, 1))
+            r_xz = (
+                sanitize_array(
+                    r_xz,
+                    replace_inf=1.0e6,
+                    replace_nan=1.0e6,
+                    max_value=1.0e6,
+                    min_value=1.0e-6,
+                )
+                .astype(np.float64)
+                .reshape((-1, 1))
+            )
         if t_xz0 is not None:
-            t_xz0 = sanitize_array(t_xz0, replace_inf=1.e6, replace_nan=1.e6, max_value=1.e6, min_value=-1.e6).astype(np.float64)
+            t_xz0 = sanitize_array(
+                t_xz0,
+                replace_inf=1.0e6,
+                replace_nan=1.0e6,
+                max_value=1.0e6,
+                min_value=-1.0e6,
+            ).astype(np.float64)
 
         # Infer dimensions of problem
         n_samples = x.shape[0]
@@ -271,7 +306,11 @@ class Estimator:
         )
 
         if resolution_x != resolution_y:
-            raise RuntimeError("Currently only supports square images, but found resolution {} x {}".format(resolution_x, resolution_y))
+            raise RuntimeError(
+                "Currently only supports square images, but found resolution {} x {}".format(
+                    resolution_x, resolution_y
+                )
+            )
 
         resolution = resolution_x
 
@@ -298,7 +337,7 @@ class Estimator:
 
             logger.info("Rescaling pixel values by factor 1 / %s", self.pixel_norm)
         else:
-            self.pixel_norm = 1.
+            self.pixel_norm = 1.0
 
         # Shuffle labels
         if shuffle_labels:
@@ -424,23 +463,19 @@ class Estimator:
 
         Returns
         -------
-        sally_estimated_score : ndarray
-            Only returned if the network was trained with `method='sally'` or `method='sallino'`. In this case, an
-            array of the estimator for `t(x_i | theta_ref)` is returned for all events `i`.
 
         log_likelihood_ratio : ndarray
-            Only returned if the network was trained with neither `method='sally'` nor `method='sallino'`. The estimated
-            log likelihood ratio. If test_all_combinations is True, the result has shape `(n_thetas, n_x)`. Otherwise,
-            it has shape `(n_samples,)`.
+            The estimated log likelihood ratio. If test_all_combinations is True, the result has shape
+            `(n_thetas, n_x)`. Otherwise, it has shape `(n_samples,)`.
 
         score_theta0 : ndarray or None
-            Only returned if the network was trained with neither `method='sally'` nor `method='sallino'`. None if
+            None if
             evaluate_score is False. Otherwise the derived estimated score at `theta0`. If test_all_combinations is
             True, the result has shape `(n_thetas, n_x, n_parameters)`. Otherwise, it has shape
             `(n_samples, n_parameters)`.
 
         score_theta1 : ndarray or None
-            Only returned if the network was trained with neither `method='sally'` nor `method='sallino'`. None if
+            None if
             evaluate_score is False, or the network was trained with any method other than 'alice2', 'alices2', 'carl2',
             'rascal2', or 'rolr2'. Otherwise the derived estimated score at `theta1`. If test_all_combinations is
             True, the result has shape `(n_thetas, n_x, n_parameters)`. Otherwise, it has shape
@@ -464,8 +499,16 @@ class Estimator:
             x = load_and_check(x)
 
         # Clean up input data
-        x = sanitize_array(x, replace_inf=1.e6, replace_nan=1.e6, max_value=1.e6, min_value=0.).astype(np.float64)
-        theta0 = sanitize_array(theta0, replace_inf=1.e6, replace_nan=1.e6, max_value=1.e6, min_value=1.e-6).astype(np.float64)
+        x = sanitize_array(
+            x, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=0.0
+        ).astype(np.float64)
+        theta0 = sanitize_array(
+            theta0,
+            replace_inf=1.0e6,
+            replace_nan=1.0e6,
+            max_value=1.0e6,
+            min_value=1.0e-6,
+        ).astype(np.float64)
 
         # Rescale pixel values
         x /= self.pixel_norm
@@ -519,9 +562,9 @@ class Estimator:
             return all_log_r_hat, all_t_hat0, all_x_gradients
         return all_log_r_hat, all_t_hat0
 
-    def evaluate_posterior(self, xs, thetas_eval, thetas_from_prior):
+    def evaluate_posterior(self, xs, thetas_eval, prior_thetas_eval, thetas_from_prior):
         """
-        Estimates the prior p(theta | xs) for a series of observations xs, and a list of evaluation parameter
+        Estimates the posterior p(theta | xs) for a series of observations xs, and a list of evaluation parameter
         points theta in thetas_eval.
 
         Parameters
@@ -531,6 +574,9 @@ class Estimator:
 
         thetas_eval : ndarray
             Parameter points to be evaluated with shape (n_evaluations, n_parameters).
+
+        prior_thetas_eval : ndarray
+            Prior evaluated at thetas_eval with shape (n_evaluations,).
 
         thetas_from_prior : ndarray
             Parameter points drawn from the prior with shape (n_theta_samples, n_parameters).
@@ -542,12 +588,26 @@ class Estimator:
 
         """
 
+        # Calculate likelihood ratios
+        log_r_evals = self.evaluate_ratio(xs, thetas_eval)  # (n_eval, n_x)
+        log_r_priors = self.evaluate_ratio(xs, thetas_from_prior)  # (n_prior, n_x)
+
+        # Calculate posteriors
         posteriors = []
 
-        for theta_eval in thetas_eval:
-            pass
+        for prior_eval, log_r_eval in zip(thetas_from_prior, log_r_evals):
+            numerator = 0.0
 
+            for log_r_prior in log_r_priors:
+                log_likelihood_ratio_priorsample_eval = np.sum(log_r_prior - log_r_eval)
+                numerator += np.exp(log_likelihood_ratio_priorsample_eval)
 
+            numerator /= float(len(log_r_priors))
+
+            posterior = prior_eval / numerator
+            posteriors.append(posterior)
+
+        return np.asarray(posteriors)
 
     def save(self, filename, save_model=False):
         """

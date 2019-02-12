@@ -189,7 +189,6 @@ class SubhaloSimulator:
         n_verbose = max(1, n_images // 20)
 
         for i_sim in range(n_images):
-
             if (i_sim + 1) % n_verbose == 0:
                 logger.info("Simulating image %s / %s", i_sim + 1, n_images)
 
