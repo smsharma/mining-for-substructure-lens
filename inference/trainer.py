@@ -49,7 +49,9 @@ def train_ratio_model(
     dtype = torch.double if double_precision else torch.float
 
     logger.debug(
-        "Training on %s with %s precision", "GPU" if run_on_gpu else "CPU", "double" if double_precision else "single"
+        "Training on %s with %s precision",
+        "GPU" if run_on_gpu else "CPU",
+        "double" if double_precision else "single",
     )
 
     # Move model to device
@@ -91,7 +93,9 @@ def train_ratio_model(
 
     # Train / validation split
     if validation_split is not None and validation_split > 0.0:
-        assert 0.0 < validation_split < 1.0, "Wrong validation split: {}".format(validation_split)
+        assert 0.0 < validation_split < 1.0, "Wrong validation split: {}".format(
+            validation_split
+        )
 
         n_samples = len(dataset)
         indices = list(range(n_samples))
@@ -102,13 +106,20 @@ def train_ratio_model(
         train_sampler = SubsetRandomSampler(train_idx)
         validation_sampler = SubsetRandomSampler(valid_idx)
 
-        train_loader = DataLoader(dataset, sampler=train_sampler, batch_size=batch_size, pin_memory=run_on_gpu)
+        train_loader = DataLoader(
+            dataset, sampler=train_sampler, batch_size=batch_size, pin_memory=run_on_gpu
+        )
         validation_loader = DataLoader(
-            dataset, sampler=validation_sampler, batch_size=batch_size, pin_memory=run_on_gpu
+            dataset,
+            sampler=validation_sampler,
+            batch_size=batch_size,
+            pin_memory=run_on_gpu,
         )
     else:
         validation_split = None
-        train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, pin_memory=run_on_gpu)
+        train_loader = DataLoader(
+            dataset, batch_size=batch_size, shuffle=True, pin_memory=run_on_gpu
+        )
 
     # Optimizer
     logger.debug("Preparing optimizer %s", trainer)
@@ -116,19 +127,26 @@ def train_ratio_model(
     if trainer == "adam":
         optimizer = optim.Adam(model.parameters(), lr=initial_learning_rate)
     elif trainer == "amsgrad":
-        optimizer = optim.Adam(model.parameters(), lr=initial_learning_rate, amsgrad=True)
+        optimizer = optim.Adam(
+            model.parameters(), lr=initial_learning_rate, amsgrad=True
+        )
     elif trainer == "sgd":
         if nesterov_momentum is None:
             optimizer = optim.SGD(model.parameters(), lr=initial_learning_rate)
         else:
             optimizer = optim.SGD(
-                model.parameters(), lr=initial_learning_rate, nesterov=True, momentum=nesterov_momentum
+                model.parameters(),
+                lr=initial_learning_rate,
+                nesterov=True,
+                momentum=nesterov_momentum,
             )
     else:
         raise ValueError("Unknown trainer {}".format(trainer))
 
     # Early stopping
-    early_stopping = early_stopping and (validation_split is not None) and (n_epochs > 1)
+    early_stopping = (
+        early_stopping and (validation_split is not None) and (n_epochs > 1)
+    )
     early_stopping_best_val_loss = None
     early_stopping_best_model = None
     early_stopping_epoch = None
@@ -173,9 +191,9 @@ def train_ratio_model(
 
         # Learning rate decay
         if n_epochs > 1:
-            lr = initial_learning_rate * (final_learning_rate / initial_learning_rate) ** float(
-                epoch / (n_epochs - 1.0)
-            )
+            lr = initial_learning_rate * (
+                final_learning_rate / initial_learning_rate
+            ) ** float(epoch / (n_epochs - 1.0))
             for param_group in optimizer.param_groups:
                 param_group["lr"] = lr
 
@@ -209,7 +227,9 @@ def train_ratio_model(
             # Forward pass
             if grad_x_regularization is None:
                 x_gradient = None
-                s_hat, log_r_hat, t_hat0 = model(theta0, x, track_score=calculate_model_score)
+                s_hat, log_r_hat, t_hat0 = model(
+                    theta0, x, track_score=calculate_model_score
+                )
             else:
                 s_hat, log_r_hat, t_hat0, x_gradient = model(
                     theta0, x, track_score=calculate_model_score, return_grad_x=True
@@ -233,7 +253,9 @@ def train_ratio_model(
 
             # For debugging, perhaps stop here
             if return_first_loss:
-                logger.info("As requested, cancelling training and returning first loss")
+                logger.info(
+                    "As requested, cancelling training and returning first loss"
+                )
                 params = dict(model.named_parameters())
 
                 if theta0s is not None:
@@ -259,18 +281,26 @@ def train_ratio_model(
         # If no validation, print out loss and continue loop
         if validation_split is None:
             individual_loss_string = ""
-            for i, (label, value) in enumerate(zip(loss_labels, individual_losses_train[-1])):
+            for i, (label, value) in enumerate(
+                zip(loss_labels, individual_losses_train[-1])
+            ):
                 if i > 0:
                     individual_loss_string += ", "
                 individual_loss_string += "{}: {:.4f}".format(label, value)
 
-            if n_epochs_verbose is not None and n_epochs_verbose > 0 and (epoch + 1) % n_epochs_verbose == 0:
+            if (
+                n_epochs_verbose is not None
+                and n_epochs_verbose > 0
+                and (epoch + 1) % n_epochs_verbose == 0
+            ):
                 logger.info(
-                    "  Epoch %-2.2d: train loss %.4f (%s)" % (epoch + 1, total_losses_train[-1], individual_loss_string)
+                    "  Epoch %-2.2d: train loss %.4f (%s)"
+                    % (epoch + 1, total_losses_train[-1], individual_loss_string)
                 )
             else:
                 logger.debug(
-                    "  Epoch %-2.2d: train loss %.4f (%s)" % (epoch + 1, total_losses_train[-1], individual_loss_string)
+                    "  Epoch %-2.2d: train loss %.4f (%s)"
+                    % (epoch + 1, total_losses_train[-1], individual_loss_string)
                 )
             continue
 
@@ -304,7 +334,10 @@ def train_ratio_model(
 
             # Evaluate loss
             s_hat, log_r_hat, t_hat0 = model(
-                theta0, x, track_score=calculate_model_score, create_gradient_graph=False
+                theta0,
+                x,
+                track_score=calculate_model_score,
+                create_gradient_graph=False,
             )
 
             losses = [
@@ -327,7 +360,10 @@ def train_ratio_model(
 
         # Early stopping: best epoch so far?
         if early_stopping:
-            if early_stopping_best_val_loss is None or total_val_loss < early_stopping_best_val_loss:
+            if (
+                early_stopping_best_val_loss is None
+                or total_val_loss < early_stopping_best_val_loss
+            ):
                 early_stopping_best_val_loss = total_val_loss
                 early_stopping_best_model = model.state_dict()
                 early_stopping_epoch = epoch
@@ -344,7 +380,11 @@ def train_ratio_model(
             individual_loss_string_train += "{}: {:.4f}".format(label, value_train)
             individual_loss_string_val += "{}: {:.4f}".format(label, value_val)
 
-        if n_epochs_verbose is not None and n_epochs_verbose > 0 and (epoch + 1) % n_epochs_verbose == 0:
+        if (
+            n_epochs_verbose is not None
+            and n_epochs_verbose > 0
+            and (epoch + 1) % n_epochs_verbose == 0
+        ):
             if early_stopping and epoch == early_stopping_epoch:
                 logger.info(
                     "  Epoch %-2.2d: train loss %.4f (%s)",
@@ -352,7 +392,11 @@ def train_ratio_model(
                     total_losses_train[-1],
                     individual_loss_string_train,
                 )
-                logger.info("            val. loss  %.4f (%s) (*)", total_losses_val[-1], individual_loss_string_val)
+                logger.info(
+                    "            val. loss  %.4f (%s) (*)",
+                    total_losses_val[-1],
+                    individual_loss_string_val,
+                )
             else:
                 logger.info(
                     "  Epoch %-2.2d: train loss %.4f (%s)",
@@ -360,7 +404,11 @@ def train_ratio_model(
                     total_losses_train[-1],
                     individual_loss_string_train,
                 )
-                logger.info("            val. loss  %.4f (%s)", total_losses_val[-1], individual_loss_string_val)
+                logger.info(
+                    "            val. loss  %.4f (%s)",
+                    total_losses_val[-1],
+                    individual_loss_string_val,
+                )
         else:
             if early_stopping and epoch == early_stopping_epoch:
                 logger.debug(
@@ -369,7 +417,11 @@ def train_ratio_model(
                     total_losses_train[-1],
                     individual_loss_string_train,
                 )
-                logger.debug("            val. loss  %.4f (%s) (*)", total_losses_val[-1], individual_loss_string_val)
+                logger.debug(
+                    "            val. loss  %.4f (%s) (*)",
+                    total_losses_val[-1],
+                    individual_loss_string_val,
+                )
             else:
                 logger.debug(
                     "  Epoch %-2.2d: train loss %.4f (%s)",
@@ -377,12 +429,19 @@ def train_ratio_model(
                     total_losses_train[-1],
                     individual_loss_string_train,
                 )
-                logger.debug("            val. loss  %.4f (%s)", total_losses_val[-1], individual_loss_string_val)
+                logger.debug(
+                    "            val. loss  %.4f (%s)",
+                    total_losses_val[-1],
+                    individual_loss_string_val,
+                )
 
         # Early stopping: actually stop training
         if early_stopping and early_stopping_patience is not None:
             if epoch - early_stopping_epoch >= early_stopping_patience > 0:
-                logger.info("No improvement for %s epochs, stopping training", epoch - early_stopping_epoch)
+                logger.info(
+                    "No improvement for %s epochs, stopping training",
+                    epoch - early_stopping_epoch,
+                )
                 break
 
     logger.debug("Main training loop finished")
@@ -405,9 +464,15 @@ def train_ratio_model(
 
         logger.debug("Saving learning curve")
 
-        np.save(learning_curve_folder + "/loss_train" + learning_curve_filename + ".npy", total_losses_train)
+        np.save(
+            learning_curve_folder + "/loss_train" + learning_curve_filename + ".npy",
+            total_losses_train,
+        )
         if validation_split is not None:
-            np.save(learning_curve_folder + "/loss_val" + learning_curve_filename + ".npy", total_losses_val)
+            np.save(
+                learning_curve_folder + "/loss_val" + learning_curve_filename + ".npy",
+                total_losses_val,
+            )
 
         if loss_labels is not None:
             individual_losses_train = np.array(individual_losses_train)
@@ -415,12 +480,22 @@ def train_ratio_model(
 
             for i, label in enumerate(loss_labels):
                 np.save(
-                    learning_curve_folder + "/loss_" + label + "_train" + learning_curve_filename + ".npy",
+                    learning_curve_folder
+                    + "/loss_"
+                    + label
+                    + "_train"
+                    + learning_curve_filename
+                    + ".npy",
                     individual_losses_train[:, i],
                 )
                 if validation_split is not None:
                     np.save(
-                        learning_curve_folder + "/loss_" + label + "_val" + learning_curve_filename + ".npy",
+                        learning_curve_folder
+                        + "/loss_"
+                        + label
+                        + "_val"
+                        + learning_curve_filename
+                        + ".npy",
                         individual_losses_val[:, i],
                     )
 
@@ -448,7 +523,12 @@ def evaluate_ratio_model(
 
     # Prepare data
     n_xs = len(xs)
-    theta0s = torch.stack([tensor(theta0s[i % n_thetas], requires_grad=evaluate_score) for i in range(n_xs)])
+    theta0s = torch.stack(
+        [
+            tensor(theta0s[i % n_thetas], requires_grad=evaluate_score)
+            for i in range(n_xs)
+        ]
+    )
     xs = torch.stack([tensor(i) for i in xs])
 
     model = model.to(device, dtype)
@@ -461,10 +541,16 @@ def evaluate_ratio_model(
 
         if return_grad_x:
             s_hat, log_r_hat, t_hat0, x_gradients = model(
-                theta0s, xs, return_grad_x=True, track_score=evaluate_score, create_gradient_graph=False
+                theta0s,
+                xs,
+                return_grad_x=True,
+                track_score=evaluate_score,
+                create_gradient_graph=False,
             )
         else:
-            s_hat, log_r_hat, t_hat0 = model(theta0s, xs, track_score=evaluate_score, create_gradient_graph=False)
+            s_hat, log_r_hat, t_hat0 = model(
+                theta0s, xs, track_score=evaluate_score, create_gradient_graph=False
+            )
             x_gradients = None
 
         # Copy back tensors to CPU
@@ -485,7 +571,9 @@ def evaluate_ratio_model(
         with torch.no_grad():
             model.eval()
 
-            s_hat, log_r_hat, _ = model(theta0s, xs, track_score=False, create_gradient_graph=False)
+            s_hat, log_r_hat, _ = model(
+                theta0s, xs, track_score=False, create_gradient_graph=False
+            )
 
             # Copy back tensors to CPU
             if run_on_gpu:

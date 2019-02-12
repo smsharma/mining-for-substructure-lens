@@ -30,7 +30,14 @@ class DenseRatioEstimator(nn.Module):
         # Log r layer
         self.layers.append(nn.Linear(n_last, 1))
 
-    def forward(self, theta, x, track_score=True, return_grad_x=False, create_gradient_graph=True):
+    def forward(
+        self,
+        theta,
+        x,
+        track_score=True,
+        return_grad_x=False,
+        create_gradient_graph=True,
+    ):
 
         """ Calculates estimated log likelihood ratio and the derived score. """
 
@@ -90,8 +97,18 @@ class DenseRatioEstimator(nn.Module):
 
 
 class Conv2DRatioEstimator(nn.Module):
-    def __init__(self, n_parameters, resolution, n_conv_layers=3, n_dense_layers=2, n_feature_maps=10, kernel_size=5, pooling_size=2,
-                 n_hidden_dense=100, activation="relu"):
+    def __init__(
+        self,
+        n_parameters,
+        resolution,
+        n_conv_layers=3,
+        n_dense_layers=2,
+        n_feature_maps=10,
+        kernel_size=5,
+        pooling_size=2,
+        n_hidden_dense=100,
+        activation="relu",
+    ):
 
         super(Conv2DRatioEstimator, self).__init__()
 
@@ -130,7 +147,9 @@ class Conv2DRatioEstimator(nn.Module):
             )
             self.conv_layers.append(nn.BatchNorm2d(n_feature_maps))
             self.conv_layers.append(self.activation)
-            self.conv_layers.append(nn.MaxPool2d(kernel_size=pooling_size, stride=pooling_size))
+            self.conv_layers.append(
+                nn.MaxPool2d(kernel_size=pooling_size, stride=pooling_size)
+            )
 
             last_channels = n_feature_maps
             current_size /= pooling_size
@@ -139,9 +158,7 @@ class Conv2DRatioEstimator(nn.Module):
 
         # Fully connected layers
         for i_conv in range(n_dense_layers - 1):
-            self.dense_layers.append(
-                nn.Linear(n_units, n_hidden_dense)
-            )
+            self.dense_layers.append(nn.Linear(n_units, n_hidden_dense))
             self.dense_layers.append(nn.Linear(n_units, n_hidden_dense))
             self.dense_layers.append(nn.ReLU)
 
@@ -150,7 +167,14 @@ class Conv2DRatioEstimator(nn.Module):
         # Log r layer
         self.dense_layers.append(nn.Linear(n_units, 1))
 
-    def forward(self, theta, x, track_score=True, return_grad_x=False, create_gradient_graph=True):
+    def forward(
+        self,
+        theta,
+        x,
+        track_score=True,
+        return_grad_x=False,
+        create_gradient_graph=True,
+    ):
         # Track gradients
         if track_score and not theta.requires_grad:
             theta.requires_grad = True
