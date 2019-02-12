@@ -10,7 +10,7 @@ import torch
 from inference import losses
 from inference.models import Conv2DRatioEstimator
 from inference.trainer import train_ratio_model, evaluate_ratio_model
-from inference.utils import create_missing_folders, load_and_check, shuffle
+from inference.utils import create_missing_folders, load_and_check, shuffle, sanitize_array
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +64,7 @@ class Estimator:
         nesterov_momentum=None,
         validation_split=None,
         early_stopping=True,
+        rescale_inputs=True,
         shuffle_labels=False,
         grad_x_regularization=None,
         limit_samplesize=None,
@@ -150,6 +151,9 @@ class Estimator:
             Activates early stopping based on the validation loss (only if validation_split is not None). Default value:
             True.
 
+        rescale_inputs : bool, optional
+            If True, the pixel values will be rescaled by dividing by np.std(x). Default value: True.
+
         shuffle_labels : bool, optional
             If True, the labels (`y`, `r_xz`, `t_xz`) are shuffled, while the observations (`x`) remain in their
             normal order. This serves as a closure test, in particular as cross-check against overfitting: an estimator
@@ -208,6 +212,7 @@ class Estimator:
             logger.info("  Nesterov momentum:      %s", nesterov_momentum)
         logger.info("  Validation split:       %s", validation_split)
         logger.info("  Early stopping:         %s", early_stopping)
+        logger.info("  Rescale inputs:         %s", rescale_inputs)
         logger.info("  Shuffle labels          %s", shuffle_labels)
         if grad_x_regularization is None:
             logger.info("  Regularization:         None")
@@ -225,12 +230,11 @@ class Estimator:
 
         theta0 = load_and_check(theta0_filename)
         x = load_and_check(x_filename)
-        y = load_and_check(y_filename)
+        y = load_and_check(y_filename).astype(np.float).reshape((-1, 1))
         r_xz = load_and_check(r_xz_filename)
+        if r_xz is not None:
+            r_xz = r_xz.astype(np.float).reshape((-1, 1))
         t_xz0 = load_and_check(t_xz0_filename)
-
-        if y is not None:
-            y = y.reshape((-1, 1))
 
         # Check necessary information is theere
         assert x is not None
@@ -243,21 +247,33 @@ class Estimator:
 
         calculate_model_score = method in ["rascal", "cascal", "alices"]
 
+        # Clean up input data
+        x = sanitize_array(x, replace_inf=1.e6, replace_nan=1.e6, max_value=1.e6, min_value=0.).astype(np.float64)
+        theta0 = sanitize_array(theta0, replace_inf=1.e6, replace_nan=1.e6, max_value=1.e6, min_value=1.e-6).astype(np.float64)
+        y = sanitize_array(y, replace_inf=0., replace_nan=0., max_value=1., min_value=0.).astype(np.float64).reshape((-1, 1))
+        if r_xz is not None:
+            r_xz = sanitize_array(r_xz, replace_inf=1.e6, replace_nan=1.e6, max_value=1.e6, min_value=1.e-6).astype(np.float64).reshape((-1, 1))
+        if t_xz0 is not None:
+            t_xz0 = sanitize_array(t_xz0, replace_inf=1.e6, replace_nan=1.e6, max_value=1.e6, min_value=-1.e6).astype(np.float64)
+
         # Infer dimensions of problem
         n_samples = x.shape[0]
-        n_observables = x.shape[1]
-        if theta0 is not None:
-            n_parameters = theta0.shape[1]
-        else:
-            n_parameters = t_xz0.shape[1]
-        resolution = n_observables ** 0.5
+        n_parameters = theta0.shape[1]
+        resolution_x = x.shape[1]
+        resolution_y = x.shape[2]
 
         logger.info(
-            "Found %s samples with %s parameters and %s observables",
+            "Found %s samples with %s parameters and resolution %s x %s",
             n_samples,
             n_parameters,
-            n_observables,
+            resolution_x,
+            resolution_y,
         )
+
+        if resolution_x != resolution_y:
+            raise RuntimeError("Currently only supports square images, but found resolution {} x {}".format(resolution_x, resolution_y))
+
+        resolution = resolution_x
 
         # Limit sample size
         if limit_samplesize is not None and limit_samplesize < n_samples:
@@ -275,13 +291,19 @@ class Estimator:
             if t_xz0 is not None:
                 t_xz0 = t_xz0[:limit_samplesize]
 
+        # Reescale inputs
+        if rescale_inputs:
+            self.pixel_norm = np.std(x)
+            x /= self.pixel_norm
+
+            logger.info("Rescaling pixel values by factor 1 / %s", self.pixel_norm)
+        else:
+            self.pixel_norm = 1.
+
         # Shuffle labels
         if shuffle_labels:
             logger.info("Shuffling labels")
             y, r_xz, t_xz0 = shuffle(y, r_xz, t_xz0)
-
-        # Images
-        x = x.reshape(-1, resolution, resolution)
 
         # Save setup
         self.method = method
@@ -444,6 +466,9 @@ class Estimator:
         if isinstance(x, six.string_types):
             x = load_and_check(x)
 
+        # Rescale pixel values
+        x /= self.pixel_norm
+
         # Evaluation for all other methods
         all_log_r_hat = []
         all_t_hat0 = []
@@ -552,6 +577,7 @@ class Estimator:
             "pooling_size": self.pooling_size,
             "n_hidden_dense": self.n_hidden_dense,
             "activation": self.activation,
+            "pixel_norm": self.pixel_norm,
         }
 
         with open(filename + "_settings.json", "w") as f:
@@ -598,6 +624,7 @@ class Estimator:
         self.pooling_size = int(settings["pooling_size"])
         self.n_hidden_dense = int(settings["n_hidden_dense"])
         self.activation = str(settings["activation"])
+        self.pixel_norm = float(settings["pixel_norm"])
 
         logger.debug(
             "  Found method %s, resolution %s, %s parameters, %s convolutional layers, %s dense layers, %s feature maps"

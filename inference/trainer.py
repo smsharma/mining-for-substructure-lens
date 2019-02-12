@@ -9,8 +9,6 @@ from torch.utils.data import TensorDataset, DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.nn.utils import clip_grad_norm_
 
-from inference.models import ParameterizedRatioEstimator
-
 logger = logging.getLogger(__name__)
 
 
@@ -33,7 +31,7 @@ def train_ratio_model(
     n_epochs=50,
     clip_gradient=100.0,
     run_on_gpu=True,
-    double_precision=False,
+    double_precision=True,
     validation_split=0.2,
     early_stopping=True,
     early_stopping_patience=None,
@@ -225,15 +223,9 @@ def train_ratio_model(
             optimizer.zero_grad()
 
             # Forward pass
-            if grad_x_regularization is None:
-                x_gradient = None
-                s_hat, log_r_hat, t_hat0 = model(
-                    theta0, x, track_score=calculate_model_score
-                )
-            else:
-                s_hat, log_r_hat, t_hat0, x_gradient = model(
-                    theta0, x, track_score=calculate_model_score, return_grad_x=True
-                )
+            s_hat, log_r_hat, t_hat0, x_gradient = model(
+                theta0, x, track_score=calculate_model_score
+            )
 
             # Evaluate loss
             losses = [
@@ -333,7 +325,7 @@ def train_ratio_model(
                 k += 1
 
             # Evaluate loss
-            s_hat, log_r_hat, t_hat0 = model(
+            s_hat, log_r_hat, t_hat0, x_gradient = model(
                 theta0,
                 x,
                 track_score=calculate_model_score,

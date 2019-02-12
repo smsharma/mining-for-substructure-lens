@@ -22,7 +22,8 @@ class SubhaloSimulator:
         self,
         resolution=52,
         coordinate_limit=2.0,
-        m_sub_min=1e7 * M_s,
+        mass_base_unit=1.e7*M_s,
+        m_sub_min=1.,
         host_profile="sis",
         host_theta_x=0.01,
         host_theta_y=-0.01,
@@ -36,6 +37,9 @@ class SubhaloSimulator:
         src_theta_e_gal=0.5,
         src_n=4,
     ):
+        """ We will effectively set m_sub_min to one, so that all masses and alpha will be dimensionless"""
+
+        self.mass_base_unit = mass_base_unit
         self.resolution = resolution
         self.coordinate_limit = coordinate_limit
         self.m_sub_min = m_sub_min
@@ -92,7 +96,7 @@ class SubhaloSimulator:
 
         # Poisson mean for number of subhalos
         n_sub_mean = (
-            -alpha * M_s / (beta + 1.0) * (self.m_sub_min / M_s) ** (1.0 + beta)
+            -alpha / (beta + 1.0) * (self.m_sub_min) ** (1.0 + beta)
         )
 
         # Avoid issues from autograd ArrayBox objects
@@ -110,12 +114,7 @@ class SubhaloSimulator:
 
         # Evaluate likelihoods of numbers of subhalos
         for i_eval, (alpha_eval, beta_eval) in enumerate(zip(alphas_eval, betas_eval)):
-            n_sub_mean_eval = (
-                -alpha_eval
-                * M_s
-                / (beta_eval + 1)
-                * (self.m_sub_min / M_s) ** (1.0 + beta_eval)
-            )
+            n_sub_mean_eval = -alpha_eval / (beta_eval + 1) * self.m_sub_min ** (1.0 + beta_eval)
             logging.debug("Eval subhalo mean: %s", n_sub_mean_eval)
             log_p_xz_eval[i_eval] += (
                 n_sub * np.log(n_sub_mean_eval) - n_sub_mean_eval
@@ -162,7 +161,7 @@ class SubhaloSimulator:
                 "profile": "nfw",
                 "theta_x": x_sub[i_sub],
                 "theta_y": y_sub[i_sub],
-                "M200": m_sub[i_sub],
+                "M200": m_sub[i_sub] * self.mass_base_unit,
             }
             lens_list.append(sub_param_dict)
 
@@ -302,9 +301,11 @@ class SubhaloSimulator:
         all_log_r_xz_uncertainties = []
         all_latents = []
 
+        n_verbose = max(1, n_images // 20)
+
         for i_sim in range(n_images):
 
-            if (i_sim + 1) % (n_images // 20) == 0:
+            if (i_sim + 1) % n_verbose == 0:
                 logging.info("Simulating image %s / %s", i_sim + 1, n_images)
 
             # Prepare parameters

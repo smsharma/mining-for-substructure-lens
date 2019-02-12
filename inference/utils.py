@@ -2,6 +2,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import numpy as np
 import torch
+from torch import nn
 import logging
 
 logger = logging.getLogger(__name__)
@@ -9,11 +10,11 @@ logger = logging.getLogger(__name__)
 
 def get_activation_function(activation):
     if activation == "relu":
-        return torch.relu
+        return nn.ReLU()
     elif activation == "tanh":
-        return torch.tanh
+        return nn.Tanh()
     elif activation == "sigmoid":
-        return torch.sigmoid
+        return nn.Sigmoid()
     else:
         raise ValueError("Activation function %s unknown", activation)
 

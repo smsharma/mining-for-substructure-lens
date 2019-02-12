@@ -120,12 +120,11 @@ class Conv2DRatioEstimator(nn.Module):
         self.n_dense_layers = n_dense_layers
         self.n_feature_maps = n_feature_maps
         self.kernel_size = kernel_size
-        self.activation = get_activation_function(activation)
 
         # Build network
         self.parameter_layer = None
         self.conv_layers = nn.ModuleList()
-        self.n_dense_layers = nn.ModuleList()
+        self.dense_layers = nn.ModuleList()
 
         last_channels = 1
         current_size = resolution
@@ -134,33 +133,32 @@ class Conv2DRatioEstimator(nn.Module):
         self.param_layer = nn.Linear(n_parameters, n_feature_maps)
 
         # Convolutional and pooling layers
-        for i_conv in range(n_conv_layers - 1):
+        for i_conv in range(n_conv_layers):
             self.conv_layers.append(
                 nn.Conv2d(
                     in_channels=last_channels,
                     out_channels=n_feature_maps,
                     kernel_size=kernel_size,
                     stride=1,
-                    padding=int(kernel_size - 1 / 2),
+                    padding=int((kernel_size - 1) / 2),
                     bias=(i_conv > 0),
                 )
             )
             self.conv_layers.append(nn.BatchNorm2d(n_feature_maps))
-            self.conv_layers.append(self.activation)
+            self.conv_layers.append(get_activation_function(activation))
             self.conv_layers.append(
                 nn.MaxPool2d(kernel_size=pooling_size, stride=pooling_size)
             )
 
             last_channels = n_feature_maps
-            current_size /= pooling_size
+            current_size = current_size // pooling_size
 
-        n_units = last_channels * current_size * current_size + n_parameters
+        n_units = int(last_channels * current_size * current_size + n_parameters)
 
         # Fully connected layers
         for i_conv in range(n_dense_layers - 1):
             self.dense_layers.append(nn.Linear(n_units, n_hidden_dense))
-            self.dense_layers.append(nn.Linear(n_units, n_hidden_dense))
-            self.dense_layers.append(nn.ReLU)
+            self.dense_layers.append(get_activation_function(activation))
 
             n_units = n_hidden_dense
 
@@ -183,7 +181,7 @@ class Conv2DRatioEstimator(nn.Module):
             x.requires_grad = True
 
         # Convolutional and pooling layers
-        h = x
+        h = x.unsqueeze(1)  # Add feature map dimension
         for i_layer, conv_layer in enumerate(self.conv_layers):
             h = conv_layer(h)
             if i_layer == 0:
@@ -195,7 +193,35 @@ class Conv2DRatioEstimator(nn.Module):
         for dense_layer in self.dense_layers:
             h = dense_layer(h)
 
-        return h
+        # Transform to outputs
+        log_r = h
+        s = 1.0 / (1.0 + torch.exp(log_r))
+
+        # Score t
+        if track_score:
+            t, = grad(
+                log_r,
+                theta,
+                grad_outputs=torch.ones_like(log_r.data),
+                only_inputs=True,
+                create_graph=create_gradient_graph,
+            )
+        else:
+            t = None
+
+        # Calculate gradient wrt x
+        if return_grad_x:
+            x_gradient, = grad(
+                log_r,
+                x,
+                grad_outputs=torch.ones_like(log_r.data),
+                only_inputs=True,
+                create_graph=create_gradient_graph,
+            )
+        else:
+            x_gradient = None
+
+        return s, log_r, t, x_gradient
 
     def to(self, *args, **kwargs):
         self = super(Conv2DRatioEstimator, self).to(*args, **kwargs)
