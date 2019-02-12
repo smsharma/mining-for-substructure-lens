@@ -237,8 +237,6 @@ class Estimator:
         x = load_and_check(x_filename)
         y = load_and_check(y_filename).astype(np.float).reshape((-1, 1))
         r_xz = load_and_check(r_xz_filename)
-        if r_xz is not None:
-            r_xz = r_xz.astype(np.float).reshape((-1, 1))
         t_xz0 = load_and_check(t_xz0_filename)
 
         # Check necessary information is theere
@@ -589,13 +587,13 @@ class Estimator:
         """
 
         # Calculate likelihood ratios
-        log_r_evals = self.evaluate_ratio(xs, thetas_eval)  # (n_eval, n_x)
-        log_r_priors = self.evaluate_ratio(xs, thetas_from_prior)  # (n_prior, n_x)
+        log_r_evals = self.evaluate_ratio(xs, thetas_eval)[0]  # (n_eval, n_x)
+        log_r_priors = self.evaluate_ratio(xs, thetas_from_prior)[0]  # (n_prior, n_x)
 
         # Calculate posteriors
         posteriors = []
 
-        for prior_eval, log_r_eval in zip(thetas_from_prior, log_r_evals):
+        for prior_eval, log_r_eval in zip(prior_thetas_eval, log_r_evals):
             numerator = 0.0
 
             for log_r_prior in log_r_priors:

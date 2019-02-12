@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 def train_ratio_model(
     model,
     loss_functions,
-    theta0s=None,
-    xs=None,
-    ys=None,
+    theta0s,
+    xs,
+    ys,
     r_xzs=None,
     t_xz0s=None,
     loss_weights=None,
@@ -71,19 +71,14 @@ def train_ratio_model(
 
     # Convert to Tensor
     if theta0s is not None:
-        # data.append(torch.stack([tensor(i, requires_grad=calculate_model_score) for i in theta0s]))
         data.append(torch.tensor(theta0s, requires_grad=calculate_model_score))
     if xs is not None:
-        # data.append(torch.stack([tensor(i) for i in xs]))
         data.append(torch.from_numpy(xs))
     if ys is not None:
-        # data.append(torch.stack([tensor(i) for i in ys]))
         data.append(torch.from_numpy(ys))
     if r_xzs is not None:
-        # data.append(torch.stack([tensor(i) for i in r_xzs]))
         data.append(torch.from_numpy(r_xzs))
     if t_xz0s is not None:
-        # data.append(torch.stack([tensor(i) for i in t_xz0s]))
         data.append(torch.from_numpy(t_xz0s))
 
     # Dataset
