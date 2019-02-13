@@ -609,8 +609,7 @@ class Estimator:
 
     def save(self, filename, save_model=False):
         """
-        Saves the trained model to four files: a JSON file with the settings, a pickled pyTorch state dict
-        file, and numpy files for the mean and variance of the inputs (used for input scaling).
+        Saves the trained model to two files: a JSON file with the settings and a pickled pyTorch state dict.
 
         Parameters
         ----------
@@ -619,7 +618,7 @@ class Estimator:
 
         save_model : bool, optional
             If True, the whole model is saved in addition to the state dict. This is not necessary for loading it
-            again with MLForge.load(), but can be useful for debugging, for instance to plot the computational graph.
+            again with Estimator.load(), but can be useful for debugging, for instance to plot the computational graph.
             Default value: False.
 
         Returns
