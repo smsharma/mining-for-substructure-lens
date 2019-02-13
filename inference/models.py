@@ -102,8 +102,8 @@ class Conv2DRatioEstimator(nn.Module):
         n_parameters,
         resolution,
         n_conv_layers=3,
-        n_dense_layers=2,
-        n_feature_maps=10,
+        n_dense_layers=3,
+        n_feature_maps=100,
         kernel_size=5,
         pooling_size=2,
         n_hidden_dense=100,
@@ -122,15 +122,11 @@ class Conv2DRatioEstimator(nn.Module):
         self.kernel_size = kernel_size
 
         # Build network
-        self.parameter_layer = None
         self.conv_layers = nn.ModuleList()
         self.dense_layers = nn.ModuleList()
 
         last_channels = 1
         current_size = resolution
-
-        # Initial transformations of parameters
-        self.param_layer = nn.Linear(n_parameters, n_feature_maps)
 
         # Convolutional and pooling layers
         for i_conv in range(n_conv_layers):
@@ -182,10 +178,8 @@ class Conv2DRatioEstimator(nn.Module):
 
         # Convolutional and pooling layers
         h = x.unsqueeze(1)  # Add feature map dimension
-        for i_layer, conv_layer in enumerate(self.conv_layers):
+        for conv_layer in self.conv_layers:
             h = conv_layer(h)
-            if i_layer == 0:
-                h = h + self.param_layer(theta).unsqueeze(2).unsqueeze(3)
 
         # Dense layers
         h = h.reshape(h.size(0), -1)

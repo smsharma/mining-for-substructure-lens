@@ -55,7 +55,7 @@ class Estimator:
         t_xz0_filename=None,
         n_conv_layers=3,
         n_dense_layers=2,
-        n_feature_maps=10,
+        n_feature_maps=100,
         kernel_size=5,
         pooling_size=2,
         n_hidden_dense=100,
