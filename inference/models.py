@@ -224,6 +224,5 @@ class Conv2DRatioEstimator(nn.Module):
             self.conv_layers[i] = layer.to(*args, **kwargs)
         for i, layer in enumerate(self.dense_layers):
             self.dense_layers[i] = layer.to(*args, **kwargs)
-        self.param_layer = self.param_layer.to(*args, **kwargs)
 
         return self
