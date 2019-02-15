@@ -185,6 +185,7 @@ class SubhaloSimulator:
 
     def rvs(self, alpha, beta, n_images):
         all_images = []
+        all_latents = []
 
         n_verbose = max(1, n_images // 20)
 
@@ -218,10 +219,11 @@ class SubhaloSimulator:
             logger.debug("Image generated with %s subhalos", n_subhalos)
 
             all_images.append(image)
+            all_latents.append(latents)
 
         all_images = np.array(all_images)
 
-        return all_images
+        return all_images, all_latents
 
     def rvs_score_ratio(self, alpha, beta, alpha_ref, beta_ref, n_images):
         all_images = []
