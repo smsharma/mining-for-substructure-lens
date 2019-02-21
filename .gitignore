@@ -126,3 +126,11 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Hidden files
+.*
+!.gitignore
+
+# Data
+data/
+models/
