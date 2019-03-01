@@ -6,7 +6,7 @@ import logging
 import autograd.numpy as np
 import autograd as ag
 
-from units import (
+from simulation.units import (
     M_s,
     erg,
     Centimeter,
@@ -14,7 +14,7 @@ from units import (
     Sec,
     radtoasc,
 )  # Don't import * since that will overwrite np
-from lensing_sim import LensingSim
+from simulation.lensing_sim import LensingSim
 
 logger = logging.getLogger(__name__)
 
