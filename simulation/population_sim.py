@@ -102,7 +102,7 @@ class SubhaloSimulator:
         logger.debug("Log p: %s", log_p_xz_eval)
 
         # Draw subhalo masses
-        m_sub = self._draw_m_sub(n_sub)
+        m_sub = self._draw_m_sub(n_sub, alpha, beta)
         logger.debug("Subhalo masses: %s", m_sub)
 
         # Evaluate likelihoods of subhalo masses
@@ -205,26 +205,7 @@ class SubhaloSimulator:
             if (i_sim + 1) % n_verbose == 0:
                 logger.info("Simulating image %s / %s", i_sim + 1, n_images)
 
-            try:
-                assert len(alpha) == n_images
-                this_alpha = alpha[i_sim]
-            except TypeError:
-                this_alpha = alpha
-            try:
-                assert len(beta) == n_images
-                this_beta = beta[i_sim]
-            except TypeError:
-                this_beta = beta
-            params = np.array([this_alpha, this_beta])
-
-            logger.debug(
-                "Simulating image %s/%s with alpha = %s, beta = %s",
-                i_sim + 1,
-                n_images,
-                this_alpha,
-                this_beta,
-            )
-
+            params = self._wrap_params(alpha, beta, i_sim, n_images)
             _, (image, _, latents) = self.simulate(params, [])
 
             n_subhalos = latents[0]
@@ -246,55 +227,18 @@ class SubhaloSimulator:
         n_verbose = max(1, n_images // 20)
 
         for i_sim in range(n_images):
-
             if (i_sim + 1) % n_verbose == 0:
                 logger.info("Simulating image %s / %s", i_sim + 1, n_images)
 
-            # Prepare parameters
-            try:
-                assert len(alpha) == n_images
-                this_alpha = alpha[i_sim]
-            except TypeError:
-                this_alpha = alpha
-            try:
-                assert len(beta) == n_images
-                this_beta = beta[i_sim]
-            except TypeError:
-                this_beta = beta
-            try:
-                assert len(alpha_ref) == n_images
-                this_alpha_ref = alpha_ref[i_sim]
-            except TypeError:
-                this_alpha_ref = alpha_ref
-            try:
-                assert len(beta_ref) == n_images
-                this_beta_ref = beta_ref[i_sim]
-            except TypeError:
-                this_beta_ref = beta_ref
-            params = np.array([this_alpha, this_beta])
-            params_ref = np.array([this_alpha_ref, this_beta_ref])
-
-            logger.debug(
-                "Simulating image %s/%s with alpha = %s, beta = %s; also evaluating probability for alpha = %s, beta = %s",
-                i_sim + 1,
-                n_images,
-                this_alpha,
-                this_beta,
-                this_alpha_ref,
-                this_beta_ref,
-            )
+            params = self._wrap_params(alpha, beta, i_sim, n_images)
+            params_ref = self._wrap_params(alpha_ref, beta_ref, i_sim, n_images)
 
             t_xz, (image, log_p_xzs, latents) = self.d_simulate(params, [params_ref])
             log_r_xz = log_p_xzs[0] - log_p_xzs[1]
 
-            try:
-                t_xz = t_xz._value
-            except AttributeError:
-                pass
-            try:
-                log_r_xz = log_r_xz._value
-            except AttributeError:
-                pass
+            # Clean up
+            t_xz = self._detach(t_xz)
+            log_r_xz = self._detach(log_r_xz)
 
             n_subhalos = latents[0]
             logger.debug("Image generated with %s subhalos", n_subhalos)
@@ -329,57 +273,26 @@ class SubhaloSimulator:
 
         n_verbose = max(1, n_images // 20)
 
-        for i_sim in range(n_images):
+        alpha_prior = np.random.normal(
+            loc=alpha_mean, scale=alpha_std, size=n_theta_samples
+        )
+        beta_prior = np.random.normal(
+            loc=beta_mean, scale=beta_std, size=n_theta_samples
+        )
+        params_prior = np.vstack((alpha_prior, beta_prior)).T
 
+        for i_sim in range(n_images):
             if (i_sim + 1) % n_verbose == 0:
                 logger.info("Simulating image %s / %s", i_sim + 1, n_images)
 
-            # Prepare parameters
-            try:
-                assert len(alpha) == n_images
-                this_alpha = alpha[i_sim]
-            except TypeError:
-                this_alpha = alpha
-            try:
-                assert len(beta) == n_images
-                this_beta = beta[i_sim]
-            except TypeError:
-                this_beta = beta
-            params = np.array([this_alpha, this_beta])
-
-            # Draw samples from prior
-            alphas = np.random.normal(
-                loc=alpha_mean, scale=alpha_std, size=n_theta_samples
-            )
-            betas = np.random.normal(
-                loc=beta_mean, scale=beta_std, size=n_theta_samples
-            )
-
-            params_prior = np.vstack((alphas, betas)).T
-
-            # Run simulator
-            logger.debug(
-                "Simulating image %s/%s with alpha = %s, beta = %s; also evaluating probability for %s samples drawn "
-                "from prior",
-                i_sim + 1,
-                n_images,
-                this_alpha,
-                this_beta,
-                n_theta_samples,
-            )
+            params = self._wrap_params(alpha, beta, i_sim, n_images)
 
             t_xz, (image, log_p_xzs, latents) = self.d_simulate(params, params_prior)
 
             # Clean up
-            try:
-                t_xz = t_xz._value
-            except AttributeError:
-                pass
+            t_xz = self._detach(t_xz)
             for i, log_p_xz in enumerate(log_p_xzs):
-                try:
-                    log_p_xzs[i] = log_p_xz._value
-                except AttributeError:
-                    pass
+                log_p_xzs[i] = self._detach(log_p_xz)
 
             # Evaluate likelihood ratio wrt evidence
             inverse_r_xz = 0.0
@@ -391,9 +304,7 @@ class SubhaloSimulator:
             # Estimate uncertainty of log r from MC sampling
             inverse_r_xz_uncertainty = 0.0
             for i_theta in range(n_theta_samples):
-                inverse_r_xz_uncertainty += (
-                    np.exp(log_p_xzs[i_theta + 1] - log_p_xzs[0]) - inverse_r_xz
-                ) ** 2.0
+                inverse_r_xz_uncertainty += (np.exp(log_p_xzs[i_theta + 1] - log_p_xzs[0]) - inverse_r_xz) ** 2.0
             inverse_r_xz_uncertainty /= float(n_theta_samples) * (float(n_theta_samples) - 1.)
             log_r_xz_uncertainty = inverse_r_xz_uncertainty / inverse_r_xz
 
@@ -412,3 +323,94 @@ class SubhaloSimulator:
         all_log_r_xz_uncertainties = np.array(all_log_r_xz_uncertainties)
 
         return all_images, all_t_xz, all_log_r_xz, all_log_r_xz_uncertainties, all_latents
+
+    def rvs_inverse_ratio_to_evidence(
+            self,
+            alpha,
+            beta,
+            alpha_mean,
+            alpha_std,
+            beta_mean,
+            beta_std,
+            n_images,
+            n_theta_samples,
+    ):
+        all_images = []
+        all_t_xz = []
+        all_log_r_xz = []
+        all_log_r_xz_uncertainties = []
+        all_latents = []
+
+        n_verbose = max(1, n_images // 20)
+
+        alpha_prior = np.random.normal(
+            loc=alpha_mean, scale=alpha_std, size=n_theta_samples
+        )
+        beta_prior = np.random.normal(
+            loc=beta_mean, scale=beta_std, size=n_theta_samples
+        )
+        params_prior = np.vstack((alpha_prior, beta_prior)).T
+
+        for i_sim in range(n_images):
+            if (i_sim + 1) % n_verbose == 0:
+                logger.info("Simulating image %s / %s", i_sim + 1, n_images)
+
+            # Choose one theta from prior that we use for sampling here
+            i_sample = np.random.randint(n_theta_samples)
+            params_sample = params_prior[i_sample]
+
+            # Numerator hypothesis
+            params = self._wrap_params(alpha, beta, i_sim, n_images)
+            params_eval = np.vstack(params, params_prior)
+
+            t_xz, (image, log_p_xzs, latents) = self.d_simulate(params_sample, params_eval)
+
+            # Clean up
+            t_xz = self._detach(t_xz)
+            for i, log_p_xz in enumerate(log_p_xzs):
+                log_p_xzs[i] = self._detach(log_p_xz)
+
+            # Evaluate likelihood ratio wrt evidence
+            inverse_r_xz = 0.0
+            for i_theta in range(n_theta_samples):
+                inverse_r_xz += np.exp(log_p_xzs[i_theta + 2] - log_p_xzs[1])
+            inverse_r_xz /= float(n_theta_samples)
+            log_r_xz = -np.log(inverse_r_xz)
+
+            # Estimate uncertainty of log r from MC sampling
+            inverse_r_xz_uncertainty = 0.0
+            for i_theta in range(n_theta_samples):
+                inverse_r_xz_uncertainty += (np.exp(log_p_xzs[i_theta + 1] - log_p_xzs[0]) - inverse_r_xz) ** 2.0
+            inverse_r_xz_uncertainty /= float(n_theta_samples) * (float(n_theta_samples) - 1.)
+            log_r_xz_uncertainty = inverse_r_xz_uncertainty / inverse_r_xz
+
+            n_subhalos = latents[0]
+            logger.debug("Image generated with %s subhalos", n_subhalos)
+
+            all_images.append(image)
+            all_t_xz.append(t_xz)
+            all_log_r_xz.append(log_r_xz)
+            all_log_r_xz_uncertainties.append(log_r_xz_uncertainty)
+            all_latents.append(latents)
+
+        all_images = np.array(all_images)
+        all_t_xz = np.array(all_t_xz)
+        all_log_r_xz = np.array(all_log_r_xz)
+        all_log_r_xz_uncertainties = np.array(all_log_r_xz_uncertainties)
+
+        return all_images, all_t_xz, all_log_r_xz, all_log_r_xz_uncertainties, all_latents
+
+    @staticmethod
+    def _wrap_params(alphas, betas, i, n):
+        try:
+            assert len(alphas) == n
+            this_alpha = alphas[i]
+        except TypeError:
+            this_alpha = alphas
+        try:
+            assert len(betas) == n
+            this_beta = betas[i]
+        except TypeError:
+            this_beta = betas
+        params = np.array([this_alpha, this_beta])
+        return params
