@@ -86,77 +86,89 @@ class SubhaloSimulator:
         Subhalo coordinates (x,y) are sampled uniformly.
         """
 
-        # Parameters
+        # Prepare parameters and joint likelihood
         alpha = params[0]
         beta = params[1]
-
         alphas_eval = [alpha] + [param[0] for param in params_eval]
         betas_eval = [beta] + [param[1] for param in params_eval]
-
-        # Joint likelihood
         log_p_xz_eval = [0.0 for _ in alphas_eval]
 
-        # Poisson mean for number of subhalos
-        n_sub_mean = (
-            -alpha / (beta + 1.0) * (self.m_sub_min) ** (1.0 + beta)
-        )
-
-        # Avoid issues from autograd ArrayBox objects
-        try:
-            n_sub_mean = n_sub_mean._value
-        except AttributeError:
-            pass
-
-        logger.debug("Poisson mean: %s", n_sub_mean)
-
-        # Draw number of subhalos
-        n_sub = np.random.poisson(n_sub_mean)
-
-        logger.debug("Number of subhalos: %s", n_sub)
+        # Number of subhalos
+        n_sub = self._draw_n_sub(alpha, beta)
 
         # Evaluate likelihoods of numbers of subhalos
         for i_eval, (alpha_eval, beta_eval) in enumerate(zip(alphas_eval, betas_eval)):
-            n_sub_mean_eval = -alpha_eval / (beta_eval + 1) * self.m_sub_min ** (1.0 + beta_eval)
-            logger.debug("Eval subhalo mean: %s", n_sub_mean_eval)
-            log_p_xz_eval[i_eval] += (
-                n_sub * np.log(n_sub_mean_eval) - n_sub_mean_eval
-            )  # Can ignore constant term
-
+            log_p_xz_eval[i_eval] += self._calculate_log_p_n_sub(n_sub, alpha_eval, beta_eval)
         logger.debug("Log p: %s", log_p_xz_eval)
 
         # Draw subhalo masses
-        u = np.random.uniform(0, 1, size=n_sub)
-        m_sub = (self.m_sub_min) * (1 - u) ** (1.0 / (beta + 1.0))
-
+        m_sub = self._draw_m_sub(n_sub)
         logger.debug("Subhalo masses: %s", m_sub)
 
         # Evaluate likelihoods of subhalo masses
         for i_eval, (alpha_eval, beta_eval) in enumerate(zip(alphas_eval, betas_eval)):
             for i_sub in range(n_sub):
-                log_p_xz_eval[i_eval] += np.log(-beta_eval - 1.0) + beta_eval * np.log(
-                    m_sub[i_sub] / self.m_sub_min
-                )
-
+                log_p_xz_eval[i_eval] += self._calculate_log_p_m_sub(m_sub[i_sub], alpha_eval, beta_eval)
         logger.debug("Log p: %s", log_p_xz_eval)
 
-        # Avoid issues from autograd ArrayBox objects
-        try:
-            m_sub = m_sub._value
-        except AttributeError:
-            pass
+        m_sub = self._detach(m_sub)
 
         # Subhalo coordinates
+        x_sub, y_sub = self._draw_sub_coordinates(n_sub)
+        logger.debug("Subhalo x: %s", x_sub)
+        logger.debug("Subhalo y: %s", y_sub)
+
+        # Lensing simulation
+        image_mean = self._lensing(n_sub, m_sub, x_sub, y_sub)
+        logger.debug("Image mean: %s", image_mean)
+
+        # Observed lensed image
+        image = self._observation(image_mean)
+        logger.debug("Image: %s", image)
+
+        # Returns
+        latent_variables = (n_sub, m_sub, x_sub, y_sub, image_mean, image)
+        return log_p_xz_eval[0], (image, log_p_xz_eval, latent_variables)
+
+    def _calculate_n_sub_mean(self, alpha, beta):
+        return -alpha / (beta + 1.0) * (self.m_sub_min) ** (1.0 + beta)
+
+    def _draw_n_sub(self, alpha, beta):
+        n_sub_mean = self._calculate_n_sub_mean(alpha, beta)
+        n_sub_mean = self._detach(n_sub_mean)
+        logger.debug("Poisson mean: %s", n_sub_mean)
+
+        # Draw number of subhalos
+        n_sub = np.random.poisson(n_sub_mean)
+        logger.debug("Number of subhalos: %s", n_sub)
+
+        return n_sub
+
+    def _calculate_log_p_n_sub(self, n_sub, alpha, beta):
+        n_sub_mean_eval = self._calculate_n_sub_mean(alpha, beta)
+        logger.debug("Eval subhalo mean: %s", n_sub_mean_eval)
+        log_p_poisson = n_sub * np.log(n_sub_mean_eval) - n_sub_mean_eval  # Can ignore constant term
+        return log_p_poisson
+
+    def _draw_m_sub(self, n_sub, alpha, beta):
+        u = np.random.uniform(0, 1, size=n_sub)
+        m_sub = self.m_sub_min * (1 - u) ** (1.0 / (beta + 1.0))
+        return m_sub
+
+    def _calculate_log_p_m_sub(self, m, alpha, beta):
+        log_p = np.log(-beta - 1.0) + beta * np.log(m / self.m_sub_min)
+        return log_p
+
+    def _draw_sub_coordinates(self, n_sub):
         x_sub = np.random.uniform(
             low=-self.coordinate_limit, high=self.coordinate_limit, size=n_sub
         )
         y_sub = np.random.uniform(
             low=-self.coordinate_limit, high=self.coordinate_limit, size=n_sub
         )
+        return x_sub, y_sub
 
-        logger.debug("Subhalo x: %s", x_sub)
-        logger.debug("Subhalo y: %s", y_sub)
-
-        # Lensing simulation
+    def _lensing(self, n_sub, m_sub, x_sub, y_sub):
         lens_list = [self.hst_param_dict]
         for i_sub in range(n_sub):
             sub_param_dict = {
@@ -166,22 +178,22 @@ class SubhaloSimulator:
                 "M200": m_sub[i_sub] * self.mass_base_unit,
             }
             lens_list.append(sub_param_dict)
-
         lsi = LensingSim(
             lens_list, [self.src_param_dict], self.global_dict, self.observation_dict
         )
         image_mean = lsi.lensed_image()
+        return image_mean
 
-        logger.debug("Image mean: %s", image_mean)
+    def _observation(self, image_mean):
+        return np.random.poisson(image_mean)
 
-        # Observed lensed image
-        image = np.random.poisson(image_mean)
-
-        logger.debug("Image: %s", image)
-
-        # Returns
-        latent_variables = (n_sub, m_sub, x_sub, y_sub, image_mean, image)
-        return log_p_xz_eval[0], (image, log_p_xz_eval, latent_variables)
+    @staticmethod
+    def _detach(obj):
+        try:
+            obj = obj._value
+        except AttributeError:
+            pass
+        return obj
 
     def rvs(self, alpha, beta, n_images):
         all_images = []
