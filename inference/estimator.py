@@ -6,16 +6,12 @@ import os
 import json
 import numpy as np
 import torch
+from torch import optim
 
-from inference import losses
 from inference.models import Conv2DRatioEstimator
-from inference.trainer import train_ratio_model, evaluate_ratio_model
-from inference.utils import (
-    create_missing_folders,
-    load_and_check,
-    shuffle,
-    sanitize_array,
-)
+from inference.trainer import SingleParameterizedRatioTrainer
+from inference.utils import create_missing_folders, load_and_check, shuffle, sanitize_array
+from inference.methods import get_loss, package_training_data
 
 logger = logging.getLogger(__name__)
 
@@ -55,15 +51,15 @@ class Estimator:
         t_xz0_filename=None,
         n_conv_layers=3,
         n_dense_layers=3,
-        n_feature_maps=64,
-        kernel_size=3,
+        n_feature_maps=128,
+        kernel_size=5,
         pooling_size=2,
         n_hidden_dense=100,
         activation="relu",
         alpha=1.0,
-        trainer="amsgrad",
+        optimizer="amsgrad",
         n_epochs=50,
-        batch_size=200,
+        batch_size=128,
         initial_lr=0.001,
         final_lr=0.0001,
         nesterov_momentum=None,
@@ -71,7 +67,6 @@ class Estimator:
         early_stopping=True,
         rescale_inputs=True,
         shuffle_labels=False,
-        grad_x_regularization=None,
         limit_samplesize=None,
         return_first_loss=False,
         verbose=False,
@@ -110,7 +105,7 @@ class Estimator:
             Number of fully connected layers. Default value: 2.
 
         n_feature_maps : int, optional
-            Number of feature maps. Default value: 10.
+            Number of feature maps. Default value: 128.
 
         kernel_size : int, optional
             Size of the convolutional filters. Default value: 5.
@@ -129,7 +124,7 @@ class Estimator:
             Hyperparameter weighting the score error in the loss function of the 'alices', 'cascal', and 'rascal'
              methods. Default value: 1.
 
-        trainer : {"adam", "amsgrad", "sgd"}, optional
+        optimizer : {"adam", "amsgrad", "sgd"}, optional
             Optimization algorithm. Default value: "amsgrad".
 
         n_epochs : int, optional
@@ -146,7 +141,7 @@ class Estimator:
             Learning rate during the last epoch. Default value: 0.0001.
 
         nesterov_momentum : float or None, optional
-            If trainer is "sgd", sets the Nesterov momentum. Default value: None.
+            If optimizer is "sgd", sets the Nesterov momentum. Default value: None.
 
         validation_split : float or None, optional
             Fraction of samples used  for validation and early stopping (if early_stopping is True). If None, the entire
@@ -206,25 +201,19 @@ class Estimator:
         if method in ["cascal", "rascal", "alices"]:
             logger.info("  alpha:                  %s", alpha)
         logger.info("  Batch size:             %s", batch_size)
-        logger.info("  Trainer:                %s", trainer)
+        logger.info("  Trainer:                %s", optimizer)
         logger.info("  Epochs:                 %s", n_epochs)
         logger.info(
             "  Learning rate:          %s initially, decaying to %s",
             initial_lr,
             final_lr,
         )
-        if trainer == "sgd":
+        if optimizer == "sgd":
             logger.info("  Nesterov momentum:      %s", nesterov_momentum)
         logger.info("  Validation split:       %s", validation_split)
         logger.info("  Early stopping:         %s", early_stopping)
         logger.info("  Rescale inputs:         %s", rescale_inputs)
         logger.info("  Shuffle labels          %s", shuffle_labels)
-        if grad_x_regularization is None:
-            logger.info("  Regularization:         None")
-        else:
-            logger.info(
-                "  Regularization:         %s * |grad_x f(x)|^2", grad_x_regularization
-            )
         if limit_samplesize is None:
             logger.info("  Samples:                all")
         else:
@@ -238,17 +227,6 @@ class Estimator:
         y = load_and_check(y_filename).astype(np.float).reshape((-1, 1))
         r_xz = load_and_check(r_xz_filename)
         t_xz0 = load_and_check(t_xz0_filename)
-
-        # Check necessary information is theere
-        assert x is not None
-        assert theta0 is not None
-        assert y is not None
-        if method in ["rolr", "alice", "rascal", "alices"]:
-            assert r_xz is not None
-        if method in ["rascal", "alices", "cascal"]:
-            assert t_xz0 is not None
-
-        calculate_model_score = method in ["rascal", "cascal", "alices"]
 
         # Clean up input data
         x = sanitize_array(
@@ -342,6 +320,9 @@ class Estimator:
             logger.info("Shuffling labels")
             y, r_xz, t_xz0 = shuffle(y, r_xz, t_xz0)
 
+        # Data
+        data = package_training_data(method, x, theta0, theta1, y, r_xz, t_xz0, t_xz1)
+
         # Save setup
         self.method = method
         self.resolution = resolution
@@ -369,61 +350,41 @@ class Estimator:
         )
 
         # Loss fn
-        if method in ["carl"]:
-            loss_functions = [losses.standard_cross_entropy]
-            loss_weights = [1.0]
-            loss_labels = ["xe"]
+        loss_functions, loss_labels, loss_weights = get_loss(method, alpha)
 
-        elif method in ["rolr"]:
-            loss_functions = [losses.ratio_mse]
-            loss_weights = [1.0]
-            loss_labels = ["mse_r"]
-
-        elif method == "rascal":
-            loss_functions = [losses.ratio_mse, losses.score_mse_num]
-            loss_weights = [1.0, alpha]
-            loss_labels = ["mse_r", "mse_score"]
-
-        elif method in ["alice"]:
-            loss_functions = [losses.augmented_cross_entropy]
-            loss_weights = [1.0]
-            loss_labels = ["improved_xe"]
-
-        elif method == "alices":
-            loss_functions = [losses.augmented_cross_entropy, losses.score_mse_num]
-            loss_weights = [1.0, alpha]
-            loss_labels = ["improved_xe", "mse_score"]
-
+        # Optimizer
+        opt_kwargs = None
+        if optimizer == "adam":
+            opt = optim.Adam
+        elif optimizer == "amsgrad":
+            opt = optim.Adam
+            opt_kwargs = {"amsgrad": True}
+        elif optimizer == "sgd":
+            opt = optim.SGD
+            if nesterov_momentum is not None:
+                opt_kwargs = {"momentum": nesterov_momentum}
         else:
-            raise NotImplementedError("Unknown method {}".format(method))
+            raise ValueError("Unknown optimizer {}".format(optimizer))
 
         # Train model
         logger.info("Training model")
+        trainer = SingleParameterizedRatioTrainer(self.model)
 
-        result = train_ratio_model(
-            model=self.model,
+        result = trainer.train(
+            data=data,
             loss_functions=loss_functions,
             loss_weights=loss_weights,
             loss_labels=loss_labels,
-            theta0s=theta0,
-            xs=x,
-            ys=y,
-            r_xzs=r_xz,
-            t_xz0s=t_xz0,
-            calculate_model_score=calculate_model_score,
+            epochs=n_epochs,
             batch_size=batch_size,
-            n_epochs=n_epochs,
-            initial_learning_rate=initial_lr,
-            final_learning_rate=final_lr,
+            optimizer=opt,
+            optimizer_kwargs=opt_kwargs,
+            initial_lr=initial_lr,
+            final_lr=final_lr,
             validation_split=validation_split,
             early_stopping=early_stopping,
-            trainer=trainer,
-            nesterov_momentum=nesterov_momentum,
-            verbose="all" if verbose else "some",
-            grad_x_regularization=grad_x_regularization,
-            return_first_loss=return_first_loss,
+            verbose=verbose,
         )
-
         return result
 
     def evaluate_ratio(
