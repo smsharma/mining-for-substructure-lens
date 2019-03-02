@@ -22,7 +22,7 @@ def evaluate_ratio_model(
 
     # Prepare data
     n_xs = len(xs)
-    theta0s = torch.stack([tensor(theta0s, requires_grad=evaluate_score) for i in range(n_xs)])
+    theta0s = torch.stack([tensor(theta0s[i % len(theta0s)], requires_grad=evaluate_score) for i in range(n_xs)])
     xs = torch.stack([tensor(i) for i in xs])
 
     model = model.to(device, dtype)
@@ -33,7 +33,7 @@ def evaluate_ratio_model(
     if evaluate_score:
         model.eval()
 
-        s_hat, log_r_hat, t_hat = model(theta0s, xs, track_score=evaluate_score, create_gradient_graph=False)
+        s_hat, log_r_hat, t_hat, _ = model(theta0s, xs, track_score=evaluate_score, create_gradient_graph=False)
 
         # Copy back tensors to CPU
         if run_on_gpu:
@@ -53,7 +53,7 @@ def evaluate_ratio_model(
         with torch.no_grad():
             model.eval()
 
-            s_hat, log_r_hat, _ = model(theta0s, xs, track_score=False, create_gradient_graph=False)
+            s_hat, log_r_hat, _, _ = model(theta0s, xs, track_score=False, create_gradient_graph=False)
 
             # Copy back tensors to CPU
             if run_on_gpu:
