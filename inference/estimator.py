@@ -12,6 +12,7 @@ from inference.models import Conv2DRatioEstimator
 from inference.trainer import SingleParameterizedRatioTrainer
 from inference.utils import create_missing_folders, load_and_check, shuffle, sanitize_array
 from inference.methods import get_loss, package_training_data
+from inference.eval import evaluate_ratio_model
 
 logger = logging.getLogger(__name__)
 
@@ -68,8 +69,7 @@ class Estimator:
         rescale_inputs=True,
         shuffle_labels=False,
         limit_samplesize=None,
-        return_first_loss=False,
-        verbose=False,
+        verbose="some",
     ):
 
         """
@@ -159,20 +159,11 @@ class Estimator:
             normal order. This serves as a closure test, in particular as cross-check against overfitting: an estimator
             trained with shuffle_labels=True should predict to likelihood ratios around 1 and scores around 0.
 
-        grad_x_regularization : float or None, optional
-            If not None, a term of the form `grad_x_regularization * |grad_x f(x)|^2` is added to the loss, where `f(x)`
-            is the neural network output (the estimated log likelihood ratio or score). Default value: None.
-
         limit_samplesize : int or None, optional
             If not None, only this number of samples (events) is used to train the estimator. Default value: None.
 
-        return_first_loss : bool, optional
-            If True, the training routine only proceeds until the loss is calculated for the first time, at which point
-            the loss tensor is returned. This can be useful for debugging or visualization purposes (but of course not
-            for training a model).
-
-        verbose : bool, optional
-            If True, prints loss updates after every epoch.
+        verbose : {"all", "many", "some", "few", "none}, optional
+            Determines verbosity of training. Default value: "some".
 
         Returns
         -------
@@ -321,7 +312,7 @@ class Estimator:
             y, r_xz, t_xz0 = shuffle(y, r_xz, t_xz0)
 
         # Data
-        data = package_training_data(method, x, theta0, theta1, y, r_xz, t_xz0, t_xz1)
+        data = package_training_data(method, x, theta0, y, r_xz, t_xz0)
 
         # Save setup
         self.method = method
@@ -393,7 +384,6 @@ class Estimator:
         theta0,
         test_all_combinations=True,
         evaluate_score=False,
-        return_grad_x=False,
     ):
 
         """
@@ -416,10 +406,6 @@ class Estimator:
         evaluate_score : bool, optional
             Whether in addition to the likelihood ratio the score is evaluated. Default value: False.
 
-        return_grad_x : bool, optional
-            If True, `grad_x log r(x)` or `grad_x t(x)` (for 'sally' or 'sallino' estimators) are returned in addition
-            to the other outputs. Default value: False.
-
         Returns
         -------
 
@@ -427,21 +413,11 @@ class Estimator:
             The estimated log likelihood ratio. If test_all_combinations is True, the result has shape
             `(n_thetas, n_x)`. Otherwise, it has shape `(n_samples,)`.
 
-        score_theta0 : ndarray or None
+        score : ndarray or None
             None if
             evaluate_score is False. Otherwise the derived estimated score at `theta0`. If test_all_combinations is
             True, the result has shape `(n_thetas, n_x, n_parameters)`. Otherwise, it has shape
             `(n_samples, n_parameters)`.
-
-        score_theta1 : ndarray or None
-            None if
-            evaluate_score is False, or the network was trained with any method other than 'alice2', 'alices2', 'carl2',
-            'rascal2', or 'rolr2'. Otherwise the derived estimated score at `theta1`. If test_all_combinations is
-            True, the result has shape `(n_thetas, n_x, n_parameters)`. Otherwise, it has shape
-            `(n_samples, n_parameters)`.
-
-        grad_x : ndarray
-            Only returned if return_grad_x is True.
 
         """
 
@@ -450,10 +426,8 @@ class Estimator:
 
         # Load evaluation data
         logger.debug("Loading evaluation data")
-
         if isinstance(theta0, six.string_types):
             theta0 = load_and_check(theta0)
-
         if isinstance(x, six.string_types):
             x = load_and_check(x)
 
@@ -474,13 +448,12 @@ class Estimator:
 
         # Evaluation for all other methods
         all_log_r_hat = []
-        all_t_hat0 = []
-        all_x_gradients = []
+        all_t_hat = []
 
         if test_all_combinations:
             logger.debug("Starting ratio evaluation for all combinations")
 
-            for i, theta0 in enumerate(theta0):
+            for i, this_theta0 in enumerate(theta0):
                 logger.debug(
                     "Starting ratio evaluation for thetas %s / %s: %s",
                     i + 1,
@@ -488,38 +461,30 @@ class Estimator:
                     theta0,
                 )
 
-                _, log_r_hat, t_hat0, x_gradient = evaluate_ratio_model(
+                _, log_r_hat, t_hat = evaluate_ratio_model(
                     model=self.model,
-                    theta0s=[theta0],
+                    theta0s=[this_theta0],
                     xs=x,
                     evaluate_score=evaluate_score,
-                    return_grad_x=True,
                 )
 
                 all_log_r_hat.append(log_r_hat)
-                all_t_hat0.append(t_hat0)
-                all_x_gradients.append(x_gradient)
+                all_t_hat.append(t_hat)
 
             all_log_r_hat = np.array(all_log_r_hat)
-            all_t_hat0 = np.array(all_t_hat0)
-            if return_grad_x:
-                all_x_gradients = np.array(all_x_gradients)
+            all_t_hat = np.array(all_t_hat)
 
         else:
             logger.debug("Starting ratio evaluation")
-            _, all_log_r_hat, all_t_hat0, all_x_gradients = evaluate_ratio_model(
+            _, all_log_r_hat, all_t_hat = evaluate_ratio_model(
                 model=self.model,
                 theta0s=theta0,
                 xs=x,
                 evaluate_score=evaluate_score,
-                return_grad_x=True,
             )
 
         logger.debug("Evaluation done")
-
-        if return_grad_x:
-            return all_log_r_hat, all_t_hat0, all_x_gradients
-        return all_log_r_hat, all_t_hat0
+        return all_log_r_hat, all_t_hat
 
     def evaluate_posterior(self, xs, thetas_eval, prior_thetas_eval, thetas_from_prior):
         """
