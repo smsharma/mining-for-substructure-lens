@@ -103,10 +103,10 @@ class Conv2DRatioEstimator(nn.Module):
         resolution,
         n_conv_layers=3,
         n_dense_layers=3,
-        n_feature_maps=100,
+        n_feature_maps=128,
         kernel_size=5,
         pooling_size=2,
-        n_hidden_dense=100,
+        n_hidden_dense=128,
         activation="relu",
     ):
 
@@ -125,7 +125,7 @@ class Conv2DRatioEstimator(nn.Module):
         self.conv_layers = nn.ModuleList()
         self.dense_layers = nn.ModuleList()
 
-        last_channels = 1
+        last_channels = 1 + n_parameters
         current_size = resolution
 
         # Convolutional and pooling layers
@@ -172,18 +172,24 @@ class Conv2DRatioEstimator(nn.Module):
         # Track gradients
         if track_score and not theta.requires_grad:
             theta.requires_grad = True
-
         if return_grad_x and not x.requires_grad:
             x.requires_grad = True
 
+        # Use theta as color layers
+        h1 = x.unsqueeze(1)  # (n_batch, 1, res_x, res_y)
+        h_theta = theta.unsqueeze(2).unsqueeze(3)  # (n_batch, n_parameters, 1, 1)
+        h_theta = h_theta * torch.ones_like(h1)  # (n_batch, n_parameters, res_x, res_y)
+        h = torch.cat((h1, h_theta), 1)
+
         # Convolutional and pooling layers
-        h = x.unsqueeze(1)  # Add feature map dimension
         for conv_layer in self.conv_layers:
             h = conv_layer(h)
 
-        # Dense layers
+        # Transition to dense layers, add theta again
         h = h.reshape(h.size(0), -1)
         h = torch.cat((h, theta), 1)
+
+        # Dense layers
         for dense_layer in self.dense_layers:
             h = dense_layer(h)
 
@@ -191,7 +197,7 @@ class Conv2DRatioEstimator(nn.Module):
         log_r = h
         s = 1.0 / (1.0 + torch.exp(log_r))
 
-        # Score t
+        # Score and gradient wrt x
         if track_score:
             t, = grad(
                 log_r,
@@ -202,8 +208,6 @@ class Conv2DRatioEstimator(nn.Module):
             )
         else:
             t = None
-
-        # Calculate gradient wrt x
         if return_grad_x:
             x_gradient, = grad(
                 log_r,

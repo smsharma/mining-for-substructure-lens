@@ -122,6 +122,9 @@ class SubhaloSimulator:
         image_mean = self._lensing(n_sub, m_sub, x_sub, y_sub)
         logger.debug("Image mean: %s", image_mean)
 
+        # dx/dz
+
+
         # Observed lensed image
         image = self._observation(image_mean)
         logger.debug("Image: %s", image)
@@ -324,7 +327,7 @@ class SubhaloSimulator:
 
         return all_images, all_t_xz, all_log_r_xz, all_log_r_xz_uncertainties, all_latents
 
-    def rvs_inverse_ratio_to_evidence(
+    def rvs_score_ratio_to_evidence_inverse(
             self,
             alpha,
             beta,
@@ -361,7 +364,7 @@ class SubhaloSimulator:
 
             # Numerator hypothesis
             params = self._wrap_params(alpha, beta, i_sim, n_images)
-            params_eval = np.vstack(params, params_prior)
+            params_eval = np.vstack((params, params_prior))
 
             t_xz, (image, log_p_xzs, latents) = self.d_simulate(params_sample, params_eval)
 
