@@ -8,7 +8,7 @@ import numpy as np
 import torch
 from torch import optim
 
-from inference.models import Conv2DRatioEstimator
+from inference.models import VGG11RatioEstimator
 from inference.trainer import SingleParameterizedRatioTrainer
 from inference.utils import create_missing_folders, load_and_check, shuffle, sanitize_array
 from inference.methods import get_loss, package_training_data
@@ -328,17 +328,7 @@ class Estimator:
 
         # Create model
         logger.debug("Creating model")
-        self.model = Conv2DRatioEstimator(
-            resolution=resolution,
-            n_parameters=n_parameters,
-            n_conv_layers=n_conv_layers,
-            n_dense_layers=n_dense_layers,
-            n_feature_maps=n_feature_maps,
-            kernel_size=kernel_size,
-            pooling_size=pooling_size,
-            n_hidden_dense=n_hidden_dense,
-            activation=activation,
-        )
+        self.model = VGG11RatioEstimator()
 
         # Loss fn
         loss_functions, loss_labels, loss_weights = get_loss(method, alpha)
@@ -638,17 +628,7 @@ class Estimator:
         )
 
         # Create model
-        self.model = Conv2DRatioEstimator(
-            resolution=self.resolution,
-            n_parameters=self.n_parameters,
-            n_conv_layers=self.n_conv_layers,
-            n_dense_layers=self.n_dense_layers,
-            n_feature_maps=self.n_feature_maps,
-            kernel_size=self.kernel_size,
-            pooling_size=self.pooling_size,
-            n_hidden_dense=self.n_hidden_dense,
-            activation=self.activation,
-        )
+        self.model = VGG11RatioEstimator()
 
         # Load state dict
         logger.debug("Loading state dictionary from %s_state_dict.pt", filename)

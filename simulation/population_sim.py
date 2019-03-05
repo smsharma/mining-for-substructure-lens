@@ -133,7 +133,7 @@ class SubhaloSimulator:
         return log_p_xz_eval[0], (image, log_p_xz_eval, latent_variables)
 
     def _calculate_n_sub_mean(self, alpha, beta):
-        return -alpha / (beta + 1.0) * (self.m_sub_min) ** (1.0 + beta)
+        return -alpha / (beta + 1.0) * self.m_sub_min ** (1.0 + beta)
 
     def _draw_n_sub(self, alpha, beta):
         n_sub_mean = self._calculate_n_sub_mean(alpha, beta)
@@ -163,7 +163,7 @@ class SubhaloSimulator:
 
     def _draw_sub_coordinates(self, n_sub):
         phi_sub = np.random.uniform(low=0., high=2.*np.pi, size=n_sub)
-        r_sub = np.random.uniform(low=0.9, high=1.1, size=n_sub)
+        r_sub = np.random.uniform(low=0.9, high=1.5, size=n_sub)
         x_sub = r_sub * np.cos(phi_sub)
         y_sub = r_sub * np.sin(phi_sub)
         # x_sub = np.random.uniform(
