@@ -233,13 +233,13 @@ class Conv2DRatioEstimator(nn.Module):
 
 
 class VGG11RatioEstimator(nn.Module):
-
-    def __init__(self, cfg="A", batch_norm=False, init_weights=True):
+    def __init__(self, n_parameters, cfg="A", batch_norm=False, init_weights=True):
         super(VGG11RatioEstimator, self).__init__()
+
         self.features = self._make_layers(cfg, batch_norm)
         self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
         self.classifier = nn.Sequential(
-            nn.Linear(512 * 7 * 7 + 2, 4096),
+            nn.Linear(512 * 7 * 7 + n_parameters, 4096),
             nn.ReLU(True),
             nn.Dropout(),
             nn.Linear(4096, 4096),

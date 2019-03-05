@@ -3,8 +3,10 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os
 import numpy as np
 import torch
-from torch import nn
+from torch import nn, optim
 import logging
+
+from inference import losses
 
 logger = logging.getLogger(__name__)
 
@@ -206,3 +208,62 @@ def create_missing_folders(folders):
 
         elif not os.path.isdir(folder):
             raise OSError("Path {} exists, but is no directory!".format(folder))
+
+
+def get_loss(method, alpha):
+    if method in ["carl"]:
+        loss_functions = [losses.ratio_xe]
+        loss_weights = [1.0]
+        loss_labels = ["xe"]
+    elif method in ["rolr"]:
+        loss_functions = [losses.ratio_mse]
+        loss_weights = [1.0]
+        loss_labels = ["mse_r"]
+    elif method == "cascal":
+        loss_functions = [losses.ratio_xe, losses.ratio_score_mse_num]
+        loss_weights = [1.0, alpha]
+        loss_labels = ["xe", "mse_score"]
+    elif method == "rascal":
+        loss_functions = [losses.ratio_mse, losses.ratio_score_mse_num]
+        loss_weights = [1.0, alpha]
+        loss_labels = ["mse_r", "mse_score"]
+    elif method in ["alice"]:
+        loss_functions = [losses.ratio_augmented_xe]
+        loss_weights = [1.0]
+        loss_labels = ["improved_xe"]
+    elif method == "alices":
+        loss_functions = [losses.ratio_augmented_xe, losses.ratio_score_mse_num]
+        loss_weights = [1.0, alpha]
+        loss_labels = ["improved_xe", "mse_score"]
+    else:
+        raise NotImplementedError("Unknown method {}".format(method))
+    return loss_functions, loss_labels, loss_weights
+
+
+def get_optimizer(optimizer, nesterov_momentum):
+    opt_kwargs = None
+    if optimizer == "adam":
+        opt = optim.Adam
+    elif optimizer == "amsgrad":
+        opt = optim.Adam
+        opt_kwargs = {"amsgrad": True}
+    elif optimizer == "sgd":
+        opt = optim.SGD
+        if nesterov_momentum is not None:
+            opt_kwargs = {"momentum": nesterov_momentum}
+    else:
+        raise ValueError("Unknown optimizer {}".format(optimizer))
+    return opt, opt_kwargs
+
+
+def restrict_samplesize(n, *arrays):
+    restricted_arrays = []
+
+    for i, a in enumerate(arrays):
+        if a is None:
+            restricted_arrays.append(None)
+            continue
+
+        restricted_arrays.append(a[:n])
+
+    return restricted_arrays
