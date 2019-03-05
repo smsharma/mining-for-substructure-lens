@@ -21,23 +21,23 @@ logger = logging.getLogger(__name__)
 
 class SubhaloSimulator:
     def __init__(
-        self,
-        resolution=52,
-        coordinate_limit=2.0,
-        mass_base_unit=1.e7*M_s,
-        m_sub_min=1.,
-        host_profile="sis",
-        host_theta_x=0.01,
-        host_theta_y=-0.01,
-        host_theta_E=1.0,
-        exposure=(1 / 1.8e-19) * erg ** -1 * Centimeter ** 2 * Angstrom * 1000 * Sec,
-        A_iso=2e-7 * erg / Centimeter ** 2 / Sec / Angstrom / (radtoasc) ** 2,
-        zs=1.0,
-        zl=0.1,
-        src_profile="sersic",
-        src_I_gal=1e-17 * erg / Centimeter ** 2 / Sec / Angstrom,
-        src_theta_e_gal=0.5,
-        src_n=4,
+            self,
+            resolution=52,
+            coordinate_limit=2.0,
+            mass_base_unit=1.e7 * M_s,
+            m_sub_min=1.,
+            host_profile="sis",
+            host_theta_x=0.01,
+            host_theta_y=-0.01,
+            host_theta_E=1.0,
+            exposure=(1 / 1.8e-19) * erg ** -1 * Centimeter ** 2 * Angstrom * 1000 * Sec,
+            A_iso=2e-7 * erg / Centimeter ** 2 / Sec / Angstrom / (radtoasc) ** 2,
+            zs=1.0,
+            zl=0.1,
+            src_profile="sersic",
+            src_I_gal=1e-17 * erg / Centimeter ** 2 / Sec / Angstrom,
+            src_theta_e_gal=0.5,
+            src_n=4,
     ):
         """ We will effectively set m_sub_min to one, so that all masses and alpha will be dimensionless"""
 
@@ -124,7 +124,6 @@ class SubhaloSimulator:
 
         # dx/dz
 
-
         # Observed lensed image
         image = self._observation(image_mean)
         logger.debug("Image: %s", image)
@@ -163,12 +162,16 @@ class SubhaloSimulator:
         return log_p
 
     def _draw_sub_coordinates(self, n_sub):
-        x_sub = np.random.uniform(
-            low=-self.coordinate_limit, high=self.coordinate_limit, size=n_sub
-        )
-        y_sub = np.random.uniform(
-            low=-self.coordinate_limit, high=self.coordinate_limit, size=n_sub
-        )
+        phi_sub = np.random.uniform(low=0., high=2.*np.pi, size=n_sub)
+        r_sub = np.random.uniform(low=0.9, high=1.1, size=n_sub)
+        x_sub = r_sub * np.cos(phi_sub)
+        y_sub = r_sub * np.sin(phi_sub)
+        # x_sub = np.random.uniform(
+        #    low=-self.coordinate_limit, high=self.coordinate_limit, size=n_sub
+        # )
+        # y_sub = np.random.uniform(
+        #    low=-self.coordinate_limit, high=self.coordinate_limit, size=n_sub
+        # )
         return x_sub, y_sub
 
     def _lensing(self, n_sub, m_sub, x_sub, y_sub):
@@ -258,15 +261,15 @@ class SubhaloSimulator:
         return all_images, all_t_xz, all_log_r_xz, all_latents
 
     def rvs_score_ratio_to_evidence(
-        self,
-        alpha,
-        beta,
-        alpha_mean,
-        alpha_std,
-        beta_mean,
-        beta_std,
-        n_images,
-        n_theta_samples,
+            self,
+            alpha,
+            beta,
+            alpha_mean,
+            alpha_std,
+            beta_mean,
+            beta_std,
+            n_images,
+            n_theta_samples,
     ):
         all_images = []
         all_t_xz = []
