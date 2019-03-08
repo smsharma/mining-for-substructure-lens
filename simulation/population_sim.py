@@ -22,10 +22,11 @@ logger = logging.getLogger(__name__)
 class SubhaloSimulator:
     def __init__(
             self,
-            resolution=52,
-            coordinate_limit=2.0,
-            mass_base_unit=1.e7 * M_s,
-            m_sub_min=1.,
+            resolution=64,
+            coordinate_limit=2.5,
+            mass_base_unit=1.e9 * M_s,
+            m_sub_min=0.01,
+            m_sub_high=1.,
             host_profile="sis",
             host_theta_x=0.01,
             host_theta_y=-0.01,
@@ -39,12 +40,11 @@ class SubhaloSimulator:
             src_theta_e_gal=0.5,
             src_n=4,
     ):
-        """ We will effectively set m_sub_min to one, so that all masses and alpha will be dimensionless"""
-
         self.mass_base_unit = mass_base_unit
         self.resolution = resolution
         self.coordinate_limit = coordinate_limit
         self.m_sub_min = m_sub_min
+        self.m_sub_high = m_sub_high
 
         # Host galaxy
         self.hst_param_dict = {
@@ -64,7 +64,7 @@ class SubhaloSimulator:
             "A_iso": A_iso,
         }
 
-        # Global parameters?!
+        # Global parameters
         self.global_dict = {"z_s": zs, "z_l": zl}
 
         # Source parameters
@@ -132,11 +132,11 @@ class SubhaloSimulator:
         latent_variables = (n_sub, m_sub, x_sub, y_sub, image_mean, image)
         return log_p_xz_eval[0], (image, log_p_xz_eval, latent_variables)
 
-    def _calculate_n_sub_mean(self, alpha, beta):
-        return -alpha / (beta + 1.0) * self.m_sub_min ** (1.0 + beta)
+    def _calculate_expected_n_sub(self, alpha, beta):
+        return alpha * (self.m_sub_min / self.m_sub_high) ** (1. + beta)
 
     def _draw_n_sub(self, alpha, beta):
-        n_sub_mean = self._calculate_n_sub_mean(alpha, beta)
+        n_sub_mean = self._calculate_expected_n_sub(alpha, beta)
         n_sub_mean = self._detach(n_sub_mean)
         logger.debug("Poisson mean: %s", n_sub_mean)
 
@@ -147,9 +147,9 @@ class SubhaloSimulator:
         return n_sub
 
     def _calculate_log_p_n_sub(self, n_sub, alpha, beta):
-        n_sub_mean_eval = self._calculate_n_sub_mean(alpha, beta)
+        n_sub_mean_eval = self._calculate_expected_n_sub(alpha, beta)
         logger.debug("Eval subhalo mean: %s", n_sub_mean_eval)
-        log_p_poisson = n_sub * np.log(n_sub_mean_eval) - n_sub_mean_eval  # Can ignore constant term
+        log_p_poisson = n_sub * np.log(n_sub_mean_eval) - n_sub_mean_eval - np.log(np.factorial(n_sub))
         return log_p_poisson
 
     def _draw_m_sub(self, n_sub, alpha, beta):
@@ -158,7 +158,7 @@ class SubhaloSimulator:
         return m_sub
 
     def _calculate_log_p_m_sub(self, m, alpha, beta):
-        log_p = np.log(-beta - 1.0) + beta * np.log(m / self.m_sub_min)
+        log_p = np.log(-beta - 1.0) - np.log(self._m_sub_min) + beta * np.log(m / self.m_sub_min)
         return log_p
 
     def _draw_sub_coordinates(self, n_sub):
