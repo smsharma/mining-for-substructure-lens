@@ -134,7 +134,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Strong lensing experiments: simulation")
 
     # Main options
-    parser.add_argument("--n", type=int, default=10000, help='Number of samples to generate. Default is 10k.')
+    parser.add_argument("-n", type=int, default=10000, help='Number of samples to generate. Default is 10k.')
     parser.add_argument("--test", action="store_true", help="Generate test rather than train data.")
     parser.add_argument("--name", type=str, default= None, help='Sample name, like "train" or "test".')
     parser.add_argument("--dir", type=str, default=".", help="Directory. Results will be saved in the data/samples subfolder.")

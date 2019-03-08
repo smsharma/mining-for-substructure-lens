@@ -5,6 +5,7 @@ sys.path.append("../")
 import logging
 import autograd.numpy as np
 import autograd as ag
+import math
 
 from simulation.units import (
     M_s,
@@ -149,7 +150,7 @@ class SubhaloSimulator:
     def _calculate_log_p_n_sub(self, n_sub, alpha, beta):
         n_sub_mean_eval = self._calculate_expected_n_sub(alpha, beta)
         logger.debug("Eval subhalo mean: %s", n_sub_mean_eval)
-        log_p_poisson = n_sub * np.log(n_sub_mean_eval) - n_sub_mean_eval - np.log(np.factorial(n_sub))
+        log_p_poisson = n_sub * np.log(n_sub_mean_eval) - n_sub_mean_eval #  - np.log(math.factorial(n_sub))
         return log_p_poisson
 
     def _draw_m_sub(self, n_sub, alpha, beta):
@@ -158,7 +159,7 @@ class SubhaloSimulator:
         return m_sub
 
     def _calculate_log_p_m_sub(self, m, alpha, beta):
-        log_p = np.log(-beta - 1.0) - np.log(self._m_sub_min) + beta * np.log(m / self.m_sub_min)
+        log_p = np.log(-beta - 1.0) - np.log(self.m_sub_min) + beta * np.log(m / self.m_sub_min)
         return log_p
 
     def _draw_sub_coordinates(self, n_sub):
