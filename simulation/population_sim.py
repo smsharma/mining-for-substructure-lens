@@ -286,6 +286,8 @@ class SubhaloSimulator:
         beta_prior = np.random.normal(
             loc=beta_mean, scale=beta_std, size=n_theta_samples
         )
+        alpha_prior = np.clip(alpha_prior, 0.1, None)
+        beta_prior = np.clip(beta_prior, None, -1.1)
         params_prior = np.vstack((alpha_prior, beta_prior)).T
 
         for i_sim in range(n_images):
@@ -356,6 +358,8 @@ class SubhaloSimulator:
         beta_prior = np.random.normal(
             loc=beta_mean, scale=beta_std, size=n_theta_samples
         )
+        alpha_prior = np.clip(alpha_prior, 0.1, None)
+        beta_prior = np.clip(beta_prior, None, -1.1)
         params_prior = np.vstack((alpha_prior, beta_prior)).T
 
         for i_sim in range(n_images):

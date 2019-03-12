@@ -36,13 +36,13 @@ def _extract_m_subs(latents):
     return np.array([np.sum(v[1]) for v in latents])
 
 
-def simulate_train(n=1000, n_prior_samples=1000, alpha_mean=10., alpha_std=2., beta_mean=-1.9, beta_std=0.2,
+def simulate_train(n=1000, n_prior_samples=1000, alpha_mean=10., alpha_std=3., beta_mean=-1.9, beta_std=0.3,
                    m_sub_min=10.):
     alpha_train = np.random.normal(loc=alpha_mean, scale=alpha_std, size=n // 2)
     beta_train = np.random.normal(loc=beta_mean, scale=beta_std, size=n // 2)
-    theta_train = np.vstack((alpha_train, beta_train)).T
-    assert np.min(alpha_train) > 0.
-    assert np.max(beta_train) < -1.
+    alpha_train = np.clip(alpha_train, 0.1, None)
+    beta_train = np.clip(beta_train, None, -1.1)
+    theta_train = np.vstack((alpha_train, beta_train))
 
     sim = SubhaloSimulator(
         m_sub_min=m_sub_min,
