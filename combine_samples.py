@@ -17,7 +17,7 @@ logging.basicConfig(
 
 def shuffle_and_combine(dir, input_samples, output_sample, regex=False):
     logging.info('Starting shuffling and combining')
-    logging.info('  Foldr:               %s', dir)
+    logging.info('  Folder:              %s', dir)
     logging.info('  Input samples:       %s', input_samples[0])
     for sample in input_samples[1:]:
         logging.info('                       %s', sample)

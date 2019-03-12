@@ -3,20 +3,19 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys, os
-
-sys.path.append('../')
-
 import logging
 import argparse
-
-from simulation.units import *
-from simulation.population_sim import SubhaloSimulator
 
 logging.basicConfig(
     format='%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s',
     datefmt='%H:%M',
     level=logging.INFO
 )
+
+sys.path.append('../')
+from simulation.units import *
+from simulation.population_sim import SubhaloSimulator
+
 
 
 def _extract_n_subs(latents):
