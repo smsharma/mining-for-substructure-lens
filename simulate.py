@@ -16,8 +16,6 @@ sys.path.append('../')
 from simulation.units import *
 from simulation.population_sim import SubhaloSimulator
 
-
-
 def _extract_n_subs(latents):
     return np.array([v[0] for v in latents])
 
@@ -42,7 +40,6 @@ def simulate_train(n=1000, n_prior_samples=1000, alpha_mean=10., alpha_std=3., b
     alpha_train = np.clip(alpha_train, 0.1, None)
     beta_train = np.clip(beta_train, None, -1.1)
     theta_train = np.vstack((alpha_train, beta_train)).T
-    logging.info("theta shape: %s", theta_train.shape)
 
     sim = SubhaloSimulator(
         m_sub_min=m_sub_min,
