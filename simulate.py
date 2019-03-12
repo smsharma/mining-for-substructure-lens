@@ -36,7 +36,7 @@ def _extract_m_subs(latents):
     return np.array([np.sum(v[1]) for v in latents])
 
 
-def simulate_train(n=1000, n_prior_samples=1000, alpha_mean=200., alpha_std=50., beta_mean=-1.9, beta_std=0.2,
+def simulate_train(n=1000, n_prior_samples=1000, alpha_mean=10., alpha_std=2., beta_mean=-1.9, beta_std=0.2,
                    m_sub_min=10.):
     alpha_train = np.random.normal(loc=alpha_mean, scale=alpha_std, size=n // 2)
     beta_train = np.random.normal(loc=beta_mean, scale=beta_std, size=n // 2)
