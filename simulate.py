@@ -6,15 +6,12 @@ import sys, os
 import logging
 import argparse
 
-logging.basicConfig(
-    format='%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s',
-    datefmt='%H:%M',
-    level=logging.INFO
-)
+logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.INFO)
 
-sys.path.append('../')
+sys.path.append("../")
 from simulation.units import *
 from simulation.population_sim import SubhaloSimulator
+
 
 def _extract_n_subs(latents):
     return np.array([v[0] for v in latents])
@@ -24,7 +21,7 @@ def _extract_heaviest_subs(latents, n=100):
     all_masses = []
     for v in latents:
         masses = np.zeros(n)
-        masses[:len(masses)] = list(sorted(v[1], reverse=True))[:n]
+        masses[: len(masses)] = list(sorted(v[1], reverse=True))[:n]
         all_masses.append(masses)
     return np.array(all_masses)
 
@@ -33,43 +30,25 @@ def _extract_m_subs(latents):
     return np.array([np.sum(v[1]) for v in latents])
 
 
-def simulate_train(n=1000, n_prior_samples=1000, alpha_mean=10., alpha_std=3., beta_mean=-1.9, beta_std=0.3,
-                   m_sub_min=10.):
+def simulate_train(n=1000, n_prior_samples=1000, alpha_mean=10.0, alpha_std=3.0, beta_mean=-1.9, beta_std=0.3, m_sub_min=10.0):
     alpha_train = np.random.normal(loc=alpha_mean, scale=alpha_std, size=n // 2)
     beta_train = np.random.normal(loc=beta_mean, scale=beta_std, size=n // 2)
     alpha_train = np.clip(alpha_train, 0.1, None)
     beta_train = np.clip(beta_train, None, -1.1)
     theta_train = np.vstack((alpha_train, beta_train)).T
 
-    sim = SubhaloSimulator(
-        m_sub_min=m_sub_min,
-        m_sub_high=m_sub_min
-    )
+    sim = SubhaloSimulator(m_sub_min=m_sub_min, m_sub_high=m_sub_min)
 
     y0 = np.zeros(n // 2)
     x0, t_xz0, log_r_xz0, log_r_xz_uncertainties0, latents0 = sim.rvs_score_ratio_to_evidence(
-        alpha_train,
-        beta_train,
-        alpha_mean,
-        alpha_std,
-        beta_mean,
-        beta_std,
-        n // 2,
-        n_prior_samples
+        alpha_train, beta_train, alpha_mean, alpha_std, beta_mean, beta_std, n // 2, n_prior_samples
     )
     m_subs0 = _extract_m_subs(latents0)
     n_subs0 = _extract_n_subs(latents0)
 
     y1 = np.ones(n // 2)
     x1, t_xz1, log_r_xz1, log_r_xz_uncertainties1, latents1 = sim.rvs_score_ratio_to_evidence_inverse(
-        alpha_train,
-        beta_train,
-        alpha_mean,
-        alpha_std,
-        beta_mean,
-        beta_std,
-        n // 2,
-        n_prior_samples
+        alpha_train, beta_train, alpha_mean, alpha_std, beta_mean, beta_std, n // 2, n_prior_samples
     )
     m_subs1 = _extract_m_subs(latents1)
     n_subs1 = _extract_n_subs(latents1)
@@ -89,8 +68,10 @@ def simulate_train(n=1000, n_prior_samples=1000, alpha_mean=10., alpha_std=3., b
 def save_train(data_dir, name, x, y, theta, r_xz, t_xz, n_subs, m_subs):
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
-    if not os.path.exists("{}/samples".format(data_dir)):
-        os.mkdir("{}/samples".format(data_dir))
+    if not os.path.exists("{}/data".format(data_dir)):
+        os.mkdir("{}/data".format(data_dir))
+    if not os.path.exists("{}/data/samples".format(data_dir)):
+        os.mkdir("{}/data/samples".format(data_dir))
 
     np.save("{}/data/samples/x_{}.npy".format(data_dir, name), x)
     np.save("{}/data/samples/y_{}.npy".format(data_dir, name), y)
@@ -101,17 +82,10 @@ def save_train(data_dir, name, x, y, theta, r_xz, t_xz, n_subs, m_subs):
     np.save("{}/data/samples/m_subs_{}.npy".format(data_dir, name), m_subs)
 
 
-def simulate_test(n=500, alpha=200, beta=-1.9, m_sub_min=10.):
-    sim = SubhaloSimulator(
-        m_sub_min=m_sub_min,
-        m_sub_high=m_sub_min
-    )
+def simulate_test(n=500, alpha=200, beta=-1.9, m_sub_min=10.0):
+    sim = SubhaloSimulator(m_sub_min=m_sub_min, m_sub_high=m_sub_min)
 
-    x, latents = sim.rvs(
-        alpha,
-        beta,
-        n
-    )
+    x, latents = sim.rvs(alpha, beta, n)
     m_subs = _extract_m_subs(latents)
     n_subs = _extract_n_subs(latents)
 
@@ -121,8 +95,10 @@ def simulate_test(n=500, alpha=200, beta=-1.9, m_sub_min=10.):
 def save_test(data_dir, name, x, n_subs, m_subs):
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
-    if not os.path.exists("{}/samples".format(data_dir)):
-        os.mkdir("{}/samples".format(data_dir))
+    if not os.path.exists("{}/data".format(data_dir)):
+        os.mkdir("{}/data".format(data_dir))
+    if not os.path.exists("{}/data/samples".format(data_dir)):
+        os.mkdir("{}/data/samples".format(data_dir))
 
     np.save("{}/data/samples/x_{}.npy".format(data_dir, name), x)
     np.save("{}/data/samples/n_subs_{}.npy".format(data_dir, name), n_subs)
@@ -133,9 +109,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Strong lensing experiments: simulation")
 
     # Main options
-    parser.add_argument("-n", type=int, default=10000, help='Number of samples to generate. Default is 10k.')
+    parser.add_argument("-n", type=int, default=10000, help="Number of samples to generate. Default is 10k.")
     parser.add_argument("--test", action="store_true", help="Generate test rather than train data.")
-    parser.add_argument("--name", type=str, default= None, help='Sample name, like "train" or "test".')
+    parser.add_argument("--name", type=str, default=None, help='Sample name, like "train" or "test".')
     parser.add_argument("--dir", type=str, default=".", help="Directory. Results will be saved in the data/samples subfolder.")
 
     return parser.parse_args()
