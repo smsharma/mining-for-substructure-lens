@@ -94,6 +94,7 @@ def shuffle_and_combine(dir, input_samples, output_sample, regex=False):
         # Save
         try:
             np.save(folder + '/' + filename + '_' + output_sample + '.npy', combined)
+            np.savez_compressed(folder + '/' + filename + '_' + output_sample + '.npz', combined)
         except FileExistsError:
             logging.warning('File %s already exists, cannot save results!',
                             folder + '/' + filename + '_' + output_sample + '.npy')
