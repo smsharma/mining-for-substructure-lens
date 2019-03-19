@@ -2,10 +2,10 @@
 
 cd /scratch/jb6504/StrongLensing-Inference/cluster
 
-sbatch --array=0-99 simulate_train.sh
-sbatch --array=0-9 simulate_test.sh
+# sbatch --array=0-99 simulate_train.sh
+# sbatch --array=0-9 simulate_test.sh
 
-# sbatch combine_samples.sh
+sbatch combine_samples.sh
 
 # sbatch train_carl.sh
 # sbatch train_carl_log.sh
