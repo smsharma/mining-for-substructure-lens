@@ -102,11 +102,14 @@ def sanitize_array(
     return array
 
 
-def load_and_check(filename, warning_threshold=1.0e9):
+def load_and_check(filename, warning_threshold=1.0e9, memmap=True):
     if filename is None:
         return None
 
-    data = np.load(filename)
+    if memmap:
+        data = np.memmap(filename, dtype=np.float64)
+    else:
+        data = np.load(filename)
 
     n_nans = np.sum(np.isnan(data))
     n_infs = np.sum(np.isinf(data))
