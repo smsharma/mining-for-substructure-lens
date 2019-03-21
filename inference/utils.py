@@ -102,7 +102,7 @@ def sanitize_array(
     return array
 
 
-def load_and_check(filename, warning_threshold=1.0e9, memmap=True):
+def load_and_check(filename, warning_threshold=1.0e9, memmap=False):
     if filename is None:
         return None
 

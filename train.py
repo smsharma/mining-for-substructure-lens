@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     train(
         method=args.method,
-        alpha=args.alpga,
+        alpha=args.alpha,
         data_dir="{}/data/".format(args.dir),
         sample_name=args.sample,
         model_filename=args.name,
