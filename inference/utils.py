@@ -106,8 +106,15 @@ def load_and_check(filename, warning_threshold=1.0e9, memmap=False):
     if filename is None:
         return None
 
-    if memmap:
-        data = np.memmap(filename, dtype=np.float64)
+    if memmap and "x_train.npy" in filename:
+        data = np.memmap(filename, shape=(1000000, 64, 64), dtype=np.float64, mode="c")
+        logger.info(
+            "Loaded %s with memmap. Found shape %s, dtype %s, and first entry\n%s",
+            filename,
+            data.shape,
+            data.dtype,
+            data[0]
+        )
     else:
         data = np.load(filename)
 
