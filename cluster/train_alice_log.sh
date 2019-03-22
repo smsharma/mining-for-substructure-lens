@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=train_alice
-#SBATCH --output=log_train_alice.log
+#SBATCH --job-name=train_alice_log
+#SBATCH --output=log_train_alice_log.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
