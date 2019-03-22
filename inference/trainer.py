@@ -185,6 +185,8 @@ class Trainer(object):
 
     @staticmethod
     def calculate_lr(i_epoch, n_epochs, initial_lr, final_lr):
+        if n_epochs == 1:
+            return initial_lr
         return initial_lr * (final_lr / initial_lr) ** float(i_epoch / (n_epochs - 1.0))
 
     @staticmethod
@@ -394,7 +396,17 @@ class SingleParameterizedRatioTrainer(Trainer):
         except KeyError:
             t_xz = None
 
+        logger.debug("x: %s", x)
+        logger.debug("y: %s", y)
+
         s_hat, log_r_hat, t_hat, _ = self.model(theta, x, track_score=self.calculate_model_score, return_grad_x=False)
 
+        logger.debug("s_hat: %s", s_hat)
+        logger.debug("log_r_hat: %s", log_r_hat)
+        logger.debug("t_hat: %s", t_hat)
+
         losses = [loss_function(s_hat, log_r_hat, t_hat, y, r_xz, t_xz) for loss_function in loss_functions]
+
+        logger.debug("losses: %s", losses)
+
         return losses
