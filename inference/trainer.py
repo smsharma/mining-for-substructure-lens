@@ -212,8 +212,6 @@ class Trainer(object):
         loss_train = 0.0
 
         for i_batch, batch_data in enumerate(train_loader):
-            for i, batch_datum in enumerate(batch_data):
-                batch_data[i] = batch_datum.to(self.device, self.dtype)
             batch_data = OrderedDict(list(zip(data_labels, batch_data)))
             batch_loss, batch_loss_contributions = self.batch_train(
                 batch_data, loss_functions, loss_weights, optimizer, clip_gradient
@@ -231,8 +229,6 @@ class Trainer(object):
             loss_val = 0.0
 
             for i_batch, batch_data in enumerate(val_loader):
-                for i, batch_datum in enumerate(batch_data):
-                    batch_data[i] = batch_datum.to(self.device, self.dtype)
                 batch_data = OrderedDict(list(zip(data_labels, batch_data)))
                 batch_loss, batch_loss_contributions = self.batch_val(batch_data, loss_functions, loss_weights)
                 loss_val += batch_loss

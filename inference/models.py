@@ -39,6 +39,8 @@ class VGG11RatioEstimator(nn.Module):
         return_grad_x=False,
         create_gradient_graph=True,
     ):
+        logger.debug("Raw x: %s", x)
+        logger.debug("Raw theta: %s", theta)
         # Track gradients
         if track_score and not theta.requires_grad:
             theta.requires_grad = True
@@ -50,14 +52,19 @@ class VGG11RatioEstimator(nn.Module):
 
         # VGG11
         h = self.features(h)
+        logger.debug("After features: %s", h)
         h = self.avgpool(h)
+        logger.debug("After avgpooling: %s", h)
         h = h.view(h.size(0), -1)
         h = torch.cat((h, theta), 1)
+        logger.debug("After concatenating: %s", h)
         h = self.classifier(h)
+        logger.debug("After classifier: %s", h)
 
         # Transform to outputs
         log_r = h
         s = 1.0 / (1.0 + torch.exp(log_r))
+        logger.debug("After r-to-s trafo: %s", s)
 
         # Score and gradient wrt x
         if track_score:
@@ -84,11 +91,15 @@ class VGG11RatioEstimator(nn.Module):
         return s, log_r, t, x_gradient
 
     def _preprocess(self, x):
+        logger.debug("Raw input: %s", x)
         if self.log_input:
             x = torch.log(1. + x)
+            logger.debug("After log: %s", x)
         if self.input_mean is not None and self.input_std is not None:
             x = (x - self.input_mean) / max(1.e-6, self.input_std)
+            logger.debug("After rescaling: %s", x)
         x = x.unsqueeze(1)
+        logger.debug("After reshaping: %s", x)
 
         return x
 
