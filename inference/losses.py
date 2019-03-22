@@ -37,7 +37,8 @@ def ratio_xe(s_hat, log_r_hat, t0_hat, y_true, r_true, t0_true):
     return BCELoss()(s_hat, y_true)
 
 
-def ratio_augmented_xe(s_hat, log_r_hat, t0_hat, y_true, r_true, t0_true):
+def ratio_augmented_xe(s_hat, log_r_hat, t0_hat, y_true, r_true, t0_true, log_r_clip=10.0):
+    log_r_hat = torch.clamp(log_r_hat, -log_r_clip, log_r_clip)
     s_hat = 1.0 / (1.0 + torch.exp(log_r_hat))
     s_true = 1.0 / (1.0 + r_true)
 
