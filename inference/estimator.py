@@ -75,11 +75,12 @@ class ParameterizedRatioEstimator(object):
         t_xz = load_and_check(t_xz)
 
         self._check_required_data(method, r_xz, t_xz)
+        self._initialize_input_transform(x)
 
         # Clean up input data
-        x = sanitize_array(
-            x, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=0.0
-        ).astype(np.float64)
+        #x = sanitize_array(
+        #    x, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=0.0
+        #).astype(np.float64)
         theta = sanitize_array(
             theta,
             replace_inf=1.0e6,
@@ -140,10 +141,6 @@ class ParameterizedRatioEstimator(object):
             logger.info("Only using %s of %s training samples", limit_samplesize, n_samples)
             x, theta, y, r_xz, t_xz = restrict_samplesize(limit_samplesize, x, theta, y, r_xz, t_xz)
 
-        # Scale features
-        self._initialize_input_transform(x)
-        x = self._transform_inputs(x)
-
         # Check consistency of input with model
         if n_parameters != self.n_parameters:
             raise RuntimeError(
@@ -193,12 +190,12 @@ class ParameterizedRatioEstimator(object):
         theta = load_and_check(theta)
 
         # Scale observables
-        x = self._transform_inputs(x)
+        # x = self._transform_inputs(x)
 
         # Clean up input data
-        x = sanitize_array(
-            x, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=0.0
-        ).astype(np.float64)
+        #x = sanitize_array(
+        #    x, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=0.0
+        #).astype(np.float64)
         theta = sanitize_array(
             theta,
             replace_inf=1.0e6,
@@ -277,7 +274,10 @@ class ParameterizedRatioEstimator(object):
 
     def _create_model(self):
         model = VGG11RatioEstimator(
-            n_parameters=self.n_parameters
+            n_parameters=self.n_parameters,
+            log_input=self.log_input,
+            input_mean=self.x_scaling_mean,
+            input_std=self.x_scaling_std
         )
         return model
 
