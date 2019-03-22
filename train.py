@@ -11,7 +11,7 @@ import argparse
 
 from inference.estimator import ParameterizedRatioEstimator
 
-logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.DEBUG)
+logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.INFO)
 
 
 def train(
