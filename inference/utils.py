@@ -100,9 +100,9 @@ def load_and_check(filename, warning_threshold=1.0e9, memmap=True):
         return None
 
     if memmap and "x_train.npy" in filename:
-        logger.info("Trying to load %s with memmap.", filename)
+        logger.debug("Trying to load %s with memmap.", filename)
         data = np.load(filename, mmap_mode="c")
-        logger.info("Loaded %s with memmap. Found shape %s, dtype %s, and first entry\n%s", filename, data.shape, data.dtype, data[0])
+        logger.debug("Loaded %s with memmap. Found shape %s, dtype %s, and first entry\n%s", filename, data.shape, data.dtype, data[0])
     else:
         data = np.load(filename)
 
