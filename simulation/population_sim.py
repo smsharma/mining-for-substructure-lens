@@ -3,9 +3,14 @@ import sys, os
 sys.path.append("../")
 
 import logging
-import autograd.numpy as np
+
+AUTOGRAD = False
+
+if AUTOGRAD:
+    import autograd.numpy as np
+else:
+    import numpy as np
 import autograd as ag
-import math
 
 from simulation.units import (
     M_s,
@@ -40,6 +45,7 @@ class SubhaloSimulator:
             src_I_gal=1e-17 * erg / Centimeter ** 2 / Sec / Angstrom,
             src_theta_e_gal=0.5,
             src_n=4,
+            epsilon=1.e-4
     ):
         self.mass_base_unit = mass_base_unit
         self.resolution = resolution
@@ -77,7 +83,12 @@ class SubhaloSimulator:
         }
 
         # Autograd
-        self.d_simulate = ag.grad_and_aux(self.simulate)
+        if AUTOGRAD:
+            self.d_simulate = ag.grad_and_aux(self.simulate)
+        else:
+            self.d_simulate = self.simulate
+
+        self.epsilon = epsilon
 
     def simulate(self, params, params_eval):
         """
@@ -240,8 +251,14 @@ class SubhaloSimulator:
             params = self._wrap_params(alpha, beta, i_sim, n_images)
             params_ref = self._wrap_params(alpha_ref, beta_ref, i_sim, n_images)
 
-            t_xz, (image, log_p_xzs, latents) = self.d_simulate(params, [params_ref])
+            params_eval = [params_ref]
+            if not AUTOGRAD:
+                params_eval = self._add_epsilon_shifts(params, params_eval)
+
+            t_xz, (image, log_p_xzs, latents) = self.d_simulate(params, params_eval)
             log_r_xz = log_p_xzs[0] - log_p_xzs[1]
+            if not AUTOGRAD:
+                t_xz = self._finite_diff(log_p_xzs)
 
             # Clean up
             t_xz = self._detach(t_xz)
@@ -296,9 +313,9 @@ class SubhaloSimulator:
 
             params = self._wrap_params(alpha, beta, i_sim, n_images)
 
-            epsilon = 1.e-6
-            params_shifted = (params + np.array([0., epsilon]))
-            params_eval = np.vstack((params_prior, params.reshape((1,2)), params_shifted.reshape((1,2))))
+            params_eval = params_prior
+            if not AUTOGRAD:
+                params_eval = self._add_epsilon_shifts(params, params_eval)
 
             t_xz, (image, log_p_xzs, latents) = self.d_simulate(params, params_eval)
 
@@ -324,9 +341,9 @@ class SubhaloSimulator:
             n_subhalos = latents[0]
             logger.debug("Image generated with %s subhalos", n_subhalos)
 
-            # Check score
-            t_xz_numerical = (log_p_xzs[-1] - log_p_xzs[-2]) / epsilon
-            logger.info("Score check: %s vs %s", t_xz[1], t_xz_numerical)
+            # Calculate score from finite diffs
+            if not AUTOGRAD:
+                t_xz = self._finite_diff(log_p_xzs)
 
             all_images.append(image)
             all_t_xz.append(t_xz)
@@ -381,6 +398,8 @@ class SubhaloSimulator:
             # Numerator hypothesis
             params = self._wrap_params(alpha, beta, i_sim, n_images)
             params_eval = np.vstack((params, params_prior))
+            if not AUTOGRAD:
+                params_eval = self._add_epsilon_shifts(params, params_eval)
 
             t_xz, (image, log_p_xzs, latents) = self.d_simulate(params_sample, params_eval)
 
@@ -405,6 +424,10 @@ class SubhaloSimulator:
 
             n_subhalos = latents[0]
             logger.debug("Image generated with %s subhalos", n_subhalos)
+
+            # Calculate score from finite diffs
+            if not AUTOGRAD:
+                t_xz = self._finite_diff(log_p_xzs)
 
             all_images.append(image)
             all_t_xz.append(t_xz)
@@ -433,3 +456,21 @@ class SubhaloSimulator:
             this_beta = betas
         params = np.array([this_alpha, this_beta])
         return params
+
+    def _add_epsilon_shifts(self, params, add_to=None):
+        eps_vec0 = np.asarray(params).flatten() + np.array([self.epsilon, 0.]).reshape(1,2)
+        eps_vec1 = np.asarray(params).flatten() + np.array([0., self.epsilon]).reshape(1,2)
+        params = params.reshape(1,2)
+
+        if add_to is None:
+            new_params = np.vstack([params, eps_vec0, eps_vec1])
+        else:
+            new_params = np.vstack([add_to, params, eps_vec0, eps_vec1])
+
+        return new_params
+
+
+    def _finite_diff(self, log_ps):
+        t0 = (log_ps[-2] - log_ps[-3]) / self.epsilon
+        t1 = (log_ps[-1] - log_ps[-3]) / self.epsilon
+        return np.array([t0,t1])
