@@ -28,11 +28,7 @@ class Trainer(object):
 
         self.model = self.model.to(self.device, self.dtype)
 
-        logger.debug(
-            "Training on %s with %s precision",
-            "GPU" if self.run_on_gpu else "CPU",
-            "double" if double_precision else "single",
-        )
+        logger.debug("Training on %s with %s precision", "GPU" if self.run_on_gpu else "CPU", "double" if double_precision else "single")
 
     def train(
         self,
@@ -116,15 +112,7 @@ class Trainer(object):
                     break
 
             verbose_epoch = (i_epoch + 1) % n_epochs_verbose == 0
-            self.report_epoch(
-                i_epoch,
-                loss_labels,
-                loss_train,
-                loss_val,
-                loss_contributions_train,
-                loss_contributions_val,
-                verbose=verbose_epoch,
-            )
+            self.report_epoch(i_epoch, loss_labels, loss_train, loss_val, loss_contributions_train, loss_contributions_val, verbose=verbose_epoch)
 
         if early_stopping:
             self.wrap_up_early_stopping(best_model, losses_val[-1], best_loss, best_epoch)
@@ -194,17 +182,7 @@ class Trainer(object):
         for param_group in optimizer.param_groups:
             param_group["lr"] = lr
 
-    def epoch(
-        self,
-        i_epoch,
-        data_labels,
-        train_loader,
-        val_loader,
-        optimizer,
-        loss_functions,
-        loss_weights,
-        clip_gradient=None,
-    ):
+    def epoch(self, i_epoch, data_labels, train_loader, val_loader, optimizer, loss_functions, loss_weights, clip_gradient=None):
         n_losses = len(loss_functions)
 
         self.model.train()
@@ -213,9 +191,7 @@ class Trainer(object):
 
         for i_batch, batch_data in enumerate(train_loader):
             batch_data = OrderedDict(list(zip(data_labels, batch_data)))
-            batch_loss, batch_loss_contributions = self.batch_train(
-                batch_data, loss_functions, loss_weights, optimizer, clip_gradient
-            )
+            batch_loss, batch_loss_contributions = self.batch_train(batch_data, loss_functions, loss_weights, optimizer, clip_gradient)
             loss_train += batch_loss
             for i, batch_loss_contribution in enumerate(batch_loss_contributions):
                 loss_contributions_train[i] += batch_loss_contribution
@@ -308,9 +284,7 @@ class Trainer(object):
         return best_loss, best_model, best_epoch
 
     @staticmethod
-    def report_epoch(
-        i_epoch, loss_labels, loss_train, loss_val, loss_contributions_train, loss_contributions_val, verbose=False
-    ):
+    def report_epoch(i_epoch, loss_labels, loss_train, loss_val, loss_contributions_train, loss_contributions_val, verbose=False):
         logging_fn = logger.info if verbose else logger.debug
 
         def contribution_summary(labels, contributions):
@@ -321,27 +295,18 @@ class Trainer(object):
                 summary += "{}: {:>6.3f}".format(label, value)
             return summary
 
-        train_report = "Epoch {:>3d}: train loss {:>8.5f} ({})".format(
-            i_epoch + 1, loss_train, contribution_summary(loss_labels, loss_contributions_train)
-        )
+        train_report = "Epoch {:>3d}: train loss {:>8.5f} ({})".format(i_epoch + 1, loss_train, contribution_summary(loss_labels, loss_contributions_train))
         logging_fn(train_report)
 
         if loss_val is not None:
-            val_report = "           val. loss  {:>8.5f} ({})".format(
-                loss_val, contribution_summary(loss_labels, loss_contributions_val)
-            )
+            val_report = "           val. loss  {:>8.5f} ({})".format(loss_val, contribution_summary(loss_labels, loss_contributions_val))
             logging_fn(val_report)
 
     def wrap_up_early_stopping(self, best_model, loss_val, best_loss, best_epoch):
         if loss_val is None or best_loss is None:
             logger.warning("Loss is None, cannot wrap up early stopping")
         elif loss_val < best_loss:
-            logger.info(
-                "Early stopping after epoch %s, with loss %8.5f compared to final loss %8.5f",
-                best_epoch + 1,
-                best_loss,
-                loss_val,
-            )
+            logger.info("Early stopping after epoch %s, with loss %8.5f compared to final loss %8.5f", best_epoch + 1, best_loss, loss_val)
             self.model.load_state_dict(best_model)
         else:
             logger.info("Early stopping did not improve performance")

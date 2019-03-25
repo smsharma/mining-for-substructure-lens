@@ -3,44 +3,32 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import torch
 import torch.nn as nn
 from torch.autograd import grad
-from inference.utils import get_activation_function
 import logging
 
 logger = logging.getLogger(__name__)
 
 
 class VGG11RatioEstimator(nn.Module):
-    def __init__(self, n_parameters, cfg="A", input_mean=None, input_std=None, log_input=False, batch_norm=True, init_weights=True):
+    def __init__(
+        self, n_parameters, cfg="A", input_mean=None, input_std=None, theta_mean=None, theta_std=None, log_input=False, batch_norm=True, init_weights=True
+    ):
         super(VGG11RatioEstimator, self).__init__()
 
-        self.input_mean=input_mean
-        self.input_std=input_std
+        self.input_mean = input_mean
+        self.input_std = input_std
         self.log_input = log_input
+        self.theta_mean = theta_mean
+        self.theta_std = theta_std
 
         self.features = self._make_layers(cfg, batch_norm)
         self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
         self.classifier = nn.Sequential(
-            nn.Linear(512 * 7 * 7 + n_parameters, 4096),
-            nn.ReLU(True),
-            nn.Dropout(),
-            nn.Linear(4096, 4096),
-            nn.ReLU(True),
-            nn.Dropout(),
-            nn.Linear(4096, 1),
+            nn.Linear(512 * 7 * 7 + n_parameters, 4096), nn.ReLU(True), nn.Dropout(), nn.Linear(4096, 4096), nn.ReLU(True), nn.Dropout(), nn.Linear(4096, 1)
         )
         if init_weights:
             self._initialize_weights()
 
-    def forward(
-        self,
-        theta,
-        x,
-        track_score=True,
-        return_grad_x=False,
-        create_gradient_graph=True,
-    ):
-        logger.debug("Raw x: %s", x)
-        logger.debug("Raw theta: %s", theta)
+    def forward(self, theta, x, track_score=True, return_grad_x=False, create_gradient_graph=True):
         # Track gradients
         if track_score and not theta.requires_grad:
             theta.requires_grad = True
@@ -48,18 +36,15 @@ class VGG11RatioEstimator(nn.Module):
             x.requires_grad = True
 
         # Preprocessing
-        h = self._preprocess(x)
+        h = self._preprocess_x(x)
+        theta = self._preprocess_theta(theta)
 
         # VGG11
         h = self.features(h)
-        logger.debug("After features: %s", h)
         h = self.avgpool(h)
-        logger.debug("After avgpooling: %s", h)
         h = h.view(h.size(0), -1)
         h = torch.cat((h, theta), 1)
-        logger.debug("After concatenating: %s", h)
         h = self.classifier(h)
-        logger.debug("After classifier: %s", h)
 
         # Transform to outputs
         log_r = h
@@ -68,45 +53,34 @@ class VGG11RatioEstimator(nn.Module):
 
         # Score and gradient wrt x
         if track_score:
-            t, = grad(
-                log_r,
-                theta,
-                grad_outputs=torch.ones_like(log_r.data),
-                only_inputs=True,
-                create_graph=create_gradient_graph,
-            )
+            t, = grad(log_r, theta, grad_outputs=torch.ones_like(log_r.data), only_inputs=True, create_graph=create_gradient_graph)
         else:
             t = None
         if return_grad_x:
-            x_gradient, = grad(
-                log_r,
-                x,
-                grad_outputs=torch.ones_like(log_r.data),
-                only_inputs=True,
-                create_graph=create_gradient_graph,
-            )
+            x_gradient, = grad(log_r, x, grad_outputs=torch.ones_like(log_r.data), only_inputs=True, create_graph=create_gradient_graph)
         else:
             x_gradient = None
 
         return s, log_r, t, x_gradient
 
-    def _preprocess(self, x):
-        logger.debug("Raw input: %s", x)
+    def _preprocess_x(self, x):
         if self.log_input:
-            x = torch.log(1. + x)
-            logger.debug("After log: %s", x)
+            x = torch.log(1.0 + x)
         if self.input_mean is not None and self.input_std is not None:
-            x = (x - self.input_mean) / max(1.e-6, self.input_std)
-            logger.debug("After rescaling: %s", x)
+            x = (x - self.input_mean) / max(1.0e-6, self.input_std)
         x = x.unsqueeze(1)
-        logger.debug("After reshaping: %s", x)
-
         return x
+
+    def _preprocess_theta(self, theta):
+        if self.theta_mean is not None and self.theta_std is not None:
+            theta = (theta - self.theta_mean)
+            theta = theta / max(1.0e-6, self.theta_std)
+        return theta
 
     def _initialize_weights(self):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
                 if m.bias is not None:
                     nn.init.constant_(m.bias, 0)
             elif isinstance(m, nn.BatchNorm2d):
@@ -117,19 +91,18 @@ class VGG11RatioEstimator(nn.Module):
                 nn.init.constant_(m.bias, 0)
 
     @staticmethod
-    def _make_layers(cfg='A', batch_norm=False):
+    def _make_layers(cfg="A", batch_norm=False):
         configs = {
-            'A': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-            'B': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-            'D': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'],
-            'E': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512,
-                  'M'],
+            "A": [64, "M", 128, "M", 256, 256, "M", 512, 512, "M", 512, 512, "M"],
+            "B": [64, 64, "M", 128, 128, "M", 256, 256, "M", 512, 512, "M", 512, 512, "M"],
+            "D": [64, 64, "M", 128, 128, "M", 256, 256, 256, "M", 512, 512, 512, "M", 512, 512, 512, "M"],
+            "E": [64, 64, "M", 128, 128, "M", 256, 256, 256, 256, "M", 512, 512, 512, 512, "M", 512, 512, 512, 512, "M"],
         }
 
         layers = []
         in_channels = 1
         for v in configs[cfg]:
-            if v == 'M':
+            if v == "M":
                 layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
             else:
                 conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)

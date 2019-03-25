@@ -17,11 +17,12 @@ logger = logging.getLogger(__name__)
 
 
 class ParameterizedRatioEstimator(object):
-    def __init__(self, resolution, n_parameters, log_input=False, rescale_inputs=True):
+    def __init__(self, resolution, n_parameters, log_input=False, rescale_inputs=True, rescale_theta=True):
         self.resolution = resolution
         self.n_parameters = n_parameters
         self.log_input = log_input
         self.rescale_inputs = rescale_inputs
+        self.rescale_theta = rescale_theta
 
         self.x_scaling_mean = None
         self.x_scaling_std = None
@@ -78,62 +79,24 @@ class ParameterizedRatioEstimator(object):
         self._initialize_input_transform(x)
 
         # Clean up input data
-        #x = sanitize_array(
+        # x = sanitize_array(
         #    x, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=0.0
-        #).astype(np.float64)
-        theta = sanitize_array(
-            theta,
-            replace_inf=1.0e6,
-            replace_nan=1.0e6,
-            max_value=1.0e6,
-            min_value=1.0e-6,
-        ).astype(np.float64)
-        y = (
-            sanitize_array(
-                y, replace_inf=0.0, replace_nan=0.0, max_value=1.0, min_value=0.0
-            )
-            .astype(np.float64)
-            .reshape((-1, 1))
-        )
+        # ).astype(np.float64)
+        theta = sanitize_array(theta, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=1.0e-6).astype(np.float64)
+        y = sanitize_array(y, replace_inf=0.0, replace_nan=0.0, max_value=1.0, min_value=0.0).astype(np.float64).reshape((-1, 1))
         if r_xz is not None:
-            r_xz = (
-                sanitize_array(
-                    r_xz,
-                    replace_inf=1.0e6,
-                    replace_nan=1.0e6,
-                    max_value=1.0e6,
-                    min_value=1.0e-6,
-                )
-                .astype(np.float64)
-                .reshape((-1, 1))
-            )
+            r_xz = sanitize_array(r_xz, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=1.0e-6).astype(np.float64).reshape((-1, 1))
         if t_xz is not None:
-            t_xz = sanitize_array(
-                t_xz,
-                replace_inf=1.0e6,
-                replace_nan=1.0e6,
-                max_value=1.0e6,
-                min_value=-1.0e6,
-            ).astype(np.float64)
+            t_xz = sanitize_array(t_xz, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=-1.0e6).astype(np.float64)
 
         # Infer dimensions of problem
         n_samples = x.shape[0]
         n_parameters = theta.shape[1]
         resolution_x = x.shape[1]
         resolution_y = x.shape[2]
-        logger.info(
-            "Found %s samples with %s parameters and resolution %s x %s",
-            n_samples,
-            n_parameters,
-            resolution_x,
-            resolution_y,
-        )
+        logger.info("Found %s samples with %s parameters and resolution %s x %s", n_samples, n_parameters, resolution_x, resolution_y)
         if resolution_x != resolution_y:
-            raise RuntimeError(
-                "Currently only supports square images, but found resolution {} x {}".format(
-                    resolution_x, resolution_y
-                )
-            )
+            raise RuntimeError("Currently only supports square images, but found resolution {} x {}".format(resolution_x, resolution_y))
         resolution = resolution_x
 
         # Limit sample size
@@ -143,13 +106,9 @@ class ParameterizedRatioEstimator(object):
 
         # Check consistency of input with model
         if n_parameters != self.n_parameters:
-            raise RuntimeError(
-                "Number of parameters does not match model: {} vs {}".format(n_parameters, self.n_parameters)
-            )
+            raise RuntimeError("Number of parameters does not match model: {} vs {}".format(n_parameters, self.n_parameters))
         if resolution != self.resolution:
-            raise RuntimeError(
-                "Number of observables does not match model: {} vs {}".format(resolution, self.resolution)
-            )
+            raise RuntimeError("Number of observables does not match model: {} vs {}".format(resolution, self.resolution))
 
         # Data
         data = self._package_training_data(method, x, theta, y, r_xz, t_xz)
@@ -189,20 +148,11 @@ class ParameterizedRatioEstimator(object):
         x = load_and_check(x)
         theta = load_and_check(theta)
 
-        # Scale observables
-        # x = self._transform_inputs(x)
-
         # Clean up input data
-        #x = sanitize_array(
+        # x = sanitize_array(
         #    x, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=0.0
-        #).astype(np.float64)
-        theta = sanitize_array(
-            theta,
-            replace_inf=1.0e6,
-            replace_nan=1.0e6,
-            max_value=1.0e6,
-            min_value=1.0e-6,
-        ).astype(np.float64)
+        # ).astype(np.float64)
+        theta = sanitize_array(theta, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=1.0e-6).astype(np.float64)
 
         if test_all_combinations:
             logger.debug("Starting ratio evaluation for all combinations")
@@ -212,12 +162,7 @@ class ParameterizedRatioEstimator(object):
 
             for i, this_theta in enumerate(theta):
                 logger.debug("Starting ratio evaluation for thetas %s / %s: %s", i + 1, len(theta), this_theta)
-                _, log_r_hat, t_hat, _ = evaluate_ratio_model(
-                    model=self.model,
-                    theta0s=[this_theta],
-                    xs=x,
-                    evaluate_score=evaluate_score,
-                )
+                _, log_r_hat, t_hat, _ = evaluate_ratio_model(model=self.model, theta0s=[this_theta], xs=x, evaluate_score=evaluate_score)
 
                 all_log_r_hat.append(log_r_hat)
                 all_t_hat.append(t_hat)
@@ -227,12 +172,7 @@ class ParameterizedRatioEstimator(object):
 
         else:
             logger.debug("Starting ratio evaluation")
-            _, all_log_r_hat, all_t_hat, _ = evaluate_ratio_model(
-                model=self.model,
-                theta0s=theta,
-                xs=x,
-                evaluate_score=evaluate_score,
-            )
+            _, all_log_r_hat, all_t_hat, _ = evaluate_ratio_model(model=self.model, theta0s=theta, xs=x, evaluate_score=evaluate_score)
 
         logger.debug("Evaluation done")
         return all_log_r_hat, all_t_hat
@@ -277,7 +217,9 @@ class ParameterizedRatioEstimator(object):
             n_parameters=self.n_parameters,
             log_input=self.log_input,
             input_mean=self.x_scaling_mean,
-            input_std=self.x_scaling_std
+            input_std=self.x_scaling_std,
+            theta_mean=torch.tensor([10., -1.9]) if self.scale_theta else None,
+            theta_std=torch.tensor([3.,0.3]) if self.scale_theta else None,
         )
         return model
 
@@ -286,13 +228,13 @@ class ParameterizedRatioEstimator(object):
             self.x_scaling_mean = np.mean(x)
             self.x_scaling_std = np.maximum(np.std(x), 1.0e-6)
         else:
-            self.x_scaling_mean = 0.
-            self.x_scaling_std = 1.
+            self.x_scaling_mean = 0.0
+            self.x_scaling_std = 1.0
 
     def _transform_inputs(self, x):
         x_scaled = x
         if self.log_input:
-            x_scaled = np.log(1. + x_scaled)
+            x_scaled = np.log(1.0 + x_scaled)
         if self.rescale_inputs and self.x_scaling_mean is not None and self.x_scaling_std is not None:
             x_scaled = x_scaled - self.x_scaling_mean
             x_scaled /= self.x_scaling_std

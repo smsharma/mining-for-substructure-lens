@@ -7,14 +7,7 @@ from torch import tensor
 logger = logging.getLogger(__name__)
 
 
-def evaluate_ratio_model(
-    model,
-    theta0s=None,
-    xs=None,
-    evaluate_score=False,
-    run_on_gpu=True,
-    double_precision=False,
-):
+def evaluate_ratio_model(model, theta0s=None, xs=None, evaluate_score=False, run_on_gpu=True, double_precision=False):
     # CPU or GPU?
     run_on_gpu = run_on_gpu and torch.cuda.is_available()
     device = torch.device("cuda" if run_on_gpu else "cpu")
