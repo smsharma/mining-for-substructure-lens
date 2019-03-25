@@ -25,6 +25,8 @@ class VGG11RatioEstimator(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(512 * 7 * 7 + n_parameters, 4096), nn.ReLU(True), nn.Dropout(), nn.Linear(4096, 4096), nn.ReLU(True), nn.Dropout(), nn.Linear(4096, 1)
         )
+        self.sigmoid = nn.Sigmoid()
+
         if init_weights:
             self._initialize_weights()
 
@@ -48,7 +50,8 @@ class VGG11RatioEstimator(nn.Module):
 
         # Transform to outputs
         log_r = h
-        s = 1.0 / (1.0 + torch.exp(log_r))
+        # s = 1.0 / (1.0 + torch.exp(log_r))
+        s = self.sigmoid(-1. * log_r)
         logger.debug("After r-to-s trafo: %s", s)
 
         # Score and gradient wrt x
