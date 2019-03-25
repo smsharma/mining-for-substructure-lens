@@ -296,6 +296,10 @@ class SubhaloSimulator:
 
             params = self._wrap_params(alpha, beta, i_sim, n_images)
 
+            epsilon = 1.e-6
+            eps_vec = np.array([[0., 1.e-9]])
+            params = np.vstack((params, params + eps_vec))
+
             t_xz, (image, log_p_xzs, latents) = self.d_simulate(params, params_prior)
 
             # Clean up
@@ -319,6 +323,10 @@ class SubhaloSimulator:
 
             n_subhalos = latents[0]
             logger.debug("Image generated with %s subhalos", n_subhalos)
+
+            # Check score
+            t_xz_numerical = (log_p_xzs[-1] - log_p_xzs[0]) / epsilon
+            logger.debug("Score check: %s vs %s", t_xz[1], t_xz_numerical)
 
             all_images.append(image)
             all_t_xz.append(t_xz)
