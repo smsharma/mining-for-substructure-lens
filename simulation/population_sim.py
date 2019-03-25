@@ -111,34 +111,34 @@ class SubhaloSimulator:
         # Evaluate likelihoods of numbers of subhalos
         for i_eval, (alpha_eval, beta_eval) in enumerate(zip(alphas_eval, betas_eval)):
             log_p_xz_eval[i_eval] += self._calculate_log_p_n_sub(n_sub, alpha_eval, beta_eval)
-        logger.debug("Log p: %s", log_p_xz_eval)
+        if __debug__: logger.debug("Log p: %s", log_p_xz_eval)
 
         # Draw subhalo masses
         m_sub = self._draw_m_sub(n_sub, alpha, beta)
-        logger.debug("Subhalo masses: %s", m_sub)
+        if __debug__: logger.debug("Subhalo masses: %s", m_sub)
 
         # Evaluate likelihoods of subhalo masses
         for i_eval, (alpha_eval, beta_eval) in enumerate(zip(alphas_eval, betas_eval)):
             for i_sub in range(n_sub):
                 log_p_xz_eval[i_eval] += self._calculate_log_p_m_sub(m_sub[i_sub], alpha_eval, beta_eval)
-        logger.debug("Log p: %s", log_p_xz_eval)
+        if __debug__: logger.debug("Log p: %s", log_p_xz_eval)
 
         m_sub = self._detach(m_sub)
 
         # Subhalo coordinates
         x_sub, y_sub = self._draw_sub_coordinates(n_sub)
-        logger.debug("Subhalo x: %s", x_sub)
-        logger.debug("Subhalo y: %s", y_sub)
+        if __debug__: logger.debug("Subhalo x: %s", x_sub)
+        if __debug__: logger.debug("Subhalo y: %s", y_sub)
 
         # Lensing simulation
         image_mean = self._lensing(n_sub, m_sub, x_sub, y_sub)
-        logger.debug("Image mean: %s", image_mean)
+        if __debug__: logger.debug("Image mean: %s", image_mean)
 
         # dx/dz
 
         # Observed lensed image
         image = self._observation(image_mean)
-        logger.debug("Image: %s", image)
+        if __debug__: logger.debug("Image: %s", image)
 
         # Returns
         latent_variables = (n_sub, m_sub, x_sub, y_sub, image_mean, image)
@@ -150,17 +150,17 @@ class SubhaloSimulator:
     def _draw_n_sub(self, alpha, beta):
         n_sub_mean = self._calculate_expected_n_sub(alpha, beta)
         n_sub_mean = self._detach(n_sub_mean)
-        logger.debug("Poisson mean: %s", n_sub_mean)
+        if __debug__: logger.debug("Poisson mean: %s", n_sub_mean)
 
         # Draw number of subhalos
         n_sub = np.random.poisson(n_sub_mean)
-        logger.debug("Number of subhalos: %s", n_sub)
+        if __debug__: logger.debug("Number of subhalos: %s", n_sub)
 
         return n_sub
 
     def _calculate_log_p_n_sub(self, n_sub, alpha, beta):
         n_sub_mean_eval = self._calculate_expected_n_sub(alpha, beta)
-        logger.debug("Eval subhalo mean: %s", n_sub_mean_eval)
+        if __debug__: logger.debug("Eval subhalo mean: %s", n_sub_mean_eval)
         log_p_poisson = n_sub * np.log(n_sub_mean_eval) - n_sub_mean_eval #  - np.log(math.factorial(n_sub))
         return log_p_poisson
 
@@ -222,6 +222,8 @@ class SubhaloSimulator:
         for i_sim in range(n_images):
             if (i_sim + 1) % n_verbose == 0:
                 logger.info("Simulating image %s / %s", i_sim + 1, n_images)
+            else:
+                logger.debug("Simulating image %s / %s", i_sim + 1, n_images)
 
             params = self._wrap_params(alpha, beta, i_sim, n_images)
             _, (image, _, latents) = self.simulate(params, [])
@@ -247,6 +249,8 @@ class SubhaloSimulator:
         for i_sim in range(n_images):
             if (i_sim + 1) % n_verbose == 0:
                 logger.info("Simulating image %s / %s", i_sim + 1, n_images)
+            else:
+                logger.debug("Simulating image %s / %s", i_sim + 1, n_images)
 
             params = self._wrap_params(alpha, beta, i_sim, n_images)
             params_ref = self._wrap_params(alpha_ref, beta_ref, i_sim, n_images)
@@ -266,6 +270,9 @@ class SubhaloSimulator:
 
             n_subhalos = latents[0]
             logger.debug("Image generated with %s subhalos", n_subhalos)
+
+            logger.debug("Joint log r: %s", log_r_xz)
+            logger.debug("Joint score: %s", t_xz)
 
             all_images.append(image)
             all_t_xz.append(t_xz)
@@ -310,6 +317,8 @@ class SubhaloSimulator:
         for i_sim in range(n_images):
             if (i_sim + 1) % n_verbose == 0:
                 logger.info("Simulating image %s / %s", i_sim + 1, n_images)
+            else:
+                logger.debug("Simulating image %s / %s", i_sim + 1, n_images)
 
             params = self._wrap_params(alpha, beta, i_sim, n_images)
 
@@ -344,6 +353,8 @@ class SubhaloSimulator:
             # Calculate score from finite diffs
             if not AUTOGRAD:
                 t_xz = self._finite_diff(log_p_xzs)
+            logger.debug("Joint log r: %s", log_r_xz)
+            logger.debug("Joint score: %s", t_xz)
 
             all_images.append(image)
             all_t_xz.append(t_xz)
@@ -390,6 +401,8 @@ class SubhaloSimulator:
         for i_sim in range(n_images):
             if (i_sim + 1) % n_verbose == 0:
                 logger.info("Simulating image %s / %s", i_sim + 1, n_images)
+            else:
+                logger.debug("Simulating image %s / %s", i_sim + 1, n_images)
 
             # Choose one theta from prior that we use for sampling here
             i_sample = np.random.randint(n_theta_samples)
@@ -428,6 +441,9 @@ class SubhaloSimulator:
             # Calculate score from finite diffs
             if not AUTOGRAD:
                 t_xz = self._finite_diff(log_p_xzs)
+
+            logger.debug("Joint log r: %s", log_r_xz)
+            logger.debug("Joint score: %s", t_xz)
 
             all_images.append(image)
             all_t_xz.append(t_xz)
