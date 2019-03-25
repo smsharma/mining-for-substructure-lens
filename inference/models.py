@@ -73,8 +73,8 @@ class VGG11RatioEstimator(nn.Module):
 
     def _preprocess_theta(self, theta):
         if self.theta_mean is not None and self.theta_std is not None:
-            theta = (theta - self.theta_mean)
-            theta = theta / max(1.0e-6, self.theta_std)
+            theta = theta - self.theta_mean.unsqueeze(0)
+            theta = theta / self.theta_std.unsqueeze(0)
         return theta
 
     def _initialize_weights(self):

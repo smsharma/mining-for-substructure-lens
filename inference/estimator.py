@@ -218,8 +218,8 @@ class ParameterizedRatioEstimator(object):
             log_input=self.log_input,
             input_mean=self.x_scaling_mean,
             input_std=self.x_scaling_std,
-            theta_mean=torch.tensor([10., -1.9]) if self.scale_theta else None,
-            theta_std=torch.tensor([3.,0.3]) if self.scale_theta else None,
+            theta_mean=torch.tensor([10., -1.9]) if self.rescale_theta else None,
+            theta_std=torch.tensor([3.,0.3]) if self.rescale_theta else None,
         )
         return model
 
