@@ -6,8 +6,6 @@ import sys, os
 import logging
 import argparse
 
-logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.INFO)
-
 sys.path.append("../")
 from simulation.units import *
 from simulation.population_sim import SubhaloSimulator
@@ -113,14 +111,20 @@ def parse_args():
     parser.add_argument("--test", action="store_true", help="Generate test rather than train data.")
     parser.add_argument("--name", type=str, default=None, help='Sample name, like "train" or "test".')
     parser.add_argument("--dir", type=str, default=".", help="Directory. Results will be saved in the data/samples subfolder.")
+    parser.add_argument("--debug", action="store_true", help="Prints debug output.")
 
     return parser.parse_args()
 
 
 if __name__ == "__main__":
-    logging.info("Hi!")
-
     args = parse_args()
+
+    logging.basicConfig(
+        format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
+        datefmt="%H:%M",
+        level=logging.DEBUG if args.debug else logging.INFO
+    )
+    logging.info("Hi!")
 
     if args.test:
         name = "test" if args.name is None else args.name
