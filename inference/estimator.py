@@ -17,6 +17,9 @@ logger = logging.getLogger(__name__)
 
 
 class ParameterizedRatioEstimator(object):
+    theta_mean = np.array([10., -1.9])
+    theta_std = np.array([3., 0.3])
+
     def __init__(self, resolution, n_parameters, log_input=False, rescale_inputs=True, rescale_theta=True):
         self.resolution = resolution
         self.n_parameters = n_parameters
@@ -88,6 +91,11 @@ class ParameterizedRatioEstimator(object):
             r_xz = sanitize_array(r_xz, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=1.0e-6).astype(np.float64).reshape((-1, 1))
         if t_xz is not None:
             t_xz = sanitize_array(t_xz, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=-1.0e6).astype(np.float64)
+
+        # Rescale theta and t_xz
+        theta = self._transform_theta(theta)
+        if t_xz is not None:
+            t_xz = self._transform_theta(t_xz)
 
         # Infer dimensions of problem
         n_samples = x.shape[0]
@@ -218,8 +226,6 @@ class ParameterizedRatioEstimator(object):
             log_input=self.log_input,
             input_mean=self.x_scaling_mean,
             input_std=self.x_scaling_std,
-            theta_mean=torch.tensor([10., -1.9]) if self.rescale_theta else None,
-            theta_std=torch.tensor([3.,0.3]) if self.rescale_theta else None,
         )
         return model
 
@@ -232,6 +238,8 @@ class ParameterizedRatioEstimator(object):
             self.x_scaling_std = 1.0
 
     def _transform_inputs(self, x):
+        # This solution is impractical with large data sets -- instead the x transformaiton is handled
+        # by th pyTorch model
         x_scaled = x
         if self.log_input:
             x_scaled = np.log(1.0 + x_scaled)
@@ -239,6 +247,17 @@ class ParameterizedRatioEstimator(object):
             x_scaled = x_scaled - self.x_scaling_mean
             x_scaled /= self.x_scaling_std
         return x_scaled
+
+    def _transform_theta(self, theta):
+        if self.rescale_theta:
+            theta = theta - self.theta_mean[np.newaxis, :]
+            theta = theta / self.theta_std[np.newaxis, :]
+        return theta
+
+    def _transform_t_xz(self, t_xz):
+        if self.rescale_theta:
+            t_xz = t_xz * self.theta_std[np.newaxis, :]
+        return t_xz
 
     def _wrap_settings(self):
         settings = {
@@ -248,6 +267,7 @@ class ParameterizedRatioEstimator(object):
             "rescale_inputs": self.rescale_inputs,
             "x_scaling_mean": self.x_scaling_mean,
             "x_scaling_std": self.x_scaling_std,
+            "rescale_theta": self.rescale_theta,
         }
         return settings
 
@@ -258,6 +278,7 @@ class ParameterizedRatioEstimator(object):
         self.rescale_inputs = str(settings["rescale_inputs"])
         self.x_scaling_mean = float(settings["x_scaling_mean"])
         self.x_scaling_std = float(settings["x_scaling_std"])
+        self.rescale_theta = bool(settings["rescale_theta"])
 
     @staticmethod
     def _check_required_data(method, r_xz, t_xz):

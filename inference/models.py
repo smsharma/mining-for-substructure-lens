@@ -10,15 +10,13 @@ logger = logging.getLogger(__name__)
 
 class VGG11RatioEstimator(nn.Module):
     def __init__(
-        self, n_parameters, cfg="A", input_mean=None, input_std=None, theta_mean=None, theta_std=None, log_input=False, batch_norm=True, init_weights=True
+        self, n_parameters, cfg="A", input_mean=None, input_std=None, log_input=False, batch_norm=True, init_weights=True
     ):
         super(VGG11RatioEstimator, self).__init__()
 
         self.input_mean = input_mean
         self.input_std = input_std
         self.log_input = log_input
-        self.theta_mean = theta_mean
-        self.theta_std = theta_std
 
         self.features = self._make_layers(cfg, batch_norm)
         self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
@@ -38,8 +36,7 @@ class VGG11RatioEstimator(nn.Module):
             x.requires_grad = True
 
         # Preprocessing
-        h = self._preprocess_x(x)
-        theta = self._preprocess_theta(theta)
+        h = self._preprocess(x)
 
         # VGG11
         h = self.features(h)
@@ -66,19 +63,13 @@ class VGG11RatioEstimator(nn.Module):
 
         return s, log_r, t, x_gradient
 
-    def _preprocess_x(self, x):
+    def _preprocess(self, x):
         if self.log_input:
             x = torch.log(1.0 + x)
         if self.input_mean is not None and self.input_std is not None:
             x = (x - self.input_mean) / max(1.0e-6, self.input_std)
         x = x.unsqueeze(1)
         return x
-
-    def _preprocess_theta(self, theta):
-        if self.theta_mean is not None and self.theta_std is not None:
-            theta = theta - self.theta_mean.unsqueeze(0)
-            theta = theta / self.theta_std.unsqueeze(0)
-        return theta
 
     def _initialize_weights(self):
         for m in self.modules():
