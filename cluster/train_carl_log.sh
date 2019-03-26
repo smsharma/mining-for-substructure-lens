@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=train_carl_log
+#SBATCH --job-name=c-l
 #SBATCH --output=log_train_carl_log.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1

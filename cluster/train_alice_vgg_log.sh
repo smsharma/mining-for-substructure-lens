@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=c
-#SBATCH --output=log_train_carl.log
+#SBATCH --job-name=a-vl
+#SBATCH --output=log_train_alice_vgg_log.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
@@ -11,4 +11,4 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-python -u train.py carl --name carl --dir /scratch/jb6504/StrongLensing-Inference
+python -u train.py alice --vgg --log --name alice_vgg_log --dir /scratch/jb6504/StrongLensing-Inference

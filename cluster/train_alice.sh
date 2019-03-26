@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=train_alice
+#SBATCH --job-name=a
 #SBATCH --output=log_train_alice.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
