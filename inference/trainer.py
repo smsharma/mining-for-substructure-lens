@@ -107,7 +107,7 @@ class Trainer(object):
                 losses_train.append(loss_train)
                 losses_val.append(loss_val)
             except NanException:
-                logger.info("Ending training after %s epochs because NaNs appeared", i_epoch + 1)
+                logger.info("Ending training during epoch %s because NaNs appeared", i_epoch + 1)
                 break
 
             if early_stopping:
@@ -122,7 +122,7 @@ class Trainer(object):
             verbose_epoch = (i_epoch + 1) % n_epochs_verbose == 0
             self.report_epoch(i_epoch, loss_labels, loss_train, loss_val, loss_contributions_train, loss_contributions_val, verbose=verbose_epoch)
 
-        if early_stopping:
+        if early_stopping and len(losses_val) > 0:
             self.wrap_up_early_stopping(best_model, losses_val[-1], best_loss, best_epoch)
 
         logger.debug("Training finished")
@@ -325,7 +325,7 @@ class Trainer(object):
             if tensor is None:
                 continue
             if torch.isnan(tensor).any():
-                logger.warning("%s contains NaNs, aborting training!", label)
+                logger.warning("%s contains NaNs, aborting training! Data:\n%s", label, tensor)
                 raise NanException
 
 
@@ -377,7 +377,9 @@ class SingleParameterizedRatioTrainer(Trainer):
         self._check_for_nans("Augmented training data", r_xz, t_xz)
 
         s_hat, log_r_hat, t_hat, _ = self.model(theta, x, track_score=self.calculate_model_score, return_grad_x=False)
-        self._check_for_nans("Model output", s_hat, log_r_hat, t_hat)
+        self._check_for_nans("Model output (log r)", log_r_hat)
+        self._check_for_nans("Model output (s)", s_hat)
+        self._check_for_nans("Model output (t)", t_hat)
 
         losses = [loss_function(s_hat, log_r_hat, t_hat, y, r_xz, t_xz) for loss_function in loss_functions]
         self._check_for_nans("Loss", *losses)
