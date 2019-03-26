@@ -8,6 +8,7 @@ from collections import OrderedDict
 import torch
 
 from inference.models.vgg import VGGRatioEstimator
+from inference.models.resnet import ResNetRatioEstimator
 from inference.trainer import SingleParameterizedRatioTrainer
 from inference.utils import create_missing_folders, load_and_check, sanitize_array, get_optimizer, get_loss
 from inference.utils import restrict_samplesize
@@ -17,15 +18,16 @@ logger = logging.getLogger(__name__)
 
 
 class ParameterizedRatioEstimator(object):
-    theta_mean = np.array([10., -1.9])
-    theta_std = np.array([3., 0.3])
+    theta_mean = np.array([10.0, -1.9])
+    theta_std = np.array([3.0, 0.3])
 
-    def __init__(self, resolution, n_parameters, log_input=False, rescale_inputs=True, rescale_theta=True):
+    def __init__(self, resolution=64, n_parameters=2, architecture="resnet", log_input=False, rescale_inputs=True, rescale_theta=True):
         self.resolution = resolution
         self.n_parameters = n_parameters
         self.log_input = log_input
         self.rescale_inputs = rescale_inputs
         self.rescale_theta = rescale_theta
+        self.architecture = architecture
 
         self.x_scaling_mean = None
         self.x_scaling_std = None
@@ -219,15 +221,16 @@ class ParameterizedRatioEstimator(object):
 
         # Load state dict
         logger.debug("Loading state dictionary from %s_state_dict.pt", filename)
-        self.model.load_state_dict(torch.load(filename + "_state_dict.pt", map_location='cpu'))
+        self.model.load_state_dict(torch.load(filename + "_state_dict.pt", map_location="cpu"))
 
     def _create_model(self):
-        model = VGGRatioEstimator(
-            n_parameters=self.n_parameters,
-            log_input=self.log_input,
-            input_mean=self.x_scaling_mean,
-            input_std=self.x_scaling_std,
-        )
+        if self.architecture == "resnet":
+            model = ResNetRatioEstimator(n_parameters=self.n_parameters, log_input=self.log_input, input_mean=self.x_scaling_mean, input_std=self.x_scaling_std)
+
+        elif self.architecture == "vgg":
+            model = VGGRatioEstimator(n_parameters=self.n_parameters, log_input=self.log_input, input_mean=self.x_scaling_mean, input_std=self.x_scaling_std)
+        else:
+            raise RuntimeError("Unknown architecture {}".format(self.architecture))
         return model
 
     def _initialize_input_transform(self, x, transform=True):
@@ -264,6 +267,7 @@ class ParameterizedRatioEstimator(object):
         settings = {
             "resolution": self.resolution,
             "n_parameters": self.n_parameters,
+            "architecture": self.architecture,
             "log_input": self.log_input,
             "rescale_inputs": self.rescale_inputs,
             "x_scaling_mean": self.x_scaling_mean,
@@ -275,6 +279,7 @@ class ParameterizedRatioEstimator(object):
     def _unwrap_settings(self, settings):
         self.resolution = int(settings["resolution"])
         self.n_parameters = int(settings["n_parameters"])
+        self.architecture = str(settings["architecture"])
         self.log_input = bool(settings["log_input"])
         self.rescale_inputs = str(settings["rescale_inputs"])
         self.x_scaling_mean = float(settings["x_scaling_mean"])

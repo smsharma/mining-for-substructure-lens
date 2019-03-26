@@ -15,9 +15,9 @@ logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(m
 
 
 def train(
-    method, alpha, data_dir, sample_name, model_filename, log_input=False, batch_size=256, n_epochs=5, optimizer="adam", initial_lr=0.001, final_lr=0.0001, limit_samplesize=None
+    method, alpha, data_dir, sample_name, model_filename, architecture="resnet", log_input=False, batch_size=256, n_epochs=5, optimizer="adam", initial_lr=0.001, final_lr=0.0001, limit_samplesize=None
 ):
-    estimator = ParameterizedRatioEstimator(resolution=64, n_parameters=2, log_input=log_input, rescale_inputs=True)
+    estimator = ParameterizedRatioEstimator(resolution=64, n_parameters=2, architecture=architecture, log_input=log_input, rescale_inputs=True)
     estimator.train(
         method,
         x="{}/samples/x_{}.npy".format(data_dir, sample_name),
@@ -55,6 +55,7 @@ def parse_args():
     )
 
     # Training options
+    parser.add_argument("--vgg", action="store_true", help="Usee VGG rather than ResNet.")
     parser.add_argument(
         "--alpha",
         type=float,
@@ -89,6 +90,7 @@ if __name__ == "__main__":
         optimizer=args.optimizer,
         initial_lr=args.initial_lr,
         final_lr=args.final_lr,
+        architecture="vgg" if args.vgg else "resnet",
     )
 
     logging.info("All done! Have a nice day!")

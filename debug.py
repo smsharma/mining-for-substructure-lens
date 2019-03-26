@@ -26,6 +26,7 @@ train(
     initial_lr=0.001,
     final_lr=0.0001,
     limit_samplesize=256,
+    architecture="resnet",
 )
 
 logging.info("All done! Have a nice day!")

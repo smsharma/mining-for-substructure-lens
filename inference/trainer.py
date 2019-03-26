@@ -112,9 +112,7 @@ class Trainer(object):
 
             if early_stopping:
                 try:
-                    best_loss, best_model, best_epoch = self.check_early_stopping(
-                        best_loss, best_model, best_epoch, loss_val, i_epoch, early_stopping_patience
-                    )
+                    best_loss, best_model, best_epoch = self.check_early_stopping(best_loss, best_model, best_epoch, loss_val, i_epoch, early_stopping_patience)
                 except EarlyStoppingException:
                     logger.info("Early stopping: ending training after %s epochs", i_epoch + 1)
                     break

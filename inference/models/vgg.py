@@ -9,9 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class VGGRatioEstimator(nn.Module):
-    def __init__(
-        self, n_parameters, cfg="A", input_mean=None, input_std=None, log_input=False, batch_norm=True, init_weights=True
-    ):
+    def __init__(self, n_parameters, cfg="A", input_mean=None, input_std=None, log_input=False, batch_norm=True, init_weights=True):
         super(VGGRatioEstimator, self).__init__()
 
         self.input_mean = input_mean
