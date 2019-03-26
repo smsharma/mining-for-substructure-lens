@@ -97,7 +97,7 @@ class Bottleneck(nn.Module):
 
 
 class ResNetRatioEstimator(nn.Module):
-    def __init__(self, n_parameters, cfg=50, input_mean=None, input_std=None, log_input=False, num_classes=1000, zero_init_residual=False, norm_layer=None):
+    def __init__(self, n_parameters, cfg=50, input_mean=None, input_std=None, log_input=False, zero_init_residual=False, norm_layer=None):
         super(ResNetRatioEstimator, self).__init__()
 
         self.input_mean = input_mean
@@ -118,7 +118,7 @@ class ResNetRatioEstimator(nn.Module):
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2, norm_layer=norm_layer)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2, norm_layer=norm_layer)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512 * block.expansion + n_parameters, num_classes)
+        self.fc = nn.Linear(512 * block.expansion + n_parameters, 1)
         self.sigmoid = nn.Sigmoid()
 
         for m in self.modules():
