@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import six
 import os
 import numpy as np
 import torch
@@ -99,7 +100,9 @@ def load_and_check(filename, warning_threshold=1.0e9, memmap=True):
     if filename is None:
         return None
 
-    if memmap and "x_train.npy" in filename:
+    if not isinstance(filename, six.string_types):
+        data = filename
+    elif memmap and "x_train.npy" in filename:
         logger.debug("Trying to load %s with memmap.", filename)
         data = np.load(filename, mmap_mode="c")
         logger.debug("Loaded %s with memmap. Found shape %s, dtype %s, and first entry\n%s", filename, data.shape, data.dtype, data[0])
