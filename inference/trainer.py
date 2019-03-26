@@ -113,7 +113,7 @@ class Trainer(object):
             if early_stopping:
                 try:
                     best_loss, best_model, best_epoch = self.check_early_stopping(
-                        best_loss, best_model, best_epoch, loss_val, best_epoch, early_stopping_patience
+                        best_loss, best_model, best_epoch, loss_val, i_epoch, early_stopping_patience
                     )
                 except EarlyStoppingException:
                     logger.info("Early stopping: ending training after %s epochs", i_epoch + 1)
@@ -310,14 +310,23 @@ class Trainer(object):
             val_report = "           val. loss  {:>8.5f} ({})".format(loss_val, contribution_summary(loss_labels, loss_contributions_val))
             logging_fn(val_report)
 
-    def wrap_up_early_stopping(self, best_model, loss_val, best_loss, best_epoch):
-        if loss_val is None or best_loss is None:
+    def wrap_up_early_stopping(self, best_model, currrent_loss, best_loss, best_epoch):
+        if currrent_loss is None or best_loss is None:
             logger.warning("Loss is None, cannot wrap up early stopping")
-        elif loss_val < best_loss:
-            logger.info("Early stopping after epoch %s, with loss %8.5f compared to final loss %8.5f", best_epoch + 1, best_loss, loss_val)
+        elif currrent_loss < best_loss:
+            logger.info("Early stopping after epoch %s, with loss %8.5f compared to final loss %8.5f", best_epoch + 1, best_loss, currrent_loss)
             self.model.load_state_dict(best_model)
         else:
             logger.info("Early stopping did not improve performance")
+
+    @staticmethod
+    def _check_for_nans(label, *tensors):
+        for tensor in tensors:
+            if tensor is None:
+                continue
+            if torch.isnan(tensor).any():
+                logger.warning("%s contains NaNs, aborting training!", label)
+                raise NanException
 
 
 class SingleParameterizedRatioTrainer(Trainer):
@@ -370,20 +379,7 @@ class SingleParameterizedRatioTrainer(Trainer):
         s_hat, log_r_hat, t_hat, _ = self.model(theta, x, track_score=self.calculate_model_score, return_grad_x=False)
         self._check_for_nans("Model output", s_hat, log_r_hat, t_hat)
 
-        logger.debug("s_hat: %s", s_hat)
-        logger.debug("log_r_hat: %s", log_r_hat)
-        logger.debug("t_hat: %s", t_hat)
-
         losses = [loss_function(s_hat, log_r_hat, t_hat, y, r_xz, t_xz) for loss_function in loss_functions]
         self._check_for_nans("Loss", *losses)
 
-        logger.debug("losses: %s", losses)
-
         return losses
-
-    @staticmethod
-    def _check_for_nans(label, *tensors):
-        for tensor in tensors:
-            if torch.isnan(tensor).any():
-                logger.warning("%s contains NaNs, aborting training!", label)
-                raise NanException
