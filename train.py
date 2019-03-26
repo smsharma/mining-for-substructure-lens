@@ -11,11 +11,11 @@ import argparse
 
 from inference.estimator import ParameterizedRatioEstimator
 
-logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.INFO)
+logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.DEBUG)
 
 
 def train(
-    method, alpha, data_dir, sample_name, model_filename, log_input=False, batch_size=256, n_epochs=5, optimizer="adam", initial_lr=0.001, final_lr=0.0001
+    method, alpha, data_dir, sample_name, model_filename, log_input=False, batch_size=256, n_epochs=5, optimizer="adam", initial_lr=0.001, final_lr=0.0001, limit_samplesize=None
 ):
     estimator = ParameterizedRatioEstimator(resolution=64, n_parameters=2, log_input=log_input, rescale_inputs=True)
     estimator.train(
@@ -34,7 +34,7 @@ def train(
         nesterov_momentum=None,
         validation_split=0.25,
         early_stopping=True,
-        limit_samplesize=None,
+        limit_samplesize=limit_samplesize,
         verbose="all",
     )
     estimator.save("{}/models/{}".format(data_dir, model_filename))

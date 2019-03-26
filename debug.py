@@ -25,6 +25,7 @@ train(
     optimizer="adam",
     initial_lr=0.001,
     final_lr=0.0001,
+    limit_samplesize=256,
 )
 
 logging.info("All done! Have a nice day!")

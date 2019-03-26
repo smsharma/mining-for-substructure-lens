@@ -95,7 +95,7 @@ class ParameterizedRatioEstimator(object):
         # Rescale theta and t_xz
         theta = self._transform_theta(theta)
         if t_xz is not None:
-            t_xz = self._transform_theta(t_xz)
+            t_xz = self._transform_t_xz(t_xz)
 
         # Infer dimensions of problem
         n_samples = x.shape[0]

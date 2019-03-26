@@ -100,27 +100,32 @@ def load_and_check(filename, warning_threshold=1.0e9, memmap=True):
     if filename is None:
         return None
 
+    memmap = memmap and "x_train.npy" in filename
+
     if not isinstance(filename, six.string_types):
         data = filename
-    elif memmap and "x_train.npy" in filename:
+    elif memmap:
         logger.debug("Trying to load %s with memmap.", filename)
         data = np.load(filename, mmap_mode="c")
         logger.debug("Loaded %s with memmap. Found shape %s, dtype %s, and first entry\n%s", filename, data.shape, data.dtype, data[0])
     else:
         data = np.load(filename)
 
-    n_nans = np.sum(np.isnan(data))
-    n_infs = np.sum(np.isinf(data))
-    n_finite = np.sum(np.isfinite(data))
+    if memmap:
+        logger.debug("Skipping NaN check for memmap-ed data")
+    else:
+        n_nans = np.sum(np.isnan(data))
+        n_infs = np.sum(np.isinf(data))
+        n_finite = np.sum(np.isfinite(data))
 
-    if n_nans + n_infs > 0:
-        logger.warning("Warning: file %s contains %s NaNs and %s Infs, compared to %s finite numbers!", filename, n_nans, n_infs, n_finite)
+        if n_nans + n_infs > 0:
+            logger.warning("Warning: file %s contains %s NaNs and %s Infs, compared to %s finite numbers!", filename, n_nans, n_infs, n_finite)
 
-    smallest = np.nanmin(data)
-    largest = np.nanmax(data)
+        smallest = np.nanmin(data)
+        largest = np.nanmax(data)
 
-    if np.abs(smallest) > warning_threshold or np.abs(largest) > warning_threshold:
-        logger.warning("Warning: file %s has some large numbers, rangin from %s to %s", filename, smallest, largest)
+        if np.abs(smallest) > warning_threshold or np.abs(largest) > warning_threshold:
+            logger.warning("Warning: file %s has some large numbers, rangin from %s to %s", filename, smallest, largest)
 
     return data
 
