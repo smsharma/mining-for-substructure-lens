@@ -170,7 +170,7 @@ class ParameterizedRatioEstimator(object):
 
             for i, this_theta in enumerate(theta):
                 logger.debug("Starting ratio evaluation for thetas %s / %s: %s", i + 1, len(theta), this_theta)
-                _, log_r_hat, t_hat, _ = evaluate_ratio_model(model=self.model, theta0s=[this_theta], xs=x, evaluate_score=evaluate_score)
+                _, log_r_hat, t_hat = evaluate_ratio_model(model=self.model, theta0s=[this_theta], xs=x, evaluate_score=evaluate_score)
 
                 all_log_r_hat.append(log_r_hat)
                 all_t_hat.append(t_hat)
@@ -180,7 +180,7 @@ class ParameterizedRatioEstimator(object):
 
         else:
             logger.debug("Starting ratio evaluation")
-            _, all_log_r_hat, all_t_hat, _ = evaluate_ratio_model(model=self.model, theta0s=theta, xs=x, evaluate_score=evaluate_score)
+            _, all_log_r_hat, all_t_hat = evaluate_ratio_model(model=self.model, theta0s=theta, xs=x, evaluate_score=evaluate_score)
 
         logger.debug("Evaluation done")
         return all_log_r_hat, all_t_hat

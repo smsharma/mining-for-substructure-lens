@@ -48,8 +48,7 @@ class VGG11RatioEstimator(nn.Module):
         # Transform to outputs
         log_r = h
         # s = 1.0 / (1.0 + torch.exp(log_r))
-        s = self.sigmoid(-1. * log_r)
-        logger.debug("After r-to-s trafo: %s", s)
+        s = self.sigmoid(-1.0 * log_r)
 
         # Score and gradient wrt x
         if track_score:
@@ -67,8 +66,8 @@ class VGG11RatioEstimator(nn.Module):
         if self.log_input:
             x = torch.log(1.0 + x)
         if self.input_mean is not None and self.input_std is not None:
-            x = (x - self.input_mean)
-            x = x / max(1.0e-6, self.input_std)
+            x = x - self.input_mean
+            x = x / self.input_std
         x = x.unsqueeze(1)
         return x
 
