@@ -4,7 +4,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import sys, os
 
-sys.path.append("../")
+sys.path.append("./")
 
 import logging
 import argparse
@@ -92,17 +92,3 @@ if __name__ == "__main__":
     )
 
     logging.info("All done! Have a nice day!")
-
-# train(
-#     method="carl",
-#     alpha=1.,
-#     data_dir="/Users/johannbrehmer/work/projects/other/strong_lensing/StrongLensing-Inference/data/",
-#     sample_name="train",
-#     model_filename="debug",
-#     log_input=False,
-#     batch_size=128,
-#     n_epochs=1,
-#     optimizer="adam",
-#     initial_lr=0.001,
-#     final_lr=0.0001,
-# )

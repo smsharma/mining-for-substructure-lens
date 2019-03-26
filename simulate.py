@@ -6,7 +6,8 @@ import sys, os
 import logging
 import argparse
 
-sys.path.append("../")
+sys.path.append("./")
+
 from simulation.units import *
 from simulation.population_sim import SubhaloSimulator
 
