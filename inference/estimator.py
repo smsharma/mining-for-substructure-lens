@@ -7,7 +7,7 @@ import numpy as np
 from collections import OrderedDict
 import torch
 
-from inference.models import VGG11RatioEstimator
+from inference.models.vgg import VGGRatioEstimator
 from inference.trainer import SingleParameterizedRatioTrainer
 from inference.utils import create_missing_folders, load_and_check, sanitize_array, get_optimizer, get_loss
 from inference.utils import restrict_samplesize
@@ -82,15 +82,16 @@ class ParameterizedRatioEstimator(object):
         self._initialize_input_transform(x)
 
         # Clean up input data
+        y = y.reshape((-1, 1))
         # x = sanitize_array(
         #    x, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=0.0
         # ).astype(np.float64)
-        theta = sanitize_array(theta, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=1.0e-6).astype(np.float64)
-        y = sanitize_array(y, replace_inf=0.0, replace_nan=0.0, max_value=1.0, min_value=0.0).astype(np.float64).reshape((-1, 1))
-        if r_xz is not None:
-            r_xz = sanitize_array(r_xz, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=1.0e-6).astype(np.float64).reshape((-1, 1))
-        if t_xz is not None:
-            t_xz = sanitize_array(t_xz, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=-1.0e6).astype(np.float64)
+        # theta = sanitize_array(theta, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=-1.0e6).astype(np.float64)
+        # y = sanitize_array(y, replace_inf=0.0, replace_nan=0.0, max_value=1.0, min_value=0.0).astype(np.float64).reshape((-1, 1))
+        # if r_xz is not None:
+        #     r_xz = sanitize_array(r_xz, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=1.0e-6).astype(np.float64).reshape((-1, 1))
+        # if t_xz is not None:
+        #     t_xz = sanitize_array(t_xz, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=-1.0e6).astype(np.float64)
 
         # Rescale theta and t_xz
         theta = self._transform_theta(theta)
@@ -221,7 +222,7 @@ class ParameterizedRatioEstimator(object):
         self.model.load_state_dict(torch.load(filename + "_state_dict.pt", map_location='cpu'))
 
     def _create_model(self):
-        model = VGG11RatioEstimator(
+        model = VGGRatioEstimator(
             n_parameters=self.n_parameters,
             log_input=self.log_input,
             input_mean=self.x_scaling_mean,

@@ -8,11 +8,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class VGG11RatioEstimator(nn.Module):
+class VGGRatioEstimator(nn.Module):
     def __init__(
         self, n_parameters, cfg="A", input_mean=None, input_std=None, log_input=False, batch_norm=True, init_weights=True
     ):
-        super(VGG11RatioEstimator, self).__init__()
+        super(VGGRatioEstimator, self).__init__()
 
         self.input_mean = input_mean
         self.input_std = input_std
@@ -43,10 +43,9 @@ class VGG11RatioEstimator(nn.Module):
         h = self.avgpool(h)
         h = h.view(h.size(0), -1)
         h = torch.cat((h, theta), 1)
-        h = self.classifier(h)
+        log_r = self.classifier(h)
 
         # Transform to outputs
-        log_r = h
         # s = 1.0 / (1.0 + torch.exp(log_r))
         s = self.sigmoid(-1.0 * log_r)
 
