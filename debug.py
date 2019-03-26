@@ -10,7 +10,6 @@ sys.path.append("../")
 from train import train
 
 logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.DEBUG)
-
 logging.info("Hi!")
 
 train(

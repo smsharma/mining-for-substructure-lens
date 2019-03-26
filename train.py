@@ -11,8 +11,6 @@ import argparse
 
 from inference.estimator import ParameterizedRatioEstimator
 
-logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.DEBUG)
-
 
 def train(
     method, alpha, data_dir, sample_name, model_filename, architecture="resnet", log_input=False, batch_size=256, n_epochs=5, optimizer="adam", initial_lr=0.001, final_lr=0.0001, limit_samplesize=None
@@ -74,6 +72,7 @@ def parse_args():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.INFO)
     logging.info("Hi!")
 
     args = parse_args()
