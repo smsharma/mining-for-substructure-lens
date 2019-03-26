@@ -32,7 +32,7 @@ class ParameterizedRatioEstimator(object):
         self.x_scaling_mean = None
         self.x_scaling_std = None
 
-        self.model = self._create_model()
+        self._create_model()
 
     def train(
         self,
@@ -53,6 +53,7 @@ class ParameterizedRatioEstimator(object):
         early_stopping=True,
         limit_samplesize=None,
         verbose="some",
+        update_input_rescaling=True,
     ):
 
         logger.info("Starting training")
@@ -71,6 +72,7 @@ class ParameterizedRatioEstimator(object):
             logger.info("  Samples:                all")
         else:
             logger.info("  Samples:                %s", limit_samplesize)
+        logger.info("  Update x rescaling:     %s", update_input_rescaling)
 
         # Load training data
         logger.info("Loading training data")
@@ -81,7 +83,8 @@ class ParameterizedRatioEstimator(object):
         t_xz = load_and_check(t_xz)
 
         self._check_required_data(method, r_xz, t_xz)
-        self._initialize_input_transform(x)
+        if update_input_rescaling:
+            self._initialize_input_transform(x)
 
         # Clean up input data
         y = y.reshape((-1, 1))
@@ -230,31 +233,22 @@ class ParameterizedRatioEstimator(object):
         logger.info("  Rescale input:          %s", self.x_scaling_std is not None and self.x_scaling_mean is not None)
 
         if self.architecture == "resnet":
-            model = ResNetRatioEstimator(n_parameters=self.n_parameters, log_input=self.log_input, input_mean=self.x_scaling_mean, input_std=self.x_scaling_std)
+            self.model = ResNetRatioEstimator(n_parameters=self.n_parameters, log_input=self.log_input, input_mean=self.x_scaling_mean, input_std=self.x_scaling_std)
         elif self.architecture == "vgg":
-            model = VGGRatioEstimator(n_parameters=self.n_parameters, log_input=self.log_input, input_mean=self.x_scaling_mean, input_std=self.x_scaling_std)
+            self.model = VGGRatioEstimator(n_parameters=self.n_parameters, log_input=self.log_input, input_mean=self.x_scaling_mean, input_std=self.x_scaling_std)
         else:
             raise RuntimeError("Unknown architecture {}".format(self.architecture))
-        return model
 
     def _initialize_input_transform(self, x, transform=True):
         if self.rescale_inputs:
             self.x_scaling_mean = np.mean(x)
             self.x_scaling_std = np.maximum(np.std(x), 1.0e-6)
         else:
-            self.x_scaling_mean = 0.0
-            self.x_scaling_std = 1.0
+            self.x_scaling_mean = None
+            self.x_scaling_std = None
 
-    def _transform_inputs(self, x):
-        # This solution is impractical with large data sets -- instead the x transformaiton is handled
-        # by th pyTorch model
-        x_scaled = x
-        if self.log_input:
-            x_scaled = np.log(1.0 + x_scaled)
-        if self.rescale_inputs and self.x_scaling_mean is not None and self.x_scaling_std is not None:
-            x_scaled = x_scaled - self.x_scaling_mean
-            x_scaled /= self.x_scaling_std
-        return x_scaled
+        self.model.input_mean = self.x_scaling_mean
+        self.model.input_std = self.x_scaling_std
 
     def _transform_theta(self, theta):
         if self.rescale_theta:
