@@ -224,9 +224,13 @@ class ParameterizedRatioEstimator(object):
         self.model.load_state_dict(torch.load(filename + "_state_dict.pt", map_location="cpu"))
 
     def _create_model(self):
+        logger.info("Creating model")
+        logger.info("  Architecture:           %s", self.architecture)
+        logger.info("  Log input:              %s", self.log_input)
+        logger.info("  Rescale input:          %s", self.x_scaling_std is not None and self.x_scaling_mean is not None)
+
         if self.architecture == "resnet":
             model = ResNetRatioEstimator(n_parameters=self.n_parameters, log_input=self.log_input, input_mean=self.x_scaling_mean, input_std=self.x_scaling_std)
-
         elif self.architecture == "vgg":
             model = VGGRatioEstimator(n_parameters=self.n_parameters, log_input=self.log_input, input_mean=self.x_scaling_mean, input_std=self.x_scaling_std)
         else:
