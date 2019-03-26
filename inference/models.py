@@ -67,7 +67,8 @@ class VGG11RatioEstimator(nn.Module):
         if self.log_input:
             x = torch.log(1.0 + x)
         if self.input_mean is not None and self.input_std is not None:
-            x = (x - self.input_mean) / max(1.0e-6, self.input_std)
+            x = (x - self.input_mean)
+            x = x / max(1.0e-6, self.input_std)
         x = x.unsqueeze(1)
         return x
 

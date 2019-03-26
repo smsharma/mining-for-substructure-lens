@@ -17,6 +17,10 @@ class EarlyStoppingException(Exception):
     pass
 
 
+class NanException(Exception):
+    pass
+
+
 class Trainer(object):
     """ Trainer class. Any subclass has to implement the forward_pass() function. """
 
@@ -96,11 +100,15 @@ class Trainer(object):
             self.set_lr(opt, lr)
             logger.debug("Learning rate: %s", lr)
 
-            loss_train, loss_val, loss_contributions_train, loss_contributions_val = self.epoch(
-                i_epoch, data_labels, train_loader, val_loader, opt, loss_functions, loss_weights, clip_gradient
-            )
-            losses_train.append(loss_train)
-            losses_val.append(loss_val)
+            try:
+                loss_train, loss_val, loss_contributions_train, loss_contributions_val = self.epoch(
+                    i_epoch, data_labels, train_loader, val_loader, opt, loss_functions, loss_weights, clip_gradient
+                )
+                losses_train.append(loss_train)
+                losses_val.append(loss_val)
+            except NanException:
+                logger.info("Ending training after %s epochs because NaNs appeared", i_epoch + 1)
+                break
 
             if early_stopping:
                 try:
@@ -108,7 +116,7 @@ class Trainer(object):
                         best_loss, best_model, best_epoch, loss_val, best_epoch, early_stopping_patience
                     )
                 except EarlyStoppingException:
-                    logger.debug("Early stopping: ending training after %s epochs", i_epoch + 1)
+                    logger.info("Early stopping: ending training after %s epochs", i_epoch + 1)
                     break
 
             verbose_epoch = (i_epoch + 1) % n_epochs_verbose == 0
@@ -356,18 +364,26 @@ class SingleParameterizedRatioTrainer(Trainer):
             t_xz = batch_data["t_xz"].to(self.device, self.dtype)
         except KeyError:
             t_xz = None
-
-        logger.debug("x: %s", x)
-        logger.debug("y: %s", y)
+        self._check_for_nans("Training data", theta, x, y)
+        self._check_for_nans("Augmented training data", r_xz, t_xz)
 
         s_hat, log_r_hat, t_hat, _ = self.model(theta, x, track_score=self.calculate_model_score, return_grad_x=False)
+        self._check_for_nans("Model output", s_hat, log_r_hat, t_hat)
 
         logger.debug("s_hat: %s", s_hat)
         logger.debug("log_r_hat: %s", log_r_hat)
         logger.debug("t_hat: %s", t_hat)
 
         losses = [loss_function(s_hat, log_r_hat, t_hat, y, r_xz, t_xz) for loss_function in loss_functions]
+        self._check_for_nans("Loss", *losses)
 
         logger.debug("losses: %s", losses)
 
         return losses
+
+    @staticmethod
+    def _check_for_nans(label, *tensors):
+        for tensor in tensors:
+            if torch.isnan(tensor).any():
+                logger.warning("%s contains NaNs, aborting training!", label)
+                raise NanException
