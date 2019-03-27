@@ -155,6 +155,9 @@ class ParameterizedRatioEstimator(object):
         x = load_and_check(x)
         theta = load_and_check(theta)
 
+        # Rescale theta
+        theta = self._transform_theta(theta)
+
         # Evaluate
         if test_all_combinations:
             logger.debug("Starting ratio evaluation for all combinations")
