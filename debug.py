@@ -20,11 +20,11 @@ train(
     model_filename="debug",
     log_input=False,
     batch_size=128,
-    n_epochs=1,
+    n_epochs=5,
     optimizer="adam",
     initial_lr=0.001,
     final_lr=0.0001,
-    limit_samplesize=256,
+    limit_samplesize=10000,
     architecture="resnet",
 )
 

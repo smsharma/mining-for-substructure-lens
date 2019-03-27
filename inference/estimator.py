@@ -88,15 +88,8 @@ class ParameterizedRatioEstimator(object):
 
         # Clean up input data
         y = y.reshape((-1, 1))
-        # x = sanitize_array(
-        #    x, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=0.0
-        # ).astype(np.float64)
-        # theta = sanitize_array(theta, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=-1.0e6).astype(np.float64)
-        # y = sanitize_array(y, replace_inf=0.0, replace_nan=0.0, max_value=1.0, min_value=0.0).astype(np.float64).reshape((-1, 1))
-        # if r_xz is not None:
-        #     r_xz = sanitize_array(r_xz, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=1.0e-6).astype(np.float64).reshape((-1, 1))
-        # if t_xz is not None:
-        #     t_xz = sanitize_array(t_xz, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=-1.0e6).astype(np.float64)
+        if r_xz is not None:
+            r_xz = r_xz.reshape((-1, 1))
 
         # Rescale theta and t_xz
         theta = self._transform_theta(theta)
@@ -162,12 +155,7 @@ class ParameterizedRatioEstimator(object):
         x = load_and_check(x)
         theta = load_and_check(theta)
 
-        # Clean up input data
-        # x = sanitize_array(
-        #    x, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=0.0
-        # ).astype(np.float64)
-        theta = sanitize_array(theta, replace_inf=1.0e6, replace_nan=1.0e6, max_value=1.0e6, min_value=1.0e-6).astype(np.float64)
-
+        # Evaluate
         if test_all_combinations:
             logger.debug("Starting ratio evaluation for all combinations")
 
