@@ -165,7 +165,7 @@ class ResNetRatioEstimator(nn.Module):
         h = torch.cat((h, theta), 1)
         h = self.fc1(h)
         h = self.relu(h)
-        h = self.fc2(h)
+        log_r = self.fc2(h)
 
         # Transform to outputs
         s = self.sigmoid(-1.0 * log_r)
