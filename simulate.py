@@ -109,6 +109,7 @@ def parse_args():
 
     # Main options
     parser.add_argument("-n", type=int, default=10000, help="Number of samples to generate. Default is 10k.")
+    parser.add_argument("--point", action="store_true", help="Generate data at specific reference parameter point rather than from prior.")
     parser.add_argument("--test", action="store_true", help="Generate test rather than train data.")
     parser.add_argument("--name", type=str, default=None, help='Sample name, like "train" or "test".')
     parser.add_argument("--dir", type=str, default=".", help="Directory. Results will be saved in the data/samples subfolder.")
@@ -133,7 +134,10 @@ if __name__ == "__main__":
         save_test(args.dir, name, *results)
     else:
         name = "train" if args.name is None else args.name
-        results = simulate_train(args.n)
+        if args.point:
+            results = simulate_train(args.n, alpha_mean=12., alpha_std=0.01, beta_mean=-1.5, beta_std=0.01)
+        else:
+            results = simulate_train(args.n)
         save_train(args.dir, name, *results)
 
     logging.info("All done! Have a nice day!")
