@@ -230,6 +230,11 @@ class ParameterizedRatioEstimator(object):
         else:
             raise RuntimeError("Unknown architecture {}".format(self.architecture))
 
+        logger.info("Model has %s trainable parameters", self._count_model_parameters())
+
+    def _count_model_parameters(self):
+        return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
+
     def _initialize_input_transform(self, x, transform=True):
         if self.rescale_inputs:
             self.x_scaling_mean = np.mean(x)
