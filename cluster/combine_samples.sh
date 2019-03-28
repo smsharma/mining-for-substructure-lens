@@ -12,4 +12,4 @@ source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
 ./combine_samples.py --regex train "train\d+" --dir /scratch/jb6504/StrongLensing-Inference
-./combine_samples.py --regex test "test\d+" --dir /scratch/jb6504/StrongLensing-Inference
+# ./combine_samples.py --regex test "test\d+" --dir /scratch/jb6504/StrongLensing-Inference

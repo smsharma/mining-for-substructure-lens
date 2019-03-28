@@ -61,10 +61,10 @@ def parse_args():
         help="alpha parameter weighting the score MSE in the loss function of the SCANDAL, RASCAL, and" "and ALICES inference methods. Default: 1.",
     )
     parser.add_argument("--log", action="store_true", help="Whether the log of the input is taken.")
-    parser.add_argument("--epochs", type=int, default=5, help="Number of epochs. Default: 5.")
-    parser.add_argument("--batch_size", type=int, default=256, help="Batch size. Default: 256.")
+    parser.add_argument("--epochs", type=int, default=10, help="Number of epochs. Default: 10.")
+    parser.add_argument("--batch_size", type=int, default=128, help="Batch size. Default: 128.")
     parser.add_argument("--optimizer", default="adam", help='Optimizer. "amsgrad", "adam", and "sgd" are supported. Default: "adam".')
-    parser.add_argument("--initial_lr", type=float, default=0.001, help="Initial learning rate. Default: 0.001.")
+    parser.add_argument("--initial_lr", type=float, default=0.0005, help="Initial learning rate. Default: 0.0005.")
     parser.add_argument("--final_lr", type=float, default=0.00001, help="Final learning rate. Default: 0.00001.")
     parser.add_argument("--validation_split", type=float, default=0.3, help="Validation split. Default: 0.3.")
 

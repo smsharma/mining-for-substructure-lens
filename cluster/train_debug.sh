@@ -11,4 +11,4 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-python -u train.py carl --name debug --dir /scratch/jb6504/StrongLensing-Inference --epochs 1
+python -u train.py carl --name debug --dir /scratch/jb6504/StrongLensing-Inference --epochs 1 --initial_lr 0.0005
