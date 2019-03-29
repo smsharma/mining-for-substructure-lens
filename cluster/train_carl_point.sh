@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=c-c
-#SBATCH --output=log_train_carl_poinit.log
+#SBATCH --job-name=c-p
+#SBATCH --output=log_train_carl_point.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
