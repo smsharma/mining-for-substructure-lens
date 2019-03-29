@@ -223,10 +223,33 @@ class ParameterizedRatioEstimator(object):
         logger.info("  Log input:              %s", self.log_input)
         logger.info("  Rescale input:          %s", self.x_scaling_std is not None and self.x_scaling_mean is not None)
 
-        if self.architecture == "resnet":
-            self.model = ResNetRatioEstimator(n_parameters=self.n_parameters, log_input=self.log_input, input_mean=self.x_scaling_mean, input_std=self.x_scaling_std)
+        if self.architecture in ["resnet", "resnet18"]:
+            self.model = ResNetRatioEstimator(
+                n_parameters=self.n_parameters,
+                n_hidden=512,
+                log_input=self.log_input,
+                input_mean=self.x_scaling_mean,
+                input_std=self.x_scaling_std
+            )
+
+        elif self.architecture == "resnet50":
+            self.model = ResNetRatioEstimator(
+                n_parameters=self.n_parameters,
+                cfg=50,
+                n_hidden=1024,
+                log_input=self.log_input,
+                input_mean=self.x_scaling_mean,
+                input_std=self.x_scaling_std
+            )
+
         elif self.architecture == "vgg":
-            self.model = VGGRatioEstimator(n_parameters=self.n_parameters, log_input=self.log_input, input_mean=self.x_scaling_mean, input_std=self.x_scaling_std)
+            self.model = VGGRatioEstimator(
+                n_parameters=self.n_parameters,
+                log_input=self.log_input,
+                input_mean=self.x_scaling_mean,
+                input_std=self.x_scaling_std
+            )
+
         else:
             raise RuntimeError("Unknown architecture {}".format(self.architecture))
 

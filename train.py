@@ -54,6 +54,7 @@ def parse_args():
 
     # Training options
     parser.add_argument("--vgg", action="store_true", help="Usee VGG rather than ResNet.")
+    parser.add_argument("--deep", action="store_true", help='Use a deeper variation, i.e. ResNet-50 instead of ResNet-18.')
     parser.add_argument(
         "--alpha",
         type=float,
@@ -77,6 +78,13 @@ if __name__ == "__main__":
 
     args = parse_args()
 
+    if args.vgg:
+        architecture = "vgg"
+    elif args.deep:
+        architecture = "resnet50"
+    else:
+        architecture = "resnet"
+
     train(
         method=args.method,
         alpha=args.alpha,
@@ -89,7 +97,7 @@ if __name__ == "__main__":
         optimizer=args.optimizer,
         initial_lr=args.initial_lr,
         final_lr=args.final_lr,
-        architecture="vgg" if args.vgg else "resnet",
+        architecture=architecture,
     )
 
     logging.info("All done! Have a nice day!")
