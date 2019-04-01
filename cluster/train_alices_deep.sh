@@ -11,4 +11,4 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-python -u train.py alices --alpha 1.e-4 --name alices_deep --deep --dir /scratch/jb6504/StrongLensing-Inference
+python -u train.py alices --alpha 0.1 --name alices_deep --deep --dir /scratch/jb6504/StrongLensing-Inference
