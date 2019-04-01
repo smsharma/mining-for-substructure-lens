@@ -88,10 +88,26 @@ def simulate_test(n=500, alpha=200, beta=-1.9, m_sub_min=10.0):
     m_subs = _extract_m_subs(latents)
     n_subs = _extract_n_subs(latents)
 
-    return x, n_subs, m_subs
+    return None, x, n_subs, m_subs
 
 
-def save_test(data_dir, name, x, n_subs, m_subs):
+def simulate_test_prior(n=1000, alpha_mean=10.0, alpha_std=3.0, beta_mean=-1.9, beta_std=0.3, m_sub_min=10.0):
+    alpha = np.random.normal(loc=alpha_mean, scale=alpha_std, size=n // 2)
+    beta = np.random.normal(loc=beta_mean, scale=beta_std, size=n // 2)
+    alpha = np.clip(alpha, 0.1, None)
+    beta = np.clip(beta, None, -1.1)
+    theta = np.vstack((alpha, beta)).T
+
+    sim = SubhaloSimulator(m_sub_min=m_sub_min, m_sub_high=m_sub_min)
+
+    x, latents = sim.rvs(alpha, beta, n)
+    m_subs = _extract_m_subs(latents)
+    n_subs = _extract_n_subs(latents)
+
+    return theta, x, n_subs, m_subs
+
+
+def save_test(data_dir, name, theta, x, n_subs, m_subs):
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
     if not os.path.exists("{}/data".format(data_dir)):
@@ -99,6 +115,8 @@ def save_test(data_dir, name, x, n_subs, m_subs):
     if not os.path.exists("{}/data/samples".format(data_dir)):
         os.mkdir("{}/data/samples".format(data_dir))
 
+    if theta is not None:
+        np.save("{}/data/samples/theta_{}.npy".format(data_dir, name), theta)
     np.save("{}/data/samples/x_{}.npy".format(data_dir, name), x)
     np.save("{}/data/samples/n_subs_{}.npy".format(data_dir, name), n_subs)
     np.save("{}/data/samples/m_subs_{}.npy".format(data_dir, name), m_subs)
@@ -109,7 +127,8 @@ def parse_args():
 
     # Main options
     parser.add_argument("-n", type=int, default=10000, help="Number of samples to generate. Default is 10k.")
-    parser.add_argument("--point", action="store_true", help="Generate data at specific reference parameter point rather than from prior.")
+    parser.add_argument("--point", action="store_true", help="Generate train data at specific reference parameter point rather than from prior.")
+    parser.add_argument("--prior", action="store_true", help="Generate test data from prior rather than from reference parameter point.")
     parser.add_argument("--test", action="store_true", help="Generate test rather than train data.")
     parser.add_argument("--name", type=str, default=None, help='Sample name, like "train" or "test".')
     parser.add_argument("--dir", type=str, default=".", help="Directory. Results will be saved in the data/samples subfolder.")
@@ -130,7 +149,10 @@ if __name__ == "__main__":
 
     if args.test:
         name = "test" if args.name is None else args.name
-        results = simulate_test(args.n)
+        if args.prior:
+            results = simulate_test_prior(args.n)
+        else:
+            results = simulate_test(args.n)
         save_test(args.dir, name, *results)
     else:
         name = "train" if args.name is None else args.name
