@@ -92,8 +92,8 @@ def simulate_test(n=500, alpha=200, beta=-1.9, m_sub_min=10.0):
 
 
 def simulate_test_prior(n=1000, alpha_mean=10.0, alpha_std=3.0, beta_mean=-1.9, beta_std=0.3, m_sub_min=10.0):
-    alpha = np.random.normal(loc=alpha_mean, scale=alpha_std, size=n // 2)
-    beta = np.random.normal(loc=beta_mean, scale=beta_std, size=n // 2)
+    alpha = np.random.normal(loc=alpha_mean, scale=alpha_std, size=n)
+    beta = np.random.normal(loc=beta_mean, scale=beta_std, size=n)
     alpha = np.clip(alpha, 0.1, None)
     beta = np.clip(beta, None, -1.1)
     theta = np.vstack((alpha, beta)).T
