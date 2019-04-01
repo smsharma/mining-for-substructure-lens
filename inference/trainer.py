@@ -311,7 +311,7 @@ class Trainer(object):
     def wrap_up_early_stopping(self, best_model, currrent_loss, best_loss, best_epoch):
         if currrent_loss is None or best_loss is None:
             logger.warning("Loss is None, cannot wrap up early stopping")
-        elif currrent_loss < best_loss:
+        elif best_loss < currrent_loss:
             logger.info("Early stopping after epoch %s, with loss %8.5f compared to final loss %8.5f", best_epoch + 1, best_loss, currrent_loss)
             self.model.load_state_dict(best_model)
         else:
