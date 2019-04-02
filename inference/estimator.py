@@ -146,7 +146,7 @@ class ParameterizedRatioEstimator(object):
         )
         return result
 
-    def log_likelihood_ratio(self, x, theta, test_all_combinations=True, evaluate_score=False):
+    def log_likelihood_ratio(self, x, theta, test_all_combinations=True, evaluate_score=False, evaluate_grad_x=False):
         if self.model is None:
             raise ValueError("No model -- train or load model before evaluating it!")
 
@@ -164,23 +164,26 @@ class ParameterizedRatioEstimator(object):
 
             all_log_r_hat = []
             all_t_hat = []
+            all_grad_x = []
 
             for i, this_theta in enumerate(theta):
                 logger.debug("Starting ratio evaluation for thetas %s / %s: %s", i + 1, len(theta), this_theta)
-                _, log_r_hat, t_hat = evaluate_ratio_model(model=self.model, theta0s=[this_theta], xs=x, evaluate_score=evaluate_score)
+                _, log_r_hat, t_hat, x_grad = evaluate_ratio_model(model=self.model, theta0s=[this_theta], xs=x, evaluate_score=evaluate_score, evaluate_grad_x=evaluate_grad_x)
 
                 all_log_r_hat.append(log_r_hat)
                 all_t_hat.append(t_hat)
+                all_grad_x.append(x_grad)
 
             all_log_r_hat = np.array(all_log_r_hat)
             all_t_hat = np.array(all_t_hat)
+            all_grad_x = np.array(x_grad)
 
         else:
             logger.debug("Starting ratio evaluation")
-            _, all_log_r_hat, all_t_hat = evaluate_ratio_model(model=self.model, theta0s=theta, xs=x, evaluate_score=evaluate_score)
+            _, all_log_r_hat, all_t_hat, all_grad_x = evaluate_ratio_model(model=self.model, theta0s=theta, xs=x, evaluate_score=evaluate_score, evaluate_grad_x=evaluate_grad_x)
 
         logger.debug("Evaluation done")
-        return all_log_r_hat, all_t_hat
+        return all_log_r_hat, all_t_hat, all_grad_x
 
     def save(self, filename, save_model=False):
         if self.model is None:
