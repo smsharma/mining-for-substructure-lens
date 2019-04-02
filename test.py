@@ -81,5 +81,5 @@ if __name__ == "__main__":
                         level=logging.INFO)
     logging.info("Hi!")
     args = parse_args()
-    evaluate(args.dir, args.model, args.sample, args.result, args.grid)
+    evaluate(args.dir + "/data", args.model, args.sample, args.result, args.grid)
     logging.info("All done! Have a nice day!")

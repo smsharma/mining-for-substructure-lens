@@ -7,7 +7,7 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 # sbatch --array=0-99 simulate_train.sh
 # sbatch --array=0-9 simulate_train_point.sh
 # sbatch --array=0-9 simulate_test.sh
-sbatch --array=0-9 simulate_test_prior.sh
+# sbatch --array=0-9 simulate_test_prior.sh
 
 # sbatch combine_samples.sh
 
