@@ -13,7 +13,19 @@ from inference.estimator import ParameterizedRatioEstimator
 
 
 def train(
-    method, alpha, data_dir, sample_name, model_filename, architecture="resnet", log_input=False, batch_size=256, n_epochs=5, optimizer="adam", initial_lr=0.001, final_lr=0.0001, limit_samplesize=None
+    method,
+    alpha,
+    data_dir,
+    sample_name,
+    model_filename,
+    architecture="resnet",
+    log_input=False,
+    batch_size=256,
+    n_epochs=5,
+    optimizer="adam",
+    initial_lr=0.001,
+    final_lr=0.0001,
+    limit_samplesize=None,
 ):
     estimator = ParameterizedRatioEstimator(resolution=64, n_parameters=2, architecture=architecture, log_input=log_input, rescale_inputs=True)
     estimator.train(
@@ -54,7 +66,7 @@ def parse_args():
 
     # Training options
     parser.add_argument("--vgg", action="store_true", help="Usee VGG rather than ResNet.")
-    parser.add_argument("--deep", action="store_true", help='Use a deeper variation, i.e. ResNet-50 instead of ResNet-18.')
+    parser.add_argument("--deep", action="store_true", help="Use a deeper variation, i.e. ResNet-50 instead of ResNet-18.")
     parser.add_argument(
         "--alpha",
         type=float,

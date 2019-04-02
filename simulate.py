@@ -140,9 +140,7 @@ if __name__ == "__main__":
     args = parse_args()
 
     logging.basicConfig(
-        format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
-        datefmt="%H:%M",
-        level=logging.DEBUG if args.debug else logging.INFO
+        format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.DEBUG if args.debug else logging.INFO
     )
     logging.info("Hi!")
 
@@ -156,7 +154,7 @@ if __name__ == "__main__":
     else:
         name = "train" if args.name is None else args.name
         if args.point:
-            results = simulate_train(args.n, alpha_mean=12., alpha_std=0.01, beta_mean=-1.5, beta_std=0.01)
+            results = simulate_train(args.n, alpha_mean=12.0, alpha_std=0.01, beta_mean=-1.5, beta_std=0.01)
         else:
             results = simulate_train(args.n)
         save_train(args.dir, name, *results)

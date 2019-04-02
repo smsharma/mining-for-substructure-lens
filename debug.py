@@ -14,7 +14,7 @@ logging.info("Hi!")
 
 train(
     method="carl",
-    alpha=1.,
+    alpha=1.0,
     data_dir="/Users/johannbrehmer/work/projects/other/strong_lensing/StrongLensing-Inference/data/",
     sample_name="train",
     model_filename="debug",
