@@ -65,6 +65,13 @@ def parse_args():
     parser.add_argument("result", type=str, help="Model name.")
     parser.add_argument("--grid", action="store_true",
                         help='Evaluates the images on a parameter grid rather than just at the original parameter points.')
+    parser.add_argument(
+        "--dir",
+        type=str,
+        default=".",
+        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the data/models subfolder.",
+    )
+
 
     return parser.parse_args()
 
@@ -74,5 +81,5 @@ if __name__ == "__main__":
                         level=logging.INFO)
     logging.info("Hi!")
     args = parse_args()
-    evaluate(args.model, args.sample, args.result, args.grid)
+    evaluate(args.dir, args.model, args.sample, args.result, args.grid)
     logging.info("All done! Have a nice day!")
