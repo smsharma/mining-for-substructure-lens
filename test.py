@@ -13,7 +13,7 @@ from inference.estimator import ParameterizedRatioEstimator
 
 
 def make_grid(
-    alpha_min=0.0, alpha_max=20.0, beta_min=-1.0, beta_max=-3.0, resolution=25
+    alpha_min=1., alpha_max=19., beta_min=-1., beta_max=-2.8, resolution=25
 ):
     alpha_test = np.linspace(alpha_min, alpha_max, resolution)
     beta_test = np.linspace(beta_min, beta_max, resolution)
@@ -21,7 +21,10 @@ def make_grid(
     theta0, theta1 = np.meshgrid(alpha_test, beta_test)
     theta_grid = np.vstack((theta0.flatten(), theta1.flatten())).T
 
-    return theta_grid
+    mid_point = ((resolution - 1) // 2) * resolution + ((resolution - 1) // 2)
+    logging.debug("Grid mid point: %s, %s", mid_point, theta_grid[mid_point])
+
+    return theta_grid, mid_point
 
 
 def evaluate(data_dir, model_filename, sample_filename, result_filename, grid, shuffle):
@@ -33,11 +36,11 @@ def evaluate(data_dir, model_filename, sample_filename, result_filename, grid, s
 
     if grid:
         x = np.load("{}/samples/x_{}.npy".format(data_dir, sample_filename))
-        theta = make_grid()
+        theta, grad_x_index = make_grid()
         np.save("{}/results/theta_grid.npy".format(data_dir), theta)
 
         llr, _, grad_x = estimator.log_likelihood_ratio(
-            x=x, theta=theta, test_all_combinations=True, evaluate_grad_x=True
+            x=x, theta=theta, test_all_combinations=True, evaluate_grad_x=True, grad_x_theta_index = grad_x_index
         )
 
     else:
@@ -89,7 +92,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
         datefmt="%H:%M",
-        level=logging.INFO,
+        level=logging.DEBUG,
     )
     logging.info("Hi!")
     args = parse_args()

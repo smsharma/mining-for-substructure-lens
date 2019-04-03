@@ -11,7 +11,7 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-# python -u test.py alice_deep test alice_deep_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
+python -u test.py alice_deep test alice_deep_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
 # python -u test.py alice_deep test_prior alice_deep_prior --dir /scratch/jb6504/StrongLensing-Inference
 python -u test.py alice_deep test_prior alice_deep_shuffledprior --shuffled --dir /scratch/jb6504/StrongLensing-Inference
 

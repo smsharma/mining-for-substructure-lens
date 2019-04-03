@@ -192,6 +192,7 @@ class ParameterizedRatioEstimator(object):
         evaluate_score=False,
         evaluate_grad_x=False,
         batch_size=1024,
+        grad_x_theta_index=0
     ):
         if self.model is None:
             raise ValueError("No model -- train or load model before evaluating it!")
@@ -210,7 +211,7 @@ class ParameterizedRatioEstimator(object):
 
             all_log_r_hat = []
             all_t_hat = []
-            all_grad_x = []
+            all_grad_x = None
 
             for i, this_theta in enumerate(theta):
                 logger.debug(
@@ -229,11 +230,11 @@ class ParameterizedRatioEstimator(object):
 
                 all_log_r_hat.append(log_r_hat)
                 all_t_hat.append(t_hat)
-                all_grad_x.append(x_grad)
+                if x_grad is not None and i == grad_x_theta_index:
+                    all_grad_x = x_grad
 
             all_log_r_hat = np.array(all_log_r_hat)
             all_t_hat = np.array(all_t_hat)
-            all_grad_x = np.array(x_grad)
 
         else:
             logger.debug("Starting ratio evaluation")
