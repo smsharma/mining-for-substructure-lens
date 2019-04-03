@@ -14,6 +14,7 @@ def _evaluate_batch(model, theta0s, xs, evaluate_score, evaluate_grad_x, run_on_
     dtype = torch.double if double_precision else torch.float
 
     # Prepare data
+    n_xs = len(xs)
     theta0s = torch.stack([tensor(theta0s[i % len(theta0s)], requires_grad=evaluate_score) for i in range(n_xs)])
     xs = torch.stack([tensor(i) for i in xs])
 

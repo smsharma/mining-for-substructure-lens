@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import sys
+import sys, os
 import logging
 import argparse
 import numpy as np
@@ -23,13 +23,16 @@ def make_grid(alpha_min=0.0, alpha_max=20.0, beta_min=-1.0, beta_max=-3.0, resol
 
 
 def evaluate(data_dir, model_filename, sample_filename, result_filename, grid):
+    if not os.path.exists("{}/results".format(data_dir)):
+        os.mkdir("{}/results".format(data_dir))
+
     estimator = ParameterizedRatioEstimator()
     estimator.load("{}/models/{}".format(data_dir, model_filename))
 
     if grid:
         x = np.load("{}/samples/x_{}.npy".format(data_dir, sample_filename))
         theta = make_grid()
-        np.save("{}/results/theta_grid.npy")
+        np.save("{}/results/theta_grid.npy", theta)
 
         llr, _, grad_x = estimator.log_likelihood_ratio(x=x, theta=theta, test_all_combinations=False, evaluate_grad_x=True)
 
