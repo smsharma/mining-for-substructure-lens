@@ -24,7 +24,7 @@ def make_grid(
     return theta_grid
 
 
-def evaluate(data_dir, model_filename, sample_filename, result_filename, grid):
+def evaluate(data_dir, model_filename, sample_filename, result_filename, grid, shuffle):
     if not os.path.exists("{}/results".format(data_dir)):
         os.mkdir("{}/results".format(data_dir))
 
@@ -43,6 +43,8 @@ def evaluate(data_dir, model_filename, sample_filename, result_filename, grid):
     else:
         x = np.load("{}/samples/x_{}.npy".format(data_dir, sample_filename))
         theta = np.load("{}/samples/theta_{}.npy".format(data_dir, sample_filename))
+        if shuffle:
+            np.random.shuffle(theta)
 
         llr, _, grad_x = estimator.log_likelihood_ratio(
             x=x, theta=theta, test_all_combinations=False, evaluate_grad_x=True
@@ -67,10 +69,17 @@ def parse_args():
         help="Evaluates the images on a parameter grid rather than just at the original parameter points.",
     )
     parser.add_argument(
+        "--shuffle",
+        action="store_true",
+        help="If --grid is not used, shuffles the theta values between the images. This can be useful to make ROC "
+             "curves.",
+    )
+    parser.add_argument(
         "--dir",
         type=str,
         default=".",
-        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the data/models subfolder.",
+        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the "
+             "data/models subfolder.",
     )
 
     return parser.parse_args()
@@ -84,5 +93,5 @@ if __name__ == "__main__":
     )
     logging.info("Hi!")
     args = parse_args()
-    evaluate(args.dir + "/data", args.model, args.sample, args.result, args.grid)
+    evaluate(args.dir + "/data", args.model, args.sample, args.result, args.grid, args.shuffle)
     logging.info("All done! Have a nice day!")
