@@ -276,12 +276,6 @@ class ParameterizedRatioEstimator(object):
             else:
                 theta_batch = np.copy(theta0s)
 
-            logger.debug(
-                "Batch data: x has shape %s, thetas has shape %s",
-                x_batch.shape,
-                theta_batch.shape,
-            )
-
             s, log_r, t, x_grad = self._evaluate_batch(
                 theta_batch,
                 x_batch,
