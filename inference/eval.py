@@ -16,7 +16,7 @@ def _evaluate_batch(model, theta0s, xs, evaluate_score, evaluate_grad_x, run_on_
     # Prepare data
     n_xs = len(xs)
     theta0s = torch.stack([tensor(theta0s[i % len(theta0s)], requires_grad=evaluate_score) for i in range(n_xs)])
-    xs = torch.stack([tensor(i) for i in xs])
+    xs = torch.stack([tensor(x) for x in xs])
 
     model = model.to(device, dtype)
     theta0s = theta0s.to(device, dtype)
@@ -65,6 +65,7 @@ def _evaluate_batch(model, theta0s, xs, evaluate_score, evaluate_grad_x, run_on_
 
     return s_hat, log_r_hat, t_hat, x_grad
 
+
 def evaluate_ratio_model(model, theta0s, xs, evaluate_score=False, evaluate_grad_x=False, run_on_gpu=True, double_precision=False, batch_size=1000):
     # Batches
     n_xs = len(xs)
@@ -78,6 +79,8 @@ def evaluate_ratio_model(model, theta0s, xs, evaluate_score=False, evaluate_grad
 
         theta_batch = theta0s[i_batch * batch_size:(i_batch+1)*batch_size]
         x_batch = xs[i_batch * batch_size:(i_batch+1)*batch_size]
+
+        logger.debug("Batch data: x has shape %s, thetas has shape %s", x_batch.shape, theta_batch.shape)
 
         s, log_r, t, x_grad = _evaluate_batch(model, theta_batch, x_batch, evaluate_score, evaluate_grad_x, run_on_gpu, double_precision)
 
