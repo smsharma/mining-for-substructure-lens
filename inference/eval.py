@@ -65,7 +65,7 @@ def _evaluate_batch(model, theta0s, xs, evaluate_score, evaluate_grad_x, run_on_
 
     return s_hat, log_r_hat, t_hat, x_grad
 
-def evaluate_ratio_model(model, theta0s, xs, evaluate_score=False, evaluate_grad_x=False, run_on_gpu=True, double_precision=False, batch_size=10000):
+def evaluate_ratio_model(model, theta0s, xs, evaluate_score=False, evaluate_grad_x=False, run_on_gpu=True, double_precision=False, batch_size=1000):
     # Batches
     n_xs = len(xs)
     n_batches = (n_xs - 1) // batch_size + 1

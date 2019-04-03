@@ -32,7 +32,7 @@ def evaluate(data_dir, model_filename, sample_filename, result_filename, grid):
     if grid:
         x = np.load("{}/samples/x_{}.npy".format(data_dir, sample_filename))
         theta = make_grid()
-        np.save("{}/results/theta_grid.npy", theta)
+        np.save("{}/results/theta_grid.npy".format(data_dir), theta)
 
         llr, _, grad_x = estimator.log_likelihood_ratio(x=x, theta=theta, test_all_combinations=False, evaluate_grad_x=True)
 
@@ -65,7 +65,7 @@ def parse_args():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.INFO)
+    logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.DEBUG)
     logging.info("Hi!")
     args = parse_args()
     evaluate(args.dir + "/data", args.model, args.sample, args.result, args.grid)
