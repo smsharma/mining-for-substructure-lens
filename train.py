@@ -27,7 +27,13 @@ def train(
     final_lr=0.0001,
     limit_samplesize=None,
 ):
-    estimator = ParameterizedRatioEstimator(resolution=64, n_parameters=2, architecture=architecture, log_input=log_input, rescale_inputs=True)
+    estimator = ParameterizedRatioEstimator(
+        resolution=64,
+        n_parameters=2,
+        architecture=architecture,
+        log_input=log_input,
+        rescale_inputs=True,
+    )
     estimator.train(
         method,
         x="{}/samples/x_{}.npy".format(data_dir, sample_name),
@@ -51,12 +57,24 @@ def train(
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Strong lensing experiments: simulation")
+    parser = argparse.ArgumentParser(
+        description="Strong lensing experiments: simulation"
+    )
 
     # Main options
-    parser.add_argument("method", help='Inference method: "carl", "rolr", "alice", "cascal", "rascal", "alices".')
-    parser.add_argument("--sample", type=str, default="train", help='Sample name, like "train".')
-    parser.add_argument("--name", type=str, default=None, help="Model name. Defaults to the name of the method.")
+    parser.add_argument(
+        "method",
+        help='Inference method: "carl", "rolr", "alice", "cascal", "rascal", "alices".',
+    )
+    parser.add_argument(
+        "--sample", type=str, default="train", help='Sample name, like "train".'
+    )
+    parser.add_argument(
+        "--name",
+        type=str,
+        default=None,
+        help="Model name. Defaults to the name of the method.",
+    )
     parser.add_argument(
         "--dir",
         type=str,
@@ -65,27 +83,63 @@ def parse_args():
     )
 
     # Training options
-    parser.add_argument("--vgg", action="store_true", help="Usee VGG rather than ResNet.")
-    parser.add_argument("--deep", action="store_true", help="Use a deeper variation, i.e. ResNet-50 instead of ResNet-18.")
+    parser.add_argument(
+        "--vgg", action="store_true", help="Usee VGG rather than ResNet."
+    )
+    parser.add_argument(
+        "--deep",
+        action="store_true",
+        help="Use a deeper variation, i.e. ResNet-50 instead of ResNet-18.",
+    )
     parser.add_argument(
         "--alpha",
         type=float,
         default=1.0,
-        help="alpha parameter weighting the score MSE in the loss function of the SCANDAL, RASCAL, and" "and ALICES inference methods. Default: 1.",
+        help="alpha parameter weighting the score MSE in the loss function of the SCANDAL, RASCAL, and"
+        "and ALICES inference methods. Default: 1.",
     )
-    parser.add_argument("--log", action="store_true", help="Whether the log of the input is taken.")
-    parser.add_argument("--epochs", type=int, default=20, help="Number of epochs. Default: 20.")
-    parser.add_argument("--batch_size", type=int, default=128, help="Batch size. Default: 128.")
-    parser.add_argument("--optimizer", default="adam", help='Optimizer. "amsgrad", "adam", and "sgd" are supported. Default: "adam".')
-    parser.add_argument("--initial_lr", type=float, default=0.0005, help="Initial learning rate. Default: 0.0005.")
-    parser.add_argument("--final_lr", type=float, default=0.00001, help="Final learning rate. Default: 0.000005.")
-    parser.add_argument("--validation_split", type=float, default=0.3, help="Validation split. Default: 0.3.")
+    parser.add_argument(
+        "--log", action="store_true", help="Whether the log of the input is taken."
+    )
+    parser.add_argument(
+        "--epochs", type=int, default=20, help="Number of epochs. Default: 20."
+    )
+    parser.add_argument(
+        "--batch_size", type=int, default=128, help="Batch size. Default: 128."
+    )
+    parser.add_argument(
+        "--optimizer",
+        default="adam",
+        help='Optimizer. "amsgrad", "adam", and "sgd" are supported. Default: "adam".',
+    )
+    parser.add_argument(
+        "--initial_lr",
+        type=float,
+        default=0.0005,
+        help="Initial learning rate. Default: 0.0005.",
+    )
+    parser.add_argument(
+        "--final_lr",
+        type=float,
+        default=0.00001,
+        help="Final learning rate. Default: 0.000005.",
+    )
+    parser.add_argument(
+        "--validation_split",
+        type=float,
+        default=0.3,
+        help="Validation split. Default: 0.3.",
+    )
 
     return parser.parse_args()
 
 
 if __name__ == "__main__":
-    logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.INFO)
+    logging.basicConfig(
+        format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
+        datefmt="%H:%M",
+        level=logging.INFO,
+    )
     logging.info("Hi!")
 
     args = parse_args()

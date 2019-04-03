@@ -10,9 +10,13 @@ import torch
 from inference.models.vgg import VGGRatioEstimator
 from inference.models.resnet import ResNetRatioEstimator
 from inference.trainer import SingleParameterizedRatioTrainer
-from inference.utils import create_missing_folders, load_and_check, sanitize_array, get_optimizer, get_loss
+from inference.utils import (
+    create_missing_folders,
+    load_and_check,
+    get_optimizer,
+    get_loss,
+)
 from inference.utils import restrict_samplesize
-from inference.eval import evaluate_ratio_model
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +25,15 @@ class ParameterizedRatioEstimator(object):
     theta_mean = np.array([10.0, -1.9])
     theta_std = np.array([3.0, 0.3])
 
-    def __init__(self, resolution=64, n_parameters=2, architecture="resnet", log_input=False, rescale_inputs=True, rescale_theta=True):
+    def __init__(
+        self,
+        resolution=64,
+        n_parameters=2,
+        architecture="resnet",
+        log_input=False,
+        rescale_inputs=True,
+        rescale_theta=True,
+    ):
         self.resolution = resolution
         self.n_parameters = n_parameters
         self.log_input = log_input
@@ -63,7 +75,11 @@ class ParameterizedRatioEstimator(object):
         logger.info("  Batch size:             %s", batch_size)
         logger.info("  Optimizer:              %s", optimizer)
         logger.info("  Epochs:                 %s", n_epochs)
-        logger.info("  Learning rate:          %s initially, decaying to %s", initial_lr, final_lr)
+        logger.info(
+            "  Learning rate:          %s initially, decaying to %s",
+            initial_lr,
+            final_lr,
+        )
         if optimizer == "sgd":
             logger.info("  Nesterov momentum:      %s", nesterov_momentum)
         logger.info("  Validation split:       %s", validation_split)
@@ -101,21 +117,43 @@ class ParameterizedRatioEstimator(object):
         n_parameters = theta.shape[1]
         resolution_x = x.shape[1]
         resolution_y = x.shape[2]
-        logger.info("Found %s samples with %s parameters and resolution %s x %s", n_samples, n_parameters, resolution_x, resolution_y)
+        logger.info(
+            "Found %s samples with %s parameters and resolution %s x %s",
+            n_samples,
+            n_parameters,
+            resolution_x,
+            resolution_y,
+        )
         if resolution_x != resolution_y:
-            raise RuntimeError("Currently only supports square images, but found resolution {} x {}".format(resolution_x, resolution_y))
+            raise RuntimeError(
+                "Currently only supports square images, but found resolution {} x {}".format(
+                    resolution_x, resolution_y
+                )
+            )
         resolution = resolution_x
 
         # Limit sample size
         if limit_samplesize is not None and limit_samplesize < n_samples:
-            logger.info("Only using %s of %s training samples", limit_samplesize, n_samples)
-            x, theta, y, r_xz, t_xz = restrict_samplesize(limit_samplesize, x, theta, y, r_xz, t_xz)
+            logger.info(
+                "Only using %s of %s training samples", limit_samplesize, n_samples
+            )
+            x, theta, y, r_xz, t_xz = restrict_samplesize(
+                limit_samplesize, x, theta, y, r_xz, t_xz
+            )
 
         # Check consistency of input with model
         if n_parameters != self.n_parameters:
-            raise RuntimeError("Number of parameters does not match model: {} vs {}".format(n_parameters, self.n_parameters))
+            raise RuntimeError(
+                "Number of parameters does not match model: {} vs {}".format(
+                    n_parameters, self.n_parameters
+                )
+            )
         if resolution != self.resolution:
-            raise RuntimeError("Number of observables does not match model: {} vs {}".format(resolution, self.resolution))
+            raise RuntimeError(
+                "Number of observables does not match model: {} vs {}".format(
+                    resolution, self.resolution
+                )
+            )
 
         # Data
         data = self._package_training_data(method, x, theta, y, r_xz, t_xz)
@@ -146,7 +184,15 @@ class ParameterizedRatioEstimator(object):
         )
         return result
 
-    def log_likelihood_ratio(self, x, theta, test_all_combinations=True, evaluate_score=False, evaluate_grad_x=False):
+    def log_likelihood_ratio(
+        self,
+        x,
+        theta,
+        test_all_combinations=True,
+        evaluate_score=False,
+        evaluate_grad_x=False,
+        batch_size=1024,
+    ):
         if self.model is None:
             raise ValueError("No model -- train or load model before evaluating it!")
 
@@ -167,8 +213,19 @@ class ParameterizedRatioEstimator(object):
             all_grad_x = []
 
             for i, this_theta in enumerate(theta):
-                logger.debug("Starting ratio evaluation for thetas %s / %s: %s", i + 1, len(theta), this_theta)
-                _, log_r_hat, t_hat, x_grad = evaluate_ratio_model(model=self.model, theta0s=[this_theta], xs=x, evaluate_score=evaluate_score, evaluate_grad_x=evaluate_grad_x)
+                logger.debug(
+                    "Starting ratio evaluation for thetas %s / %s: %s",
+                    i + 1,
+                    len(theta),
+                    this_theta,
+                )
+                _, log_r_hat, t_hat, x_grad = self._evaluate(
+                    theta0s=[this_theta],
+                    xs=x,
+                    evaluate_score=evaluate_score,
+                    evaluate_grad_x=evaluate_grad_x,
+                    batch_size=batch_size,
+                )
 
                 all_log_r_hat.append(log_r_hat)
                 all_t_hat.append(t_hat)
@@ -180,10 +237,157 @@ class ParameterizedRatioEstimator(object):
 
         else:
             logger.debug("Starting ratio evaluation")
-            _, all_log_r_hat, all_t_hat, all_grad_x = evaluate_ratio_model(model=self.model, theta0s=theta, xs=x, evaluate_score=evaluate_score, evaluate_grad_x=evaluate_grad_x)
+            _, all_log_r_hat, all_t_hat, all_grad_x = self._evaluate(
+                theta0s=theta,
+                xs=x,
+                evaluate_score=evaluate_score,
+                evaluate_grad_x=evaluate_grad_x,
+                batch_size=batch_size,
+            )
 
         logger.debug("Evaluation done")
         return all_log_r_hat, all_t_hat, all_grad_x
+
+    def _evaluate(
+        self,
+        theta0s,
+        xs,
+        evaluate_score=False,
+        evaluate_grad_x=False,
+        run_on_gpu=True,
+        double_precision=False,
+        batch_size=1000,
+    ):
+        # Batches
+        n_xs = len(xs)
+        n_batches = (n_xs - 1) // batch_size + 1
+
+        # results
+        all_s, all_log_r, all_t, all_x_grad = [], [], [], []
+
+        for i_batch in range(n_batches):
+            logger.debug("Evaluating batch %s / %s", i_batch + 1, n_batches)
+
+            x_batch = np.copy(xs[i_batch * batch_size : (i_batch + 1) * batch_size])
+            if len(theta0s) == n_xs:
+                theta_batch = np.copy(
+                    theta0s[i_batch * batch_size : (i_batch + 1) * batch_size]
+                )
+            else:
+                theta_batch = np.copy(theta0s)
+
+            logger.debug(
+                "Batch data: x has shape %s, thetas has shape %s",
+                x_batch.shape,
+                theta_batch.shape,
+            )
+
+            s, log_r, t, x_grad = self._evaluate_batch(
+                theta_batch,
+                x_batch,
+                evaluate_score,
+                evaluate_grad_x,
+                run_on_gpu,
+                double_precision,
+            )
+
+            all_s.append(s)
+            all_log_r.append(log_r)
+            if t is not None:
+                all_t.append(t)
+            if all_x_grad is not None:
+                all_x_grad.append(x_grad)
+
+        # mash together
+        all_s = np.concatenate(all_s, 0)
+        all_log_r = np.concatenate(all_log_r, 0)
+        if len(all_t) > 0:
+            all_t = np.concatenate(all_t, 0)
+        else:
+            all_t = None
+        if len(all_x_grad) > 0:
+            all_x_grad = np.concatenate(all_x_grad, 0)
+        else:
+            all_x_grad = None
+
+        return all_s, all_log_r, all_t, all_x_grad
+
+    def _evaluate_batch(
+        self, theta0s, xs, evaluate_score, evaluate_grad_x, run_on_gpu, double_precision
+    ):
+        # CPU or GPU?
+        run_on_gpu = run_on_gpu and torch.cuda.is_available()
+        device = torch.device("cuda" if run_on_gpu else "cpu")
+        dtype = torch.double if double_precision else torch.float
+
+        # Prepare data
+        n_xs = len(xs)
+        theta0s = torch.stack(
+            [
+                torch.tensor(theta0s[i % len(theta0s)], requires_grad=evaluate_score)
+                for i in range(n_xs)
+            ]
+        )
+        xs = torch.stack([torch.tensor(x) for x in xs])
+
+        self.model = self.model.to(device, dtype)
+        theta0s = theta0s.to(device, dtype)
+        xs = xs.to(device, dtype)
+
+        # Evaluate ratio estimator with score or x gradients:
+        if evaluate_score or evaluate_grad_x:
+            self.model.eval()
+
+            s, log_r, t, x_grad = self.model(
+                theta0s,
+                xs,
+                track_score=evaluate_score,
+                return_grad_x=evaluate_grad_x,
+                create_gradient_graph=False,
+            )
+
+            # Copy back tensors to CPU
+            if run_on_gpu:
+                s = s.cpu()
+                log_r = log_r.cpu()
+                if t is not None:
+                    t = t.cpu()
+                if x_grad is not None:
+                    x_grad = x_grad.cpu()
+
+            # Get data and return
+            s = s.detach().numpy().flatten()
+            log_r = log_r.detach().numpy().flatten()
+            if t is not None:
+                t = t.detach().numpy()
+            if x_grad is not None:
+                x_grad = x_grad.detach().numpy()
+
+        # Evaluate ratio estimator without score:
+        else:
+            with torch.no_grad():
+                self.model.eval()
+
+                s, log_r, _, _ = self.model(
+                    theta0s,
+                    xs,
+                    track_score=False,
+                    return_grad_x=False,
+                    create_gradient_graph=False,
+                )
+
+                # Copy back tensors to CPU
+                if run_on_gpu:
+                    s = s.cpu()
+                    log_r = log_r.cpu()
+
+                # Get data and return
+                s = s.detach().numpy().flatten()
+                log_r = log_r.detach().numpy().flatten()
+                t = None
+                x_grad = None
+
+        return s, log_r, t, x_grad
 
     def save(self, filename, save_model=False):
         if self.model is None:
@@ -218,13 +422,18 @@ class ParameterizedRatioEstimator(object):
 
         # Load state dict
         logger.debug("Loading state dictionary from %s_state_dict.pt", filename)
-        self.model.load_state_dict(torch.load(filename + "_state_dict.pt", map_location="cpu"))
+        self.model.load_state_dict(
+            torch.load(filename + "_state_dict.pt", map_location="cpu")
+        )
 
     def _create_model(self):
         logger.info("Creating model")
         logger.info("  Architecture:           %s", self.architecture)
         logger.info("  Log input:              %s", self.log_input)
-        logger.info("  Rescale input:          %s", self.x_scaling_std is not None and self.x_scaling_mean is not None)
+        logger.info(
+            "  Rescale input:          %s",
+            self.x_scaling_std is not None and self.x_scaling_mean is not None,
+        )
 
         if self.architecture in ["resnet", "resnet18"]:
             self.model = ResNetRatioEstimator(
@@ -232,7 +441,7 @@ class ParameterizedRatioEstimator(object):
                 n_hidden=512,
                 log_input=self.log_input,
                 input_mean=self.x_scaling_mean,
-                input_std=self.x_scaling_std
+                input_std=self.x_scaling_std,
             )
 
         elif self.architecture == "resnet50":
@@ -242,7 +451,7 @@ class ParameterizedRatioEstimator(object):
                 n_hidden=1024,
                 log_input=self.log_input,
                 input_mean=self.x_scaling_mean,
-                input_std=self.x_scaling_std
+                input_std=self.x_scaling_std,
             )
 
         elif self.architecture == "vgg":
@@ -250,7 +459,7 @@ class ParameterizedRatioEstimator(object):
                 n_parameters=self.n_parameters,
                 log_input=self.log_input,
                 input_mean=self.x_scaling_mean,
-                input_std=self.x_scaling_std
+                input_std=self.x_scaling_std,
             )
 
         else:
@@ -261,7 +470,7 @@ class ParameterizedRatioEstimator(object):
     def _count_model_parameters(self):
         return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
 
-    def _initialize_input_transform(self, x, transform=True):
+    def _initialize_input_transform(self, x):
         if self.rescale_inputs:
             self.x_scaling_mean = np.mean(x)
             self.x_scaling_std = np.maximum(np.std(x), 1.0e-6)
@@ -309,9 +518,13 @@ class ParameterizedRatioEstimator(object):
     @staticmethod
     def _check_required_data(method, r_xz, t_xz):
         if method in ["cascal", "alices", "rascal"] and t_xz is None:
-            raise RuntimeError("Method {} requires joint score information".format(method))
+            raise RuntimeError(
+                "Method {} requires joint score information".format(method)
+            )
         if method in ["rolr", "alices", "rascal"] and r_xz is None:
-            raise RuntimeError("Method {} requires joint likelihood ratio information".format(method))
+            raise RuntimeError(
+                "Method {} requires joint likelihood ratio information".format(method)
+            )
 
     @staticmethod
     def _package_training_data(method, x, theta, y, r_xz, t_xz):

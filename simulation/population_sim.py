@@ -13,7 +13,14 @@ else:
     import numpy as np
 import autograd as ag
 
-from simulation.units import M_s, erg, Centimeter, Angstrom, Sec, radtoasc  # Don't import * since that will overwrite np
+from simulation.units import (
+    M_s,
+    erg,
+    Centimeter,
+    Angstrom,
+    Sec,
+    radtoasc,
+)  # Don't import * since that will overwrite np
 from simulation.lensing_sim import LensingSim
 
 logger = logging.getLogger(__name__)
@@ -48,7 +55,12 @@ class SubhaloSimulator:
         self.m_sub_high = m_sub_high
 
         # Host galaxy
-        self.hst_param_dict = {"profile": host_profile, "theta_x": host_theta_x, "theta_y": host_theta_y, "theta_E": host_theta_E}
+        self.hst_param_dict = {
+            "profile": host_profile,
+            "theta_x": host_theta_x,
+            "theta_y": host_theta_y,
+            "theta_E": host_theta_E,
+        }
 
         # Observational parameters
         self.observation_dict = {
@@ -64,7 +76,12 @@ class SubhaloSimulator:
         self.global_dict = {"z_s": zs, "z_l": zl}
 
         # Source parameters
-        self.src_param_dict = {"profile": src_profile, "I_gal": src_I_gal, "theta_e_gal": src_theta_e_gal, "n_srsc": src_n}
+        self.src_param_dict = {
+            "profile": src_profile,
+            "I_gal": src_I_gal,
+            "theta_e_gal": src_theta_e_gal,
+            "n_srsc": src_n,
+        }
 
         # Autograd
         if AUTOGRAD:
@@ -94,7 +111,9 @@ class SubhaloSimulator:
 
         # Evaluate likelihoods of numbers of subhalos
         for i_eval, (alpha_eval, beta_eval) in enumerate(zip(alphas_eval, betas_eval)):
-            log_p_xz_eval[i_eval] += self._calculate_log_p_n_sub(n_sub, alpha_eval, beta_eval)
+            log_p_xz_eval[i_eval] += self._calculate_log_p_n_sub(
+                n_sub, alpha_eval, beta_eval
+            )
         if DEBUG:
             logger.debug("Log p: %s", log_p_xz_eval)
 
@@ -106,7 +125,9 @@ class SubhaloSimulator:
         # Evaluate likelihoods of subhalo masses
         for i_eval, (alpha_eval, beta_eval) in enumerate(zip(alphas_eval, betas_eval)):
             for i_sub in range(n_sub):
-                log_p_xz_eval[i_eval] += self._calculate_log_p_m_sub(m_sub[i_sub], alpha_eval, beta_eval)
+                log_p_xz_eval[i_eval] += self._calculate_log_p_m_sub(
+                    m_sub[i_sub], alpha_eval, beta_eval
+                )
         if DEBUG:
             logger.debug("Log p: %s", log_p_xz_eval)
 
@@ -155,7 +176,9 @@ class SubhaloSimulator:
         n_sub_mean_eval = self._calculate_expected_n_sub(alpha, beta)
         if DEBUG:
             logger.debug("Eval subhalo mean: %s", n_sub_mean_eval)
-        log_p_poisson = n_sub * np.log(n_sub_mean_eval) - n_sub_mean_eval  #  - np.log(math.factorial(n_sub))
+        log_p_poisson = (
+            n_sub * np.log(n_sub_mean_eval) - n_sub_mean_eval
+        )  #  - np.log(math.factorial(n_sub))
         return log_p_poisson
 
     def _draw_m_sub(self, n_sub, alpha, beta):
@@ -164,7 +187,11 @@ class SubhaloSimulator:
         return m_sub
 
     def _calculate_log_p_m_sub(self, m, alpha, beta):
-        log_p = np.log(-beta - 1.0) - np.log(self.m_sub_min) + beta * np.log(m / self.m_sub_min)
+        log_p = (
+            np.log(-beta - 1.0)
+            - np.log(self.m_sub_min)
+            + beta * np.log(m / self.m_sub_min)
+        )
         return log_p
 
     def _draw_sub_coordinates(self, n_sub):
@@ -183,9 +210,16 @@ class SubhaloSimulator:
     def _lensing(self, n_sub, m_sub, x_sub, y_sub):
         lens_list = [self.hst_param_dict]
         for i_sub in range(n_sub):
-            sub_param_dict = {"profile": "nfw", "theta_x": x_sub[i_sub], "theta_y": y_sub[i_sub], "M200": m_sub[i_sub] * self.mass_base_unit}
+            sub_param_dict = {
+                "profile": "nfw",
+                "theta_x": x_sub[i_sub],
+                "theta_y": y_sub[i_sub],
+                "M200": m_sub[i_sub] * self.mass_base_unit,
+            }
             lens_list.append(sub_param_dict)
-        lsi = LensingSim(lens_list, [self.src_param_dict], self.global_dict, self.observation_dict)
+        lsi = LensingSim(
+            lens_list, [self.src_param_dict], self.global_dict, self.observation_dict
+        )
         image_mean = lsi.lensed_image()
         return image_mean
 
@@ -272,7 +306,17 @@ class SubhaloSimulator:
 
         return all_images, all_t_xz, all_log_r_xz, all_latents
 
-    def rvs_score_ratio_to_evidence(self, alpha, beta, alpha_mean, alpha_std, beta_mean, beta_std, n_images, n_theta_samples):
+    def rvs_score_ratio_to_evidence(
+        self,
+        alpha,
+        beta,
+        alpha_mean,
+        alpha_std,
+        beta_mean,
+        beta_std,
+        n_images,
+        n_theta_samples,
+    ):
         all_images = []
         all_t_xz = []
         all_log_r_xz = []
@@ -281,8 +325,12 @@ class SubhaloSimulator:
 
         n_verbose = max(1, n_images // 20)
 
-        alpha_prior = np.random.normal(loc=alpha_mean, scale=alpha_std, size=n_theta_samples)
-        beta_prior = np.random.normal(loc=beta_mean, scale=beta_std, size=n_theta_samples)
+        alpha_prior = np.random.normal(
+            loc=alpha_mean, scale=alpha_std, size=n_theta_samples
+        )
+        beta_prior = np.random.normal(
+            loc=beta_mean, scale=beta_std, size=n_theta_samples
+        )
         alpha_prior = np.clip(alpha_prior, 0.1, None)
         beta_prior = np.clip(beta_prior, None, -1.1)
         params_prior = np.vstack((alpha_prior, beta_prior)).T
@@ -316,8 +364,12 @@ class SubhaloSimulator:
             # Estimate uncertainty of log r from MC sampling
             inverse_r_xz_uncertainty = 0.0
             for i_theta in range(n_theta_samples):
-                inverse_r_xz_uncertainty += (np.exp(log_p_xzs[i_theta + 1] - log_p_xzs[0]) - inverse_r_xz) ** 2.0
-            inverse_r_xz_uncertainty /= float(n_theta_samples) * (float(n_theta_samples) - 1.0)
+                inverse_r_xz_uncertainty += (
+                    np.exp(log_p_xzs[i_theta + 1] - log_p_xzs[0]) - inverse_r_xz
+                ) ** 2.0
+            inverse_r_xz_uncertainty /= float(n_theta_samples) * (
+                float(n_theta_samples) - 1.0
+            )
             log_r_xz_uncertainty = inverse_r_xz_uncertainty / inverse_r_xz
 
             n_subhalos = latents[0]
@@ -340,9 +392,25 @@ class SubhaloSimulator:
         all_log_r_xz = np.array(all_log_r_xz)
         all_log_r_xz_uncertainties = np.array(all_log_r_xz_uncertainties)
 
-        return all_images, all_t_xz, all_log_r_xz, all_log_r_xz_uncertainties, all_latents
+        return (
+            all_images,
+            all_t_xz,
+            all_log_r_xz,
+            all_log_r_xz_uncertainties,
+            all_latents,
+        )
 
-    def rvs_score_ratio_to_evidence_inverse(self, alpha, beta, alpha_mean, alpha_std, beta_mean, beta_std, n_images, n_theta_samples):
+    def rvs_score_ratio_to_evidence_inverse(
+        self,
+        alpha,
+        beta,
+        alpha_mean,
+        alpha_std,
+        beta_mean,
+        beta_std,
+        n_images,
+        n_theta_samples,
+    ):
         all_images = []
         all_t_xz = []
         all_log_r_xz = []
@@ -351,8 +419,12 @@ class SubhaloSimulator:
 
         n_verbose = max(1, n_images // 20)
 
-        alpha_prior = np.random.normal(loc=alpha_mean, scale=alpha_std, size=n_theta_samples)
-        beta_prior = np.random.normal(loc=beta_mean, scale=beta_std, size=n_theta_samples)
+        alpha_prior = np.random.normal(
+            loc=alpha_mean, scale=alpha_std, size=n_theta_samples
+        )
+        beta_prior = np.random.normal(
+            loc=beta_mean, scale=beta_std, size=n_theta_samples
+        )
         alpha_prior = np.clip(alpha_prior, 0.1, None)
         beta_prior = np.clip(beta_prior, None, -1.1)
         params_prior = np.vstack((alpha_prior, beta_prior)).T
@@ -373,7 +445,9 @@ class SubhaloSimulator:
             if not AUTOGRAD:
                 params_eval = self._add_epsilon_shifts(params, params_eval)
 
-            t_xz, (image, log_p_xzs, latents) = self.d_simulate(params_sample, params_eval)
+            t_xz, (image, log_p_xzs, latents) = self.d_simulate(
+                params_sample, params_eval
+            )
 
             # Clean up
             t_xz = self._detach(t_xz)
@@ -390,8 +464,12 @@ class SubhaloSimulator:
             # Estimate uncertainty of log r from MC sampling
             inverse_r_xz_uncertainty = 0.0
             for i_theta in range(n_theta_samples):
-                inverse_r_xz_uncertainty += (np.exp(log_p_xzs[i_theta + 1] - log_p_xzs[0]) - inverse_r_xz) ** 2.0
-            inverse_r_xz_uncertainty /= float(n_theta_samples) * (float(n_theta_samples) - 1.0)
+                inverse_r_xz_uncertainty += (
+                    np.exp(log_p_xzs[i_theta + 1] - log_p_xzs[0]) - inverse_r_xz
+                ) ** 2.0
+            inverse_r_xz_uncertainty /= float(n_theta_samples) * (
+                float(n_theta_samples) - 1.0
+            )
             log_r_xz_uncertainty = inverse_r_xz_uncertainty / inverse_r_xz
 
             n_subhalos = latents[0]
@@ -415,7 +493,13 @@ class SubhaloSimulator:
         all_log_r_xz = np.array(all_log_r_xz)
         all_log_r_xz_uncertainties = np.array(all_log_r_xz_uncertainties)
 
-        return all_images, all_t_xz, all_log_r_xz, all_log_r_xz_uncertainties, all_latents
+        return (
+            all_images,
+            all_t_xz,
+            all_log_r_xz,
+            all_log_r_xz_uncertainties,
+            all_latents,
+        )
 
     @staticmethod
     def _wrap_params(alphas, betas, i, n):
@@ -433,8 +517,12 @@ class SubhaloSimulator:
         return params
 
     def _add_epsilon_shifts(self, params, add_to=None):
-        eps_vec0 = np.asarray(params).flatten() + np.array([self.epsilon, 0.0]).reshape(1, 2)
-        eps_vec1 = np.asarray(params).flatten() + np.array([0.0, self.epsilon]).reshape(1, 2)
+        eps_vec0 = np.asarray(params).flatten() + np.array([self.epsilon, 0.0]).reshape(
+            1, 2
+        )
+        eps_vec1 = np.asarray(params).flatten() + np.array([0.0, self.epsilon]).reshape(
+            1, 2
+        )
         params = params.reshape(1, 2)
 
         if add_to is None:

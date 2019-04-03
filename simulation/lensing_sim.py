@@ -4,7 +4,9 @@ from simulation.profiles import *
 
 
 class LensingSim:
-    def __init__(self, lenses_list=[{}], sources_list=[{}], global_dict={}, observation_dict={}):
+    def __init__(
+        self, lenses_list=[{}], sources_list=[{}], global_dict={}, observation_dict={}
+    ):
         """
         Class for simulation of strong lensing images
         """
@@ -44,9 +46,14 @@ class LensingSim:
 
         # x/y-coordinates of grid and pixel area in arcsec**2
 
-        self.x_coords, self.y_coords = np.meshgrid(np.linspace(self.xlims[0], self.xlims[1], self.nx), np.linspace(self.ylims[0], self.ylims[1], self.ny))
+        self.x_coords, self.y_coords = np.meshgrid(
+            np.linspace(self.xlims[0], self.xlims[1], self.nx),
+            np.linspace(self.ylims[0], self.ylims[1], self.ny),
+        )
 
-        self.pixarea = ((self.xlims[1] - self.xlims[0]) / self.nx) * ((self.ylims[1] - self.ylims[0]) / self.ny)
+        self.pixarea = ((self.xlims[1] - self.xlims[0]) / self.nx) * (
+            (self.ylims[1] - self.ylims[0]) / self.ny
+        )
 
     def lensed_image(self):
         """ Get strongly lensed image
@@ -61,14 +68,28 @@ class LensingSim:
                 self.theta_x_hst = lens_dict["theta_x"]
                 self.theta_y_hst = lens_dict["theta_y"]
                 self.theta_E_hst = lens_dict["theta_E"]
-                _xg, _yg = deflection_sis(self.x_coords, self.y_coords, x0=self.theta_x_hst, y0=self.theta_y_hst, b=self.theta_E_hst)
+                _xg, _yg = deflection_sis(
+                    self.x_coords,
+                    self.y_coords,
+                    x0=self.theta_x_hst,
+                    y0=self.theta_y_hst,
+                    b=self.theta_E_hst,
+                )
                 xg += _xg
                 yg += _yg
             elif lens_dict["profile"] == "nfw":
                 self.theta_x_sub = lens_dict["theta_x"]
                 self.theta_y_sub = lens_dict["theta_y"]
                 self.M_sub = lens_dict["M200"]
-                _xg, _yg = deflection_nfw(self.x_coords, self.y_coords, x0=self.theta_x_sub, y0=self.theta_y_sub, M=self.M_sub, D_s=self.D_s, D_l=self.D_l)
+                _xg, _yg = deflection_nfw(
+                    self.x_coords,
+                    self.y_coords,
+                    x0=self.theta_x_sub,
+                    y0=self.theta_y_sub,
+                    M=self.M_sub,
+                    D_s=self.D_s,
+                    D_l=self.D_l,
+                )
                 xg += _xg
                 yg += _yg
 
@@ -84,11 +105,19 @@ class LensingSim:
                 self.I_gal = source_dict["I_gal"]
                 self.n_srsc = source_dict["n_srsc"]
                 self.theta_e_gal = source_dict["theta_e_gal"]
-                self.i_lens += f_gal_sersic(self.x_coords - xg, self.y_coords - yg, self.n_srsc, self.I_gal, self.theta_e_gal)
+                self.i_lens += f_gal_sersic(
+                    self.x_coords - xg,
+                    self.y_coords - yg,
+                    self.n_srsc,
+                    self.I_gal,
+                    self.theta_e_gal,
+                )
             else:
                 raise Exception("Unknown source profile specification!")
 
         self.i_iso = self.A_iso * np.ones((self.nx, self.ny))  # Isotropic background
-        self.i_tot = (self.i_lens + self.i_iso) * self.exposure * self.pixarea  # Total lensed image
+        self.i_tot = (
+            (self.i_lens + self.i_iso) * self.exposure * self.pixarea
+        )  # Total lensed image
 
         return self.i_tot

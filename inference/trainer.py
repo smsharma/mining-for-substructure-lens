@@ -32,7 +32,11 @@ class Trainer(object):
 
         self.model = self.model.to(self.device, self.dtype)
 
-        logger.debug("Training on %s with %s precision", "GPU" if self.run_on_gpu else "CPU", "double" if double_precision else "single")
+        logger.debug(
+            "Training on %s with %s precision",
+            "GPU" if self.run_on_gpu else "CPU",
+            "double" if double_precision else "single",
+        )
 
     def train(
         self,
@@ -56,18 +60,24 @@ class Trainer(object):
         self.check_data(data)
         self.report_data(data)
         data_labels, dataset = self.make_dataset(data)
-        train_loader, val_loader = self.make_dataloaders(dataset, validation_split, batch_size)
+        train_loader, val_loader = self.make_dataloaders(
+            dataset, validation_split, batch_size
+        )
 
         logger.debug("Setting up optimizer")
         optimizer_kwargs = {} if optimizer_kwargs is None else optimizer_kwargs
         opt = optimizer(self.model.parameters(), lr=initial_lr, **optimizer_kwargs)
 
-        early_stopping = early_stopping and (validation_split is not None) and (epochs > 1)
+        early_stopping = (
+            early_stopping and (validation_split is not None) and (epochs > 1)
+        )
         best_loss, best_model, best_epoch = None, None, None
         if early_stopping and early_stopping_patience is None:
             logger.debug("Using early stopping with infinite patience")
         elif early_stopping:
-            logger.debug("Using early stopping with patience %s", early_stopping_patience)
+            logger.debug(
+                "Using early stopping with patience %s", early_stopping_patience
+            )
         else:
             logger.debug("No early stopping")
 
@@ -102,26 +112,54 @@ class Trainer(object):
 
             try:
                 loss_train, loss_val, loss_contributions_train, loss_contributions_val = self.epoch(
-                    i_epoch, data_labels, train_loader, val_loader, opt, loss_functions, loss_weights, clip_gradient
+                    i_epoch,
+                    data_labels,
+                    train_loader,
+                    val_loader,
+                    opt,
+                    loss_functions,
+                    loss_weights,
+                    clip_gradient,
                 )
                 losses_train.append(loss_train)
                 losses_val.append(loss_val)
             except NanException:
-                logger.info("Ending training during epoch %s because NaNs appeared", i_epoch + 1)
+                logger.info(
+                    "Ending training during epoch %s because NaNs appeared", i_epoch + 1
+                )
                 break
 
             if early_stopping:
                 try:
-                    best_loss, best_model, best_epoch = self.check_early_stopping(best_loss, best_model, best_epoch, loss_val, i_epoch, early_stopping_patience)
+                    best_loss, best_model, best_epoch = self.check_early_stopping(
+                        best_loss,
+                        best_model,
+                        best_epoch,
+                        loss_val,
+                        i_epoch,
+                        early_stopping_patience,
+                    )
                 except EarlyStoppingException:
-                    logger.info("Early stopping: ending training after %s epochs", i_epoch + 1)
+                    logger.info(
+                        "Early stopping: ending training after %s epochs", i_epoch + 1
+                    )
                     break
 
             verbose_epoch = (i_epoch + 1) % n_epochs_verbose == 0
-            self.report_epoch(i_epoch, loss_labels, loss_train, loss_val, loss_contributions_train, loss_contributions_val, verbose=verbose_epoch)
+            self.report_epoch(
+                i_epoch,
+                loss_labels,
+                loss_train,
+                loss_val,
+                loss_contributions_train,
+                loss_contributions_val,
+                verbose=verbose_epoch,
+            )
 
         if early_stopping and len(losses_val) > 0:
-            self.wrap_up_early_stopping(best_model, losses_val[-1], best_loss, best_epoch)
+            self.wrap_up_early_stopping(
+                best_model, losses_val[-1], best_loss, best_epoch
+            )
 
         logger.debug("Training finished")
 
@@ -157,11 +195,15 @@ class Trainer(object):
 
     def make_dataloaders(self, dataset, validation_split, batch_size):
         if validation_split is None or validation_split <= 0.0:
-            train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, pin_memory=self.run_on_gpu)
+            train_loader = DataLoader(
+                dataset, batch_size=batch_size, shuffle=True, pin_memory=self.run_on_gpu
+            )
             val_loader = None
 
         else:
-            assert 0.0 < validation_split < 1.0, "Wrong validation split: {}".format(validation_split)
+            assert 0.0 < validation_split < 1.0, "Wrong validation split: {}".format(
+                validation_split
+            )
 
             n_samples = len(dataset)
             indices = list(range(n_samples))
@@ -172,8 +214,18 @@ class Trainer(object):
             train_sampler = SubsetRandomSampler(train_idx)
             val_sampler = SubsetRandomSampler(valid_idx)
 
-            train_loader = DataLoader(dataset, sampler=train_sampler, batch_size=batch_size, pin_memory=self.run_on_gpu)
-            val_loader = DataLoader(dataset, sampler=val_sampler, batch_size=batch_size, pin_memory=self.run_on_gpu)
+            train_loader = DataLoader(
+                dataset,
+                sampler=train_sampler,
+                batch_size=batch_size,
+                pin_memory=self.run_on_gpu,
+            )
+            val_loader = DataLoader(
+                dataset,
+                sampler=val_sampler,
+                batch_size=batch_size,
+                pin_memory=self.run_on_gpu,
+            )
 
         return train_loader, val_loader
 
@@ -188,7 +240,17 @@ class Trainer(object):
         for param_group in optimizer.param_groups:
             param_group["lr"] = lr
 
-    def epoch(self, i_epoch, data_labels, train_loader, val_loader, optimizer, loss_functions, loss_weights, clip_gradient=None):
+    def epoch(
+        self,
+        i_epoch,
+        data_labels,
+        train_loader,
+        val_loader,
+        optimizer,
+        loss_functions,
+        loss_weights,
+        clip_gradient=None,
+    ):
         n_losses = len(loss_functions)
 
         self.model.train()
@@ -197,7 +259,9 @@ class Trainer(object):
 
         for i_batch, batch_data in enumerate(train_loader):
             batch_data = OrderedDict(list(zip(data_labels, batch_data)))
-            batch_loss, batch_loss_contributions = self.batch_train(batch_data, loss_functions, loss_weights, optimizer, clip_gradient)
+            batch_loss, batch_loss_contributions = self.batch_train(
+                batch_data, loss_functions, loss_weights, optimizer, clip_gradient
+            )
             loss_train += batch_loss
             for i, batch_loss_contribution in enumerate(batch_loss_contributions):
                 loss_contributions_train[i] += batch_loss_contribution
@@ -212,7 +276,9 @@ class Trainer(object):
 
             for i_batch, batch_data in enumerate(val_loader):
                 batch_data = OrderedDict(list(zip(data_labels, batch_data)))
-                batch_loss, batch_loss_contributions = self.batch_val(batch_data, loss_functions, loss_weights)
+                batch_loss, batch_loss_contributions = self.batch_val(
+                    batch_data, loss_functions, loss_weights
+                )
                 loss_val += batch_loss
                 for i, batch_loss_contribution in enumerate(batch_loss_contributions):
                     loss_contributions_val[i] += batch_loss_contribution
@@ -226,7 +292,9 @@ class Trainer(object):
 
         return loss_train, loss_val, loss_contributions_train, loss_contributions_val
 
-    def batch_train(self, batch_data, loss_functions, loss_weights, optimizer, clip_gradient=None):
+    def batch_train(
+        self, batch_data, loss_functions, loss_weights, optimizer, clip_gradient=None
+    ):
         loss_contributions = self.forward_pass(batch_data, loss_functions)
         loss = self.sum_losses(loss_contributions, loss_weights)
 
@@ -278,19 +346,38 @@ class Trainer(object):
             clip_grad_norm_(self.model.parameters(), clip_gradient)
         optimizer.step()
 
-    def check_early_stopping(self, best_loss, best_model, best_epoch, loss, i_epoch, early_stopping_patience=None):
+    def check_early_stopping(
+        self,
+        best_loss,
+        best_model,
+        best_epoch,
+        loss,
+        i_epoch,
+        early_stopping_patience=None,
+    ):
         if best_loss is None or loss < best_loss:
             best_loss = loss
             best_model = self.model.state_dict()
             best_epoch = i_epoch
 
-        if early_stopping_patience is not None and i_epoch - best_epoch > early_stopping_patience >= 0:
+        if (
+            early_stopping_patience is not None
+            and i_epoch - best_epoch > early_stopping_patience >= 0
+        ):
             raise EarlyStoppingException
 
         return best_loss, best_model, best_epoch
 
     @staticmethod
-    def report_epoch(i_epoch, loss_labels, loss_train, loss_val, loss_contributions_train, loss_contributions_val, verbose=False):
+    def report_epoch(
+        i_epoch,
+        loss_labels,
+        loss_train,
+        loss_val,
+        loss_contributions_train,
+        loss_contributions_val,
+        verbose=False,
+    ):
         logging_fn = logger.info if verbose else logger.debug
 
         def contribution_summary(labels, contributions):
@@ -301,18 +388,29 @@ class Trainer(object):
                 summary += "{}: {:>6.3f}".format(label, value)
             return summary
 
-        train_report = "Epoch {:>3d}: train loss {:>8.5f} ({})".format(i_epoch + 1, loss_train, contribution_summary(loss_labels, loss_contributions_train))
+        train_report = "Epoch {:>3d}: train loss {:>8.5f} ({})".format(
+            i_epoch + 1,
+            loss_train,
+            contribution_summary(loss_labels, loss_contributions_train),
+        )
         logging_fn(train_report)
 
         if loss_val is not None:
-            val_report = "           val. loss  {:>8.5f} ({})".format(loss_val, contribution_summary(loss_labels, loss_contributions_val))
+            val_report = "           val. loss  {:>8.5f} ({})".format(
+                loss_val, contribution_summary(loss_labels, loss_contributions_val)
+            )
             logging_fn(val_report)
 
     def wrap_up_early_stopping(self, best_model, currrent_loss, best_loss, best_epoch):
         if currrent_loss is None or best_loss is None:
             logger.warning("Loss is None, cannot wrap up early stopping")
         elif best_loss < currrent_loss:
-            logger.info("Early stopping after epoch %s, with loss %8.5f compared to final loss %8.5f", best_epoch + 1, best_loss, currrent_loss)
+            logger.info(
+                "Early stopping after epoch %s, with loss %8.5f compared to final loss %8.5f",
+                best_epoch + 1,
+                best_loss,
+                currrent_loss,
+            )
             self.model.load_state_dict(best_model)
         else:
             logger.info("Early stopping did not improve performance")
@@ -323,19 +421,25 @@ class Trainer(object):
             if tensor is None:
                 continue
             if torch.isnan(tensor).any():
-                logger.warning("%s contains NaNs, aborting training! Data:\n%s", label, tensor)
+                logger.warning(
+                    "%s contains NaNs, aborting training! Data:\n%s", label, tensor
+                )
                 raise NanException
 
 
 class SingleParameterizedRatioTrainer(Trainer):
     def __init__(self, model, run_on_gpu=True, double_precision=False):
-        super(SingleParameterizedRatioTrainer, self).__init__(model, run_on_gpu, double_precision)
+        super(SingleParameterizedRatioTrainer, self).__init__(
+            model, run_on_gpu, double_precision
+        )
         self.calculate_model_score = True
 
     def check_data(self, data):
         data_keys = list(data.keys())
         if "x" not in data_keys or "theta" not in data_keys or "y" not in data_keys:
-            raise ValueError("Missing required information 'x', 'theta', or 'y' in training data!")
+            raise ValueError(
+                "Missing required information 'x', 'theta', or 'y' in training data!"
+            )
 
         for key in data_keys:
             if key not in ["x", "theta", "y", "r_xz", "t_xz"]:
@@ -374,12 +478,17 @@ class SingleParameterizedRatioTrainer(Trainer):
         self._check_for_nans("Training data", theta, x, y)
         self._check_for_nans("Augmented training data", r_xz, t_xz)
 
-        s_hat, log_r_hat, t_hat, _ = self.model(theta, x, track_score=self.calculate_model_score, return_grad_x=False)
+        s_hat, log_r_hat, t_hat, _ = self.model(
+            theta, x, track_score=self.calculate_model_score, return_grad_x=False
+        )
         self._check_for_nans("Model output (log r)", log_r_hat)
         self._check_for_nans("Model output (s)", s_hat)
         self._check_for_nans("Model output (t)", t_hat)
 
-        losses = [loss_function(s_hat, log_r_hat, t_hat, y, r_xz, t_xz) for loss_function in loss_functions]
+        losses = [
+            loss_function(s_hat, log_r_hat, t_hat, y, r_xz, t_xz)
+            for loss_function in loss_functions
+        ]
         self._check_for_nans("Loss", *losses)
 
         return losses

@@ -31,7 +31,9 @@ def deflection_nfw(x, y, x0=0, y0=0, M=1e14 * M_s, c=20.0, D_s=1 * Mpc, D_l=0.5 
     delta_c = (200 / 3.0) * c ** 3 / (np.log(1 + c) - c / (1 + c))
     rho_s = rho_c * delta_c
 
-    r_s = (M / ((4 / 3.0) * np.pi * c ** 3 * 200 * rho_c)) ** (1 / 3.0)  # NFW scale radius
+    r_s = (M / ((4 / 3.0) * np.pi * c ** 3 * 200 * rho_c)) ** (
+        1 / 3.0
+    )  # NFW scale radius
 
     x = r / r_s
 
@@ -68,7 +70,9 @@ def Sigma_cr(D_l, D_s):
     return 1.0 / (4 * np.pi * GN) * D_s / ((D_s - D_l) * D_l)
 
 
-def f_gal_sersic(x, y, n=4, I_gal=1e-16 * erg / Centimeter ** 2 / Sec / Angstrom, theta_e_gal=1):
+def f_gal_sersic(
+    x, y, n=4, I_gal=1e-16 * erg / Centimeter ** 2 / Sec / Angstrom, theta_e_gal=1
+):
     """ Sersic profile surface brightness, following Daylan et al
     """
     theta = np.sqrt(x ** 2 + y ** 2)
