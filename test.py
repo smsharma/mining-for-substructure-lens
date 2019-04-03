@@ -34,13 +34,13 @@ def evaluate(data_dir, model_filename, sample_filename, result_filename, grid):
         theta = make_grid()
         np.save("{}/results/theta_grid.npy".format(data_dir), theta)
 
-        llr, _, grad_x = estimator.log_likelihood_ratio(x=x, theta=theta, test_all_combinations=False, evaluate_grad_x=True)
+        llr, _, grad_x = estimator.log_likelihood_ratio(x=x, theta=theta, test_all_combinations=True, evaluate_grad_x=True)
 
     else:
         x = np.load("{}/samples/x_{}.npy".format(data_dir, sample_filename))
         theta = np.load("{}/samples/theta_{}.npy".format(data_dir, sample_filename))
 
-        llr, _, grad_x = estimator.log_likelihood_ratio(x=x, theta=theta, test_all_combinations=True, evaluate_grad_x=True)
+        llr, _, grad_x = estimator.log_likelihood_ratio(x=x, theta=theta, test_all_combinations=False, evaluate_grad_x=True)
 
     np.save("{}/results/llr_{}.npy".format(data_dir, result_filename), llr)
     np.save("{}/results/grad_x_{}.npy".format(data_dir, result_filename), grad_x)

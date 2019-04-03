@@ -77,8 +77,11 @@ def evaluate_ratio_model(model, theta0s, xs, evaluate_score=False, evaluate_grad
     for i_batch in range(n_batches):
         logger.debug("Evaluating batch %s / %s", i_batch + 1, n_batches)
 
-        theta_batch = np.copy(theta0s[i_batch * batch_size:(i_batch+1)*batch_size])
         x_batch = np.copy(xs[i_batch * batch_size:(i_batch+1)*batch_size])
+        if len(theta0s) == n_xs:
+            theta_batch = np.copy(theta0s[i_batch * batch_size:(i_batch+1)*batch_size])
+        else:
+            theta_batch = np.copy(theta0s)
 
         logger.debug("Batch data: x has shape %s, thetas has shape %s", x_batch.shape, theta_batch.shape)
 
