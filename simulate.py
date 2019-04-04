@@ -103,14 +103,18 @@ def save_train(data_dir, name, x, y, theta, r_xz, t_xz, n_subs, m_subs):
     np.save("{}/data/samples/m_subs_{}.npy".format(data_dir, name), m_subs)
 
 
-def simulate_test(n=500, alpha=200, beta=-1.9, m_sub_min=10.0):
+def simulate_test(n=500, alpha=10, beta=-1.9, m_sub_min=10.0):
     sim = SubhaloSimulator(m_sub_min=m_sub_min, m_sub_high=m_sub_min)
 
-    x, latents = sim.rvs(alpha, beta, n)
+    alphas = np.array([alpha for _ in range(n)])
+    betas = np.array([beta for _ in range(n)])
+    thetas = np.vstack((alphas, betas)).T
+
+    x, latents = sim.rvs(alphas, betas, n)
     m_subs = _extract_m_subs(latents)
     n_subs = _extract_n_subs(latents)
 
-    return None, x, n_subs, m_subs
+    return thetas, x, n_subs, m_subs
 
 
 def simulate_test_prior(

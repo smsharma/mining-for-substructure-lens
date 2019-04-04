@@ -238,7 +238,7 @@ class SubhaloSimulator:
         all_images = []
         all_latents = []
 
-        n_verbose = max(1, n_images // 20)
+        n_verbose = max(1, n_images // 100)
 
         for i_sim in range(n_images):
             if (i_sim + 1) % n_verbose == 0:
@@ -265,7 +265,7 @@ class SubhaloSimulator:
         all_log_r_xz = []
         all_latents = []
 
-        n_verbose = max(1, n_images // 20)
+        n_verbose = max(1, n_images // 100)
 
         for i_sim in range(n_images):
             if (i_sim + 1) % n_verbose == 0:
@@ -323,7 +323,7 @@ class SubhaloSimulator:
         all_log_r_xz_uncertainties = []
         all_latents = []
 
-        n_verbose = max(1, n_images // 20)
+        n_verbose = max(1, n_images // 100)
 
         alpha_prior = np.random.normal(
             loc=alpha_mean, scale=alpha_std, size=n_theta_samples
@@ -417,7 +417,7 @@ class SubhaloSimulator:
         all_log_r_xz_uncertainties = []
         all_latents = []
 
-        n_verbose = max(1, n_images // 20)
+        n_verbose = max(1, n_images // 100)
 
         alpha_prior = np.random.normal(
             loc=alpha_mean, scale=alpha_std, size=n_theta_samples
