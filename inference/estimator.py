@@ -267,8 +267,6 @@ class ParameterizedRatioEstimator(object):
         all_s, all_log_r, all_t, all_x_grad = [], [], [], []
 
         for i_batch in range(n_batches):
-            logger.debug("Evaluating batch %s / %s", i_batch + 1, n_batches)
-
             x_batch = np.copy(xs[i_batch * batch_size : (i_batch + 1) * batch_size])
             if len(theta0s) == n_xs:
                 theta_batch = np.copy(
