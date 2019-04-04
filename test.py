@@ -27,7 +27,7 @@ def make_grid(
     return theta_grid, mid_point
 
 
-def evaluate(data_dir, model_filename, sample_filename, result_filename, grid, shuffle):
+def evaluate(data_dir, model_filename, sample_filename, result_filename, grid=True, shuffle=False, small=False):
     if not os.path.exists("{}/results".format(data_dir)):
         os.mkdir("{}/results".format(data_dir))
 
@@ -36,6 +36,8 @@ def evaluate(data_dir, model_filename, sample_filename, result_filename, grid, s
 
     if grid:
         x = np.load("{}/samples/x_{}.npy".format(data_dir, sample_filename))
+        if small:
+            x = x[:100]
         theta, grad_x_index = make_grid()
         np.save("{}/results/theta_grid.npy".format(data_dir), theta)
 
@@ -84,6 +86,7 @@ def parse_args():
         help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the "
              "data/models subfolder.",
     )
+    parser.add_argument("--small", action="store_true", help="Restricts evaluation to first 100 images.")
 
     return parser.parse_args()
 
@@ -96,5 +99,5 @@ if __name__ == "__main__":
     )
     logging.info("Hi!")
     args = parse_args()
-    evaluate(args.dir + "/data", args.model, args.sample, args.result, args.grid, args.shuffle)
+    evaluate(args.dir + "/data", args.model, args.sample, args.result, args.grid, args.shuffle, args.small)
     logging.info("All done! Have a nice day!")
