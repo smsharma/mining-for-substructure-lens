@@ -1,0 +1,186 @@
+% mnras_template.tex
+%
+% LaTeX template for creating an MNRAS paper
+%
+% v3.0 released 14 May 2015
+% (version numbers match those of mnras.cls)
+%
+% Copyright (C) Royal Astronomical Society 2015
+% Authors:
+% Keith T. Smith (Royal Astronomical Society)
+
+% Change log
+%
+% v3.0 May 2015
+%    Renamed to match the new package name
+%    Version number matches mnras.cls
+%    A few minor tweaks to wording
+% v1.0 September 2013
+%    Beta testing only - never publicly released
+%    First version: a simple (ish) template for creating an MNRAS paper
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Basic setup. Most papers should leave these options alone.
+\documentclass[a4paper,fleqn,usenatbib]{mnras}
+
+% MNRAS is set in Times font. If you don't have this installed (most LaTeX
+% installations will be fine) or prefer the old Computer Modern fonts, comment
+% out the following line
+\usepackage{newtxtext,newtxmath}
+% Depending on your LaTeX fonts installation, you might get better results with one of these:
+%\usepackage{mathptmx}
+%\usepackage{txfonts}
+
+% Use vector fonts, so it zooms properly in on-screen viewing software
+% Don't change these lines unless you know what you are doing
+\usepackage[T1]{fontenc}
+\usepackage{ae,aecompl}
+
+
+%%%%% AUTHORS - PLACE YOUR OWN PACKAGES HERE %%%%%
+
+% Only include extra packages if you really need them. Common packages are:
+\usepackage{graphicx}	% Including figure files
+\usepackage{amsmath}	% Advanced maths commands
+\usepackage{amssymb}	% Extra maths symbols
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%% AUTHORS - PLACE YOUR OWN COMMANDS HERE %%%%%
+
+% Please keep new commands to a minimum, and use \newcommand not \def to avoid
+% overwriting existing commands. Example:
+%\newcommand{\pcm}{\,cm$^{-2}$}	% per cm-squared
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%% TITLE PAGE %%%%%%%%%%%%%%%%%%%
+
+% Title of the paper, and the short title which is used in the headers.
+% Keep the title short and informative.
+\title[Substructure with likelihood-free inference]{Characterizing substructure from a population of strong lensing systems using likelihood-free inference}
+
+% The list of authors, and the short list which is used in the headers.
+% If you need two or more lines of authors, add an extra line using \newauthor
+\author[J. Brehmer et al.]{Johann Brehmer,$^{1,2}$
+Siddharth Mishra-Sharma,$^{1}$\thanks{E-mail: sm8383@nyu.edu}
+Joeri Hermans,$^{3}$
+\newauthor
+Gilles Louppe,$^{3}$
+and Kyle Cranmer$^{1,2}$
+\\
+% List of institutions
+$^{1}$Center for Cosmology and Particle Physics, New York University, USA\\
+$^{2}$Center for Data Science, New York University, USA\\
+$^{3}$University of Li\`ege, Belgium
+}
+
+% These dates will be filled out by the publisher
+\date{Accepted XXX. Received YYY; in original form ZZZ}
+
+% Enter the current year, for the copyright statements etc.
+\pubyear{2015}
+
+% Don't change these lines
+\begin{document}
+\label{firstpage}
+\pagerange{\pageref{firstpage}--\pageref{lastpage}}
+\maketitle
+
+% Abstract of the paper
+\begin{abstract}
+We develop methods to analyze a statistical sample of strong lenses in a principled way to look for dark matter substructure with likelihood-free inference techniques.
+\end{abstract}
+
+% Select between one and six entries from the list of approved keywords.
+% Don't make up new ones.
+\begin{keywords}
+Strong Lensing -- Dark Matter -- Likelihood-free Inference -- Machine Learning
+\end{keywords}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%% BODY OF PAPER %%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+\section{Strong lensing formalism}
+
+\section{Simulating a population of lenses}
+
+In strong lensing systems, the background light emission source can in general be a point-like quasar or supernova, or a faint, extended ``blue'' galaxy. The former results in multiple localized images on the lens plane rather than extended arc-like images, providing the ability to probe substructure over a limited region. For this reason, we focus our method on analyzing images with extended arcs, since we aim to disentangle the collective, sub-threshold effect of a population of subhalo perturbers over multiple images. Young, blue galaxies are uniquitous in the redshift regime $z\gtrsim1$ and dominate the faint end of the galaxy luminosity function, resulting in a much larger deliverable sample of galaxy-galaxy strong lenses compared to quadruply- and doubly-imaged quasars/supernovae.
+
+The fact that the strong lens population is expected to be dominated by higher-redshift ($z\gtrsim1$) blue source galaxies lensed by intermediate-redshift ($z\sim 0.5$--$1$) elliptical galaxies presents significant challenges for quantifying the lens population obtainable with future observations. Specifically, planned ground-based surveys like LSST and space telescopes like \emph{Euclid} present complementary challenges for delivering images of strong lensing systems suitable for substructure studies. LSST is expected to image in six bands, allowing efficient source selection and distinguishing source and lens emission, but at the cost of lower resolution by virtue of being a ground-based instrument. \emph{Euclid} imaging is expected be much higher in resolution but with a single optical passband (\emph{VIS}). Near-IR imaging from WFIRST may deliver a high-resolution, multi-wavelength dataset that is more suitable for substructure studies, although the lens and source populations may differ from those probed by optical telescopes. 
+
+In light of these uncertainties, we limit the scope of the present study to developing a class of methods that can be adapted to the specifications of a galaxy-galaxy strong lensing population obtained with the next generation of optical, near-IR and radio telescopes. In particular, we confine ourselves to a setting where the main methodological points can be made without detailed modeling of the detector capabilities and the deliverable lensing dataset, which is outside of the scope of the current paper.
+
+We now describe our models for the background source, lensing galaxy and population parameters of the lens systems used in this study. 
+
+\subsection{Background source}
+
+We model the background source galaxies using a S\'{e}rsic profile
+\begin{equation}
+I(r)=I_{e} \exp \left\{-b_{n}\left[\left(\frac{r}{r_{e}}\right)^{1 / n}-1\right]\right\},
+\end{equation}
+where $r_e$ is the effective circular half-light radius, $n$ is the S\'{e}rsic index, $b_n$ is a factor depending on $n$ that ensures that $r_e$ contains half the total intensity form the source galaxy, given by~\citep{1999A&A...352..447C}
+\begin{equation}
+b_n \approx 2 n - \frac{1}{3} + \frac{4}{405 n} + \frac{46}{25515 n^2} + \frac{131}{1148175 n^3} - \frac{2194697}{30690717750 n^4}.
+\end{equation}
+
+We use $n=1$ for the source galaxies, corresponding to an exponential profile and consistent with expectation for blue-type galaxies at the relevant redshifts. Treatment of the other parameters in the context of population studies is described in Secs.~\ref{sec:observations} and~\ref{sec:populations} below.
+
+\subsection{Lensing host galaxy}
+
+Cosmological $N$-body simulations suggest that the dark matter distribution in structures at galactic scales can be well-described by a universal, spherically symmetric NFW profile. However, strong lensing probes a region of the host galaxy much smaller than the typical virial radii of galaxy-scale dark matter halo, and the mass budget here is dominated by the baryonic bulge component of the galaxy. Taking this into account, the total mass budget of the lensing host galaxy, being early-type, can be well describe by a singular isothermal ellipsoid (SIE) profile, known as the bulge-halo conspiracy since neither the dark matter nor the baryonic components are individually isothermal. The host profile is thus described as
+\begin{equation}
+\rho(x, y)=\frac{\sigma_{v}^{2}}{2 \pi G\left(x^{2} / q+q y^{2}\right)}
+\end{equation}
+where $\sigma_{v}$ is the velocity dispersion of the lens galaxy $q$ is the ellipsoid axis ratio, with $q=1$ corresponding to a spherical profile. The Einstein radius for this profile, giving the characteristic lensing scale, is given by
+\begin{equation}
+\theta_{\mathrm{E}}=4 \pi\left(\frac{\sigma_{v}}{c}\right)^{2} \frac{D_{l s}\left(z_{l}, z_{s}\right)}{D_{s}\left(z_{s}\right)}
+\end{equation}
+where $D_{ls}$ and $D_s$ are respectively the angular diameter distances from the source to the lens planes and from the source plane to the observer respectively. The host velocity dispersion can be relation to the virial mass of its dark matter halo, which will be crucial for the description of substructure.
+
+The deflection field for this profile is given by...
+
+We described the population parameters we use to describe the host ellipticity and velocity dispersion (and thus its Einstein radius and halo mass) in Secs.~\ref{sec:observations} and~\ref{sec:populations} below.
+
+\subsection{Lensing substructure}
+
+\subsection{Observational considerations}
+\label{sec:observations}
+
+
+\subsection{Population statistics of the lens sample}
+\label{sec:populations}
+
+We use the \texttt{LensPop} code~\citep{Collett:2015roa}.
+
+
+
+\section{Conclusions}
+
+\section*{Acknowledgements}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%% REFERENCES %%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{mnras}
+\bibliography{lensing-lfi} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%% APPENDICES %%%%%%%%%%%%%%%%%%%%%
+
+\appendix
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Don't change these lines
+\bsp	% typesetting comment
+\label{lastpage}
+\end{document}
+
+% End of mnras_template.tex
