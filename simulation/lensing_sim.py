@@ -64,20 +64,22 @@ class LensingSim:
         xg, yg = np.zeros((self.nx, self.ny)), np.zeros((self.nx, self.ny))
 
         for lens_dict in self.lenses_list:
-            if lens_dict["profile"] == "sis":
+            if lens_dict["profile"] == "SIS":
                 self.theta_x_hst = lens_dict["theta_x"]
                 self.theta_y_hst = lens_dict["theta_y"]
                 self.theta_E_hst = lens_dict["theta_E"]
-                _xg, _yg = deflection_sis(
+                self.q_hst = lens_dict["q"]
+                _xg, _yg = deflection_sie(
                     self.x_coords,
                     self.y_coords,
-                    x0=self.theta_x_hst,
-                    y0=self.theta_y_hst,
-                    b=self.theta_E_hst,
+                    theta_x0=self.theta_x_hst,
+                    theta_y0=self.theta_y_hst,
+                    theta_E=self.theta_E_hst,
+                    q=self.q_hst
                 )
                 xg += _xg
                 yg += _yg
-            elif lens_dict["profile"] == "nfw":
+            elif lens_dict["profile"] == "NFW":
                 self.theta_x_sub = lens_dict["theta_x"]
                 self.theta_y_sub = lens_dict["theta_y"]
                 self.M_sub = lens_dict["M200"]
@@ -101,16 +103,16 @@ class LensingSim:
         self.i_lens = np.zeros((self.nx, self.ny))
 
         for source_dict in self.sources_list:
-            if source_dict["profile"] == "sersic":
+            if source_dict["profile"] == "Sersic":
                 self.I_gal = source_dict["I_gal"]
                 self.n_srsc = source_dict["n_srsc"]
                 self.theta_e_gal = source_dict["theta_e_gal"]
                 self.i_lens += f_gal_sersic(
                     self.x_coords - xg,
                     self.y_coords - yg,
+                    self.theta_e_gal,
                     self.n_srsc,
                     self.I_gal,
-                    self.theta_e_gal,
                 )
             else:
                 raise Exception("Unknown source profile specification!")
