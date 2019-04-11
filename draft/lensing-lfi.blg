@@ -1,48 +1,47 @@
 This is BibTeX, Version 0.99d (TeX Live 2016)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: lensing-lfi.aux
-The style file: mnras.bst
+The style file: aasjournal.bst
 Database file #1: lensing-lfi.bib
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 You've used 2 entries,
-            2881 wiz_defined-function locations,
-            737 strings with 6269 characters,
-and the built_in function-call counts, 907 in all, are:
-= -- 74
-> -- 56
-< -- 8
-+ -- 26
-- -- 6
-* -- 100
-:= -- 147
-add.period$ -- 0
+            3166 wiz_defined-function locations,
+            667 strings with 4939 characters,
+and the built_in function-call counts, 735 in all, are:
+= -- 63
+> -- 34
+< -- 2
++ -- 11
+- -- 10
+* -- 51
+:= -- 137
+add.period$ -- 2
 call.type$ -- 2
-change.case$ -- 4
+change.case$ -- 9
 chr.to.int$ -- 2
 cite$ -- 2
-duplicate$ -- 44
-empty$ -- 45
-format.name$ -- 14
-if$ -- 151
+duplicate$ -- 32
+empty$ -- 56
+format.name$ -- 15
+if$ -- 149
 int.to.chr$ -- 1
 int.to.str$ -- 0
 missing$ -- 2
-newline$ -- 19
-num.names$ -- 14
-pop$ -- 7
+newline$ -- 14
+num.names$ -- 8
+pop$ -- 9
 preamble$ -- 1
-purify$ -- 8
+purify$ -- 9
 quote$ -- 0
-skip$ -- 30
+skip$ -- 29
 stack$ -- 0
-substring$ -- 48
-swap$ -- 22
-text.length$ -- 8
+substring$ -- 31
+swap$ -- 0
+text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 18
 warning$ -- 0
-while$ -- 16
+while$ -- 8
 width$ -- 0
-write$ -- 32
+write$ -- 28

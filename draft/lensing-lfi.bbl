@@ -1,30 +1,14 @@
 \begin{thebibliography}{}
-\makeatletter
-\relax
-\def\mn@urlcharsother{\let\do\@makeother \do\$\do\&\do\#\do\^\do\_\do\%\do\~}
-\def\mn@doi{\begingroup\mn@urlcharsother \@ifnextchar [ {\mn@doi@}
-  {\mn@doi@[]}}
-\def\mn@doi@[#1]#2{\def\@tempa{#1}\ifx\@tempa\@empty \href
-  {http://dx.doi.org/#2} {doi:#2}\else \href {http://dx.doi.org/#2} {#1}\fi
-  \endgroup}
-\def\mn@eprint#1#2{\mn@eprint@#1:#2::\@nil}
-\def\mn@eprint@arXiv#1{\href {http://arxiv.org/abs/#1} {{\tt arXiv:#1}}}
-\def\mn@eprint@dblp#1{\href {http://dblp.uni-trier.de/rec/bibtex/#1.xml}
-  {dblp:#1}}
-\def\mn@eprint@#1:#2:#3:#4\@nil{\def\@tempa {#1}\def\@tempb {#2}\def\@tempc
-  {#3}\ifx \@tempc \@empty \let \@tempc \@tempb \let \@tempb \@tempa \fi \ifx
-  \@tempb \@empty \def\@tempb {arXiv}\fi \@ifundefined
-  {mn@eprint@\@tempb}{\@tempb:\@tempc}{\expandafter \expandafter \csname
-  mn@eprint@\@tempb\endcsname \expandafter{\@tempc}}}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\providecommand{\url}[1]{\href{#1}{#1}}
+\providecommand{\dodoi}[1]{doi:~\href{http://doi.org/#1}{\nolinkurl{#1}}}
+\providecommand{\doeprint}[1]{\href{http://ascl.net/#1}{\nolinkurl{http://ascl.net/#1}}}
+\providecommand{\doarXiv}[1]{\href{https://arxiv.org/abs/#1}{\nolinkurl{https://arxiv.org/abs/#1}}}
 
-\bibitem[\protect\citeauthoryear{{Ciotti} \& {Bertin}}{{Ciotti} \&
-  {Bertin}}{1999}]{1999A&A...352..447C}
-{Ciotti} L.,  {Bertin} G.,  1999, \aap, \href
-  {http://adsabs.harvard.edu/abs/1999A%26A...352..447C} {352, 447}
+\bibitem[{{Ciotti} \& {Bertin}(1999)}]{1999A&A...352..447C}
+{Ciotti}, L., \& {Bertin}, G. 1999, \aap, 352, 447
 
-\bibitem[\protect\citeauthoryear{Collett}{Collett}{2015}]{Collett:2015roa}
-Collett T.~E.,  2015, \mn@doi [Astrophys. J.] {10.1088/0004-637X/811/1/20},
-  811, 20
+\bibitem[{Collett(2015)}]{Collett:2015roa}
+Collett, T.~E. 2015, Astrophys. J., 811, 20, \dodoi{10.1088/0004-637X/811/1/20}
 
-\makeatother
 \end{thebibliography}

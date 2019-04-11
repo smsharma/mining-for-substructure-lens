@@ -1,106 +1,59 @@
-% mnras_template.tex
-%
-% LaTeX template for creating an MNRAS paper
-%
-% v3.0 released 14 May 2015
-% (version numbers match those of mnras.cls)
-%
-% Copyright (C) Royal Astronomical Society 2015
-% Authors:
-% Keith T. Smith (Royal Astronomical Society)
+\documentclass[twocolumn]{aastex62}
 
-% Change log
-%
-% v3.0 May 2015
-%    Renamed to match the new package name
-%    Version number matches mnras.cls
-%    A few minor tweaks to wording
-% v1.0 September 2013
-%    Beta testing only - never publicly released
-%    First version: a simple (ish) template for creating an MNRAS paper
+\newcommand{\acronym}[1]{{\small{#1}}}
+\newcommand{\package}[1]{\textsl{#1}}
+\newcommand{\Euclid}{\textsl{Euclid}~}
+\newcommand{\lcdm}{\acronym{$\Lambda$CDM}}
+\newcommand{\kpc}{\textrm{kpc}}
+\newcommand{\Msun}{\textrm{M}_\odot}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Basic setup. Most papers should leave these options alone.
-\documentclass[a4paper,fleqn,usenatbib]{mnras}
+\shorttitle{Dark matter substructure with likelihood-free inference}
+\shortauthors{Brehmer et al.}
+%@arxiver{}
 
-% MNRAS is set in Times font. If you don't have this installed (most LaTeX
-% installations will be fine) or prefer the old Computer Modern fonts, comment
-% out the following line
-\usepackage{newtxtext,newtxmath}
-% Depending on your LaTeX fonts installation, you might get better results with one of these:
-%\usepackage{mathptmx}
-%\usepackage{txfonts}
+\begin{document}\sloppy\sloppypar\raggedbottom\frenchspacing
 
-% Use vector fonts, so it zooms properly in on-screen viewing software
-% Don't change these lines unless you know what you are doing
-\usepackage[T1]{fontenc}
-\usepackage{ae,aecompl}
+\title{\textbf{%
+Mining for Substructure: \\
+Inferring subhalo population properties in strong lenses with machine learning
+}}
 
+% \correspondingauthor{Siddharth Mishra-Sharma}
+% \email{sm8383@nyu.edu}
 
-%%%%% AUTHORS - PLACE YOUR OWN PACKAGES HERE %%%%%
+\author{Johann Brehmer}
+\affil{Center for Cosmology and Particle Physics, Department of Physics, New York University, 726~Broadway, New York, NY 10003, USA}
+\affil{Center for Data Science, New York University, 60 Fifth Ave, New York, NY 10011, USA}
 
-% Only include extra packages if you really need them. Common packages are:
-\usepackage{graphicx}	% Including figure files
-\usepackage{amsmath}	% Advanced maths commands
-\usepackage{amssymb}	% Extra maths symbols
+\author{Siddharth Mishra-Sharma}
+\affil{Center for Cosmology and Particle Physics, Department of Physics, New York University, 726~Broadway, New York, NY 10003, USA}
+\email{sm8383@nyu.edu}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\author{Joeri Hermans}
+\affil{University of Li\`ege, Belgium}
 
-%%%%% AUTHORS - PLACE YOUR OWN COMMANDS HERE %%%%%
+\author{Gilles Louppe}
+\affil{University of Li\`ege, Belgium}
 
-% Please keep new commands to a minimum, and use \newcommand not \def to avoid
-% overwriting existing commands. Example:
-%\newcommand{\pcm}{\,cm$^{-2}$}	% per cm-squared
+\author{Kyle Cranmer}
+\affil{Center for Cosmology and Particle Physics, Department of Physics, New York University, 726~Broadway, New York, NY 10003, USA}
+\affil{Center for Data Science, New York University, 60 Fifth Ave, New York, NY 10011, USA}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%% TITLE PAGE %%%%%%%%%%%%%%%%%%%
-
-% Title of the paper, and the short title which is used in the headers.
-% Keep the title short and informative.
-\title[Substructure with likelihood-free inference]{Characterizing substructure from a population of strong lensing systems using likelihood-free inference}
-
-% The list of authors, and the short list which is used in the headers.
-% If you need two or more lines of authors, add an extra line using \newauthor
-\author[J. Brehmer et al.]{Johann Brehmer,$^{1,2}$
-Siddharth Mishra-Sharma,$^{1}$\thanks{E-mail: sm8383@nyu.edu}
-Joeri Hermans,$^{3}$
-\newauthor
-Gilles Louppe,$^{3}$
-and Kyle Cranmer$^{1,2}$
-\\
-% List of institutions
-$^{1}$Center for Cosmology and Particle Physics, New York University, USA\\
-$^{2}$Center for Data Science, New York University, USA\\
-$^{3}$University of Li\`ege, Belgium
-}
-
-% These dates will be filled out by the publisher
-\date{Accepted XXX. Received YYY; in original form ZZZ}
-
-% Enter the current year, for the copyright statements etc.
-\pubyear{2015}
-
-% Don't change these lines
-\begin{document}
-\label{firstpage}
-\pagerange{\pageref{firstpage}--\pageref{lastpage}}
-\maketitle
-
-% Abstract of the paper
-\begin{abstract}
+\begin{abstract}\noindent
 We develop methods to analyze a statistical sample of strong lenses in a principled way to look for dark matter substructure with likelihood-free inference techniques.
 \end{abstract}
 
-% Select between one and six entries from the list of approved keywords.
-% Don't make up new ones.
-\begin{keywords}
-Strong Lensing -- Dark Matter -- Likelihood-free Inference -- Machine Learning
-\end{keywords}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%% BODY OF PAPER %%%%%%%%%%%%%%%%%%
+\keywords{%
+strong lensing 
+  ---
+dark matter 
+  --- 
+cosmology
+  ---
+likelihood-free inference 
+  --- 
+machine learning
+}
 
 \section{Introduction}
 
@@ -108,9 +61,9 @@ Strong Lensing -- Dark Matter -- Likelihood-free Inference -- Machine Learning
 
 \section{Simulating a population of lenses}
 
-In strong lensing systems, the background light emission source can in general be a point-like quasar or supernova, or a faint, extended ``blue'' galaxy. The former results in multiple localized images on the lens plane rather than extended arc-like images, providing the ability to probe substructure over a limited region. For this reason, we focus our method on analyzing images with extended arcs, since we aim to disentangle the collective, sub-threshold effect of a population of subhalo perturbers over multiple images. Young, blue galaxies are uniquitous in the redshift regime $z\gtrsim1$ and dominate the faint end of the galaxy luminosity function, resulting in a much larger deliverable sample of galaxy-galaxy strong lenses compared to quadruply- and doubly-imaged quasars/supernovae.
+In strong lensing systems, the background light emission source can in general be a point-like quasar or supernova, or a faint, extended ``blue'' galaxy. The former results in multiple localized images on the lens plane rather than extended arc-like images, providing the ability to probe substructure over a limited region on the lens plane. For this reason, we focus our method towards galaxy-galaxy lense---systems producing images with extended arcs---since we aim to disentangle the collective, sub-threshold effect of a population of subhalo perturbers over multiple images. Young, blue galaxies are uniquitous in the redshift regime $z\gtrsim1$ and dominate the faint end of the galaxy luminosity function, resulting in a much larger deliverable sample of galaxy-galaxy strong lenses compared to quadruply- and doubly-imaged quasars/supernovae.
 
-The fact that the strong lens population is expected to be dominated by higher-redshift ($z\gtrsim1$) blue source galaxies lensed by intermediate-redshift ($z\sim 0.5$--$1$) elliptical galaxies presents significant challenges for quantifying the lens population obtainable with future observations. Specifically, planned ground-based surveys like LSST and space telescopes like \emph{Euclid} present complementary challenges for delivering images of strong lensing systems suitable for substructure studies. LSST is expected to image in six bands, allowing efficient source selection and distinguishing source and lens emission, but at the cost of lower resolution by virtue of being a ground-based instrument. \emph{Euclid} imaging is expected be much higher in resolution but with a single optical passband (\emph{VIS}). Near-IR imaging from WFIRST may deliver a high-resolution, multi-wavelength dataset that is more suitable for substructure studies, although the lens and source populations may differ from those probed by optical telescopes. 
+The fact that the strong lens population is expected to be dominated by higher-redshift ($z\gtrsim1$) blue source galaxies lensed by intermediate-redshift ($z\sim 0.5$--$1$) elliptical galaxies presents significant challenges for quantifying the lens population obtainable with future observations. Specifically, planned ground-based surveys like LSST and space telescopes like \Euclid present complementary challenges for delivering images of strong lensing systems suitable for substructure studies. LSST is expected to image in six bands, allowing efficient source selection and distinguishing source and lens emission, but at the cost of lower resolution by virtue of being a ground-based instrument. \emph{Euclid} imaging is expected be much higher in resolution but with a single optical passband (\emph{VIS}). Near-IR imaging from WFIRST may deliver a high-resolution, multi-wavelength dataset that is more suitable for substructure studies, although the lens and source populations may differ from those probed by optical telescopes. 
 
 In light of these uncertainties, we limit the scope of the present study to developing a class of methods that can be adapted to the specifications of a galaxy-galaxy strong lensing population obtained with the next generation of optical, near-IR and radio telescopes. In particular, we confine ourselves to a setting where the main methodological points can be made without detailed modeling of the detector capabilities and the deliverable lensing dataset, which is outside of the scope of the current paper.
 
@@ -139,11 +92,23 @@ where $\sigma_{v}$ is the velocity dispersion of the lens galaxy $q$ is the elli
 \begin{equation}
 \theta_{\mathrm{E}}=4 \pi\left(\frac{\sigma_{v}}{c}\right)^{2} \frac{D_{l s}\left(z_{l}, z_{s}\right)}{D_{s}\left(z_{s}\right)}
 \end{equation}
-where $D_{ls}$ and $D_s$ are respectively the angular diameter distances from the source to the lens planes and from the source plane to the observer respectively. The host velocity dispersion can be relation to the virial mass of its dark matter halo, which will be crucial for the description of substructure.
+where $D_{ls}$ and $D_s$ are respectively the angular diameter distances from the source to the lens planes and from the source plane to the observer respectively. 
 
 The deflection field for this profile is given by...
 
+Although the total galaxy mass (baryons + dark matter) describe the macro lensing field, for the purposes of describing substructure we require being able to map the SIE properties onto the properties of the host dark matter halo. To do this, we use... 
+
 We described the population parameters we use to describe the host ellipticity and velocity dispersion (and thus its Einstein radius and halo mass) in Secs.~\ref{sec:observations} and~\ref{sec:populations} below.
+
+% - Calculate halo mass from velocity dispersion using relation from that paper
+% - Have a few ideas to write down subhalo mass function
+% 	- Use unified model paper
+% 	- Use CLUMPY paper
+% 	- Use Despali paper (but this doesn't have the norm)
+% - Assuming \propto scaling for host halo mass
+% - Scale number of subhalos to our region using ratio of projected mass profiles?
+% - Draw 3D distances and truncate
+% - Actually, just distribute isotropically and use S-C concentration, no truncation
 
 \subsection{Lensing substructure}
 
@@ -157,30 +122,13 @@ We described the population parameters we use to describe the host ellipticity a
 We use the \texttt{LensPop} code~\citep{Collett:2015roa}.
 
 
-
-\section{Conclusions}
-
-\section*{Acknowledgements}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%% REFERENCES %%%%%%%%%%%%%%%%%%
-
-\bibliographystyle{mnras}
-\bibliography{lensing-lfi} 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%% APPENDICES %%%%%%%%%%%%%%%%%%%%%
-
-\appendix
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\acknowledgements
 
 
-% Don't change these lines
-\bsp	% typesetting comment
-\label{lastpage}
+\software{
+}
+
+\bibliographystyle{aasjournal}
+\bibliography{lensing-lfi}
+
 \end{document}
-
-% End of mnras_template.tex
