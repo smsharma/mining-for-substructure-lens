@@ -78,16 +78,6 @@ def F(x):
     # TODO: returning warnings for invalid value in sqrt for some reason...
     return np.where(x == 1, 1, np.where(x < 1, np.arctanh(np.sqrt(1 - x ** 2)) / (np.sqrt(1 - x ** 2)), \
                                         np.arctan(np.sqrt(x ** 2 - 1)) / (np.sqrt(x ** 2 - 1))))
-#
-# def F(x):
-#     """ Helper function for NFW deflection, from astro-ph/0102341
-#     """
-#     if x > 1:
-#         return np.arctan(np.sqrt(x ** 2 - 1)) / (np.sqrt(x ** 2 - 1))
-#     elif x == 1:
-#         return 1
-#     elif x < 1:
-#         return np.arctanh(np.sqrt(1 - x ** 2)) / (np.sqrt(1 - x ** 2))
 
 
 def Sigma_cr(D_l, D_s):

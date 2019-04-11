@@ -83,12 +83,14 @@ class LensingSim:
                 self.theta_x_sub = lens_dict["theta_x"]
                 self.theta_y_sub = lens_dict["theta_y"]
                 self.M_sub = lens_dict["M200"]
+                self.c_sub = lens_dict["c200"]
                 _xg, _yg = deflection_nfw(
                     theta_x=self.x_coords,
                     theta_y=self.y_coords,
                     theta_x0=self.theta_x_sub,
                     theta_y0=self.theta_y_sub,
                     M=self.M_sub,
+                    c=self.c_sub,
                     D_s=self.D_s,
                     D_l=self.D_l,
                 )
