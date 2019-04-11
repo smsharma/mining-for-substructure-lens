@@ -64,14 +64,14 @@ class LensingSim:
         xg, yg = np.zeros((self.nx, self.ny)), np.zeros((self.nx, self.ny))
 
         for lens_dict in self.lenses_list:
-            if lens_dict["profile"] == "SIS":
+            if lens_dict["profile"] == "SIE":
                 self.theta_x_hst = lens_dict["theta_x"]
                 self.theta_y_hst = lens_dict["theta_y"]
                 self.theta_E_hst = lens_dict["theta_E"]
                 self.q_hst = lens_dict["q"]
                 _xg, _yg = deflection_sie(
-                    self.x_coords,
-                    self.y_coords,
+                    theta_x=self.x_coords,
+                    theta_y=self.y_coords,
                     theta_x0=self.theta_x_hst,
                     theta_y0=self.theta_y_hst,
                     theta_E=self.theta_E_hst,
@@ -105,14 +105,18 @@ class LensingSim:
         for source_dict in self.sources_list:
             if source_dict["profile"] == "Sersic":
                 self.I_gal = source_dict["I_gal"]
+                self.theta_x = source_dict["theta_x"]
+                self.theta_y = source_dict["theta_y"]
                 self.n_srsc = source_dict["n_srsc"]
                 self.theta_e_gal = source_dict["theta_e_gal"]
                 self.i_lens += f_gal_sersic(
-                    self.x_coords - xg,
-                    self.y_coords - yg,
-                    self.theta_e_gal,
-                    self.n_srsc,
-                    self.I_gal,
+                    theta_x=self.x_coords - xg,
+                    theta_y=self.y_coords - yg,
+                    theta_x0=self.theta_x,
+                    theta_y0=self.theta_y,
+                    theta_e_gal=self.theta_e_gal,
+                    n_srsc=self.n_srsc,
+                    I_gal=self.I_gal,
                 )
             else:
                 raise Exception("Unknown source profile specification!")

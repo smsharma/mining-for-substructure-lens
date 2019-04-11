@@ -85,7 +85,7 @@ def deflection_sie(theta_x, theta_y, theta_x0=0, theta_y0=0, theta_E=1.5, q=1):
 
 
 def f_gal_sersic(
-    theta_x=0, theta_y=0, theta_e_gal=1, n_srsc=4, I_gal=1e-16 * erg / Centimeter ** 2 / Sec / Angstrom):
+    theta_x, theta_y, theta_x0=0, theta_y0=0, theta_e_gal=1, n_srsc=4, I_gal=1e-16 * erg / Centimeter ** 2 / Sec / Angstrom):
     """ Compute the intensity of the Sersic profile at a given position.
 
         :param theta_x: x-coordinate at which intensity computed in the same units as theta_e_gal
@@ -95,14 +95,20 @@ def f_gal_sersic(
         :param I_gal: overall intensity normalization of the light profile
         :return: Intensity of specified Sersic profile at a given position.
     """
+
+    # Go into shifted coordinates
+    theta_xp = theta_x - theta_x0
+    theta_yp = theta_y - theta_y0
+
     # Radial distance for spherically symmetric profile
-    theta = np.sqrt(theta_x ** 2 + theta_y ** 2)
+    theta = np.sqrt(theta_xp ** 2 + theta_yp ** 2)
 
     # Normalization parameter ensuring that the effective radius contains half of the profile's total light
-    # TODO: augment to fourth order.
-    b_n = 2 * n_srsc - 1 / 3.0 + 4 / (405 * n_srsc) + 46 / (25515 * n_srsc ** 2)
+    b_n = 2 * n_srsc - 1 / 3.0 + 4 / (405 * n_srsc) + 46 / (25515 * n_srsc ** 2) + 131 / (1148175 * n_srsc ** 3) - \
+          2194697 / (30690717750 * n_srsc ** 4)
 
     # Conversion between surface brightness at half-light radius and flux of galaxy
+    # TODO: only valid for n_srsc = 4; fix!
     f_e_gal = I_gal / (7.2 * np.pi * theta_e_gal ** 2)
 
     return f_e_gal * np.exp(-b_n * ((theta / theta_e_gal) ** (1 / n_srsc) - 1))
