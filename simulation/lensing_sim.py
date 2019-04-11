@@ -84,10 +84,10 @@ class LensingSim:
                 self.theta_y_sub = lens_dict["theta_y"]
                 self.M_sub = lens_dict["M200"]
                 _xg, _yg = deflection_nfw(
-                    self.x_coords,
-                    self.y_coords,
-                    x0=self.theta_x_sub,
-                    y0=self.theta_y_sub,
+                    theta_x=self.x_coords,
+                    theta_y=self.y_coords,
+                    theta_x0=self.theta_x_sub,
+                    theta_y0=self.theta_y_sub,
                     M=self.M_sub,
                     D_s=self.D_s,
                     D_l=self.D_l,
@@ -98,7 +98,7 @@ class LensingSim:
             else:
                 raise Exception("Unknown lens profile specification!")
 
-        # Get lensed image
+        # Evaluate source image on deflected lens plane to get lensed image
 
         self.i_lens = np.zeros((self.nx, self.ny))
 
