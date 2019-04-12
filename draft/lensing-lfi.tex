@@ -1,17 +1,26 @@
 \documentclass[twocolumn]{aastex62}
 
+\usepackage{amsmath, amsthm, amssymb, amsfonts}
+
 \newcommand{\acronym}[1]{{\small{#1}}}
 \newcommand{\package}[1]{\textsl{#1}}
 \newcommand{\Euclid}{\textsl{Euclid}~}
 \newcommand{\lcdm}{\acronym{$\Lambda$CDM}}
 \newcommand{\kpc}{\textrm{kpc}}
 \newcommand{\Msun}{\textrm{M}_\odot}
+\newcommand{\kmps}{\textrm{km\,s}^{-1}}
 \newcommand{\zl}{z_l}
 \newcommand{\zs}{z_s}
 \newcommand{\sv}{\sigma_v}
+\newcommand{\mtwo}{m_{200}}
+\newcommand{\MMW}{M_\textrm{MW}}
+\newcommand{\Mtwo}{M_{200}}
+\newcommand{\ctwo}{c_{200}}
+\newcommand{\rtwo}{r_{200}}
+\newcommand{\Rtwo}{R_{200}}
 
-\shorttitle{Dark matter substructure with likelihood-free inference}
-\shortauthors{Brehmer et al.}
+\shorttitle{Inferring dark matter substructure with likelihood-free inference}
+\shortauthors{Brehmer and Mishra-Sharma et al.}
 %@arxiver{}
 
 \begin{document}\sloppy\sloppypar\raggedbottom\frenchspacing
@@ -47,15 +56,15 @@ We develop methods to analyze a statistical sample of strong lenses in a princip
 \end{abstract}
 
 \keywords{%
-strong lensing 
+cosmology
   ---
 dark matter 
   --- 
-cosmology
+galaxies: statistics
   ---
-likelihood-free inference 
-  --- 
-machine learning
+gravitational lensing: strong
+  ---
+methods: statistical 
 }
 
 \section{Introduction}
@@ -74,16 +83,16 @@ We now describe our models for the background source, lensing galaxy and populat
 
 \subsection{Background source}
 
-We model the background source galaxies using a S\'{e}rsic profile
+We model the emission from background source galaxies using a S\'{e}rsic profile, with the surface brightness given by
 \begin{equation}
-I(r)=I_{e} \exp \left\{-b_{n}\left[\left(\frac{r}{r_{e}}\right)^{1 / n}-1\right]\right\},
+\Sigma(r)=\Sigma_{e} \exp \left\{-b_{n}\left[\left(\frac{r}{r_{e}}\right)^{1 / n}-1\right]\right\},
 \end{equation}
-where $r_e$ is the effective circular half-light radius, $n$ is the S\'{e}rsic index, $b_n$ is a factor depending on $n$ that ensures that $r_e$ contains half the total intensity form the source galaxy, given by~\citep{1999A&A...352..447C}
-\begin{equation}
-b_n \approx 2 n - \frac{1}{3} + \frac{4}{405 n} + \frac{46}{25515 n^2} + \frac{131}{1148175 n^3} - \frac{2194697}{30690717750 n^4}.
-\end{equation}
+where $r_e$ is the effective circular half-light radius, $n$ is the S\'{e}rsic index, and $b_n$ is a factor depending on $n$ that ensures that $r_e$ contains half the total intensity from the source galaxy, given by~\citep{1999A&A...352..447C}
+\begin{align}
+b_n \approx 2 n &- \frac{1}{3} + \frac{4}{405 n} + \frac{46}{25515 n^2} \nonumber \\ &+ \frac{131}{1148175 n^3} - \frac{2194697}{30690717750 n^4}. \nonumber
+\end{align}
 
-We use $n=1$ for the source galaxies, corresponding to an exponential profile and consistent with expectation for blue-type galaxies at the relevant redshifts. Treatment of the other parameters in the context of population studies is described in Secs.~\ref{sec:observations} and~\ref{sec:populations} below.
+We assume $n=1$ for the source galaxies, corresponding to a flattened exponential profile and consistent with expectation for blue-type galaxies at the relevant redshifts. $\Sigma_{e}$ encodes the flux at half-light radius, which can be mapped onto the total flux (or magnitude) associated with a given galaxy. Treatment of the other S\'{e}rsic parameters, in particular the total emission and half-light radius, in the context of population studies is described in Secs.~\ref{sec:observations} and~\ref{sec:populations} below.
 
 \subsection{Lensing host galaxy}
 
@@ -93,15 +102,40 @@ Cosmological $N$-body simulations suggest that the dark matter distribution in s
 \end{equation}
 where $\sigma_{v}$ is the velocity dispersion of the lens galaxy $q$ is the ellipsoid axis ratio, with $q=1$ corresponding to a spherical profile. The Einstein radius for this profile, giving the characteristic lensing scale, is given by
 \begin{equation}
-\theta_{\mathrm{E}}=4 \pi\left(\frac{\sigma_{v}}{c}\right)^{2} \frac{D_{l s}\left(z_{l}, z_{s}\right)}{D_{s}\left(z_{s}\right)}
+\theta_{{E}}=4 \pi\left(\frac{\sigma_{v}}{c}\right)^{2} \frac{D_{l s}\left(z_{l}, z_{s}\right)}{D_{s}\left(z_{s}\right)}
 \end{equation}
 where $D_{ls}$ and $D_s$ are respectively the angular diameter distances from the source to the lens planes and from the source plane to the observer respectively. 
 
-The deflection field for this profile is given by...
+The deflection field for the SIE profile is given by~\citep{2001astro.ph..2341K}
 
-Although the total galaxy mass (baryons + dark matter) describe the macro lensing field, for the purposes of describing substructure we require being able to map the SIE properties onto the properties of the host dark matter halo. To do this, we use... 
+\begin{align} 
+\phi_{x} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tan ^{-1}\left[\frac{\sqrt{1-q^{2}} x}{\psi}\right] \\ 
+\phi_{y} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tanh ^{-1}\left[\frac{\sqrt{1-q^{2}} y}{\psi+q^{2} }\right] 
+\end{align}
+with $\psi \equiv \sqrt{x^2 q^2 + y^2}$.
 
-We described the population parameters we use to describe the host ellipticity and velocity dispersion (and thus its Einstein radius and halo mass) in Secs.~\ref{sec:observations} and~\ref{sec:populations} below.
+Although the total galaxy mass (baryons + dark matter) describe the macro lensing field, for the purposes of describing substructure we require being able to map the measure properties of an SIE lens onto the properties of the host dark matter halo. To do this, we relate the central stellar velocity dispersion $\sigma_v$ to the mass $M_{200}$ of the host dark matter halo. \citet{2018ApJ...859...96Z} derived a tight correlation between $\sigma_v$ and $M_{200}$, modeled as
+\begin{equation}
+\log\left(\frac{M_{200}}{10^{12}\,\Msun}\right) = \alpha + \beta\left(\frac{\sigma_v}{100\,\kmps}\right)
+\end{equation}
+with $\alpha = 0.09$ and $\beta = 3.48$ with a mean log-normal scatter of 0.13\,dex. We model the host dark matter halo with a Navarro-Frenk-White (NFW) profile~\citep{1996ApJ...462..563N,1997ApJ...490..493N}
+
+\begin{equation}
+\rho(r)=\frac{\rho_{s}}{\left(r / r_{s}\right)\left(1+r / r_{s}\right)^{2}}
+\end{equation}
+where $\rho_s$ and $r_s$ are the scale density and scale radius, respectively. The halo virial mass $M_{200}$ describes the total mass contained with the virial radius $r_{200}$, defined as the radius within which the mean density is 200 times the critical density of the universe and related to the scale radius through the concentration parameter $c_{200} \equiv r_{200}/r_s$. Thus, an NFW halo is completely described by the parameters $\{M_{200}, c_{200}\}$. We use the concentration-mass relation from~\citet{2014MNRAS.442.2271S} assuming a log-normal distribution for $c_{200}$ around the median inferred value given by the relation with scatter 0.15\,dex.
+
+The spherically symmetric deflection for an NFW perturber is given by
+\begin{equation}
+\phi_{r}=4 \kappa_{s} r_{s} \frac{\ln (x / 2)+\mathcal{F}(x)}{x}
+\end{equation}
+where $x = r/r_s, \kappa_s = \rho_s\,r_s/\Sigma_\mathrm{cr}$ with $\Sigma_\mathrm{cr}$ the critical surface density, and
+\begin{equation}
+\mathcal{F}(x)=\left\{\begin{array}{ll}{\frac{1}{\sqrt{x^{2}-1}} \tan ^{-1} \sqrt{x^{2}-1}} & {(x>1)} \\ {\frac{1}{\sqrt{1-x^{2}}} \tanh ^{-1} \sqrt{1-x^{2}}} & {(x<1)} \\ {1} & {(x=1).}\end{array}\right.
+\label{eq:Fx}
+\end{equation}
+
+We described the population parameters we use to model the host ellipticity and velocity dispersion (and thus its Einstein radius and halo mass) in Secs.~\ref{sec:observations} and~\ref{sec:populations} below.
 
 % - Calculate halo mass from velocity dispersion using relation from that paper
 % - Have a few ideas to write down subhalo mass function
@@ -115,6 +149,20 @@ We described the population parameters we use to describe the host ellipticity a
 
 \subsection{Lensing substructure}
 
+The ultimate goal of our method is to characterize the substructure population in strong lenses. Here we describe our procedure to model the substructure contribution to the lensing signal. Understaing the expected abundance of substructure in galaxies over a large range of epochs is complex task and an active area of research. Properties of individual subhalos (such as their density profiles) as well as those that describe their population (such as the mass and spatial distribution) are strongly affected by their host environment, and accurately modeling all aspects of subhalo evolution and environment is beyond the scope of this paper. Instead, we use simple physically justifiable assumptions to model the substructure contributions in order to highlight the broad methodological points associated with the application of our method.
+
+ \lcdm, often called the standard model of cosmology, predicts a scale-invariant power spectrum of primordial fluctuations and the existence of substrucure over a broad range of masses with equal contribution per logarithmic mass interval. We parameterize the distribution of subhalo masses $\mtwo$ in a given host halo of mass $\Mtwo$ a power law distribution subhalo mass function,
+ \begin{equation}
+ \frac{M_{200,0}}{\Mtwo}\frac{dn}{d\ln\mtwo} = \alpha\,\left(\frac{\mtwo}{m_{200, 0}}\right)^{\beta}
+ \end{equation}
+where $\alpha$ encodes the overall substructure abundance, with larger $\alpha$ corresponding to more substructure, and the slope $\beta$ encodes the relative constribution of subhalos at different masses, with more negative $\beta$ corresponding to a steeper slope with more low-mass subhalos. The normalization factors $m_{200, 0}$ and $M_{200, 0}$ are arbitrarily set to $10^8\,\Msun$ and the Milky Way mass $\MMW \simeq 1.1\times10^{12}\,\Msun$, respectively.
+
+Theory and simulations within the framework of \lcdm predict a slope $\beta\sim-0.9$, giving a nearly scale-invariant spectrum of subhalos, which we assume in our fiducial setup. We follow the specifications in~\citet{2016JCAP...09..047H} in order to set the overall fiducial abundance of subhalos, normalizing $\alpha$ to give 150 subhalos in expectation between $10^{8}\,\Msun$ and $10^{10}\,\Msun$ for a Milky Way-sized host halo. The linear scaling of the halo mass function with the host halo mass $\Mtwo$ is additionally described in~\citet{2016MNRAS.457.1208H,2017MNRAS.469.1997D}.
+
+This procedure tells us the total number $n_\mathrm{tot}$ of subhalos within the virial radius $\Rtwo$ of the host halo. Strong lensing probes a region much smaller this scale---the typical Einstein radii for the host deflector are much smaller than the virial radius of the host dark matter halos. In order to obtain the expected number of subhalos within the lensing observations region of interest, we scale the total number of subhalos obtained from the above procedure by the ratio of projected mass within our region of interest $\theta_\textrm{ROI}$ and within the angular virial radius $\theta_{200}$.
+
+We assume the subhalos to be distributed in number density following the host NFW dark matter profile. In this case, the NFW enclosed mass function is $M_\mathrm{enc}(x) \propto \ln(x/2) + \mathcal{F}(x)$, where $x$ is the angular radius in units of the virial radius, $x\equiv \theta/\theta_{200}$ and $\mathcal{F}$ is given by Eq.~\ref{eq:Fx} above. The number of subhalos within our ROI is thus obtained as $n_\mathrm{ROI} = n_\mathrm{tot}\times M_\mathrm{enc}(\theta_\textrm{ROI})/M_\mathrm{enc}(\theta_{200})$.
+
 \subsection{Observational considerations}
 \label{sec:observations}
 
@@ -122,7 +170,7 @@ We described the population parameters we use to describe the host ellipticity a
 \subsection{Population statistics of the lens sample}
 \label{sec:populations}
 
-We use the \texttt{LensPop} code~\citep{Collett:2015roa}.
+We use the \texttt{LensPop} code~\citep{2015ApJ...811...20C}.
 
 
 \acknowledgements

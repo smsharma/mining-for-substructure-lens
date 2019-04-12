@@ -8,7 +8,44 @@
 \bibitem[{{Ciotti} \& {Bertin}(1999)}]{1999A&A...352..447C}
 {Ciotti}, L., \& {Bertin}, G. 1999, \aap, 352, 447
 
-\bibitem[{Collett(2015)}]{Collett:2015roa}
-Collett, T.~E. 2015, Astrophys. J., 811, 20, \dodoi{10.1088/0004-637X/811/1/20}
+\bibitem[{{Collett}(2015)}]{2015ApJ...811...20C}
+{Collett}, T.~E. 2015, \apj, 811, 20, \dodoi{10.1088/0004-637X/811/1/20}
+
+\bibitem[{{Despali} \& {Vegetti}(2017)}]{2017MNRAS.469.1997D}
+{Despali}, G., \& {Vegetti}, S. 2017, \mnras, 469, 1997,
+  \dodoi{10.1093/mnras/stx966}
+
+\bibitem[{{Han} {et~al.}(2016){Han}, {Cole}, {Frenk}, \&
+  {Jing}}]{2016MNRAS.457.1208H}
+{Han}, J., {Cole}, S., {Frenk}, C.~S., \& {Jing}, Y. 2016, \mnras, 457, 1208,
+  \dodoi{10.1093/mnras/stv2900}
+
+\bibitem[{{H{\"u}tten} {et~al.}(2016){H{\"u}tten}, {Combet}, {Maier}, \&
+  {Maurin}}]{2016JCAP...09..047H}
+{H{\"u}tten}, M., {Combet}, C., {Maier}, G., \& {Maurin}, D. 2016, Journal of
+  Cosmology and Astro-Particle Physics, 2016, 047,
+  \dodoi{10.1088/1475-7516/2016/09/047}
+
+\bibitem[{{Keeton}(2001)}]{2001astro.ph..2341K}
+{Keeton}, C.~R. 2001, arXiv e-prints, astro.
+\newblock \doarXiv{astro-ph/0102341}
+
+\bibitem[{{Navarro} {et~al.}(1996){Navarro}, {Frenk}, \&
+  {White}}]{1996ApJ...462..563N}
+{Navarro}, J.~F., {Frenk}, C.~S., \& {White}, S.~D.~M. 1996, \apj, 462, 563,
+  \dodoi{10.1086/177173}
+
+\bibitem[{{Navarro} {et~al.}(1997){Navarro}, {Frenk}, \&
+  {White}}]{1997ApJ...490..493N}
+---. 1997, \apj, 490, 493, \dodoi{10.1086/304888}
+
+\bibitem[{{S{\'a}nchez-Conde} \& {Prada}(2014)}]{2014MNRAS.442.2271S}
+{S{\'a}nchez-Conde}, M.~A., \& {Prada}, F. 2014, \mnras, 442, 2271,
+  \dodoi{10.1093/mnras/stu1014}
+
+\bibitem[{{Zahid} {et~al.}(2018){Zahid}, {Sohn}, \&
+  {Geller}}]{2018ApJ...859...96Z}
+{Zahid}, H.~J., {Sohn}, J., \& {Geller}, M.~J. 2018, \apj, 859, 96,
+  \dodoi{10.3847/1538-4357/aabe31}
 
 \end{thebibliography}
