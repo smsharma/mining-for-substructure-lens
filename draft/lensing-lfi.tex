@@ -2,9 +2,11 @@
 
 \usepackage{amsmath, amsthm, amssymb, amsfonts}
 
+\newcommand{\SMS}[1]{{\bf \color{blue}{[SM: #1]}}}
+
 \newcommand{\acronym}[1]{{\small{#1}}}
 \newcommand{\package}[1]{\textsl{#1}}
-\newcommand{\Euclid}{\textsl{Euclid}~}
+\newcommand{\Euclid}{\textsl{Euclid}}
 \newcommand{\lcdm}{\acronym{$\Lambda$CDM}}
 \newcommand{\kpc}{\textrm{kpc}}
 \newcommand{\Msun}{\textrm{M}_\odot}
@@ -75,7 +77,7 @@ methods: statistical
 
 In strong lensing systems, the background light emission source can in general be a point-like quasar or supernova, or a faint, extended ``blue'' galaxy. The former results in multiple localized images on the lens plane rather than extended arc-like images, providing the ability to probe substructure over a limited region on the lens plane. For this reason, we focus our method towards galaxy-galaxy lense---systems producing images with extended arcs---since we aim to disentangle the collective, sub-threshold effect of a population of subhalo perturbers over multiple images. Young, blue galaxies are uniquitous in the redshift regime $z\gtrsim1$ and dominate the faint end of the galaxy luminosity function, resulting in a much larger deliverable sample of galaxy-galaxy strong lenses compared to quadruply- and doubly-imaged quasars/supernovae.
 
-The fact that the strong lens population is expected to be dominated by higher-redshift ($z\gtrsim1$) blue source galaxies lensed by intermediate-redshift ($z\sim 0.5$--$1$) elliptical galaxies presents significant challenges for quantifying the lens population obtainable with future observations. Specifically, planned ground-based surveys like LSST and space telescopes like \Euclid present complementary challenges for delivering images of strong lensing systems suitable for substructure studies. LSST is expected to image in six bands, allowing efficient source selection and distinguishing source and lens emission, but at the cost of lower resolution by virtue of being a ground-based instrument. \emph{Euclid} imaging is expected be much higher in resolution but with a single optical passband (\emph{VIS}). Near-IR imaging from WFIRST may deliver a high-resolution, multi-wavelength dataset that is more suitable for substructure studies, although the lens and source populations may differ from those probed by optical telescopes. 
+The fact that the strong lens population is expected to be dominated by higher-redshift ($z\gtrsim1$) blue source galaxies lensed by intermediate-redshift ($z\sim 0.5$--$1$) elliptical galaxies presents significant challenges for quantifying the lens population obtainable with future observations. Specifically, planned ground-based surveys like LSST and space telescopes like \Euclid~present complementary challenges for delivering images of strong lensing systems suitable for substructure studies. LSST is expected to image in six bands, allowing efficient source selection and distinguishing source and lens emission, but at the cost of lower resolution by virtue of being a ground-based instrument. \Euclid~imaging is expected be much higher in resolution but with a single optical passband (VIS). Near-IR imaging from WFIRST may deliver a high-resolution, multi-wavelength dataset that is more suitable for substructure studies, although the lens and source populations may differ from those probed by optical telescopes. 
 
 In light of these uncertainties, we limit the scope of the present study to developing a class of methods that can be adapted to the specifications of a galaxy-galaxy strong lensing population obtained with the next generation of optical, near-IR and radio telescopes. In particular, we confine ourselves to a setting where the main methodological points can be made without detailed modeling of the detector capabilities and the deliverable lensing dataset, which is outside of the scope of the current paper.
 
@@ -122,6 +124,7 @@ with $\alpha = 0.09$ and $\beta = 3.48$ with a mean log-normal scatter of 0.13\,
 
 \begin{equation}
 \rho(r)=\frac{\rho_{s}}{\left(r / r_{s}\right)\left(1+r / r_{s}\right)^{2}}
+\label{eq:rhoNFW}
 \end{equation}
 where $\rho_s$ and $r_s$ are the scale density and scale radius, respectively. The halo virial mass $M_{200}$ describes the total mass contained with the virial radius $r_{200}$, defined as the radius within which the mean density is 200 times the critical density of the universe and related to the scale radius through the concentration parameter $c_{200} \equiv r_{200}/r_s$. Thus, an NFW halo is completely described by the parameters $\{M_{200}, c_{200}\}$. We use the concentration-mass relation from~\citet{2014MNRAS.442.2271S} assuming a log-normal distribution for $c_{200}$ around the median inferred value given by the relation with scatter 0.15\,dex.
 
@@ -151,9 +154,9 @@ We described the population parameters we use to model the host ellipticity and 
 
 The ultimate goal of our method is to characterize the substructure population in strong lenses. Here we describe our procedure to model the substructure contribution to the lensing signal. Understaing the expected abundance of substructure in galaxies over a large range of epochs is complex task and an active area of research. Properties of individual subhalos (such as their density profiles) as well as those that describe their population (such as the mass and spatial distribution) are strongly affected by their host environment, and accurately modeling all aspects of subhalo evolution and environment is beyond the scope of this paper. Instead, we use simple physically justifiable assumptions to model the substructure contributions in order to highlight the broad methodological points associated with the application of our method.
 
- \lcdm, often called the standard model of cosmology, predicts a scale-invariant power spectrum of primordial fluctuations and the existence of substrucure over a broad range of masses with equal contribution per logarithmic mass interval. We parameterize the distribution of subhalo masses $\mtwo$ in a given host halo of mass $\Mtwo$ a power law distribution subhalo mass function,
+ \lcdm, often called the standard model of cosmology, predicts a scale-invariant power spectrum of primordial fluctuations and the existence of substrucure over a broad range of masses with equal contribution per logarithmic mass interval. We parameterize the distribution of subhalo masses $\mtwo$ in a given host halo of mass $\Mtwo$---the subhalo mass function---as power law distribution:
  \begin{equation}
- \frac{M_{200,0}}{\Mtwo}\frac{dn}{d\ln\mtwo} = \alpha\,\left(\frac{\mtwo}{m_{200, 0}}\right)^{\beta}
+ \frac{M_{200,0}}{\Mtwo}\frac{dn}{d\ln\mtwo} = \alpha\left(\frac{\mtwo}{m_{200, 0}}\right)^{\beta}
  \end{equation}
 where $\alpha$ encodes the overall substructure abundance, with larger $\alpha$ corresponding to more substructure, and the slope $\beta$ encodes the relative constribution of subhalos at different masses, with more negative $\beta$ corresponding to a steeper slope with more low-mass subhalos. The normalization factors $m_{200, 0}$ and $M_{200, 0}$ are arbitrarily set to $10^8\,\Msun$ and the Milky Way mass $\MMW \simeq 1.1\times10^{12}\,\Msun$, respectively.
 
@@ -163,20 +166,35 @@ This procedure tells us the total number $n_\mathrm{tot}$ of subhalos within the
 
 We assume the subhalos to be distributed in number density following the host NFW dark matter profile. In this case, the NFW enclosed mass function is $M_\mathrm{enc}(x) \propto \ln(x/2) + \mathcal{F}(x)$, where $x$ is the angular radius in units of the virial radius, $x\equiv \theta/\theta_{200}$ and $\mathcal{F}$ is given by Eq.~\ref{eq:Fx} above. The number of subhalos within our ROI is thus obtained as $n_\mathrm{ROI} = n_\mathrm{tot}\times M_\mathrm{enc}(\theta_\textrm{ROI})/M_\mathrm{enc}(\theta_{200})$.
 
+Since strong lensing probes the line-of-sight distribution of subhalos within the host, their projected spatial distribution is approximately uniform within the lensing ROI~\citep{2017MNRAS.469.1997D}. We thus distribute subhalos isotropically within our ROI. The density profile of subhalos is assumed to be NFW and given by Eq.~\ref{eq:rhoNFW}, with associated lensing properties as described and the concentration inferred from the relation modeled in~\citet{2014MNRAS.442.2271S}.
+
+We finally emphasize that we do not intent to capture all of the intricacies of the subhalo distribution, such as the effects of baryonic physics, tidal distruption of subhalos in proximity to the center of the host and redshift evolution of host as well as substructure properties. Although our description can be extended to take these into account, their precise characterization and effect is still subject to large uncertainties, and our simple model above captures the essential physics for demonstration purposes.
+
 \subsection{Observational considerations}
 \label{sec:observations}
 
+A noted above, our method is best-suited to analyzing a statistical sample of strong lenses to search for substructure, such as those that are expected to be obtained in the near future with optical telescopes like \Euclid~and LSST. Given the challenges associated with the precise characterization of such a sample at the present time, we describe here the observational characteristics we assume in order to build up training and testing samples to validate our inference techniques.
+
+We largely follow the description in~\citet{2015ApJ...811...20C}, and use the associated \package{LensPop} package, to characterize our mock observations. In particular, we use the detector configuration for \Euclid, assuming a zero-point magnitude $m_\mathrm{AB} = 25.5$ in the single optical VIS passband, pixel size 0.1\,arcsec, a Gaussian point spread function (PSF) with FWHM 0.18\,arcsec, individual exposures with exposure time 565\,s, an isotropic sky background with magnitude 22.8\,arcsec$^{-2}$ in the detector passband. \SMS{Read-out noise and gain?}.
+
+These properties, in particular the exposure, sky background and PSF shape are expected to vary somewhat across the lens sample. Additionally, a given region may be imaged by multiple exposures over a range of color bands. Although these variations can easily be incorporated into our analysis, modeling this is beyond the scope of this study. We briefly comment on how this information can be taken into account later.
 
 \subsection{Population statistics of the lens sample}
 \label{sec:populations}
 
-We use the \texttt{LensPop} code~\citep{2015ApJ...811...20C}.
 
 
 \acknowledgements
 
 
 \software{
+\package{Astropy} \citep{2013A&A...558A..33A,2018AJ....156..123A},
+\package{IPython} \citep{PER-GRA:2007},
+\package{LensPop} \citep{2015ApJ...811...20C},
+\package{matplotlib} \citep{Hunter:2007},
+\package{NumPy} \citep{numpy:2011},
+\package{PyTorch} \citep{paszke2017automatic},
+\package{SciPy} \citep{Jones:2001ab}.
 }
 
 \bibliographystyle{aasjournal}
