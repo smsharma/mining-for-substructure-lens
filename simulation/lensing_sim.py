@@ -33,12 +33,12 @@ class LensingSim:
         """ Set up observational grid and parameters
         """
         # Coordinate limits (in arcsecs)
-        self.xlims = self.observation_dict["xlims"]
-        self.ylims = self.observation_dict["ylims"]
+        self.xlims = self.observation_dict["theta_x_lims"]
+        self.ylims = self.observation_dict["theta_y_lims"]
 
         # Size of grid
-        self.nx = self.observation_dict["nx"]
-        self.ny = self.observation_dict["ny"]
+        self.nx = self.observation_dict["n_x"]
+        self.ny = self.observation_dict["n_y"]
 
         # Exposure and background noise level
         self.exposure = self.observation_dict["exposure"]
