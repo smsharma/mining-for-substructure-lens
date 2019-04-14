@@ -6,16 +6,18 @@ from astropy.convolution import convolve, Gaussian2DKernel
 
 
 class LensingObservationWithSubhalos:
-    def __init__(self, sim_mvgauss_mean, sim_mvgauss_cov, mag_zero=25.5, mag_iso=22.5, exposure=1610, fwhm_psf=0.18,
+    def __init__(self, sim_mvgauss_mean, sim_mvgauss_cov,
+                 mag_zero=25.5, mag_iso=22.5, exposure=1610, fwhm_psf=0.18,
                  pixel_size=0.1, n_xy=64,
                  fix_source=True,
+                 spherical_host=True,
                  m_200_min_sub = 1e7 * M_s, n_calib = 150
                  ):
         """
         Class to simulation an observation strong lensing image, with substructure sprinkled in.
 
         Parameters corresponding to sim_mvgauss_[mean/cov] are:
-        log_z_l, z_s, log_theta_E, sigma_v, q, theta_x_0, theta_y_0, theta_s_e, mag_s, TS
+        log_z_l, z_s, log_theta_E, sigma_v, q, theta_x_0, theta_y_0, log_theta_s_e, mag_s, TS
 
         :param sim_mvgauss_mean: Mean of drawn parameters
         :param sim_mvgauss_cov: Covariance matrix of drawn parameters
@@ -26,6 +28,7 @@ class LensingObservationWithSubhalos:
         :param pixel_size: Pixel side size, in arcsecs
         :param n_xy: Number of pixels (along x and y) of observation
         :param fix_source: Whether to fix source parameters rather than drawing, for an easier problem
+        :param spherical_host: Whether to restrict to spherical hosts (q = 1), for an easier problem
         :param m_200_min_sub: Lowest mass of subhalos to draw
         :param n_calib: Number of subhalos expected between 1e8 and 1e10*M_s for a MW-sized halo, for calibration
         """
@@ -39,10 +42,6 @@ class LensingObservationWithSubhalos:
         z_l = 10**log_z_l
         theta_E = 10**log_theta_E
 
-        # Clip host ellipticity to be between 0.2 and 1.0; outside values not physical
-        if q > 1: q = 1
-        if q < 0.2: q = 0.2
-
         # If fixing the source, these are fixed to reasonable mean-ish quantities
         # and a higher-than-average brightness, for an easier problem
         if fix_source:
@@ -52,6 +51,16 @@ class LensingObservationWithSubhalos:
         else:
             theta_s_e = 10**theta_s_e
             z_s = 10**z_s
+
+        # If only considering spherical host, set q = 1 for a simpler problem
+        if spherical_host:
+            q = 1
+        else:
+            # Clip host ellipticity to be between 0.2 and 1.0; outside values not physical
+            if q > 1:
+                q = 1
+            if q < 0.2:
+                q = 0.2
 
         # Get properties for NFW host
         M_200_hst = self.M_200_sigma_v(sigma_v * Kmps)
@@ -200,7 +209,6 @@ class SubhaloPopulation:
         """
         return alpha * M * (m_max * m_min / m_0) ** beta * \
                (m_max ** -beta * m_min - m_max * m_min ** -beta) / (M_0 * (-1 + -beta))
-
 
     def _draw_m_sub(self, n_sub, m_sub_min, beta):
         """
