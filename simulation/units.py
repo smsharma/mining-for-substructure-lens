@@ -47,3 +47,5 @@ e1 /= np.linalg.norm(e1)
 e2 /= np.linalg.norm(e2)
 lambdap = np.deg2rad(281.93)
 t1 = 79.3266
+
+M_MW = 1.1e12 * M_s

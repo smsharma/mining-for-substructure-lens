@@ -91,14 +91,36 @@ class MassProfileNFW:
         # Convert to arcsecs and return deflection field
         return x_d, y_d
 
-    @staticmethod
-    def F(x):
+    @classmethod
+    def F(self, x):
         """
         Helper function for NFW deflection, from astro-ph/0102341
         TODO: returning warnings for invalid value in sqrt for some reason
         """
         return np.where(x == 1, 1, np.where(x < 1, np.arctanh(np.sqrt(1 - x ** 2)) / (np.sqrt(1 - x ** 2)),
                                             np.arctan(np.sqrt(x ** 2 - 1)) / (np.sqrt(x ** 2 - 1))))
+
+    @classmethod
+    def get_r_s_rho_s_NFW(self, M_200, c_200):
+        """ Get NFW scale radius and density
+        """
+        r_200 = (M_200 / (4 / 3. * np.pi * 200 * rho_c)) ** (1 / 3.)
+        rho_s = M_200 / (4 * np.pi * (r_200 / c_200) ** 3 * (np.log(1 + c_200) - c_200 / (1 + c_200)))
+        r_s = r_200 / c_200
+        return r_s, rho_s
+
+    @classmethod
+    def c_200_SCP(self, M_200):
+        """ Concentration-mass relation according to eq. 1 of  Sanchez-Conde & Prada 2014 (1312.1729)
+            :param M_200: M_200 mass of halo
+        """
+        x = np.log(M_200/(M_s/h))
+        pars = [37.5153, -1.5093, 1.636e-2, 3.66e-4, -2.89237e-5, 5.32e-7][::-1]
+        return np.polyval(pars, x)
+
+    @classmethod
+    def M_cyl_div_M0(self, x):
+        return np.log(x / 2) + self.F(x)
 
 
 class LightProfileSersic:
@@ -138,8 +160,8 @@ class LightProfileSersic:
 
         return flux_e * np.exp(-b_n * ((r / self.r_e) ** (1 / self.n_srsc) - 1))
 
-    @staticmethod
-    def b_n(n_srsc):
+    @classmethod
+    def b_n(self, n_srsc):
         """
         Normalization parameter ensuring that the effective radius contains half of the profile's total light
         From Ciotti & Bertin 1999, A&A, 352, 447
@@ -147,6 +169,7 @@ class LightProfileSersic:
         return 2 * n_srsc - 1 / 3.0 + 4 / (405 * n_srsc) + 46 / (25515 * n_srsc ** 2) + \
             131 / (1148175 * n_srsc ** 3) - 2194697 / (30690717750 * n_srsc ** 4)
 
+    @classmethod
     def flux_e(self, S_tot, n_srsc, r_e):
         """
         Compute flux at half-light radius given the total counts S_tot

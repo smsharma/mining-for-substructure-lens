@@ -106,6 +106,6 @@ class LensingSim:
                 raise Exception("Unknown source profile specification!")
 
         f_iso = self.f_iso * np.ones((self.n_x, self.n_y))  # Isotropic background
-        i_tot = (f_lens + f_iso) * self.exposure * self.pixarea # Total lensed image
+        i_tot = (f_lens + f_iso) * self.exposure * self.pixarea  # Total lensed image
 
         return i_tot
