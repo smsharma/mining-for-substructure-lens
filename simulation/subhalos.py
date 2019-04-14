@@ -1,5 +1,5 @@
 from simulation.units import *
-from simulation_new.profiles import MassProfileNFW
+from simulation.profiles import MassProfileNFW
 
 
 class SubhaloPopulation:

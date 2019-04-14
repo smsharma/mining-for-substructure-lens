@@ -1,121 +1,184 @@
 from simulation.units import *
+from scipy.special import gamma
 
 
-def deflection_sie(theta_x, theta_y, theta_x0=0, theta_y0=0, theta_E=1.5, q=1):
-    """ Deflection for singular isothermal ellipsoid (SIE) mass profile, from astro-ph/0102341.
-        # TODO: deal with origin singularity
+class MassProfileSIE:
+    def __init__(self, x_0, y_0, r_E, q):
+        """
+        Singular isothermal ellipsoid (SIE) mass profile class
 
-        :param theta_x: x-coordinate at which deflection computed, in same units as theta_E
-        :param theta_y: y-coordinate at which deflection computed, in same units as theta_E
-        :param theta_x0: x-coordinate of center of deflector, in same units as theta_E
-        :param theta_y0: y-coordinate of center of deflector, in same units as theta_E
-        :param theta_E: Einstein radius of deflector
+        :param x_0: x-coordinate of center of deflector, in same units as r_E
+        :param y_0: y-coordinate of center of deflector, in same units as r_E
+        :param r_E: Einstein radius of deflector
         :param q: Axis-ratio of deflector
-        :return: Deflections at positions specified by theta_x, theta_y
-    """
-    # Go into shifted coordinates
-    theta_xp = theta_x - theta_x0
-    theta_yp = theta_y - theta_y0
+        """
+        self.x_0 = x_0
+        self.y_0 = y_0
+        self.r_E = r_E
+        self.q = q
 
-    # Compute deflection field
+    def deflection(self, x, y):
+        """
+        Calculate deflection vectors, from astro-ph/0102341
+        TODO: deal with origin singularity
 
-    theta_psi = np.sqrt((q * theta_xp) ** 2 + theta_yp ** 2)
+        :param x: x-coordinate at which deflection computed, in same units as r_E
+        :param y: y-coordinate at which deflection computed, in same units as r_E
+        :return: Deflections at positions specified by x, y
+        """
+        # Go into shifted coordinates
+        x_p = x - self.x_0
+        y_p = y - self.y_0
 
-    if q == 1:
-        theta_xd = theta_E * theta_xp / theta_psi
-        theta_yd = theta_E * theta_yp / theta_psi
-    else:
-        theta_xd = theta_E * q / np.sqrt(1 - q ** 2) * np.arctan(np.sqrt(1 - q ** 2) * theta_xp / theta_psi)
-        theta_yd = theta_E * q / np.sqrt(1 - q ** 2) * np.arctanh(np.sqrt(1 - q ** 2) * theta_yp / theta_psi)
+        # Compute deflection field
+        psi = np.sqrt((self.q * x_p) ** 2 + y_p ** 2)
 
-    # Return deflection field
-    return theta_xd, theta_yd
+        if self.q == 1:
+            x_d = self.r_E * x_p / psi
+            y_d = self.r_E * y_p / psi
+        else:
+            x_d = self.r_E * self.q / np.sqrt(1 - self.q ** 2) * \
+                np.arctan(np.sqrt(1 - self.q ** 2) * x_p / psi)
+            y_d = self.r_E * self.q / np.sqrt(1 - self.q ** 2) * \
+                np.arctanh(np.sqrt(1 - self.q ** 2) * y_p / psi)
 
-
-def deflection_nfw(theta_x, theta_y, theta_x0=0, theta_y0=0, M=1e14 * M_s, c=20.0, D_s=1 * Mpc, D_l=0.5 * Mpc):
-    """ Deflection for an NFW halo, from astro-ph/0102341
-        # TODO: deal with origin singularity
-    """
-
-    # Go into shifted coordinates
-    theta_xp = theta_x - theta_x0
-    theta_yp = theta_y - theta_y0
-
-    theta_r = np.sqrt(theta_xp ** 2 + theta_yp ** 2)
-
-    r_s, rho_s = get_rs_rhos_NFW(M, c)
-
-    theta_s = r_s / D_l
-
-    x = theta_r * asctorad / theta_s
-
-    Sigma_crit = Sigma_cr(D_l, D_s)  # Critical lensing density
-
-    kappa_s = rho_s * r_s / Sigma_crit
-
-    # Get spherically symmetric deflection
-    phi_theta = 4 * kappa_s * theta_s * (np.log(x / 2.0) + F(x)) / x
-
-    # Get x and y coordinates of deflection
-    xtg = phi_theta * theta_xp / theta_r
-    ytg = phi_theta * theta_yp / theta_r
-
-    # Convert to arcsecs
-    return xtg * radtoasc, ytg * radtoasc
+        # Return deflection field
+        return x_d, y_d
 
 
-def get_rs_rhos_NFW(M200, c200):
-    """ Get NFW scale radius and density
-    """
-    r200 = (M200 / (4 / 3. * np.pi * 200 * rho_c)) ** (1 / 3.)
-    rho_s = M200 / (4 * np.pi * (r200 / c200) ** 3 * (np.log(1 + c200) - c200 / (1 + c200)))
-    r_s = r200 / c200
-    return r_s, rho_s
+class MassProfileNFW:
+    def __init__(self, x_0, y_0, M_200, kappa_s, r_s):
+        """
+        Navarro-Frenk-White (NFW) mass profile class
+
+        :param x_0: x-coordinate of center of deflector, in same units as r_s
+        :param y_0: y-coordinate of center of deflector, in same units as r_s
+        :param kappa_s: Overall normalization of the DM halo (kappa_s = rho_s * r_s / Sigma_crit)
+        :param r_s: Scale radius of NFW halo
+        """
+
+        self.x_0 = x_0
+        self.y_0 = y_0
+        self.M_200 = M_200
+        self.kappa_s = kappa_s
+        self.r_s = r_s
+
+    def deflection(self, x, y):
+        """
+        Calculate deflection vectors, from astro-ph/0102341
+        TODO: deal with origin singularity
+
+        :param x: x-coordinate at which deflection computed, in same units as r_E
+        :param y: y-coordinate at which deflection computed, in same units as r_E
+        :return: Deflections at positions specified by x, y
+        """
+
+        # Go into shifted coordinates
+        x_p = x - self.x_0
+        y_p = y - self.y_0
+
+        r = np.sqrt(x_p ** 2 + y_p ** 2)
+
+        x = r / self.r_s
+
+        # Get spherically symmetric deflection field, from astro-ph/0102341
+        phi_r = 4 * self.kappa_s * self.r_s * (np.log(x / 2.0) + self.F(x)) / x
+
+        # Get x and y coordinates of deflection
+        x_d = phi_r * x_p / r
+        y_d = phi_r * y_p / r
+
+        # Convert to arcsecs and return deflection field
+        return x_d, y_d
+
+    @classmethod
+    def F(self, x):
+        """
+        Helper function for NFW deflection, from astro-ph/0102341
+        TODO: returning warnings for invalid value in sqrt for some reason
+        """
+        return np.where(x == 1, 1, np.where(x < 1, np.arctanh(np.sqrt(1 - x ** 2)) / (np.sqrt(1 - x ** 2)),
+                                            np.arctan(np.sqrt(x ** 2 - 1)) / (np.sqrt(x ** 2 - 1))))
+
+    @classmethod
+    def get_r_s_rho_s_NFW(self, M_200, c_200):
+        """ Get NFW scale radius and density
+        """
+        r_200 = (M_200 / (4 / 3. * np.pi * 200 * rho_c)) ** (1 / 3.)
+        rho_s = M_200 / (4 * np.pi * (r_200 / c_200) ** 3 * (np.log(1 + c_200) - c_200 / (1 + c_200)))
+        r_s = r_200 / c_200
+        return r_s, rho_s
+
+    @classmethod
+    def c_200_SCP(self, M_200):
+        """ Concentration-mass relation according to eq. 1 of  Sanchez-Conde & Prada 2014 (1312.1729)
+            :param M_200: M_200 mass of halo
+        """
+        x = np.log(M_200/(M_s/h))
+        pars = [37.5153, -1.5093, 1.636e-2, 3.66e-4, -2.89237e-5, 5.32e-7][::-1]
+        return np.polyval(pars, x)
+
+    @classmethod
+    def M_cyl_div_M0(self, x):
+        return np.log(x / 2) + self.F(x)
 
 
-def F(x):
-    """ Helper function for NFW deflection, from astro-ph/0102341
-    """
-    # TODO: returning warnings for invalid value in sqrt for some reason...
-    return np.where(x == 1, 1, np.where(x < 1, np.arctanh(np.sqrt(1 - x ** 2)) / (np.sqrt(1 - x ** 2)), \
-                np.arctan(np.sqrt(x ** 2 - 1)) / (np.sqrt(x ** 2 - 1))))
+class LightProfileSersic:
+    def __init__(self, x_0, y_0, r_e, n_srsc, S_tot):
+        """
+        Sersic light profile.
 
+        :param x_0: x-coordinate of source location
+        :param y_0: y-coordinate of source location
+        :param r_e: The circular effective radius containing half the total light
+        :param n_srsc: Sersic index controlling concentration of the light profile
+        :param S_tot: Total counts or flux normalization
+        """
+        self.x_0 = x_0
+        self.y_0 = y_0
+        self.r_e = r_e
+        self.n_srsc = n_srsc
+        self.S_tot = S_tot
 
-def Sigma_cr(D_l, D_s):
-    """ Critical surface density
-    """
-    return 1.0 / (4 * np.pi * GN) * D_s / ((D_s - D_l) * D_l)
+    def flux(self, x, y):
+        """
+        :param x: x-coordinate at which intensity computed in the same units as r_e
+        :param y: y-coordinate at which intensity computed in the same units as r_e
+        :return: Flux for Sersic profile at given points x, y
+        """
 
+        # Go into shifted coordinates
+        x_p = x - self.x_0
+        y_p = y - self.y_0
 
-def f_gal_sersic(
-        theta_x, theta_y, theta_x0=0, theta_y0=0, theta_e_gal=1, n_srsc=4,
-        I_gal=1e-16 * erg / Centimeter ** 2 / Sec / Angstrom):
-    """ Compute the intensity of the Sersic profile at a given position.
+        # Radial distance for spherically symmetric profile
+        r = np.sqrt(x_p ** 2 + y_p ** 2)
 
-        :param theta_x: x-coordinate at which intensity computed in the same units as theta_e_gal
-        :param theta_y: y-coordinate at which intensity computed in the same units as theta_e_gal
-        :param theta_x0: x-coordinate of source location
-        :param theta_y0: y-coordinate of source location
-        :param theta_e_gal: the circular effective radius containing half the total light
-        :param n_srsc: Sersic index controlling concentration of the light profile (lower value -> more concentrated)
-        :param I_gal: overall intensity normalization of the light profile
-        :return: Intensity of specified Sersic profile at a given position.
-    """
+        # Get normalization factors
+        b_n = self.b_n(self.n_srsc)
+        flux_e = self.flux_e(self.S_tot, self.n_srsc, self.r_e)
 
-    # Go into shifted coordinates
-    theta_xp = theta_x - theta_x0
-    theta_yp = theta_y - theta_y0
+        return flux_e * np.exp(-b_n * ((r / self.r_e) ** (1 / self.n_srsc) - 1))
 
-    # Radial distance for spherically symmetric profile
-    theta_r = np.sqrt(theta_xp ** 2 + theta_yp ** 2)
+    @classmethod
+    def b_n(self, n_srsc):
+        """
+        Normalization parameter ensuring that the effective radius contains half of the profile's total light
+        From Ciotti & Bertin 1999, A&A, 352, 447
+        """
+        return 2 * n_srsc - 1 / 3.0 + 4 / (405 * n_srsc) + 46 / (25515 * n_srsc ** 2) + \
+            131 / (1148175 * n_srsc ** 3) - 2194697 / (30690717750 * n_srsc ** 4)
 
-    # Normalization parameter ensuring that the effective radius contains half of the profile's total light
-    # From Ciotti & Bertin 1999, A&A, 352, 447
-    b_n = 2 * n_srsc - 1 / 3.0 + 4 / (405 * n_srsc) + 46 / (25515 * n_srsc ** 2) + 131 / (1148175 * n_srsc ** 3) - \
-        2194697 / (30690717750 * n_srsc ** 4)
-
-    # Conversion between surface brightness at half-light radius and flux of galaxy
-    # TODO: only valid for n_srsc = 4; fix!
-    f_e_gal = I_gal / (7.2 * np.pi * theta_e_gal ** 2)
-
-    return f_e_gal * np.exp(-b_n * ((theta_r / theta_e_gal) ** (1 / n_srsc) - 1))
+    @classmethod
+    def flux_e(self, S_tot, n_srsc, r_e):
+        """
+        Compute flux at half-light radius given the total counts S_tot
+        """
+        if n_srsc == 1:
+            return S_tot / (3.8 * np.pi * r_e ** 2)
+        elif n_srsc == 4:
+            return S_tot / (7.2 * np.pi * r_e ** 2)
+        else:
+            b_n = self.b_n(n_srsc)
+            return S_tot * (b_n ** (2 * n_srsc) * np.exp(-b_n)) / \
+                (2 * n_srsc * np.pi * r_e ** 2 * gamma(2 * n_srsc))
