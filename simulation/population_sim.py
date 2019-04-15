@@ -1,9 +1,12 @@
 import math
+import logging
 from simulation.units import *
 from simulation.profiles import MassProfileNFW
 from simulation.lensing_sim import LensingSim
 from astropy.cosmology import Planck15
 from astropy.convolution import convolve, Gaussian2DKernel
+
+logger = logging.getLogger(__name__)
 
 
 class LensingObservationWithSubhalos:
@@ -206,16 +209,23 @@ class SubhaloPopulation:
         # Alpha corresponding to calibration configuration
         alpha = self._alpha_calib(M_min_calib, M_max_calib, n_calib, M_MW, beta)
 
+        logger.debug("Subhalo population:")
+        logger.debug("  alpha = %s", alpha)
+
         # Total number of subhalos within virial radius of host halo
         n_sub_tot = self._n_sub(m_min, 0.01 * M_hst, M_hst, alpha, beta)
+        logger.debug("  n_sub_tot = %s", n_sub_tot)
 
         # Fraction and number of subhalos within lensing region of interest specified by theta_roi
         self.f_sub = MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s) \
             / MassProfileNFW.M_cyl_div_M0(c_hst * theta_s / theta_s)
+        logger.debug("  f_sub = %s", self.f_sub)
         self.n_sub_roi = np.random.poisson(self.f_sub * n_sub_tot)
+        logger.debug("  n_sub_roi = %s", self.n_sub_roi)
 
         # Sample of subhalo masses drawn from subhalo mass function
         self.m_sample = self._draw_m_sub(self.n_sub_roi, m_min, beta)
+        logger.debug("  m_sub: %s", self.m_sample)
 
         # Sample subhalo positions uniformly within ROI
         self.theta_x_sample, self.theta_y_sample = self._draw_sub_coordinates(self.n_sub_roi, r_max=theta_roi)
@@ -249,14 +259,25 @@ class SubhaloPopulation:
         m_sub = m_sub_min * (1 - u) ** (1.0 / (beta + 1.0))
         return m_sub
 
-    def _draw_sub_coordinates(self, n_sub, r_min=0, r_max=2.5):
+    def _draw_sub_coordinates(self, n_sub, r_min=0.0, r_max=2.5):
         """
         Draw subhalo n_sub coordinates uniformly within a ring r_min < r < r_max
         """
-        phi_sub = np.random.uniform(low=0.0, high=2.0 * np.pi, size=n_sub)
-        r_sub = np.random.uniform(low=r_min, high=r_max, size=n_sub)
-        x_sub = r_sub * np.cos(phi_sub)
-        y_sub = r_sub * np.sin(phi_sub)
+        # phi_sub = np.random.uniform(low=0.0, high=2.0 * np.pi, size=n_sub)
+        # r_sub = np.random.uniform(low=r_min, high=r_max, size=n_sub)
+        # x_sub = r_sub * np.cos(phi_sub)
+        # y_sub = r_sub * np.sin(phi_sub)
+
+        x_sub = []
+        y_sub = []
+        while len(x_sub) < n_sub:
+            x_candidates = np.random.uniform(low=-r_max, high=r_max, size=n_sub - len(x_sub))
+            y_candidates = np.random.uniform(low=-r_max, high=r_max, size=n_sub - len(x_sub))
+            r2 = x_candidates**2 + y_candidates**2
+            good = (r2 <= r_max**2) * (r2 >= r_min**2)
+            x_sub += list(x_candidates[good])
+            y_sub += list(y_candidates[good])
+
         return x_sub, y_sub
 
     def _calculate_joint_log_probs(self, params_eval):
@@ -301,8 +322,8 @@ class SubhaloPopulation:
 
     def _log_p_m_sub(self, m, beta):
         log_p = (
-            np.log(beta - 1.0)
+            np.log(- beta - 1.0)
             - np.log(self.m_min)
-            - beta * np.log(m / self.m_min)
+            + beta * np.log(m / self.m_min)
         )
         return log_p
