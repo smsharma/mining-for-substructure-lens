@@ -64,10 +64,10 @@ class SubhaloSimulator:
 
         # Observational parameters
         self.observation_dict = {
-            "nx": resolution,
-            "ny": resolution,
-            "xlims": (-coordinate_limit, coordinate_limit),
-            "ylims": (-coordinate_limit, coordinate_limit),
+            "n_x": resolution,
+            "n_y": resolution,
+            "theta_x_lims": (-coordinate_limit, coordinate_limit),
+            "theta_y_lims": (-coordinate_limit, coordinate_limit),
             "exposure": exposure,
             "A_iso": A_iso,
         }
