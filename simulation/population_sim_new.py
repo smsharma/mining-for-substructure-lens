@@ -275,8 +275,18 @@ class SubhaloPopulation:
 
         return log_probs
 
-    def _calculate_joint_score(self, params):
-        raise NotImplementedError
+    def _calculate_joint_score(self, params, eps=1.e-6):
+        eps_vec0 = np.asarray(params).flatten() + np.array([eps, 0.0]).reshape(1, 2)
+        eps_vec1 = np.asarray(params).flatten() + np.array([0.0, eps]).reshape(1, 2)
+        params = params.reshape(1, 2)
+        all_params = np.vstack([params, eps_vec0, eps_vec1])
+
+        log_probs = self._calculate_joint_log_probs(all_params)
+
+        t0 = (log_probs[1] - log_probs[0]) / eps
+        t1 = (log_probs[2] - log_probs[0]) / eps
+
+        return np.array([t0, t1])
 
     def _log_p_n_sub(self, n_sub, n_calib, beta, include_constant=False):
         alpha = self._alpha_calib(self.M_min_calib, self.M_max_calib, n_calib, self.M_MW, beta)
