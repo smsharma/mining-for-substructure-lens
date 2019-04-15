@@ -1,7 +1,7 @@
 import numpy as np
 import logging
 
-from simulation.population_sim_new import LensingObservationWithSubhalos
+from simulation.population_sim import LensingObservationWithSubhalos
 
 logger = logging.getLogger(__name__)
 
