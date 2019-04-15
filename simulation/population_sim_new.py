@@ -11,7 +11,8 @@ class LensingObservationWithSubhalos:
                  pixel_size=0.1, n_xy=64,
                  fix_source=True,
                  spherical_host=True,
-                 m_200_min_sub = 1e7 * M_s, n_calib = 150
+                 m_200_min_sub=1e7 * M_s, n_calib=150, beta=1.9,
+                 params_eval=None, calculate_joint_score=False,
                  ):
         """
         Class to simulation an observation strong lensing image, with substructure sprinkled in.
@@ -31,6 +32,9 @@ class LensingObservationWithSubhalos:
         :param spherical_host: Whether to restrict to spherical hosts (q = 1), for an easier problem
         :param m_200_min_sub: Lowest mass of subhalos to draw
         :param n_calib: Number of subhalos expected between 1e8 and 1e10*M_s for a MW-sized halo, for calibration
+        :param beta: Slope in the subhalo mass fn
+        :param params_eval: Parameters (n_calib, beta) for which p(x,z|params) will be calculated
+        :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         """
 
         self.coordinate_limit = pixel_size * n_xy / 2.
@@ -70,8 +74,9 @@ class LensingObservationWithSubhalos:
         D_l = Planck15.angular_diameter_distance(z=z_l).value * Mpc
 
         # Generate a subhalo population...
-        ps = SubhaloPopulation(n_calib=n_calib, M_hst=M_200_hst, c_hst=c_200_hst,
-                               m_min=m_200_min_sub, theta_s=r_s_hst / D_l, theta_roi=3 * theta_E)
+        ps = SubhaloPopulation(n_calib=n_calib, beta=beta, M_hst=M_200_hst, c_hst=c_200_hst,
+                               m_min=m_200_min_sub, theta_s=r_s_hst / D_l, theta_roi=3 * theta_E,
+                               params_eval=params_eval, calculate_joint_score=calculate_joint_score)
 
         # ... and grab its properties
         m_sample = ps.m_sample
@@ -131,6 +136,10 @@ class LensingObservationWithSubhalos:
         self.image_poiss = np.random.poisson(self.image)  # Poisson fluctuate
         self.image_poiss_psf = self._convolve_psf(self.image_poiss, fwhm_psf, pixel_size)  # Convolve with PSF
 
+        # Augmented data
+        self.joint_log_probs = ps.joint_log_probs
+        self.joint_scores = ps.joint_scores
+
     def _convolve_psf(self, image, fwhm_psf=0.18, pixel_size=0.1):
         """
         Convolve input map of pixel_size with Gaussian PSF of with FWHM fwhm_psf
@@ -161,7 +170,8 @@ class LensingObservationWithSubhalos:
 class SubhaloPopulation:
     def __init__(self, n_calib=150, M_min_calib=1e8*M_s, M_max_calib=1e10*M_s,
                  beta=-1.9, m_min=1e9*M_s, theta_roi=2.5,
-                 M_hst=1e14*M_s, theta_s=1e-4, c_hst=6.):
+                 M_hst=1e14*M_s, theta_s=1e-4, c_hst=6.,
+                 params_eval=None, calculate_joint_score=False):
         """
         Calibrate number of subhalos and generate a mass sample within lensing ROI
 
@@ -177,6 +187,8 @@ class SubhaloPopulation:
         :param M_hst: Host halo mass
         :param theta_s: Angular scale radius of host halo, in rad
         :param c_hst: Concentration parameter of host halo
+        :param params_eval: Parameters (n_calib, beta) for which p(x,z|params) will be calculated
+        :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         """
 
         # Alpha corresponding to calibration configuration
@@ -195,6 +207,13 @@ class SubhaloPopulation:
 
         # Sample subhalo positions uniformly within ROI
         self.theta_x_sample, self.theta_y_sample = self._draw_sub_coordinates(self.n_sub_roi, r_max=theta_roi)
+
+        # Calculate augmented data
+        self.joint_log_probs = self._calculate_joint_log_probs(params_eval)
+        if calculate_joint_score:
+            self.joint_scores = self._calculate_joint_score([n_calib, beta])
+        else:
+            self.joint_scores = None
 
     def _alpha_calib(self, m_min_calib, m_max_calib, n_calib, M_calib, beta, M_0=M_MW, m_0=1e9*M_s):
         """
@@ -227,3 +246,9 @@ class SubhaloPopulation:
         x_sub = r_sub * np.cos(phi_sub)
         y_sub = r_sub * np.sin(phi_sub)
         return x_sub, y_sub
+
+    def _calculate_joint_log_probs(self, params_eval):
+        raise NotImplementedError
+
+    def _calculate_joint_score(self, params):
+        raise NotImplementedError
