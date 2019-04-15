@@ -9,7 +9,7 @@ import argparse
 sys.path.append("./")
 
 from simulation.units import *
-from simulation.population_sim import SubhaloSimulator
+from simulation.population_sim_old import SubhaloSimulator
 
 
 def _extract_n_subs(latents):
