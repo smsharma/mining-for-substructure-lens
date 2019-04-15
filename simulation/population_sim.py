@@ -289,8 +289,8 @@ class SubhaloPopulation:
         return np.array([t0, t1])
 
     def _log_p_n_sub(self, n_sub, n_calib, beta, include_constant=False):
-        alpha = self._alpha_calib(self.M_min_calib, self.M_max_calib, n_calib, self.M_MW, beta)
-        expected_n_sub_mean = self._n_sub(self.m_min, 0.01 * self.M_hst, M_hst, alpha, beta)
+        alpha = self._alpha_calib(self.M_min_calib, self.M_max_calib, n_calib, M_MW, beta)
+        expected_n_sub_mean = self._n_sub(self.m_min, 0.01 * self.M_hst, self.M_hst, alpha, beta)
 
         log_p_poisson = (
             n_sub * np.log(expected_n_sub_mean) - expected_n_sub_mean
@@ -301,8 +301,8 @@ class SubhaloPopulation:
 
     def _log_p_m_sub(self, m, beta):
         log_p = (
-            np.log(-beta - 1.0)
-            - np.log(self.m_sub_min)
-            + beta * np.log(m / self.m_sub_min)
+            np.log(beta - 1.0)
+            - np.log(self.m_min)
+            - beta * np.log(m / self.m_min)
         )
         return log_p

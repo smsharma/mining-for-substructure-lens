@@ -12,6 +12,7 @@ def augmented_data(
     n_calib_prior=uniform(0., 500.), beta_prior=uniform(1.001,3.),
     n_images=None, n_thetas_marginal=1000,
     inverse=False,
+    sim_mvgauss_file="data/sim_mvgauss.npz"
 ):
     # Input
     if (n_images is None or beta is None) and n_calib is None:
@@ -21,7 +22,7 @@ def augmented_data(
     n_verbose = max(1, n_images // 100)
 
     # Load fitted data
-    sim_mvgauss = np.load("../../simulation/data/sim_mvgauss.npz")
+    sim_mvgauss = np.load(sim_mvgauss_file)
     sim_mvgauss_mean = sim_mvgauss["mean"]
     sim_mvgauss_cov = sim_mvgauss["cov"]
 
