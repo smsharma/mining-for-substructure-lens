@@ -8,7 +8,6 @@ logger = logging.getLogger(__name__)
 
 def augmented_data(
         n_calibs, betas,
-        sim_mvgauss_mean, sim_mvgauss_cov,
         n_calib_mean, n_calib_std, beta_mean, beta_std,
         n_images=None, n_thetas_marginal=1000,
         inverse=False,
@@ -17,6 +16,11 @@ def augmented_data(
     if n_images is None:
         n_images = len(n_calibs)
     n_verbose = max(1, n_images // 100)
+
+    # Load fitted data
+    sim_mvgauss = np.load("../../simulation/data/sim_mvgauss.npz")
+    sim_mvgauss_mean = sim_mvgauss["mean"]
+    sim_mvgauss_cov = sim_mvgauss["cov"]
 
     # Parameter from prior
     n_calib_prior = np.random.normal(loc=n_calib_mean, scale=n_calib_std, size=n_thetas_marginal)
@@ -52,6 +56,8 @@ def augmented_data(
             sim_mvgauss_cov=sim_mvgauss_cov,
             n_calib=n_calib,
             beta=beta,
+            spherical_host=True,
+            fix_source=True,
             params_eval=params_eval,
             calculate_joint_score=True
         )
