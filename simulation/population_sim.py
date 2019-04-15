@@ -80,9 +80,9 @@ class LensingObservationWithSubhalos:
                                params_eval=params_eval, calculate_joint_score=calculate_joint_score)
 
         # ... and grab its properties
-        m_sample = ps.m_sample
-        theta_x_sample = ps.theta_x_sample
-        theta_y_sample = ps.theta_y_sample
+        self.m_subs = ps.m_sample
+        self.theta_xs = ps.theta_x_sample
+        self.theta_ys = ps.theta_y_sample
 
         # Convert magnitude for source and isotropic component to expected counts
         S_tot = self._mag_to_flux(mag_s, mag_zero)
@@ -96,7 +96,7 @@ class LensingObservationWithSubhalos:
         lens_list = [hst_param_dict]
 
         # Set subhalo properties
-        for m, theta_x, theta_y in zip(m_sample, theta_x_sample, theta_y_sample):
+        for m, theta_x, theta_y in zip(self.m_subs, self.theta_xs, self.theta_ys):
             c = MassProfileNFW.c_200_SCP(m)
             r_s, rho_s = MassProfileNFW.get_r_s_rho_s_NFW(m, c)
             sub_param_dict = {

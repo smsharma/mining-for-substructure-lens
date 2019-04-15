@@ -1,5 +1,6 @@
 import numpy as np
 import logging
+from scipy.stats import uniform
 
 from simulation.population_sim import LensingObservationWithSubhalos
 
@@ -7,14 +8,16 @@ logger = logging.getLogger(__name__)
 
 
 def augmented_data(
-        n_calibs, betas,
-        n_calib_mean, n_calib_std, beta_mean, beta_std,
-        n_images=None, n_thetas_marginal=1000,
-        inverse=False,
+    n_calib=None, beta=None,
+    n_calib_prior=uniform(0., 500.), beta_prior=uniform(1.001,3.),
+    n_images=None, n_thetas_marginal=1000,
+    inverse=False,
 ):
     # Input
+    if (n_images is None or beta is None) and n_calib is None:
+        raise ValueError("Either n_calib and beta or n_images have to be different from None")
     if n_images is None:
-        n_images = len(n_calibs)
+        n_images = len(n_calib)
     n_verbose = max(1, n_images // 100)
 
     # Load fitted data
@@ -22,15 +25,23 @@ def augmented_data(
     sim_mvgauss_mean = sim_mvgauss["mean"]
     sim_mvgauss_cov = sim_mvgauss["cov"]
 
-    # Parameter from prior
-    n_calib_prior = np.random.normal(loc=n_calib_mean, scale=n_calib_std, size=n_thetas_marginal)
-    beta_prior = np.random.normal(loc=beta_mean, scale=beta_std, size=n_thetas_marginal)
-    n_calib_prior = np.clip(n_calib_prior, 0., None)
-    beta_prior = np.clip(beta_prior, None, -1.01)
-    params_prior = np.vstack((n_calib_prior, beta_prior)).T
+    # Test hypothesis
+    if n_calib is None:
+        n_calib = n_calib_prior.rvs(size=n_images)
+    if beta is None:
+        beta = beta_prior.rvs(size=n_images)
+    n_calib = np.clip(n_calib, 0., None)
+    beta = np.clip(beta, 1.001, None)
+
+    # Reference hypothesis
+    n_calib_ref = n_calib_prior.rvs(size=n_thetas_marginal)
+    beta_ref = n_calib_prior.rvs(size=n_thetas_marginal)
+    n_calib_ref = np.clip(n_calib_ref, 0., None)
+    beta_ref = np.clip(beta_ref, 1.001, None)
+    params_ref = np.vstack((n_calib_ref, beta_ref)).T
 
     # Output
-    all_images, all_t_xz, all_log_r_xz = [], [], []
+    all_images, all_t_xz, all_log_r_xz, all_latents = [], [], [], []
 
     # Main loop
     for i_sim in range(n_images):
@@ -40,22 +51,22 @@ def augmented_data(
             logger.debug("Simulating image %s / %s", i_sim + 1, n_images)
 
         # Prepare params
-        n_calib = _pick_param(n_calibs, i_sim, n_images)
-        beta = _pick_param(betas, i_sim, n_images)
-        params = np.asarray([n_calib, beta])
-        params_eval = np.vstack((params, params_prior))
+        this_n_calib = _pick_param(n_calib, i_sim, n_images)
+        this_beta = _pick_param(beta, i_sim, n_images)
+        params = np.asarray([this_n_calib, this_beta])
+        params_eval = np.vstack((params, params_ref))
 
         if inverse:
             # Choose one theta from prior that we use for sampling here
             i_sample = np.random.randint(n_images)
-            n_calib, beta = params_prior[i_sample]
+            this_n_calib, this_beta = params_ref[i_sample]
 
         # Simulate
         sim = LensingObservationWithSubhalos(
             sim_mvgauss_mean=sim_mvgauss_mean,
             sim_mvgauss_cov=sim_mvgauss_cov,
-            n_calib=n_calib,
-            beta=beta,
+            n_calib=this_n_calib,
+            beta=this_beta,
             spherical_host=True,
             fix_source=True,
             params_eval=params_eval,
@@ -65,16 +76,14 @@ def augmented_data(
         log_r_xz, uncertainty = _extract_log_r(sim, n_thetas_marginal)
         if uncertainty > 0.01:
             logger.warning("Large uncertainty: log r(x,z) = %s +/- %s", log_r_xz, uncertainty)
+        latents = np.vstack((sim.m_subs, sim.theta_xs, sim.theta_ys)).T
 
         all_images.append(sim.image_poiss_psf)
         all_t_xz.append(sim.joint_scores)
         all_log_r_xz.append(log_r_xz)
+        all_latents.append(latents)
 
-    all_images = np.array(all_images)
-    all_t_xz = np.array(all_t_xz)
-    all_log_r_xz = np.array(all_log_r_xz)
-
-    return all_images, all_t_xz, all_log_r_xz
+    return np.array(all_images), np.array(all_t_xz), np.array(all_log_r_xz), all_latents
 
 
 def _pick_param(xs, i, n):
