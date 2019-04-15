@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 def augmented_data(
     n_calib=None, beta=None,
-    n_calib_prior=uniform(0., 500.), beta_prior=uniform(1.001,3.),
+    n_calib_prior=uniform(0., 500.), beta_prior=uniform(-3.,-1.1),
     n_images=None, n_thetas_marginal=1000,
     inverse=False,
     sim_mvgauss_file="data/sim_mvgauss.npz"
@@ -32,13 +32,13 @@ def augmented_data(
     if beta is None:
         beta = beta_prior.rvs(size=n_images)
     n_calib = np.clip(n_calib, 0., None)
-    beta = np.clip(beta, 1.001, None)
+    beta = np.clip(beta, None, -1.001)
 
     # Reference hypothesis
     n_calib_ref = n_calib_prior.rvs(size=n_thetas_marginal)
     beta_ref = n_calib_prior.rvs(size=n_thetas_marginal)
     n_calib_ref = np.clip(n_calib_ref, 0., None)
-    beta_ref = np.clip(beta_ref, 1.001, None)
+    beta_ref = np.clip(beta_ref, None, -1.001)
     params_ref = np.vstack((n_calib_ref, beta_ref)).T
 
     # Output
@@ -61,6 +61,8 @@ def augmented_data(
             # Choose one theta from prior that we use for sampling here
             i_sample = np.random.randint(n_images)
             this_n_calib, this_beta = params_ref[i_sample]
+
+        logger.debug("Input params: %s, %s", this_n_calib, this_beta)
 
         # Simulate
         sim = LensingObservationWithSubhalos(

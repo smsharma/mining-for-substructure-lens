@@ -15,7 +15,7 @@ class LensingObservationWithSubhalos:
                  pixel_size=0.1, n_xy=64,
                  fix_source=True,
                  spherical_host=True,
-                 m_200_min_sub=1e7 * M_s, n_calib=150, beta=1.9,
+                 m_200_min_sub=1e7 * M_s, n_calib=150, beta=-1.9,
                  params_eval=None, calculate_joint_score=False,
                  ):
         """
@@ -149,7 +149,7 @@ class LensingObservationWithSubhalos:
         Convolve input map of pixel_size with Gaussian PSF of with FWHM fwhm_psf
         """
         sigma_psf = fwhm_psf / 2 ** 1.5 * np.sqrt(np.log(2))
-        kernel = Gaussian2DKernel(x_stddev=1 * sigma_psf / pixel_size)
+        kernel = Gaussian2DKernel(stddev=1 * sigma_psf / pixel_size)
 
         return convolve(image, kernel)
 
@@ -210,6 +210,8 @@ class SubhaloPopulation:
         alpha = self._alpha_calib(M_min_calib, M_max_calib, n_calib, M_MW, beta)
 
         logger.debug("Subhalo population:")
+        logger.debug("  n_calib = %s", n_calib)
+        logger.debug("  beta = %s", beta)
         logger.debug("  alpha = %s", alpha)
 
         # Total number of subhalos within virial radius of host halo
@@ -299,15 +301,15 @@ class SubhaloPopulation:
     def _calculate_joint_score(self, params, eps=1.e-6):
         eps_vec0 = np.asarray(params).flatten() + np.array([eps, 0.0]).reshape(1, 2)
         eps_vec1 = np.asarray(params).flatten() + np.array([0.0, eps]).reshape(1, 2)
-        params = params.reshape(1, 2)
+        params = np.asarray(params).reshape(1, 2)
         all_params = np.vstack([params, eps_vec0, eps_vec1])
 
         log_probs = self._calculate_joint_log_probs(all_params)
 
-        t0 = (log_probs[1] - log_probs[0]) / eps
-        t1 = (log_probs[2] - log_probs[0]) / eps
+        score0 = (log_probs[1] - log_probs[0]) / eps
+        score1 = (log_probs[2] - log_probs[0]) / eps
 
-        return np.array([t0, t1])
+        return np.array([score0, score1])
 
     def _log_p_n_sub(self, n_sub, n_calib, beta, include_constant=False):
         alpha = self._alpha_calib(self.M_min_calib, self.M_max_calib, n_calib, M_MW, beta)
