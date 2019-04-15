@@ -1,3 +1,4 @@
+import math
 from simulation.units import *
 from simulation.profiles import MassProfileNFW
 from simulation.lensing_sim import LensingSim
@@ -191,6 +192,17 @@ class SubhaloPopulation:
         :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         """
 
+        # Store settings
+        self.n_calib = n_calib
+        self.M_min_calib = M_min_calib
+        self.M_max_calib = M_max_calib
+        self.beta = beta
+        self.m_min = m_min
+        self.theta_roi = theta_roi
+        self.M_hst = M_hst
+        self.theta_s = theta_s
+        self.c_hst = c_hst
+
         # Alpha corresponding to calibration configuration
         alpha = self._alpha_calib(M_min_calib, M_max_calib, n_calib, M_MW, beta)
 
@@ -198,9 +210,9 @@ class SubhaloPopulation:
         n_sub_tot = self._n_sub(m_min, 0.01 * M_hst, M_hst, alpha, beta)
 
         # Fraction and number of subhalos within lensing region of interest specified by theta_roi
-        f_sub = MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s) \
+        self.f_sub = MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s) \
             / MassProfileNFW.M_cyl_div_M0(c_hst * theta_s / theta_s)
-        self.n_sub_roi = np.random.poisson(f_sub * n_sub_tot)
+        self.n_sub_roi = np.random.poisson(self.f_sub * n_sub_tot)
 
         # Sample of subhalo masses drawn from subhalo mass function
         self.m_sample = self._draw_m_sub(self.n_sub_roi, m_min, beta)
@@ -224,7 +236,7 @@ class SubhaloPopulation:
 
     def _n_sub(self, m_min, m_max, M, alpha, beta, M_0=M_MW, m_0=1e9*M_s):
         """
-        Get number of subhalos between m_min, m_max
+        Get (expected) number of subhalos between m_min, m_max
         """
         return alpha * M * (m_max * m_min / m_0) ** beta * \
                (m_max ** -beta * m_min - m_max * m_min ** -beta) / (M_0 * (-1 + -beta))
@@ -248,7 +260,39 @@ class SubhaloPopulation:
         return x_sub, y_sub
 
     def _calculate_joint_log_probs(self, params_eval):
-        raise NotImplementedError
+        if params_eval is None:
+            params_eval = []
+            
+        log_probs = [0.0 for _ in params_eval]
+
+        for i_eval, (n_calib, beta) in enumerate(params_eval):
+            # Poisson term
+            log_probs[i_eval] += self._log_p_n_sub(self.n_sub_roi, n_calib, beta)
+
+            # Power law for subhalo masses
+            for m_sub in self.m_sample:
+                log_probs[i_eval] += self._log_p_m_sub(m_sub, beta)
+
+        return log_probs
 
     def _calculate_joint_score(self, params):
         raise NotImplementedError
+
+    def _log_p_n_sub(self, n_sub, n_calib, beta, include_constant=False):
+        alpha = self._alpha_calib(self.M_min_calib, self.M_max_calib, n_calib, self.M_MW, beta)
+        expected_n_sub_mean = self._n_sub(self.m_min, 0.01 * self.M_hst, M_hst, alpha, beta)
+
+        log_p_poisson = (
+            n_sub * np.log(expected_n_sub_mean) - expected_n_sub_mean
+        )
+        if include_constant:
+            log_p_poisson = log_p_poisson - np.log(math.factorial(n_sub))
+        return log_p_poisson
+
+    def _log_p_m_sub(self, m, beta):
+        log_p = (
+            np.log(-beta - 1.0)
+            - np.log(self.m_sub_min)
+            + beta * np.log(m / self.m_sub_min)
+        )
+        return log_p
