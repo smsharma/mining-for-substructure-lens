@@ -11,7 +11,7 @@ def augmented_data(
     n_calib=None, beta=None,
     n_calib_prior=uniform(0., 500.), beta_prior=uniform(-3.,-1.1),
     n_images=None, n_thetas_marginal=1000,
-    inverse=False,
+    inverse=False, mine_gold=True,
     sim_mvgauss_file="data/sim_mvgauss.npz"
 ):
     # Input
@@ -42,7 +42,7 @@ def augmented_data(
     params_ref = np.vstack((n_calib_ref, beta_ref)).T
 
     # Output
-    all_images, all_t_xz, all_log_r_xz, all_latents = [], [], [], []
+    all_params, all_images, all_t_xz, all_log_r_xz, all_latents = [], [], [], [], []
 
     # Main loop
     for i_sim in range(n_images):
@@ -55,7 +55,7 @@ def augmented_data(
         this_n_calib = _pick_param(n_calib, i_sim, n_images)
         this_beta = _pick_param(beta, i_sim, n_images)
         params = np.asarray([this_n_calib, this_beta])
-        params_eval = np.vstack((params, params_ref))
+        params_eval = np.vstack((params, params_ref)) if mine_gold else None
 
         if inverse:
             # Choose one theta from prior that we use for sampling here
@@ -73,20 +73,25 @@ def augmented_data(
             spherical_host=True,
             fix_source=True,
             params_eval=params_eval,
-            calculate_joint_score=True
+            calculate_joint_score=mine_gold
         )
 
-        log_r_xz, uncertainty = _extract_log_r(sim, n_thetas_marginal)
-        if uncertainty > 0.01:
-            logger.warning("Large uncertainty: log r(x,z) = %s +/- %s", log_r_xz, uncertainty)
         latents = np.vstack((sim.m_subs, sim.theta_xs, sim.theta_ys)).T
 
+        all_params.append(params)
         all_images.append(sim.image_poiss_psf)
-        all_t_xz.append(sim.joint_scores)
-        all_log_r_xz.append(log_r_xz)
         all_latents.append(latents)
 
-    return np.array(all_images), np.array(all_t_xz), np.array(all_log_r_xz), all_latents
+        if mine_gold:
+            log_r_xz, uncertainty = _extract_log_r(sim, n_thetas_marginal)
+            if uncertainty > 0.01:
+                logger.warning("Large uncertainty: log r(x,z) = %s +/- %s", log_r_xz, uncertainty)
+            all_t_xz.append(sim.joint_scores)
+            all_log_r_xz.append(log_r_xz)
+
+    if mine_gold:
+        return np.array(all_params), np.array(all_images), np.array(all_t_xz), np.array(all_log_r_xz), all_latents
+    return np.array(all_params), np.array(all_images), None, None, all_latents
 
 
 def _pick_param(xs, i, n):

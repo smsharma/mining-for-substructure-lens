@@ -3,90 +3,74 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys, os
-import logging
 import argparse
+import logging
 
+logger = logging.getLogger(__name__)
 sys.path.append("./")
 
 from simulation.units import *
-from simulation.population_sim_old import SubhaloSimulator
+from simulation.wrapper import augmented_data
 
 
-def _extract_n_subs(latents):
-    return np.array([v[0] for v in latents])
+def simulate_train(n=1000, n_thetas_marginal=1000):
+    logger.info("Generating training data with %s images", n)
 
-
-def _extract_heaviest_subs(latents, n=100):
-    all_masses = []
-    for v in latents:
-        masses = np.zeros(n)
-        masses[: len(masses)] = list(sorted(v[1], reverse=True))[:n]
-        all_masses.append(masses)
-    return np.array(all_masses)
-
-
-def _extract_m_subs(latents):
-    return np.array([np.sum(v[1]) for v in latents])
-
-
-def simulate_train(
-    n=1000,
-    n_prior_samples=1000,
-    alpha_mean=10.0,
-    alpha_std=3.0,
-    beta_mean=-1.9,
-    beta_std=0.3,
-    m_sub_min=10.0,
-):
-    alpha_train = np.random.normal(loc=alpha_mean, scale=alpha_std, size=n // 2)
-    beta_train = np.random.normal(loc=beta_mean, scale=beta_std, size=n // 2)
-    alpha_train = np.clip(alpha_train, 0.1, None)
-    beta_train = np.clip(beta_train, None, -1.1)
-    theta_train = np.vstack((alpha_train, beta_train)).T
-
-    sim = SubhaloSimulator(m_sub_min=m_sub_min, m_sub_high=m_sub_min)
-
+    logger.info("Generating %s numerator images", n // 2)
     y0 = np.zeros(n // 2)
-    x0, t_xz0, log_r_xz0, log_r_xz_uncertainties0, latents0 = sim.rvs_score_ratio_to_evidence(
-        alpha_train,
-        beta_train,
-        alpha_mean,
-        alpha_std,
-        beta_mean,
-        beta_std,
-        n // 2,
-        n_prior_samples,
+    theta0, x0, t_xz0, log_r_xz0, _ = augmented_data(
+        n_images=n // 2,
+        n_thetas_marginal=n_thetas_marginal,
+        inverse=False,
+        mine_gold=True,
     )
-    m_subs0 = _extract_m_subs(latents0)
-    n_subs0 = _extract_n_subs(latents0)
 
+    logger.info("Generating %s denominator images", n // 2)
     y1 = np.ones(n // 2)
-    x1, t_xz1, log_r_xz1, log_r_xz_uncertainties1, latents1 = sim.rvs_score_ratio_to_evidence_inverse(
-        alpha_train,
-        beta_train,
-        alpha_mean,
-        alpha_std,
-        beta_mean,
-        beta_std,
-        n // 2,
-        n_prior_samples,
+    theta1, x1, t_xz1, log_r_xz1, _ = augmented_data(
+        n_images=n // 2,
+        n_thetas_marginal=n_thetas_marginal,
+        inverse=True,
+        mine_gold=True,
     )
-    m_subs1 = _extract_m_subs(latents1)
-    n_subs1 = _extract_n_subs(latents1)
 
     x = np.vstack((x0, x1))
     y = np.hstack((y0, y1))
-    theta = np.vstack((theta_train, theta_train))
+    theta = np.vstack((theta0, theta1))
     t_xz = np.vstack((t_xz0, t_xz1))
     log_r_xz = np.hstack((log_r_xz0, log_r_xz1))
     r_xz = np.exp(log_r_xz, dtype=np.float64)
-    n_subs = np.hstack((n_subs0, n_subs1))
-    m_subs = np.hstack((m_subs0, m_subs1))
 
-    return x, y, theta, r_xz, t_xz, n_subs, m_subs
+    return x, theta, y, r_xz, t_xz
 
 
-def save_train(data_dir, name, x, y, theta, r_xz, t_xz, n_subs, m_subs):
+def simulate_test_point(n=1000, n_calib=150, beta=-1.9):
+    logger.info("Generating point test data with %s images at n_calib = %s, beta = %s", n, n_calib, beta)
+    theta, x, _, _, _ = augmented_data(
+        n_calib=n_calib,
+        beta=beta,
+        n_images=n,
+        mine_gold=False,
+    )
+
+    return x, theta, None, None, None
+
+
+def simulate_test_prior(n=1000):
+    logger.info("Generating prior test data with %s images", n)
+    theta, x, _, _, _ = augmented_data(
+        n_calib=None,
+        beta=None,
+        n_images=n,
+        mine_gold=False,
+    )
+
+    return x, theta, None, None, None
+
+
+def save(data_dir, name, x, theta, y=None, r_xz=None, t_xz=None):
+    logger.info("Saving results with name %s", name)
+
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
     if not os.path.exists("{}/data".format(data_dir)):
@@ -95,59 +79,13 @@ def save_train(data_dir, name, x, y, theta, r_xz, t_xz, n_subs, m_subs):
         os.mkdir("{}/data/samples".format(data_dir))
 
     np.save("{}/data/samples/x_{}.npy".format(data_dir, name), x)
-    np.save("{}/data/samples/y_{}.npy".format(data_dir, name), y)
     np.save("{}/data/samples/theta_{}.npy".format(data_dir, name), theta)
-    np.save("{}/data/samples/r_xz_{}.npy".format(data_dir, name), r_xz)
-    np.save("{}/data/samples/t_xz_{}.npy".format(data_dir, name), t_xz)
-    np.save("{}/data/samples/n_subs_{}.npy".format(data_dir, name), n_subs)
-    np.save("{}/data/samples/m_subs_{}.npy".format(data_dir, name), m_subs)
-
-
-def simulate_test(n=500, alpha=10, beta=-1.9, m_sub_min=10.0):
-    sim = SubhaloSimulator(m_sub_min=m_sub_min, m_sub_high=m_sub_min)
-
-    alphas = np.array([alpha for _ in range(n)])
-    betas = np.array([beta for _ in range(n)])
-    thetas = np.vstack((alphas, betas)).T
-
-    x, latents = sim.rvs(alphas, betas, n)
-    m_subs = _extract_m_subs(latents)
-    n_subs = _extract_n_subs(latents)
-
-    return thetas, x, n_subs, m_subs
-
-
-def simulate_test_prior(
-    n=1000, alpha_mean=10.0, alpha_std=3.0, beta_mean=-1.9, beta_std=0.3, m_sub_min=10.0
-):
-    alpha = np.random.normal(loc=alpha_mean, scale=alpha_std, size=n)
-    beta = np.random.normal(loc=beta_mean, scale=beta_std, size=n)
-    alpha = np.clip(alpha, 0.1, None)
-    beta = np.clip(beta, None, -1.1)
-    theta = np.vstack((alpha, beta)).T
-
-    sim = SubhaloSimulator(m_sub_min=m_sub_min, m_sub_high=m_sub_min)
-
-    x, latents = sim.rvs(alpha, beta, n)
-    m_subs = _extract_m_subs(latents)
-    n_subs = _extract_n_subs(latents)
-
-    return theta, x, n_subs, m_subs
-
-
-def save_test(data_dir, name, theta, x, n_subs, m_subs):
-    if not os.path.exists(data_dir):
-        os.mkdir(data_dir)
-    if not os.path.exists("{}/data".format(data_dir)):
-        os.mkdir("{}/data".format(data_dir))
-    if not os.path.exists("{}/data/samples".format(data_dir)):
-        os.mkdir("{}/data/samples".format(data_dir))
-
-    if theta is not None:
-        np.save("{}/data/samples/theta_{}.npy".format(data_dir, name), theta)
-    np.save("{}/data/samples/x_{}.npy".format(data_dir, name), x)
-    np.save("{}/data/samples/n_subs_{}.npy".format(data_dir, name), n_subs)
-    np.save("{}/data/samples/m_subs_{}.npy".format(data_dir, name), m_subs)
+    if y is not None:
+        np.save("{}/data/samples/y_{}.npy".format(data_dir, name), y)
+    if r_xz is not None:
+        np.save("{}/data/samples/r_xz_{}.npy".format(data_dir, name), r_xz)
+    if t_xz is not None:
+        np.save("{}/data/samples/t_xz_{}.npy".format(data_dir, name), t_xz)
 
 
 def parse_args():
@@ -163,12 +101,12 @@ def parse_args():
         help="Number of samples to generate. Default is 10k.",
     )
     parser.add_argument(
-        "--point",
-        action="store_true",
-        help="Generate data at specific reference model rather than sampled from the prior.",
+        "--test", action="store_true", help="Generate test rather than train data."
     )
     parser.add_argument(
-        "--test", action="store_true", help="Generate test rather than train data."
+        "--point",
+        action="store_true",
+        help="Generate test data at specific reference model rather than sampled from the prior.",
     )
     parser.add_argument(
         "--name", type=str, default=None, help='Sample name, like "train" or "test".'
@@ -177,7 +115,7 @@ def parse_args():
         "--dir",
         type=str,
         default=".",
-        help="Directory. Results will be saved in the data/samples subfolder.",
+        help="Base directory. Results will be saved in the data/samples subfolder.",
     )
     parser.add_argument("--debug", action="store_true", help="Prints debug output.")
 
@@ -192,23 +130,17 @@ if __name__ == "__main__":
         datefmt="%H:%M",
         level=logging.DEBUG if args.debug else logging.INFO,
     )
-    logging.info("Hi!")
+    logger.info("Hi!")
 
     if args.test:
         name = "test" if args.name is None else args.name
         if args.point:
-            results = simulate_test(args.n)
+            results = simulate_test_point(args.n)
         else:
             results = simulate_test_prior(args.n)
-        save_test(args.dir, name, *results)
     else:
         name = "train" if args.name is None else args.name
-        if args.point:
-            results = simulate_train(
-                args.n, alpha_mean=12.0, alpha_std=0.01, beta_mean=-1.5, beta_std=0.01
-            )
-        else:
-            results = simulate_train(args.n)
-        save_train(args.dir, name, *results)
+        results = simulate_train(args.n)
+    save(args.dir, name, *results)
 
-    logging.info("All done! Have a nice day!")
+    logger.info("All done! Have a nice day!")
