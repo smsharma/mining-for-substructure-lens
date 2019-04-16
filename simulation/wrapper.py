@@ -9,13 +9,13 @@ logger = logging.getLogger(__name__)
 
 def augmented_data(
     n_calib=None, beta=None,
-    n_calib_prior=uniform(0., 500.), beta_prior=uniform(-3.,-1.1),
+    n_calib_prior=uniform(0., 500.), beta_prior=uniform(-3.,1.9),
     n_images=None, n_thetas_marginal=1000,
     inverse=False, mine_gold=True,
-    sim_mvgauss_file="data/sim_mvgauss.npz"
+    sim_mvgauss_file="simulation/data/sim_mvgauss.npz"
 ):
     # Input
-    if (n_images is None or beta is None) and n_calib is None:
+    if (n_calib is None or beta is None) and n_images is None:
         raise ValueError("Either n_calib and beta or n_images have to be different from None")
     if n_images is None:
         n_images = len(n_calib)
