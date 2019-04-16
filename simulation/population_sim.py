@@ -79,7 +79,7 @@ class LensingObservationWithSubhalos:
 
         # Generate a subhalo population...
         ps = SubhaloPopulation(n_calib=n_calib, beta=beta, M_hst=M_200_hst, c_hst=c_200_hst,
-                               m_min=m_200_min_sub, theta_s=r_s_hst / D_l, theta_roi=3 * theta_E,
+                               m_min=m_200_min_sub, theta_s=r_s_hst / D_l, theta_roi=2. * theta_E,
                                params_eval=params_eval, calculate_joint_score=calculate_joint_score)
 
         # ... and grab its properties
