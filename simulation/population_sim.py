@@ -142,7 +142,7 @@ class LensingObservationWithSubhalos:
 
         # Augmented data
         self.joint_log_probs = ps.joint_log_probs
-        self.joint_scores = ps.joint_scores
+        self.joint_score = ps.joint_score
 
     def _convolve_psf(self, image, fwhm_psf=0.18, pixel_size=0.1):
         """
@@ -226,9 +226,10 @@ class SubhaloPopulation:
         # Calculate augmented data
         self.joint_log_probs = self._calculate_joint_log_probs(params_eval)
         if calculate_joint_score:
-            self.joint_scores = self._calculate_joint_score([n_calib, beta])
+            self.joint_score = self._calculate_joint_score([n_calib, beta])
         else:
-            self.joint_scores = None
+            self.joint_score = None
+        logger.debug("joint score: %s", self.joint_score)
 
     @staticmethod
     def _alpha_calib(m_min_calib, m_max_calib, n_calib, M_calib, beta, M_0=M_MW, m_0=1e9 * M_s):
@@ -303,10 +304,18 @@ class SubhaloPopulation:
         params = np.asarray(params).reshape(1, 2)
         all_params = np.vstack([params, eps_vec0, eps_vec1])
 
+        logger.debug("PArams: %s", all_params)
+
+        logger.debug
+
         log_probs = self._calculate_joint_log_probs(all_params)
+
+        logger.debug("log probs: %s", log_probs)
 
         score0 = (log_probs[1] - log_probs[0]) / eps
         score1 = (log_probs[2] - log_probs[0]) / eps
+
+        logger.debug("score0, score1: %s, %s", score0, score1)
 
         return np.array([score0, score1])
 

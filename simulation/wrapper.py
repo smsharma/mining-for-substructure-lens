@@ -86,7 +86,7 @@ def augmented_data(
             log_r_xz, uncertainty = _extract_log_r(sim, n_thetas_marginal)
             if uncertainty > 0.01:
                 logger.warning("Large uncertainty: log r(x,z) = %s +/- %s", log_r_xz, uncertainty)
-            all_t_xz.append(sim.joint_scores)
+            all_t_xz.append(sim.joint_score)
             all_log_r_xz.append(log_r_xz)
 
     if mine_gold:
