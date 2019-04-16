@@ -36,7 +36,7 @@ def augmented_data(
 
     # Reference hypothesis
     n_calib_ref = n_calib_prior.rvs(size=n_thetas_marginal)
-    beta_ref = n_calib_prior.rvs(size=n_thetas_marginal)
+    beta_ref = beta_prior.rvs(size=n_thetas_marginal)
     n_calib_ref = np.clip(n_calib_ref, 0., None)
     beta_ref = np.clip(beta_ref, None, -1.001)
     params_ref = np.vstack((n_calib_ref, beta_ref)).T
