@@ -209,25 +209,16 @@ class SubhaloPopulation:
         # Alpha corresponding to calibration configuration
         alpha = self._alpha_calib(M_min_calib, M_max_calib, n_calib, M_MW, beta)
 
-        logger.debug("Subhalo population:")
-        logger.debug("  n_calib = %s", n_calib)
-        logger.debug("  beta = %s", beta)
-        logger.debug("  alpha = %s", alpha)
-
         # Total number of subhalos within virial radius of host halo
         n_sub_tot = self._n_sub(m_min, 0.01 * M_hst, M_hst, alpha, beta)
-        logger.debug("  n_sub_tot = %s", n_sub_tot)
 
         # Fraction and number of subhalos within lensing region of interest specified by theta_roi
         self.f_sub = MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s) \
                      / MassProfileNFW.M_cyl_div_M0(c_hst * theta_s / theta_s)
-        logger.debug("  f_sub = %s", self.f_sub)
         self.n_sub_roi = np.random.poisson(self.f_sub * n_sub_tot)
-        logger.debug("  n_sub_roi = %s", self.n_sub_roi)
 
         # Sample of subhalo masses drawn from subhalo mass function
         self.m_sample = self._draw_m_sub(self.n_sub_roi, m_min, beta)
-        logger.debug("  m_sub: %s", self.m_sample)
 
         # Sample subhalo positions uniformly within ROI
         self.theta_x_sample, self.theta_y_sample = self._draw_sub_coordinates(self.n_sub_roi, r_max=theta_roi)
