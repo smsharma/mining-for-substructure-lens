@@ -47,8 +47,8 @@ class LensingObservationWithSubhalos:
         log_z_l, z_s, log_theta_E, sigma_v, q, theta_x_0, theta_y_0, theta_s_e, mag_s, TS = \
             np.random.multivariate_normal(sim_mvgauss_mean, sim_mvgauss_cov)
 
-        z_l = 10**log_z_l
-        theta_E = 10**log_theta_E
+        z_l = 10 ** log_z_l
+        theta_E = 10 ** log_theta_E
 
         # If fixing the source, these are fixed to reasonable mean-ish quantities
         # and a higher-than-average brightness, for an easier problem
@@ -57,8 +57,8 @@ class LensingObservationWithSubhalos:
             z_s = 2.
             mag_s = 23.
         else:
-            theta_s_e = 10**theta_s_e
-            z_s = 10**z_s
+            theta_s_e = 10 ** theta_s_e
+            z_s = 10 ** z_s
 
         # If only considering spherical host, set q = 1 for a simpler problem
         if spherical_host:
@@ -94,7 +94,7 @@ class LensingObservationWithSubhalos:
         # Set host properties. Host assumed to be at the center of the image.
         hst_param_dict = {"profile": "SIE",
                           "theta_x_0": 0.0, "theta_y_0": 0.0,
-                          "theta_E": theta_E,"q": q}
+                          "theta_E": theta_E, "q": q}
 
         lens_list = [hst_param_dict]
 
@@ -126,7 +126,7 @@ class LensingObservationWithSubhalos:
                             "theta_y_lims": (-self.coordinate_limit, self.coordinate_limit),
                             "exposure": exposure,
                             "f_iso": f_iso,
-        }
+                            }
 
         global_dict = {"z_s": z_s, "z_l": z_l}
 
@@ -149,7 +149,7 @@ class LensingObservationWithSubhalos:
         Convolve input map of pixel_size with Gaussian PSF of with FWHM fwhm_psf
         """
         sigma_psf = fwhm_psf / 2 ** 1.5 * np.sqrt(np.log(2))
-        kernel = Gaussian2DKernel(stddev=1 * sigma_psf / pixel_size)
+        kernel = Gaussian2DKernel(x_stddev=1 * sigma_psf / pixel_size)
 
         return convolve(image, kernel)
 
@@ -172,9 +172,9 @@ class LensingObservationWithSubhalos:
 
 
 class SubhaloPopulation:
-    def __init__(self, n_calib=150, M_min_calib=1e8*M_s, M_max_calib=1e10*M_s,
-                 beta=-1.9, m_min=1e9*M_s, theta_roi=2.5,
-                 M_hst=1e14*M_s, theta_s=1e-4, c_hst=6.,
+    def __init__(self, n_calib=150, M_min_calib=1e8 * M_s, M_max_calib=1e10 * M_s,
+                 beta=-1.9, m_min=1e9 * M_s, theta_roi=2.5,
+                 M_hst=1e14 * M_s, theta_s=1e-4, c_hst=6.,
                  params_eval=None, calculate_joint_score=False):
         """
         Calibrate number of subhalos and generate a mass sample within lensing ROI
@@ -220,7 +220,7 @@ class SubhaloPopulation:
 
         # Fraction and number of subhalos within lensing region of interest specified by theta_roi
         self.f_sub = MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s) \
-            / MassProfileNFW.M_cyl_div_M0(c_hst * theta_s / theta_s)
+                     / MassProfileNFW.M_cyl_div_M0(c_hst * theta_s / theta_s)
         logger.debug("  f_sub = %s", self.f_sub)
         self.n_sub_roi = np.random.poisson(self.f_sub * n_sub_tot)
         logger.debug("  n_sub_roi = %s", self.n_sub_roi)
@@ -239,21 +239,28 @@ class SubhaloPopulation:
         else:
             self.joint_scores = None
 
-    def _alpha_calib(self, m_min_calib, m_max_calib, n_calib, M_calib, beta, M_0=M_MW, m_0=1e9*M_s):
+    @staticmethod
+    def _alpha_calib(m_min_calib, m_max_calib, n_calib, M_calib, beta, M_0=M_MW, m_0=1e9 * M_s):
         """
         Get normalization alpha corresponding calibration configuration
         """
-        return -M_0 * (m_max_calib * m_min_calib / m_0) ** -beta * n_calib * (-1 + -beta) / \
-               (M_calib * (-m_max_calib ** -beta * m_min_calib + m_max_calib * m_min_calib ** -beta))
+        # return -M_0 * (m_max_calib * m_min_calib / m_0) ** -beta * n_calib * (-1 + -beta) / \
+        #        (M_calib * (-m_max_calib ** -beta * m_min_calib + m_max_calib * m_min_calib ** -beta))
+        # has flointing point precision issues
 
-    def _n_sub(self, m_min, m_max, M, alpha, beta, M_0=M_MW, m_0=1e9*M_s):
+        return (n_calib * (-1 - beta) * M_0 / M_calib * m_0**beta) / \
+               (-m_max_calib**(1.+beta) + m_min_calib**(1.+beta))
+
+    @staticmethod
+    def _n_sub(m_min, m_max, M, alpha, beta, M_0=M_MW, m_0=1e9 * M_s):
         """
         Get (expected) number of subhalos between m_min, m_max
         """
         return alpha * M * (m_max * m_min / m_0) ** beta * \
                (m_max ** -beta * m_min - m_max * m_min ** -beta) / (M_0 * (-1 + -beta))
 
-    def _draw_m_sub(self, n_sub, m_sub_min, beta):
+    @staticmethod
+    def _draw_m_sub(n_sub, m_sub_min, beta):
         """
         Draw subhalos from SHMF
         """
@@ -261,7 +268,8 @@ class SubhaloPopulation:
         m_sub = m_sub_min * (1 - u) ** (1.0 / (beta + 1.0))
         return m_sub
 
-    def _draw_sub_coordinates(self, n_sub, r_min=0.0, r_max=2.5):
+    @staticmethod
+    def _draw_sub_coordinates(n_sub, r_min=0.0, r_max=2.5):
         """
         Draw subhalo n_sub coordinates uniformly within a ring r_min < r < r_max
         """
@@ -275,8 +283,8 @@ class SubhaloPopulation:
         while len(x_sub) < n_sub:
             x_candidates = np.random.uniform(low=-r_max, high=r_max, size=n_sub - len(x_sub))
             y_candidates = np.random.uniform(low=-r_max, high=r_max, size=n_sub - len(x_sub))
-            r2 = x_candidates**2 + y_candidates**2
-            good = (r2 <= r_max**2) * (r2 >= r_min**2)
+            r2 = x_candidates ** 2 + y_candidates ** 2
+            good = (r2 <= r_max ** 2) * (r2 >= r_min ** 2)
             x_sub += list(x_candidates[good])
             y_sub += list(y_candidates[good])
 
@@ -285,7 +293,7 @@ class SubhaloPopulation:
     def _calculate_joint_log_probs(self, params_eval):
         if params_eval is None:
             params_eval = []
-            
+
         log_probs = [0.0 for _ in params_eval]
 
         for i_eval, (n_calib, beta) in enumerate(params_eval):
@@ -313,10 +321,15 @@ class SubhaloPopulation:
 
     def _log_p_n_sub(self, n_sub, n_calib, beta, include_constant=False):
         alpha = self._alpha_calib(self.M_min_calib, self.M_max_calib, n_calib, M_MW, beta)
-        expected_n_sub_mean = self._n_sub(self.m_min, 0.01 * self.M_hst, self.M_hst, alpha, beta)
+        expected_n_sub = self._n_sub(self.m_min, 0.01 * self.M_hst, self.M_hst, alpha, beta)
+
+        if expected_n_sub < 1.e-6:
+            logger.warning("Small expected_n_sub = %s for n_calib = %s, beta = %s, alpha = %s, 0.01 * M_hst = %s, "
+                           "m_min = %s",
+                           expected_n_sub, n_calib, beta, alpha,  0.01 * self.M_hst, self.m_min)
 
         log_p_poisson = (
-            n_sub * np.log(expected_n_sub_mean) - expected_n_sub_mean
+                n_sub * np.log(expected_n_sub) - expected_n_sub
         )
         if include_constant:
             log_p_poisson = log_p_poisson - np.log(math.factorial(n_sub))
@@ -324,8 +337,8 @@ class SubhaloPopulation:
 
     def _log_p_m_sub(self, m, beta):
         log_p = (
-            np.log(- beta - 1.0)
-            - np.log(self.m_min)
-            + beta * np.log(m / self.m_min)
+                np.log(- beta - 1.0)
+                - np.log(self.m_min)
+                + beta * np.log(m / self.m_min)
         )
         return log_p
