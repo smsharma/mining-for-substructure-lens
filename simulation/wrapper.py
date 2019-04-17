@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 def augmented_data(
     n_calib=None, beta=None,
     n_calib_prior=uniform(0., 500.), beta_prior=uniform(-3.,1.9),
-    n_images=None, n_thetas_marginal=1000,
+    n_images=None, n_thetas_marginal=5000,
     inverse=False, mine_gold=True,
     sim_mvgauss_file="simulation/data/sim_mvgauss.npz"
 ):
@@ -54,12 +54,12 @@ def augmented_data(
         # Prepare params
         this_n_calib = _pick_param(n_calib, i_sim, n_images)
         this_beta = _pick_param(beta, i_sim, n_images)
-        params = np.asarray([this_n_calib, this_beta])
+        params = np.asarray([this_n_calib, this_beta]).reshape((1,2))
         params_eval = np.vstack((params, params_ref)) if mine_gold else None
 
         if inverse:
             # Choose one theta from prior that we use for sampling here
-            i_sample = np.random.randint(n_images)
+            i_sample = np.random.randint(n_thetas_marginal)
             this_n_calib, this_beta = params_ref[i_sample]
 
         logger.debug("Input params: %s, %s", this_n_calib, this_beta)
@@ -84,7 +84,7 @@ def augmented_data(
 
         if mine_gold:
             log_r_xz, uncertainty = _extract_log_r(sim, n_thetas_marginal)
-            if uncertainty > 0.01:
+            if uncertainty > 0.1:
                 logger.warning("Large uncertainty: log r(x,z) = %s +/- %s", log_r_xz, uncertainty)
             all_t_xz.append(sim.joint_score)
             all_log_r_xz.append(log_r_xz)
@@ -113,8 +113,7 @@ def _extract_log_r(sim, n_thetas_marginal):
     # Estimate uncertainty of log r from MC sampling
     inverse_r_xz_uncertainty = 0.0
     for i_theta in range(n_thetas_marginal):
-        inverse_r_xz_uncertainty += (np.exp(
-            sim.joint_log_probs[i_theta + 1] - sim.joint_log_probs[0]) - inverse_r_xz) ** 2.0
+        inverse_r_xz_uncertainty += (np.exp(sim.joint_log_probs[i_theta + 1] - sim.joint_log_probs[0]) - inverse_r_xz) ** 2.0
     inverse_r_xz_uncertainty /= float(n_thetas_marginal) * (float(n_thetas_marginal) - 1.0)
     log_r_xz_uncertainty = inverse_r_xz_uncertainty / inverse_r_xz
 
