@@ -106,6 +106,7 @@ class ParameterizedRatioEstimator(object):
         y = y.reshape((-1, 1))
         if r_xz is not None:
             r_xz = r_xz.reshape((-1, 1))
+        theta = theta.reshape((-1, 2))
 
         # Rescale theta and t_xz
         theta = self._transform_theta(theta)

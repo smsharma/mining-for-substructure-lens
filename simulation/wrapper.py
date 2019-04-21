@@ -90,8 +90,8 @@ def augmented_data(
             all_log_r_xz.append(log_r_xz)
 
     if mine_gold:
-        return np.array(all_params), np.array(all_images), np.array(all_t_xz), np.array(all_log_r_xz), all_latents
-    return np.array(all_params), np.array(all_images), None, None, all_latents
+        return np.array(all_params).reshape((-1, 2)), np.array(all_images), np.array(all_t_xz), np.array(all_log_r_xz), all_latents
+    return np.array(all_params).reshape((-1, 2)), np.array(all_images), None, None, all_latents
 
 
 def _pick_param(xs, i, n):
