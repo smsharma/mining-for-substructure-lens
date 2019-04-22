@@ -216,6 +216,7 @@ class SubhaloPopulation:
         self.f_sub = MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s) \
                      / MassProfileNFW.M_cyl_div_M0(c_hst * theta_s / theta_s)
         self.n_sub_roi = np.random.poisson(self.f_sub * n_sub_tot)
+        logger.debug("%s subhalos (%s expected)", self.n_sub_roi, self.f_sub * n_sub_tot)
 
         # Sample of subhalo masses drawn from subhalo mass function
         self.m_sample = self._draw_m_sub(self.n_sub_roi, m_min, beta)
@@ -326,10 +327,8 @@ class SubhaloPopulation:
             log_p_poisson = log_p_poisson - np.log(math.factorial(n_sub))
         return log_p_poisson
 
-    def _log_p_m_sub(self, m, beta):
-        log_p = (
-                np.log(- beta - 1.0)
-                - np.log(self.m_min)
-                + beta * np.log(m / self.m_min)
-        )
+    def _log_p_m_sub(self, m, beta, include_constant=False):
+        log_p = np.log(- beta - 1.0) + beta * np.log(m / self.m_min)
+        if include_constant:
+            log_p = log_p - np.log(self.m_min)
         return log_p

@@ -18,7 +18,7 @@ def simulate_train(n=1000, n_thetas_marginal=1000):
 
     logger.info("Generating %s numerator images", n // 2)
     y0 = np.zeros(n // 2)
-    theta0, x0, t_xz0, log_r_xz0, _ = augmented_data(
+    theta0, x0, t_xz0, log_r_xz0, _, latents0 = augmented_data(
         n_images=n // 2,
         n_thetas_marginal=n_thetas_marginal,
         inverse=False,
@@ -27,7 +27,7 @@ def simulate_train(n=1000, n_thetas_marginal=1000):
 
     logger.info("Generating %s denominator images", n // 2)
     y1 = np.ones(n // 2)
-    theta1, x1, t_xz1, log_r_xz1, _, latents = augmented_data(
+    theta1, x1, t_xz1, log_r_xz1, _, latents1 = augmented_data(
         n_images=n // 2,
         n_thetas_marginal=n_thetas_marginal,
         inverse=True,
@@ -40,6 +40,7 @@ def simulate_train(n=1000, n_thetas_marginal=1000):
     t_xz = np.vstack((t_xz0, t_xz1))
     log_r_xz = np.hstack((log_r_xz0, log_r_xz1))
     r_xz = np.exp(log_r_xz, dtype=np.float64)
+    latents = np.vstack((latents0, latents1))
 
     return x, theta, y, r_xz, t_xz, latents
 

@@ -57,12 +57,14 @@ def augmented_data(
         params = np.asarray([this_n_calib, this_beta]).reshape((1, 2))
         params_eval = np.vstack((params, params_ref)) if mine_gold else None
 
+        logger.debug("Numerator hypothesis: n_calib = %s, beta = %s", this_n_calib, this_beta)
+
         if inverse:
             # Choose one theta from prior that we use for sampling here
             i_sample = np.random.randint(n_thetas_marginal)
             this_n_calib, this_beta = params_ref[i_sample]
 
-        logger.debug("Running simulation with n_calib = %s, beta = %s", this_n_calib, this_beta)
+        logger.debug("Running simulation at n_calib = %s, beta = %s", this_n_calib, this_beta)
 
         # Simulate
         sim = LensingObservationWithSubhalos(
