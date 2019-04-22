@@ -213,8 +213,11 @@ class SubhaloPopulation:
         n_sub_tot = self._n_sub(m_min, 0.01 * M_hst, M_hst, alpha, beta)
 
         # Fraction and number of subhalos within lensing region of interest specified by theta_roi
-        self.f_sub = MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s) \
-                     / MassProfileNFW.M_cyl_div_M0(c_hst * theta_s / theta_s)
+        self.f_sub = max(
+            MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s) \
+            / MassProfileNFW.M_cyl_div_M0(c_hst * theta_s / theta_s),
+            0.0
+        )
         self.n_sub_roi = np.random.poisson(self.f_sub * n_sub_tot)
         logger.debug("%s subhalos (%s expected)", self.n_sub_roi, self.f_sub * n_sub_tot)
 
@@ -249,8 +252,9 @@ class SubhaloPopulation:
         """
         Get (expected) number of subhalos between m_min, m_max
         """
-        return alpha * M * (m_max * m_min / m_0) ** beta * \
-               (m_max ** -beta * m_min - m_max * m_min ** -beta) / (M_0 * (-1 + -beta))
+        n_sub = (alpha * M * (m_max * m_min / m_0) ** beta * (m_max ** -beta * m_min - m_max * m_min ** -beta)
+             / (M_0 * (-1 + -beta)))
+        return max(n_sub, 0.0)
 
     @staticmethod
     def _draw_m_sub(n_sub, m_sub_min, beta):
