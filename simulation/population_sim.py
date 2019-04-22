@@ -5,6 +5,7 @@ from simulation.profiles import MassProfileNFW
 from simulation.lensing_sim import LensingSim
 from astropy.cosmology import Planck15
 from astropy.convolution import convolve, Gaussian2DKernel
+from scipy.stats import uniform, norm
 
 logger = logging.getLogger(__name__)
 

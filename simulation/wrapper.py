@@ -1,6 +1,6 @@
 import numpy as np
 import logging
-from scipy.stats import uniform
+from scipy.stats import uniform, norm
 
 from simulation.population_sim import LensingObservationWithSubhalos
 
@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 def augmented_data(
         n_calib=None, beta=None,
-        n_calib_prior=uniform(0., 500.), beta_prior=uniform(-3., 1.9),
-        n_images=None, n_thetas_marginal=5000,
+        n_calib_prior=norm(150., 50.), beta_prior=norm(-1.9, 0.3),
+        n_images=None, n_thetas_marginal=1000,
         inverse=False, mine_gold=True,
         sim_mvgauss_file="simulation/data/sim_mvgauss.npz"
 ):

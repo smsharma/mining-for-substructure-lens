@@ -5,6 +5,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import sys, os
 import argparse
 import logging
+from scipy.stats import uniform, norm
 
 logger = logging.getLogger(__name__)
 sys.path.append("./")
@@ -16,9 +17,15 @@ from simulation.wrapper import augmented_data
 def simulate_train(n=1000, n_thetas_marginal=1000):
     logger.info("Generating training data with %s images", n)
 
+    # Parameter points
+    n_calib=uniform(0., 500.).rvs(size=n//2)
+    beta=uniform(-3., 1.9).rvs(size=n//2)
+
     logger.info("Generating %s numerator images", n // 2)
     y0 = np.zeros(n // 2)
     theta0, x0, t_xz0, log_r_xz0, _, latents0 = augmented_data(
+        n_calib=n_calib,
+        beta=beta,
         n_images=n // 2,
         n_thetas_marginal=n_thetas_marginal,
         inverse=False,
@@ -28,6 +35,8 @@ def simulate_train(n=1000, n_thetas_marginal=1000):
     logger.info("Generating %s denominator images", n // 2)
     y1 = np.ones(n // 2)
     theta1, x1, t_xz1, log_r_xz1, _, latents1 = augmented_data(
+        n_calib=n_calib,
+        beta=beta,
         n_images=n // 2,
         n_thetas_marginal=n_thetas_marginal,
         inverse=True,
