@@ -245,8 +245,10 @@ class SubhaloPopulation:
         #        (M_calib * (-m_max_calib ** -beta * m_min_calib + m_max_calib * m_min_calib ** -beta))
         # has flointing point precision issues
 
-        return (n_calib * (-1 - beta) * M_0 / M_calib * m_0**beta) / \
-               (-m_max_calib**(1.+beta) + m_min_calib**(1.+beta))
+        alpha = (n_calib * (-1 - beta) * M_0 / M_calib * m_0**beta) / \
+                (-m_max_calib**(1.+beta) + m_min_calib**(1.+beta))
+
+        return alpha
 
     @staticmethod
     def _n_sub(m_min, m_max, M, alpha, beta, M_0=M_MW, m_0=1e9 * M_s):

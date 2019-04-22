@@ -31,14 +31,14 @@ def augmented_data(
         n_calib = n_calib_prior.rvs(size=n_images)
     if beta is None:
         beta = beta_prior.rvs(size=n_images)
-    n_calib = np.clip(n_calib, 0., None)
-    beta = np.clip(beta, None, -1.001)
+    n_calib = np.clip(n_calib, 10., None)
+    beta = np.clip(beta, None, -1.05)
 
     # Reference hypothesis
     n_calib_ref = n_calib_prior.rvs(size=n_thetas_marginal)
     beta_ref = beta_prior.rvs(size=n_thetas_marginal)
-    n_calib_ref = np.clip(n_calib_ref, 0., None)
-    beta_ref = np.clip(beta_ref, None, -1.001)
+    n_calib_ref = np.clip(n_calib_ref, 10., None)
+    beta_ref = np.clip(beta_ref, None, -1.05)
     params_ref = np.vstack((n_calib_ref, beta_ref)).T
 
     # Output
@@ -114,15 +114,17 @@ def _extract_log_r(sim, n_thetas_marginal):
     # Evaluate likelihood ratio wrt evidence
     inverse_r_xz = 0.0
     for i_theta in range(n_thetas_marginal):
-        inverse_r_xz += np.exp(sim.joint_log_probs[i_theta + 1] - sim.joint_log_probs[0])
+        log_r_contribution = sim.joint_log_probs[i_theta + 1] - sim.joint_log_probs[0]
+        inverse_r_xz += np.exp(log_r_contribution)
     inverse_r_xz /= float(n_thetas_marginal)
     log_r_xz = -np.log(inverse_r_xz)
 
     # Estimate uncertainty of log r from MC sampling
     inverse_r_xz_uncertainty = 0.0
     for i_theta in range(n_thetas_marginal):
-        inverse_r_xz_uncertainty += (np.exp(
-            sim.joint_log_probs[i_theta + 1] - sim.joint_log_probs[0]) - inverse_r_xz) ** 2.0
+        log_r_contribution = sim.joint_log_probs[i_theta + 1] - sim.joint_log_probs[0]
+        inverse_r_contribution = np.exp(log_r_contribution)
+        inverse_r_xz_uncertainty += (inverse_r_contribution - inverse_r_xz) ** 2.0
     inverse_r_xz_uncertainty /= float(n_thetas_marginal) * (float(n_thetas_marginal) - 1.0)
     log_r_xz_uncertainty = inverse_r_xz_uncertainty / inverse_r_xz
 

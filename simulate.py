@@ -18,7 +18,7 @@ def simulate_train(n=1000, n_thetas_marginal=1000):
     logger.info("Generating training data with %s images", n)
 
     # Parameter points
-    n_calib=uniform(0., 500.).rvs(size=n//2)
+    n_calib=uniform(10., 500.).rvs(size=n//2)
     beta=uniform(-3., 1.9).rvs(size=n//2)
 
     logger.info("Generating %s numerator images", n // 2)
