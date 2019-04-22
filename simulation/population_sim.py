@@ -298,35 +298,26 @@ class SubhaloPopulation:
 
         return log_probs
 
-    def _calculate_joint_score(self, params, eps=1.e-6):
+    def _calculate_joint_score(self, params, eps=1.e-3):
         eps_vec0 = np.asarray(params).flatten() + np.array([eps, 0.0]).reshape(1, 2)
         eps_vec1 = np.asarray(params).flatten() + np.array([0.0, eps]).reshape(1, 2)
         params = np.asarray(params).reshape(1, 2)
         all_params = np.vstack([params, eps_vec0, eps_vec1])
-
-        logger.debug("PArams: %s", all_params)
-
-        logger.debug
-
         log_probs = self._calculate_joint_log_probs(all_params)
-
-        logger.debug("log probs: %s", log_probs)
 
         score0 = (log_probs[1] - log_probs[0]) / eps
         score1 = (log_probs[2] - log_probs[0]) / eps
-
-        logger.debug("score0, score1: %s, %s", score0, score1)
 
         return np.array([score0, score1])
 
     def _log_p_n_sub(self, n_sub, n_calib, beta, include_constant=False):
         alpha = self._alpha_calib(self.M_min_calib, self.M_max_calib, n_calib, M_MW, beta)
-        expected_n_sub = self._n_sub(self.m_min, 0.01 * self.M_hst, self.M_hst, alpha, beta)
+        expected_n_sub = self.f_sub * self._n_sub(self.m_min, 0.01 * self.M_hst, self.M_hst, alpha, beta)
 
         if expected_n_sub < 1.e-6:
             logger.warning("Small expected_n_sub = %s for n_calib = %s, beta = %s, alpha = %s, 0.01 * M_hst = %s, "
-                           "m_min = %s",
-                           expected_n_sub, n_calib, beta, alpha,  0.01 * self.M_hst, self.m_min)
+                           "m_min = %s, f_sub = %s",
+                           expected_n_sub, n_calib, beta, alpha,  0.01 * self.M_hst, self.m_min, self.f_sub)
 
         log_p_poisson = (
                 n_sub * np.log(expected_n_sub) - expected_n_sub
