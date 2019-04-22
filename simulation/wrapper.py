@@ -8,11 +8,11 @@ logger = logging.getLogger(__name__)
 
 
 def augmented_data(
-    n_calib=None, beta=None,
-    n_calib_prior=uniform(0., 500.), beta_prior=uniform(-3.,1.9),
-    n_images=None, n_thetas_marginal=5000,
-    inverse=False, mine_gold=True,
-    sim_mvgauss_file="simulation/data/sim_mvgauss.npz"
+        n_calib=None, beta=None,
+        n_calib_prior=uniform(0., 500.), beta_prior=uniform(-3., 1.9),
+        n_images=None, n_thetas_marginal=5000,
+        inverse=False, mine_gold=True,
+        sim_mvgauss_file="simulation/data/sim_mvgauss.npz"
 ):
     # Input
     if (n_calib is None or beta is None) and n_images is None:
@@ -42,7 +42,7 @@ def augmented_data(
     params_ref = np.vstack((n_calib_ref, beta_ref)).T
 
     # Output
-    all_params, all_images, all_t_xz, all_log_r_xz, all_latents = [], [], [], [], []
+    all_params, all_images, all_t_xz, all_log_r_xz, all_sub_latents, all_host_latents = [], [], [], [], [], []
 
     # Main loop
     for i_sim in range(n_images):
@@ -54,7 +54,7 @@ def augmented_data(
         # Prepare params
         this_n_calib = _pick_param(n_calib, i_sim, n_images)
         this_beta = _pick_param(beta, i_sim, n_images)
-        params = np.asarray([this_n_calib, this_beta]).reshape((1,2))
+        params = np.asarray([this_n_calib, this_beta]).reshape((1, 2))
         params_eval = np.vstack((params, params_ref)) if mine_gold else None
 
         if inverse:
@@ -62,7 +62,7 @@ def augmented_data(
             i_sample = np.random.randint(n_thetas_marginal)
             this_n_calib, this_beta = params_ref[i_sample]
 
-        logger.debug("Input params: %s, %s", this_n_calib, this_beta)
+        logger.debug("Running simulation with n_calib = %s, beta = %s", this_n_calib, this_beta)
 
         # Simulate
         sim = LensingObservationWithSubhalos(
@@ -76,22 +76,28 @@ def augmented_data(
             calculate_joint_score=mine_gold
         )
 
-        latents = np.vstack((sim.m_subs, sim.theta_xs, sim.theta_ys, sim.z_s, sim.z_l, sim.sigma_v)).T
+        sub_latents = np.vstack((sim.m_subs, sim.theta_xs, sim.theta_ys)).T
+        host_latents = np.asarray((sim.z_s, sim.z_l, sim.sigma_v))
 
         all_params.append(params)
         all_images.append(sim.image_poiss_psf)
-        all_latents.append(latents)
+        all_sub_latents.append(sub_latents)
+        all_host_latents.append(host_latents)
 
         if mine_gold:
             log_r_xz, uncertainty = _extract_log_r(sim, n_thetas_marginal)
+            logger.debug("log r(x,z) = %s +/- %s", log_r_xz, uncertainty)
             if uncertainty > 0.1:
                 logger.warning("Large uncertainty: log r(x,z) = %s +/- %s", log_r_xz, uncertainty)
             all_t_xz.append(sim.joint_score)
+            logger.debug("t(x,z) = %s", sim.joint_score)
             all_log_r_xz.append(log_r_xz)
 
     if mine_gold:
-        return np.array(all_params).reshape((-1, 2)), np.array(all_images), np.array(all_t_xz), np.array(all_log_r_xz), all_latents
-    return np.array(all_params).reshape((-1, 2)), np.array(all_images), None, None, all_latents
+        return np.array(all_params).reshape((-1, 2)), np.array(all_images), np.array(all_t_xz), np.array(
+            all_log_r_xz), all_sub_latents, np.array(all_host_latents)
+    return np.array(all_params).reshape((-1, 2)), np.array(all_images), None, None, all_sub_latents, np.array(
+        all_host_latents)
 
 
 def _pick_param(xs, i, n):
@@ -113,7 +119,8 @@ def _extract_log_r(sim, n_thetas_marginal):
     # Estimate uncertainty of log r from MC sampling
     inverse_r_xz_uncertainty = 0.0
     for i_theta in range(n_thetas_marginal):
-        inverse_r_xz_uncertainty += (np.exp(sim.joint_log_probs[i_theta + 1] - sim.joint_log_probs[0]) - inverse_r_xz) ** 2.0
+        inverse_r_xz_uncertainty += (np.exp(
+            sim.joint_log_probs[i_theta + 1] - sim.joint_log_probs[0]) - inverse_r_xz) ** 2.0
     inverse_r_xz_uncertainty /= float(n_thetas_marginal) * (float(n_thetas_marginal) - 1.0)
     log_r_xz_uncertainty = inverse_r_xz_uncertainty / inverse_r_xz
 
