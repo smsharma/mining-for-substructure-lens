@@ -17,26 +17,34 @@ from simulation.wrapper import augmented_data
 def simulate_train(n=1000, n_thetas_marginal=1000):
     logger.info("Generating training data with %s images", n)
 
-    # Parameter points
+    # Parameter points from prior
     n_calib=uniform(10., 500.).rvs(size=n//2)
     beta=uniform(-3., 1.9).rvs(size=n//2)
+    n_calib_ref=norm(150.,50.).rvs(size=n_thetas_marginal)
+    beta_ref=norm(-1.9,0.3).rvs(size=n_thetas_marginal)
 
+    # Samples from numerator
     logger.info("Generating %s numerator images", n // 2)
     y0 = np.zeros(n // 2)
     theta0, x0, t_xz0, log_r_xz0, _, latents0 = augmented_data(
         n_calib=n_calib,
         beta=beta,
+        n_calib_ref=n_calib_ref,
+        beta_ref=beta_ref,
         n_images=n // 2,
         n_thetas_marginal=n_thetas_marginal,
         inverse=False,
         mine_gold=True,
     )
 
+    # Samples from denominator / reference / marginal
     logger.info("Generating %s denominator images", n // 2)
     y1 = np.ones(n // 2)
     theta1, x1, t_xz1, log_r_xz1, _, latents1 = augmented_data(
         n_calib=n_calib,
         beta=beta,
+        n_calib_ref=n_calib_ref,
+        beta_ref=beta_ref,
         n_images=n // 2,
         n_thetas_marginal=n_thetas_marginal,
         inverse=True,
@@ -68,15 +76,18 @@ def simulate_test_point(n=1000, n_calib=150, beta=-1.9):
 
 def simulate_test_prior(n=1000):
     logger.info("Generating prior test data with %s images", n)
+
+    # Parameter points from prior
+    n_calib=uniform(10., 500.).rvs(size=n)
+    beta=uniform(-3., 1.9).rvs(size=n)
+
     theta, x, _, _, _, latents = augmented_data(
-        n_calib=None,
-        beta=None,
+        n_calib=n_calib,
+        beta=beta,
         n_images=n,
+        inverse=False,
         mine_gold=False,
     )
-    z_s = latents[:,0]
-    z_l = latents[:,1]
-    sigma_v = latents[:,2]
 
     return x, theta, None, None, None, latents
 

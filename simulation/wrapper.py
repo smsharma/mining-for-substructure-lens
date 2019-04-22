@@ -1,6 +1,6 @@
 import numpy as np
 import logging
-from scipy.stats import uniform, norm
+from scipy.stats import norm
 
 from simulation.population_sim import LensingObservationWithSubhalos
 
@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 def augmented_data(
         n_calib=None, beta=None,
+        n_calib_ref=None, beta_ref=None,
         n_calib_prior=norm(150., 50.), beta_prior=norm(-1.9, 0.3),
         n_images=None, n_thetas_marginal=1000,
         inverse=False, mine_gold=True,
@@ -35,8 +36,10 @@ def augmented_data(
     beta = np.clip(beta, None, -1.05)
 
     # Reference hypothesis
-    n_calib_ref = n_calib_prior.rvs(size=n_thetas_marginal)
-    beta_ref = beta_prior.rvs(size=n_thetas_marginal)
+    if n_calib_ref is None:
+        n_calib_ref = n_calib_prior.rvs(size=n_thetas_marginal)
+    if beta_ref is None:
+        beta_ref = beta_prior.rvs(size=n_thetas_marginal)
     n_calib_ref = np.clip(n_calib_ref, 10., None)
     beta_ref = np.clip(beta_ref, None, -1.05)
     params_ref = np.vstack((n_calib_ref, beta_ref)).T
@@ -118,6 +121,8 @@ def _extract_log_r(sim, n_thetas_marginal):
         inverse_r_xz += np.exp(log_r_contribution)
     inverse_r_xz /= float(n_thetas_marginal)
     log_r_xz = -np.log(inverse_r_xz)
+    if not np.isfinite(log_r_xz):
+        logger.warning("Infinite log r for 1/r = %s", inverse_r_xz)
 
     # Estimate uncertainty of log r from MC sampling
     inverse_r_xz_uncertainty = 0.0

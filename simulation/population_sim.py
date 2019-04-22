@@ -5,7 +5,6 @@ from simulation.profiles import MassProfileNFW
 from simulation.lensing_sim import LensingSim
 from astropy.cosmology import Planck15
 from astropy.convolution import convolve, Gaussian2DKernel
-from scipy.stats import uniform, norm
 
 logger = logging.getLogger(__name__)
 
@@ -234,7 +233,6 @@ class SubhaloPopulation:
             self.joint_score = self._calculate_joint_score([n_calib, beta])
         else:
             self.joint_score = None
-        logger.debug("joint score: %s", self.joint_score)
 
     @staticmethod
     def _alpha_calib(m_min_calib, m_max_calib, n_calib, M_calib, beta, M_0=M_MW, m_0=1e9 * M_s):
