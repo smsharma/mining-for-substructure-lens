@@ -82,8 +82,8 @@ def simulate_test_prior(n=1000):
     logger.info("Generating prior test data with %s images", n)
 
     # Parameter points from prior
-    n_calib=uniform(10., 500.).rvs(size=n)
-    beta=uniform(-3., 1.9).rvs(size=n)
+    n_calib=uniform(10., 400.).rvs(size=n//2)
+    beta=uniform(-3., 1.9).rvs(size=n//2)
 
     theta, x, _, _, _, latents = augmented_data(
         n_calib=n_calib,
