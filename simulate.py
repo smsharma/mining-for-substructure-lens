@@ -27,7 +27,7 @@ def simulate_train(n=1000, n_thetas_marginal=1000):
 
     logger.info("Generating %s denominator images", n // 2)
     y1 = np.ones(n // 2)
-    theta1, x1, t_xz1, log_r_xz1, _ = augmented_data(
+    theta1, x1, t_xz1, log_r_xz1, latents = augmented_data(
         n_images=n // 2,
         n_thetas_marginal=n_thetas_marginal,
         inverse=True,
@@ -40,35 +40,44 @@ def simulate_train(n=1000, n_thetas_marginal=1000):
     t_xz = np.vstack((t_xz0, t_xz1))
     log_r_xz = np.hstack((log_r_xz0, log_r_xz1))
     r_xz = np.exp(log_r_xz, dtype=np.float64)
+    z_s = np.array([latent[3] for latent in latents])
+    z_l = np.array([latent[4] for latent in latents])
+    sigma_v = np.array([latent[5] for latent in latents])
 
-    return x, theta, y, r_xz, t_xz
+    return x, theta, y, r_xz, t_xz, z_s, z_l, sigma_v
 
 
 def simulate_test_point(n=1000, n_calib=150, beta=-1.9):
     logger.info("Generating point test data with %s images at n_calib = %s, beta = %s", n, n_calib, beta)
-    theta, x, _, _, _ = augmented_data(
+    theta, x, _, _, latents = augmented_data(
         n_calib=n_calib,
         beta=beta,
         n_images=n,
         mine_gold=False,
     )
+    z_s = np.array([latent[3] for latent in latents])
+    z_l = np.array([latent[4] for latent in latents])
+    sigma_v = np.array([latent[5] for latent in latents])
 
-    return x, theta, None, None, None
+    return x, theta, None, None, None, z_s, z_l, sigma_v
 
 
 def simulate_test_prior(n=1000):
     logger.info("Generating prior test data with %s images", n)
-    theta, x, _, _, _ = augmented_data(
+    theta, x, _, _, latents = augmented_data(
         n_calib=None,
         beta=None,
         n_images=n,
         mine_gold=False,
     )
+    z_s = np.array([latent[3] for latent in latents])
+    z_l = np.array([latent[4] for latent in latents])
+    sigma_v = np.array([latent[5] for latent in latents])
 
-    return x, theta, None, None, None
+    return x, theta, None, None, None, z_s, z_l, sigma_v
 
 
-def save(data_dir, name, x, theta, y=None, r_xz=None, t_xz=None):
+def save(data_dir, name, x, theta, y=None, r_xz=None, t_xz=None, z_s=None, z_l=None, sigma_v=None):
     logger.info("Saving results with name %s", name)
 
     if not os.path.exists(data_dir):
@@ -86,6 +95,13 @@ def save(data_dir, name, x, theta, y=None, r_xz=None, t_xz=None):
         np.save("{}/data/samples/r_xz_{}.npy".format(data_dir, name), r_xz)
     if t_xz is not None:
         np.save("{}/data/samples/t_xz_{}.npy".format(data_dir, name), t_xz)
+    if z_s is not None:
+        np.save("{}/data/samples/zs_{}.npy".format(data_dir, name), zs)
+    if z_l is not None:
+        np.save("{}/data/samples/zl_{}.npy".format(data_dir, name), zl)
+    if sigma_v is not None:
+        np.save("{}/data/samples/sigmav_{}.npy".format(data_dir, name), sigma_v)
+
 
 
 def parse_args():

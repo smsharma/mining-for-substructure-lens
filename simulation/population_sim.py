@@ -44,21 +44,21 @@ class LensingObservationWithSubhalos:
         self.coordinate_limit = pixel_size * n_xy / 2.
 
         # Draw parameters from multivariate Gaussian
-        log_z_l, z_s, log_theta_E, sigma_v, q, theta_x_0, theta_y_0, theta_s_e, mag_s, TS = \
+        log_z_l, log_z_s, log_theta_E, self.sigma_v, q, theta_x_0, theta_y_0, theta_s_e, mag_s, TS = \
             np.random.multivariate_normal(sim_mvgauss_mean, sim_mvgauss_cov)
 
-        z_l = 10 ** log_z_l
+        self.z_l = 10 ** log_z_l
         theta_E = 10 ** log_theta_E
 
         # If fixing the source, these are fixed to reasonable mean-ish quantities
         # and a higher-than-average brightness, for an easier problem
         if fix_source:
             theta_s_e = 0.2
-            z_s = 2.
+            self.z_s = 2.
             mag_s = 23.
         else:
             theta_s_e = 10 ** theta_s_e
-            z_s = 10 ** z_s
+            self.z_s = 10 ** log_z_s
 
         # If only considering spherical host, set q = 1 for a simpler problem
         if spherical_host:
@@ -71,11 +71,11 @@ class LensingObservationWithSubhalos:
                 q = 0.2
 
         # Get properties for NFW host
-        M_200_hst = self.M_200_sigma_v(sigma_v * Kmps)
+        M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps)
         c_200_hst = MassProfileNFW.c_200_SCP(M_200_hst)
         r_s_hst, rho_s_hst = MassProfileNFW.get_r_s_rho_s_NFW(M_200_hst, c_200_hst)
 
-        D_l = Planck15.angular_diameter_distance(z=z_l).value * Mpc
+        D_l = Planck15.angular_diameter_distance(z=self.z_l).value * Mpc
 
         # Generate a subhalo population...
         ps = SubhaloPopulation(n_calib=n_calib, beta=beta, M_hst=M_200_hst, c_hst=c_200_hst,
@@ -128,7 +128,7 @@ class LensingObservationWithSubhalos:
                             "f_iso": f_iso,
                             }
 
-        global_dict = {"z_s": z_s, "z_l": z_l}
+        global_dict = {"z_s": self.z_s, "z_l": self.z_l}
 
         # Inititalize lensing class and produce lensed image
         lsi = LensingSim(lens_list,

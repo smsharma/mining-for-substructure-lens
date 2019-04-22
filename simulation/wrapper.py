@@ -76,7 +76,7 @@ def augmented_data(
             calculate_joint_score=mine_gold
         )
 
-        latents = np.vstack((sim.m_subs, sim.theta_xs, sim.theta_ys)).T
+        latents = np.vstack((sim.m_subs, sim.theta_xs, sim.theta_ys, sim.z_s, sim.z_l, sim.sigma_v)).T
 
         all_params.append(params)
         all_images.append(sim.image_poiss_psf)
