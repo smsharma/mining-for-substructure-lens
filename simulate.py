@@ -14,14 +14,18 @@ from simulation.units import *
 from simulation.wrapper import augmented_data
 
 
-def simulate_train(n=1000, n_thetas_marginal=1000):
+def simulate_train(n=10000, n_thetas_marginal=5000):
     logger.info("Generating training data with %s images", n)
 
     # Parameter points from prior
-    n_calib=uniform(10., 500.).rvs(size=n//2)
+    n_calib=uniform(10., 400.).rvs(size=n//2)
     beta=uniform(-3., 1.9).rvs(size=n//2)
-    n_calib_ref=norm(150.,50.).rvs(size=n_thetas_marginal)
-    beta_ref=norm(-1.9,0.3).rvs(size=n_thetas_marginal)
+    if n_thetas_marginal is None:
+        n_calib_ref = n_calib
+        beta_ref = beta
+    else:
+        n_calib_ref=uniform(10., 400.).rvs(size=n_thetas_marginal)
+        beta_ref=uniform(-3., 1.9).rvs(size=n_thetas_marginal)
 
     # Samples from numerator
     logger.info("Generating %s numerator images", n // 2)
