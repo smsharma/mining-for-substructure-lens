@@ -439,6 +439,7 @@ class ParameterizedRatioEstimator(object):
         if self.architecture in ["resnet", "resnet18"]:
             self.model = ResNetRatioEstimator(
                 n_parameters=self.n_parameters,
+                n_aux=self.n_aux,
                 n_hidden=512,
                 log_input=self.log_input,
                 input_mean=self.x_scaling_mean,
@@ -448,6 +449,7 @@ class ParameterizedRatioEstimator(object):
         elif self.architecture == "resnet50":
             self.model = ResNetRatioEstimator(
                 n_parameters=self.n_parameters,
+                n_aux=self.n_aux,
                 cfg=50,
                 n_hidden=1024,
                 log_input=self.log_input,
@@ -481,7 +483,7 @@ class ParameterizedRatioEstimator(object):
 
         if self.rescale_inputs and aux is not None:
             self.aux_scaling_mean = np.mean(aux, axis=0)
-            self.aux_scaling_std = np.std(aux, axis=0)
+            self.aux_scaling_std = np.maximum(np.std(aux, axis=0),1.0e-6)
         else:
             self.aux_scaling_mean = None
             self.aux_scaling_std = None

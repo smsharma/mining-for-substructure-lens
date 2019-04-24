@@ -442,7 +442,7 @@ class SingleParameterizedRatioTrainer(Trainer):
             )
 
         for key in data_keys:
-            if key not in ["x", "theta", "y", "r_xz", "t_xz"]:
+            if key not in ["x", "theta", "y", "r_xz", "t_xz", "aux"]:
                 logger.warning("Unknown key %s in training data! Ignoring it.", key)
 
         self.calculate_model_score = "t_xz" in data_keys
@@ -483,7 +483,7 @@ class SingleParameterizedRatioTrainer(Trainer):
         self._check_for_nans("Augmented training data", r_xz, t_xz)
 
         s_hat, log_r_hat, t_hat, _ = self.model(
-            theta, x, aux, track_score=self.calculate_model_score, return_grad_x=False
+            theta, x, aux=aux, track_score=self.calculate_model_score, return_grad_x=False
         )
         self._check_for_nans("Model output (log r)", log_r_hat)
         self._check_for_nans("Model output (s)", s_hat)
