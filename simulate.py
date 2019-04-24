@@ -18,14 +18,14 @@ def simulate_train(n=10000, n_thetas_marginal=5000):
     logger.info("Generating training data with %s images", n)
 
     # Parameter points from prior
-    n_calib=uniform(10., 400.).rvs(size=n//2)
-    beta=uniform(-3., 1.9).rvs(size=n//2)
+    n_calib = uniform(10.0, 400.0).rvs(size=n // 2)
+    beta = uniform(-3.0, 1.9).rvs(size=n // 2)
     if n_thetas_marginal is None:
         n_calib_ref = n_calib
         beta_ref = beta
     else:
-        n_calib_ref=uniform(10., 400.).rvs(size=n_thetas_marginal)
-        beta_ref=uniform(-3., 1.9).rvs(size=n_thetas_marginal)
+        n_calib_ref = uniform(10.0, 400.0).rvs(size=n_thetas_marginal)
+        beta_ref = uniform(-3.0, 1.9).rvs(size=n_thetas_marginal)
 
     # Samples from numerator
     logger.info("Generating %s numerator images", n // 2)
@@ -67,12 +67,14 @@ def simulate_train(n=10000, n_thetas_marginal=5000):
 
 
 def simulate_test_point(n=1000, n_calib=150, beta=-1.9):
-    logger.info("Generating point test data with %s images at n_calib = %s, beta = %s", n, n_calib, beta)
+    logger.info(
+        "Generating point test data with %s images at n_calib = %s, beta = %s",
+        n,
+        n_calib,
+        beta,
+    )
     theta, x, _, _, _, latents = augmented_data(
-        n_calib=n_calib,
-        beta=beta,
-        n_images=n,
-        mine_gold=False,
+        n_calib=n_calib, beta=beta, n_images=n, mine_gold=False
     )
 
     return x, theta, None, None, None, latents
@@ -82,15 +84,11 @@ def simulate_test_prior(n=1000):
     logger.info("Generating prior test data with %s images", n)
 
     # Parameter points from prior
-    n_calib=uniform(10., 400.).rvs(size=n)
-    beta=uniform(-3., 1.9).rvs(size=n)
+    n_calib = uniform(10.0, 400.0).rvs(size=n)
+    beta = uniform(-3.0, 1.9).rvs(size=n)
 
     theta, x, _, _, _, latents = augmented_data(
-        n_calib=n_calib,
-        beta=beta,
-        n_images=n,
-        inverse=False,
-        mine_gold=False,
+        n_calib=n_calib, beta=beta, n_images=n, inverse=False, mine_gold=False
     )
 
     return x, theta, None, None, None, latents
@@ -116,7 +114,6 @@ def save(data_dir, name, x, theta, y=None, r_xz=None, t_xz=None, latents=None):
         np.save("{}/data/samples/t_xz_{}.npy".format(data_dir, name), t_xz)
     if latents is not None:
         np.save("{}/data/samples/z_{}.npy".format(data_dir, name), latents)
-
 
 
 def parse_args():

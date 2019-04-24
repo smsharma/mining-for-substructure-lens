@@ -22,13 +22,14 @@ logger = logging.getLogger(__name__)
 
 
 class ParameterizedRatioEstimator(object):
-    theta_mean = np.array([10.0, -1.9])
-    theta_std = np.array([3.0, 0.3])
+    theta_mean = np.array([150.0, -1.9])
+    theta_std = np.array([50.0, 0.3])
 
     def __init__(
         self,
         resolution=64,
         n_parameters=2,
+        n_aux=0,
         architecture="resnet",
         log_input=False,
         rescale_inputs=True,
@@ -36,6 +37,7 @@ class ParameterizedRatioEstimator(object):
     ):
         self.resolution = resolution
         self.n_parameters = n_parameters
+        self.n_aux = n_aux
         self.log_input = log_input
         self.rescale_inputs = rescale_inputs
         self.rescale_theta = rescale_theta
@@ -43,6 +45,8 @@ class ParameterizedRatioEstimator(object):
 
         self.x_scaling_mean = None
         self.x_scaling_std = None
+        self.aux_scaling_mean = None
+        self.aux_scaling_std = None
 
         self._create_model()
 
@@ -52,6 +56,7 @@ class ParameterizedRatioEstimator(object):
         x,
         y,
         theta,
+        aux=None,
         r_xz=None,
         t_xz=None,
         alpha=1.0,
@@ -97,10 +102,11 @@ class ParameterizedRatioEstimator(object):
         y = load_and_check(y)
         r_xz = load_and_check(r_xz)
         t_xz = load_and_check(t_xz)
+        aux = load_and_check(aux)
 
         self._check_required_data(method, r_xz, t_xz)
         if update_input_rescaling:
-            self._initialize_input_transform(x)
+            self._initialize_input_transform(x, aux)
 
         # Clean up input data
         y = y.reshape((-1, 1))
@@ -108,7 +114,8 @@ class ParameterizedRatioEstimator(object):
             r_xz = r_xz.reshape((-1, 1))
         theta = theta.reshape((-1, 2))
 
-        # Rescale theta and t_xz
+        # Rescale aux, theta, and t_xz
+        aux = self._transform_aux(aux)
         theta = self._transform_theta(theta)
         if t_xz is not None:
             t_xz = self._transform_t_xz(t_xz)
@@ -138,8 +145,8 @@ class ParameterizedRatioEstimator(object):
             logger.info(
                 "Only using %s of %s training samples", limit_samplesize, n_samples
             )
-            x, theta, y, r_xz, t_xz = restrict_samplesize(
-                limit_samplesize, x, theta, y, r_xz, t_xz
+            x, theta, y, r_xz, t_xz, aux = restrict_samplesize(
+                limit_samplesize, x, theta, y, r_xz, t_xz, aux
             )
 
         # Check consistency of input with model
@@ -157,7 +164,7 @@ class ParameterizedRatioEstimator(object):
             )
 
         # Data
-        data = self._package_training_data(method, x, theta, y, r_xz, t_xz)
+        data = self._package_training_data(method, x, theta, y, r_xz, t_xz, aux)
 
         # Losses
         loss_functions, loss_labels, loss_weights = get_loss(method, alpha)
@@ -193,7 +200,7 @@ class ParameterizedRatioEstimator(object):
         evaluate_score=False,
         evaluate_grad_x=False,
         batch_size=1024,
-        grad_x_theta_index=0
+        grad_x_theta_index=0,
     ):
         if self.model is None:
             raise ValueError("No model -- train or load model before evaluating it!")
@@ -464,7 +471,7 @@ class ParameterizedRatioEstimator(object):
     def _count_model_parameters(self):
         return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
 
-    def _initialize_input_transform(self, x):
+    def _initialize_input_transform(self, x, aux=None):
         if self.rescale_inputs:
             self.x_scaling_mean = np.mean(x)
             self.x_scaling_std = np.maximum(np.std(x), 1.0e-6)
@@ -472,8 +479,21 @@ class ParameterizedRatioEstimator(object):
             self.x_scaling_mean = None
             self.x_scaling_std = None
 
+        if self.rescale_inputs and aux is not None:
+            self.aux_scaling_mean = np.mean(aux, axis=0)
+            self.aux_scaling_std = np.std(aux, axis=0)
+        else:
+            self.aux_scaling_mean = None
+            self.aux_scaling_std = None
+
         self.model.input_mean = self.x_scaling_mean
         self.model.input_std = self.x_scaling_std
+
+    def _transform_aux(self, aux):
+        if aux is not None and self.aux_scaling_mean is not None and self.aux_scaling_std is not None:
+            aux = aux - self.aux_scaling_mean[np.newaxis, :]
+            aux = aux / self.aux_scaling_std[np.newaxis, :]
+        return aux
 
     def _transform_theta(self, theta):
         if self.rescale_theta:
@@ -496,6 +516,8 @@ class ParameterizedRatioEstimator(object):
             "x_scaling_mean": self.x_scaling_mean,
             "x_scaling_std": self.x_scaling_std,
             "rescale_theta": self.rescale_theta,
+            "aux_scaling_mean": [] if self.aux_scaling_mean is None else list(self.aux_scaling_mean),
+            "aux_scaling_std": [] if self.aux_scaling_std is None else list(self.aux_scaling_std),
         }
         return settings
 
@@ -508,6 +530,16 @@ class ParameterizedRatioEstimator(object):
         self.x_scaling_mean = float(settings["x_scaling_mean"])
         self.x_scaling_std = float(settings["x_scaling_std"])
         self.rescale_theta = bool(settings["rescale_theta"])
+        self.aux_scaling_mean = list(settings["aux_scaling_mean"])
+        if len(self.aux_scaling_mean) == 0:
+            self.aux_scaling_mean = None
+        else:
+            self.aux_scaling_mean = np.array(self.aux_scaling_mean)
+        self.aux_scaling_std = list(settings["aux_scaling_std"])
+        if len(self.aux_scaling_std) == 0:
+            self.aux_scaling_std = None
+        else:
+            self.aux_scaling_std = np.array(self.aux_scaling_std)
 
     @staticmethod
     def _check_required_data(method, r_xz, t_xz):
@@ -521,7 +553,7 @@ class ParameterizedRatioEstimator(object):
             )
 
     @staticmethod
-    def _package_training_data(method, x, theta, y, r_xz, t_xz):
+    def _package_training_data(method, x, theta, y, r_xz, t_xz, aux=None):
         data = OrderedDict()
         data["x"] = x
         data["theta"] = theta
@@ -530,4 +562,6 @@ class ParameterizedRatioEstimator(object):
             data["r_xz"] = r_xz
         if method in ["cascal", "alices", "rascal"]:
             data["t_xz"] = t_xz
+        if aux is not None:
+            data["aux"] = aux
         return data

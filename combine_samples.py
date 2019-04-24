@@ -135,7 +135,9 @@ def remove_infs_and_nans(folder, filenames, input_sample):
     for filename in filenames:
         try:
             data.append(np.load(folder + "/" + filename + "_" + input_sample + ".npy"))
-            out_filenames.append(folder + "/" + filename + "_" + input_sample + "_cleaned.npy")
+            out_filenames.append(
+                folder + "/" + filename + "_" + input_sample + "_cleaned.npy"
+            )
         except FileNotFoundError:
             pass
 
@@ -149,7 +151,13 @@ def remove_infs_and_nans(folder, filenames, input_sample):
 
     n_pass = np.sum(cut, dtype=np.int)
     n_fail = len(cut) - n_pass
-    logger.info("Cleaning up *_%s.npy: %s samples pass, %s samples removed", folder, input_sample, n_pass, n_fail)
+    logger.info(
+        "Cleaning up *_%s.npy: %s samples pass, %s samples removed",
+        folder,
+        input_sample,
+        n_pass,
+        n_fail,
+    )
 
     for array, out_filename in zip(data, out_filenames):
         cleaned_array = array[cut]
