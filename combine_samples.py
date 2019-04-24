@@ -60,8 +60,8 @@ def shuffle_and_combine(dir, input_samples, output_sample, regex=False):
             return
 
     # Clean samples
-    for input_sample in input_samples:
-        remove_infs_and_nans(folder, filenames, input_sample)
+    # for input_sample in input_samples:
+    #     remove_infs_and_nans(folder, filenames, input_sample)
 
     # Combine samples
     n_samples = None
