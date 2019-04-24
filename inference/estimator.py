@@ -29,6 +29,7 @@ class ParameterizedRatioEstimator(object):
         self,
         resolution=64,
         n_parameters=2,
+        n_aux=0,
         architecture="resnet",
         log_input=False,
         rescale_inputs=True,
@@ -36,6 +37,7 @@ class ParameterizedRatioEstimator(object):
     ):
         self.resolution = resolution
         self.n_parameters = n_parameters
+        self.n_aux = n_aux
         self.log_input = log_input
         self.rescale_inputs = rescale_inputs
         self.rescale_theta = rescale_theta
@@ -52,6 +54,7 @@ class ParameterizedRatioEstimator(object):
         x,
         y,
         theta,
+        aux=None,
         r_xz=None,
         t_xz=None,
         alpha=1.0,
@@ -97,6 +100,7 @@ class ParameterizedRatioEstimator(object):
         y = load_and_check(y)
         r_xz = load_and_check(r_xz)
         t_xz = load_and_check(t_xz)
+        aux = load_and_check(aux)
 
         self._check_required_data(method, r_xz, t_xz)
         if update_input_rescaling:
@@ -138,8 +142,8 @@ class ParameterizedRatioEstimator(object):
             logger.info(
                 "Only using %s of %s training samples", limit_samplesize, n_samples
             )
-            x, theta, y, r_xz, t_xz = restrict_samplesize(
-                limit_samplesize, x, theta, y, r_xz, t_xz
+            x, theta, y, r_xz, t_xz, aux = restrict_samplesize(
+                limit_samplesize, x, theta, y, r_xz, t_xz, aux
             )
 
         # Check consistency of input with model
@@ -157,7 +161,7 @@ class ParameterizedRatioEstimator(object):
             )
 
         # Data
-        data = self._package_training_data(method, x, theta, y, r_xz, t_xz)
+        data = self._package_training_data(method, x, theta, y, r_xz, t_xz, aux)
 
         # Losses
         loss_functions, loss_labels, loss_weights = get_loss(method, alpha)
@@ -193,7 +197,7 @@ class ParameterizedRatioEstimator(object):
         evaluate_score=False,
         evaluate_grad_x=False,
         batch_size=1024,
-        grad_x_theta_index=0
+        grad_x_theta_index=0,
     ):
         if self.model is None:
             raise ValueError("No model -- train or load model before evaluating it!")
@@ -521,7 +525,7 @@ class ParameterizedRatioEstimator(object):
             )
 
     @staticmethod
-    def _package_training_data(method, x, theta, y, r_xz, t_xz):
+    def _package_training_data(method, x, theta, y, r_xz, t_xz, aux=None):
         data = OrderedDict()
         data["x"] = x
         data["theta"] = theta
@@ -530,4 +534,6 @@ class ParameterizedRatioEstimator(object):
             data["r_xz"] = r_xz
         if method in ["cascal", "alices", "rascal"]:
             data["t_xz"] = t_xz
+        if aux is not None:
+            data["aux"] = aux
         return data

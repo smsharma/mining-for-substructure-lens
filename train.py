@@ -10,6 +10,7 @@ import logging
 import argparse
 
 from inference.estimator import ParameterizedRatioEstimator
+from inference.utils import load_and_check
 
 
 def train(
@@ -18,6 +19,7 @@ def train(
     data_dir,
     sample_name,
     model_filename,
+    aux=None,
     architecture="resnet",
     log_input=False,
     batch_size=256,
@@ -27,9 +29,11 @@ def train(
     final_lr=0.0001,
     limit_samplesize=None,
 ):
+    aux_data, n_aux = load_aux("{}/samples/z_{}.npy".format(data_dir, sample_name), aux)
     estimator = ParameterizedRatioEstimator(
         resolution=64,
         n_parameters=2,
+        n_aux=n_aux,
         architecture=architecture,
         log_input=log_input,
         rescale_inputs=True,
@@ -41,6 +45,7 @@ def train(
         theta="{}/samples/theta_{}.npy".format(data_dir, sample_name),
         r_xz="{}/samples/r_xz_{}.npy".format(data_dir, sample_name),
         t_xz="{}/samples/t_xz_{}.npy".format(data_dir, sample_name),
+        aux=aux_data,
         alpha=alpha,
         optimizer=optimizer,
         n_epochs=n_epochs,
@@ -56,6 +61,23 @@ def train(
     estimator.save("{}/models/{}".format(data_dir, model_filename))
 
 
+def load_aux(filename, aux=None):
+    if aux is None:
+        return None, 0
+    elif aux == "zs":
+        return load_and_check(filename)[:, 0].reshape(-1, 1), 1
+    elif aux == "zl":
+        return load_and_check(filename)[:, 1].reshape(-1, 1), 1
+    elif aux == "z":
+        return load_and_check(filename)[:, ::2], 2
+    elif aux == "all":
+        return load_and_check(filename)[:, :], 3
+    else:
+        raise ValueError(
+            "Unknown aux settings {}, please use 'zs', 'zl', 'z', or 'all'.".format(aux)
+        )
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Strong lensing experiments: simulation"
@@ -65,6 +87,14 @@ def parse_args():
     parser.add_argument(
         "method",
         help='Inference method: "carl", "rolr", "alice", "cascal", "rascal", "alices".',
+    )
+    parser.add_argument(
+        "--aux",
+        type=str,
+        default=None,
+        help='Whether auxiliary information is used during training. Can be "zs" for '
+        'the source redshift, "zl" for the lens redshift, "z" for both redshifts,'
+        ' and "all" for both redshifts as well as sigma_v.',
     )
     parser.add_argument(
         "--sample", type=str, default="train", help='Sample name, like "train".'
@@ -79,7 +109,8 @@ def parse_args():
         "--dir",
         type=str,
         default=".",
-        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the data/models subfolder.",
+        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the "
+        "data/models subfolder.",
     )
 
     # Training options
@@ -153,6 +184,7 @@ if __name__ == "__main__":
 
     train(
         method=args.method,
+        aux=args.aux,
         alpha=args.alpha,
         data_dir="{}/data/".format(args.dir),
         sample_name=args.sample,

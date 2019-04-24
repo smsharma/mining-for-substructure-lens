@@ -13,7 +13,7 @@ from inference.estimator import ParameterizedRatioEstimator
 
 
 def make_grid(
-    alpha_min=1., alpha_max=19., beta_min=-1., beta_max=-2.8, resolution=25
+    alpha_min=1.0, alpha_max=19.0, beta_min=-1.0, beta_max=-2.8, resolution=25
 ):
     alpha_test = np.linspace(alpha_min, alpha_max, resolution)
     beta_test = np.linspace(beta_min, beta_max, resolution)
@@ -27,7 +27,15 @@ def make_grid(
     return theta_grid, mid_point
 
 
-def evaluate(data_dir, model_filename, sample_filename, result_filename, grid=True, shuffle=False, small=False):
+def evaluate(
+    data_dir,
+    model_filename,
+    sample_filename,
+    result_filename,
+    grid=True,
+    shuffle=False,
+    small=False,
+):
     if not os.path.exists("{}/results".format(data_dir)):
         os.mkdir("{}/results".format(data_dir))
 
@@ -42,7 +50,11 @@ def evaluate(data_dir, model_filename, sample_filename, result_filename, grid=Tr
         np.save("{}/results/theta_grid.npy".format(data_dir), theta)
 
         llr, _, grad_x = estimator.log_likelihood_ratio(
-            x=x, theta=theta, test_all_combinations=True, evaluate_grad_x=True, grad_x_theta_index = grad_x_index
+            x=x,
+            theta=theta,
+            test_all_combinations=True,
+            evaluate_grad_x=True,
+            grad_x_theta_index=grad_x_index,
         )
 
     else:
@@ -77,16 +89,18 @@ def parse_args():
         "--shuffle",
         action="store_true",
         help="If --grid is not used, shuffles the theta values between the images. This can be useful to make ROC "
-             "curves.",
+        "curves.",
     )
     parser.add_argument(
         "--dir",
         type=str,
         default=".",
         help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the "
-             "data/models subfolder.",
+        "data/models subfolder.",
     )
-    parser.add_argument("--small", action="store_true", help="Restricts evaluation to first 100 images.")
+    parser.add_argument(
+        "--small", action="store_true", help="Restricts evaluation to first 100 images."
+    )
 
     return parser.parse_args()
 
@@ -99,5 +113,13 @@ if __name__ == "__main__":
     )
     logging.info("Hi!")
     args = parse_args()
-    evaluate(args.dir + "/data", args.model, args.sample, args.result, args.grid, args.shuffle, args.small)
+    evaluate(
+        args.dir + "/data",
+        args.model,
+        args.sample,
+        args.result,
+        args.grid,
+        args.shuffle,
+        args.small,
+    )
     logging.info("All done! Have a nice day!")

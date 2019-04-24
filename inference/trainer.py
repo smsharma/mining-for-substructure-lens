@@ -475,11 +475,15 @@ class SingleParameterizedRatioTrainer(Trainer):
             t_xz = batch_data["t_xz"].to(self.device, self.dtype)
         except KeyError:
             t_xz = None
-        self._check_for_nans("Training data", theta, x, y)
+        try:
+            aux = batch_data["aux"].to(self.device, self.dtype)
+        except KeyError:
+            aux = None
+        self._check_for_nans("Training data", theta, x, y, aux)
         self._check_for_nans("Augmented training data", r_xz, t_xz)
 
         s_hat, log_r_hat, t_hat, _ = self.model(
-            theta, x, track_score=self.calculate_model_score, return_grad_x=False
+            theta, x, aux, track_score=self.calculate_model_score, return_grad_x=False
         )
         self._check_for_nans("Model output (log r)", log_r_hat)
         self._check_for_nans("Model output (s)", s_hat)
