@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(
     format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
     datefmt="%H:%M",
-    level=logging.info,
+    level=logging.INFO,
 )
 
 
