@@ -22,8 +22,8 @@ logger = logging.getLogger(__name__)
 
 
 class ParameterizedRatioEstimator(object):
-    theta_mean = np.array([10.0, -1.9])
-    theta_std = np.array([3.0, 0.3])
+    theta_mean = np.array([150.0, -1.9])
+    theta_std = np.array([50.0, 0.3])
 
     def __init__(
         self,
@@ -45,6 +45,8 @@ class ParameterizedRatioEstimator(object):
 
         self.x_scaling_mean = None
         self.x_scaling_std = None
+        self.aux_scaling_mean = None
+        self.aux_scaling_std = None
 
         self._create_model()
 
@@ -104,7 +106,7 @@ class ParameterizedRatioEstimator(object):
 
         self._check_required_data(method, r_xz, t_xz)
         if update_input_rescaling:
-            self._initialize_input_transform(x)
+            self._initialize_input_transform(x, aux)
 
         # Clean up input data
         y = y.reshape((-1, 1))
@@ -112,7 +114,8 @@ class ParameterizedRatioEstimator(object):
             r_xz = r_xz.reshape((-1, 1))
         theta = theta.reshape((-1, 2))
 
-        # Rescale theta and t_xz
+        # Rescale aux, theta, and t_xz
+        aux = self._transform_aux(aux)
         theta = self._transform_theta(theta)
         if t_xz is not None:
             t_xz = self._transform_t_xz(t_xz)
@@ -468,7 +471,7 @@ class ParameterizedRatioEstimator(object):
     def _count_model_parameters(self):
         return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
 
-    def _initialize_input_transform(self, x):
+    def _initialize_input_transform(self, x, aux=None):
         if self.rescale_inputs:
             self.x_scaling_mean = np.mean(x)
             self.x_scaling_std = np.maximum(np.std(x), 1.0e-6)
@@ -476,8 +479,21 @@ class ParameterizedRatioEstimator(object):
             self.x_scaling_mean = None
             self.x_scaling_std = None
 
+        if self.rescale_inputs and aux is not None:
+            self.aux_scaling_mean = np.mean(aux, axis=0)
+            self.aux_scaling_std = np.std(aux, axis=0)
+        else:
+            self.aux_scaling_mean = None
+            self.aux_scaling_std = None
+
         self.model.input_mean = self.x_scaling_mean
         self.model.input_std = self.x_scaling_std
+
+    def _transform_aux(self, aux):
+        if aux is not None and self.aux_scaling_mean is not None and self.aux_scaling_std is not None:
+            aux = aux - self.aux_scaling_mean[np.newaxis, :]
+            aux = aux / self.aux_scaling_std[np.newaxis, :]
+        return aux
 
     def _transform_theta(self, theta):
         if self.rescale_theta:
@@ -500,6 +516,8 @@ class ParameterizedRatioEstimator(object):
             "x_scaling_mean": self.x_scaling_mean,
             "x_scaling_std": self.x_scaling_std,
             "rescale_theta": self.rescale_theta,
+            "aux_scaling_mean": [] if self.aux_scaling_mean is None else list(self.aux_scaling_mean),
+            "aux_scaling_std": [] if self.aux_scaling_std is None else list(self.aux_scaling_std),
         }
         return settings
 
@@ -512,6 +530,16 @@ class ParameterizedRatioEstimator(object):
         self.x_scaling_mean = float(settings["x_scaling_mean"])
         self.x_scaling_std = float(settings["x_scaling_std"])
         self.rescale_theta = bool(settings["rescale_theta"])
+        self.aux_scaling_mean = list(settings["aux_scaling_mean"])
+        if len(self.aux_scaling_mean) == 0:
+            self.aux_scaling_mean = None
+        else:
+            self.aux_scaling_mean = np.array(self.aux_scaling_mean)
+        self.aux_scaling_std = list(settings["aux_scaling_std"])
+        if len(self.aux_scaling_std) == 0:
+            self.aux_scaling_std = None
+        else:
+            self.aux_scaling_std = np.array(self.aux_scaling_std)
 
     @staticmethod
     def _check_required_data(method, r_xz, t_xz):
