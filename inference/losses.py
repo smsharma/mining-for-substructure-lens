@@ -7,9 +7,14 @@ from torch.nn import BCELoss, MSELoss
 
 def _clean_rs(log_r_hat, r_true, log_r_clip=15.):
     r_hat = torch.exp(log_r_hat)
+    r_hat = torch.where(
+        torch.isnan(r_true),
+        torch.ones_like(r_hat),
+        r_hat
+    )
     r_true = torch.where(
         torch.isnan(r_true),
-        r_hat,
+        torch.ones_like(r_true),
         torch.clamp(r_true, np.exp(-log_r_clip), np.exp(log_r_clip))
     )
     return r_hat, r_true
