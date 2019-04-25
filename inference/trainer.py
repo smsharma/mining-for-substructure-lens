@@ -483,7 +483,11 @@ class SingleParameterizedRatioTrainer(Trainer):
         self._check_for_nans("Augmented training data", r_xz, t_xz)
 
         s_hat, log_r_hat, t_hat, _ = self.model(
-            theta, x, aux=aux, track_score=self.calculate_model_score, return_grad_x=False
+            theta,
+            x,
+            aux=aux,
+            track_score=self.calculate_model_score,
+            return_grad_x=False,
         )
         self._check_for_nans("Model output (log r)", log_r_hat)
         self._check_for_nans("Model output (s)", s_hat)
