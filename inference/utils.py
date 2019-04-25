@@ -156,6 +156,18 @@ def load_and_check(filename, warning_threshold=1.0e9, memmap=True):
     return data
 
 
+def clean_r(r, log_r_clip=20.0):
+    return np.where(
+        np.isnan(r),
+        np.exp(-log_r_clip) * np.ones_like(r),
+        np.clip(r, np.exp(-log_r_clip), np.exp(log_r_clip)),
+    )
+
+
+def clean_t(t, t_clip=1000.0):
+    return np.where(np.isnan(t), np.zeros_like(t), np.clip(t, -t_clip, t_clip))
+
+
 def weighted_quantile(
     values, quantiles, sample_weight=None, values_sorted=False, old_style=False
 ):

@@ -10,12 +10,8 @@ import torch
 from inference.models.vgg import VGGRatioEstimator
 from inference.models.resnet import ResNetRatioEstimator
 from inference.trainer import SingleParameterizedRatioTrainer
-from inference.utils import (
-    create_missing_folders,
-    load_and_check,
-    get_optimizer,
-    get_loss,
-)
+from inference.utils import create_missing_folders, load_and_check, get_optimizer
+from inference.utils import get_loss, clean_r, clean_t
 from inference.utils import restrict_samplesize
 
 logger = logging.getLogger(__name__)
@@ -113,6 +109,8 @@ class ParameterizedRatioEstimator(object):
         if r_xz is not None:
             r_xz = r_xz.reshape((-1, 1))
         theta = theta.reshape((-1, 2))
+        r_xz = clean_r(r_xz)
+        t_xz = clean_t(t_xz)
 
         # Rescale aux, theta, and t_xz
         aux = self._transform_aux(aux)
@@ -483,7 +481,7 @@ class ParameterizedRatioEstimator(object):
 
         if self.rescale_inputs and aux is not None:
             self.aux_scaling_mean = np.mean(aux, axis=0)
-            self.aux_scaling_std = np.maximum(np.std(aux, axis=0),1.0e-6)
+            self.aux_scaling_std = np.maximum(np.std(aux, axis=0), 1.0e-6)
         else:
             self.aux_scaling_mean = None
             self.aux_scaling_std = None
@@ -492,7 +490,11 @@ class ParameterizedRatioEstimator(object):
         self.model.input_std = self.x_scaling_std
 
     def _transform_aux(self, aux):
-        if aux is not None and self.aux_scaling_mean is not None and self.aux_scaling_std is not None:
+        if (
+            aux is not None
+            and self.aux_scaling_mean is not None
+            and self.aux_scaling_std is not None
+        ):
             aux = aux - self.aux_scaling_mean[np.newaxis, :]
             aux = aux / self.aux_scaling_std[np.newaxis, :]
         return aux
@@ -518,8 +520,12 @@ class ParameterizedRatioEstimator(object):
             "x_scaling_mean": self.x_scaling_mean,
             "x_scaling_std": self.x_scaling_std,
             "rescale_theta": self.rescale_theta,
-            "aux_scaling_mean": [] if self.aux_scaling_mean is None else list(self.aux_scaling_mean),
-            "aux_scaling_std": [] if self.aux_scaling_std is None else list(self.aux_scaling_std),
+            "aux_scaling_mean": []
+            if self.aux_scaling_mean is None
+            else list(self.aux_scaling_mean),
+            "aux_scaling_std": []
+            if self.aux_scaling_std is None
+            else list(self.aux_scaling_std),
         }
         return settings
 
