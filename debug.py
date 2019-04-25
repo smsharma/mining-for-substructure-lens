@@ -13,10 +13,26 @@ logging.basicConfig(
     datefmt="%H:%M",
     level=logging.DEBUG,
 )
+
+from train import train
+
 logging.info("Hi!")
 
-from simulate import simulate_train
-
-simulate_train(n=2, n_thetas_marginal=3)
+train(
+    method="alices",
+    alpha=0.1,
+    data_dir="./data/",
+    sample_name="train",
+    model_filename="debug",
+    aux="z",
+    architecture="resnet",
+    log_input=False,
+    batch_size=128,
+    n_epochs=1,
+    optimizer="adam",
+    initial_lr=0.001,
+    final_lr=0.0001,
+    limit_samplesize=None,
+)
 
 logging.info("All done! Have a nice day!")

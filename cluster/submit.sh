@@ -30,9 +30,17 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 # sbatch train_alice.sh
 # sbatch train_alices.sh
 
+# sbatch train_carl_aux.sh
+# sbatch train_alice_aux.sh
+# sbatch train_alices_aux.sh
+
 # sbatch train_carl_deep.sh
 # sbatch train_alice_deep.sh
 # sbatch train_alices_deep.sh
+
+# sbatch train_carl_aux_deep.sh
+# sbatch train_alice_aux_deep.sh
+# sbatch train_alices_aux_deep.sh
 
 
 ############################################################
@@ -43,6 +51,14 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 # sbatch eval_alice.sh
 # sbatch eval_alices.sh
 
+# sbatch eval_carl_aux.sh
+# sbatch eval_alice_aux.sh
+# sbatch eval_alices_aux.sh
+
 # sbatch eval_carl_deep.sh
 # sbatch eval_alice_deep.sh
 # sbatch eval_alices_deep.sh
+
+# sbatch eval_carl_aux_deep.sh
+# sbatch eval_alice_aux_deep.sh
+# sbatch eval_alices_aux_deep.sh
