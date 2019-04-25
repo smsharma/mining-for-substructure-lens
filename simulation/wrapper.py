@@ -1,6 +1,7 @@
 import numpy as np
 import logging
 from scipy.stats import norm
+import scipy.special
 
 from simulation.population_sim import LensingObservationWithSubhalos
 
@@ -115,16 +116,17 @@ def _pick_param(xs, i, n):
 
 def _extract_log_r(sim, n_thetas_marginal):
     # Evaluate likelihood ratio wrt evidence
-    inverse_r_xz = 0.0
-    for i_theta in range(n_thetas_marginal):
-        log_r_contribution = sim.joint_log_probs[i_theta + 1] - sim.joint_log_probs[0]
-        inverse_r_xz += np.exp(log_r_contribution)
-    inverse_r_xz /= float(n_thetas_marginal)
-    log_r_xz = -np.log(inverse_r_xz)
+    delta_log = np.asarray(
+        sim.joint_log_probs[1:] - sim.joint_log_probs[0] - np.log(float(n_thetas_marginal)),
+        dtype=np.float128
+    )
+    log_r_xz = - 1. * scipy.special.logsumexp(delta_log)
+
     if not np.isfinite(log_r_xz):
-        logger.warning("Infinite log r for 1/r = %s", inverse_r_xz)
+        logger.warning("Infinite log r for delta_log = %s", delta_log)
 
     # Estimate uncertainty of log r from MC sampling
+    inverse_r_xz = np.exp(- log_r_xz)
     inverse_r_xz_uncertainty = 0.0
     for i_theta in range(n_thetas_marginal):
         log_r_contribution = sim.joint_log_probs[i_theta + 1] - sim.joint_log_probs[0]

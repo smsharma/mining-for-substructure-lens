@@ -159,6 +159,9 @@ if __name__ == "__main__":
         level=logging.DEBUG if args.debug else logging.INFO,
     )
     logger.info("Hi!")
+    logger.info("")
+    logger.info("USING NEW JOINT RATIO CALCULATION")
+    logger.info("")
 
     if args.test:
         name = "test" if args.name is None else args.name
