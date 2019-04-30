@@ -460,7 +460,13 @@ class SingleParameterizedRatioTrainer(Trainer):
                 tensor_data.append(torch.tensor(value, requires_grad=True))
             else:
                 tensor_data.append(torch.from_numpy(value))
-        dataset = TensorDataset(*tensor_data)
+        try:
+            dataset = TensorDataset(*tensor_data)
+        except AssertionError:
+            raise RuntimeError(
+                "Size mismatch in data set. Data have shapes %s",
+                {key: value.shape for key, value in six.iteritems(data)}
+            )
         return data_labels, dataset
 
     def forward_pass(self, batch_data, loss_functions):

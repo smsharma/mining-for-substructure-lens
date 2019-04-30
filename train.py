@@ -30,6 +30,11 @@ def train(
     limit_samplesize=None,
 ):
     aux_data, n_aux = load_aux("{}/samples/z_{}.npy".format(data_dir, sample_name), aux)
+    if aux_data is None:
+        logging.info("%s aux variables", n_aux)
+    else:
+        logging.info("%s aux variables with shape %s", n_aux, aux_data.shape)
+
     estimator = ParameterizedRatioEstimator(
         resolution=64,
         n_parameters=2,
@@ -69,9 +74,9 @@ def load_aux(filename, aux=None):
     elif aux == "zl":
         return load_and_check(filename)[:, 1].reshape(-1, 1), 1
     elif aux == "z":
-        return load_and_check(filename)[:, ::2], 2
+        return load_and_check(filename)[:, ::2].reshape(-1, 2), 2
     elif aux == "all":
-        return load_and_check(filename)[:, :], 3
+        return load_and_check(filename)[:, :].reshape(-1, 3), 3
     else:
         raise ValueError(
             "Unknown aux settings {}, please use 'zs', 'zl', 'z', or 'all'.".format(aux)
