@@ -123,12 +123,14 @@ class ParameterizedRatioEstimator(object):
         n_parameters = theta.shape[1]
         resolution_x = x.shape[1]
         resolution_y = x.shape[2]
+        n_aux = aux.shape[1]
         logger.info(
-            "Found %s samples with %s parameters and resolution %s x %s",
+            "Found %s samples with %s parameters, image resolution %s x %s, and %s auxiliary parameters",
             n_samples,
             n_parameters,
             resolution_x,
             resolution_y,
+            n_aux
         )
         if resolution_x != resolution_y:
             raise RuntimeError(
@@ -137,6 +139,12 @@ class ParameterizedRatioEstimator(object):
                 )
             )
         resolution = resolution_x
+        if n_aux != self.n_aux:
+            raise RuntimeError("Number of auxiliary variables found in data ({}) does not match number of" 
+                               "auxiliary variables in model ({})".format(n_aux, self.n_aux))
+        if aux.shape[0] != n_samples:
+            raise RuntimeError("Number of samples in auxiliary variables does not match number of"
+                               "samples ({})".format(aux.shape[0], n_samples))
 
         # Limit sample size
         if limit_samplesize is not None and limit_samplesize < n_samples:
@@ -520,12 +528,8 @@ class ParameterizedRatioEstimator(object):
             "x_scaling_mean": self.x_scaling_mean,
             "x_scaling_std": self.x_scaling_std,
             "rescale_theta": self.rescale_theta,
-            "aux_scaling_mean": []
-            if self.aux_scaling_mean is None
-            else list(self.aux_scaling_mean),
-            "aux_scaling_std": []
-            if self.aux_scaling_std is None
-            else list(self.aux_scaling_std),
+            "aux_scaling_mean": [] if self.aux_scaling_mean is None else list(self.aux_scaling_mean),
+            "aux_scaling_std": [] if self.aux_scaling_std is None  else list(self.aux_scaling_std),
         }
         return settings
 
