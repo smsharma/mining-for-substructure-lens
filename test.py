@@ -13,7 +13,7 @@ from inference.estimator import ParameterizedRatioEstimator
 
 
 def make_grid(
-    alpha_min=1.0, alpha_max=19.0, beta_min=-1.0, beta_max=-2.8, resolution=25
+    alpha_min=10., alpha_max=400., beta_min=-1.0, beta_max=-3.0, resolution=21
 ):
     alpha_test = np.linspace(alpha_min, alpha_max, resolution)
     beta_test = np.linspace(beta_min, beta_max, resolution)
