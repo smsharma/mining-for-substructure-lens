@@ -202,6 +202,7 @@ class ParameterizedRatioEstimator(object):
         self,
         x,
         theta,
+        aux=None,
         test_all_combinations=True,
         evaluate_score=False,
         evaluate_grad_x=False,
@@ -214,6 +215,7 @@ class ParameterizedRatioEstimator(object):
         # Load training data
         logger.debug("Loading evaluation data")
         x = load_and_check(x)
+        aux = load_and_check(aux)
         theta = load_and_check(theta)
 
         # Rescale theta
@@ -237,6 +239,7 @@ class ParameterizedRatioEstimator(object):
                 _, log_r_hat, t_hat, x_grad = self._evaluate(
                     theta0s=[this_theta],
                     xs=x,
+                    auxs=aux,
                     evaluate_score=evaluate_score,
                     evaluate_grad_x=evaluate_grad_x,
                     batch_size=batch_size,
@@ -255,6 +258,7 @@ class ParameterizedRatioEstimator(object):
             _, all_log_r_hat, all_t_hat, all_grad_x = self._evaluate(
                 theta0s=theta,
                 xs=x,
+                auxs=aux,
                 evaluate_score=evaluate_score,
                 evaluate_grad_x=evaluate_grad_x,
                 batch_size=batch_size,

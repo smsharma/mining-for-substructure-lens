@@ -54,7 +54,7 @@ def evaluate(
 
         llr, _, grad_x = estimator.log_likelihood_ratio(
             x=x,
-            aux=aux,
+            aux=aux_data,
             theta=theta,
             test_all_combinations=True,
             evaluate_grad_x=True,
@@ -69,7 +69,7 @@ def evaluate(
             np.random.shuffle(theta)
 
         llr, _, grad_x = estimator.log_likelihood_ratio(
-            x=x, aux=aux, theta=theta, test_all_combinations=False, evaluate_grad_x=True
+            x=x, aux=aux_data, theta=theta, test_all_combinations=False, evaluate_grad_x=True
         )
 
     np.save("{}/results/llr_{}.npy".format(data_dir, result_filename), llr)
