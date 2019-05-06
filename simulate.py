@@ -66,6 +66,32 @@ def simulate_train(n=10000, n_thetas_marginal=5000):
     return x, theta, y, r_xz, t_xz, latents
 
 
+def grid_point(i, alpha_min=10., alpha_max=400., beta_min=-1.1, beta_max=-3.0, resolution=21):
+    alpha_test = np.linspace(alpha_min, alpha_max, resolution)
+    beta_test = np.linspace(beta_min, beta_max, resolution)
+
+    theta0, theta1 = np.meshgrid(alpha_test, beta_test)
+    theta_grid = np.vstack((theta0.flatten(), theta1.flatten())).T
+
+    return theta_grid[i]
+
+
+def simulate_calibration(i_theta, n=1000):
+    n_calib, beta = grid_point(i_theta)
+    logger.info(
+        "Generating calibration data with %s images at theta %s / 625: n_calib = %s, beta = %s",
+        n,
+        i_theta + 1,
+        n_calib,
+        beta,
+    )
+    theta, x, _, _, _, latents = augmented_data(
+        n_calib=n_calib, beta=beta, n_images=n, mine_gold=False
+    )
+
+    return x, theta, None, None, None, latents
+
+
 def simulate_test_point(n=1000, n_calib=150, beta=-1.9):
     logger.info(
         "Generating point test data with %s images at n_calib = %s, beta = %s",
@@ -132,12 +158,18 @@ def parse_args():
         "--test", action="store_true", help="Generate test rather than train data."
     )
     parser.add_argument(
+        "--calibrate", action="store_true", help="Generate calibration rather than train data."
+    )
+    parser.add_argument(
         "--point",
         action="store_true",
         help="Generate test data at specific reference model rather than sampled from the prior.",
     )
     parser.add_argument(
         "--name", type=str, default=None, help='Sample name, like "train" or "test".'
+    )
+    parser.add_argument(
+        "--theta", type=int, default=None, help='Theta index for calibration (between 0 and 440)'
     )
     parser.add_argument(
         "--dir",
@@ -169,6 +201,10 @@ if __name__ == "__main__":
             results = simulate_test_point(args.n)
         else:
             results = simulate_test_prior(args.n)
+    elif args.calibrate:
+        assert args.theta is not None, "Please provide --theta"
+        name = "calibrate_theta{}".format(args.theta) if args.name is None else args.name
+        results = simulate_calibration(args.theta, args.n)
     else:
         name = "train" if args.name is None else args.name
         results = simulate_train(args.n)
