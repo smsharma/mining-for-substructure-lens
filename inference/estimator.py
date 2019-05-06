@@ -267,6 +267,7 @@ class ParameterizedRatioEstimator(object):
         self,
         theta0s,
         xs,
+        auxs=None,
         evaluate_score=False,
         evaluate_grad_x=False,
         run_on_gpu=True,
@@ -288,10 +289,15 @@ class ParameterizedRatioEstimator(object):
                 )
             else:
                 theta_batch = np.copy(theta0s)
+            if auxs is not None:
+                aux_batch = np.copy(auxs[i_batch * batch_size : (i_batch + 1) * batch_size])
+            else:
+                aux_batch = None
 
             s, log_r, t, x_grad = self._evaluate_batch(
                 theta_batch,
                 x_batch,
+                aux_batch,
                 evaluate_score,
                 evaluate_grad_x,
                 run_on_gpu,
@@ -320,7 +326,7 @@ class ParameterizedRatioEstimator(object):
         return all_s, all_log_r, all_t, all_x_grad
 
     def _evaluate_batch(
-        self, theta0s, xs, evaluate_score, evaluate_grad_x, run_on_gpu, double_precision
+        self, theta0s, xs, auxs, evaluate_score, evaluate_grad_x, run_on_gpu, double_precision
     ):
         # CPU or GPU?
         run_on_gpu = run_on_gpu and torch.cuda.is_available()
@@ -336,10 +342,14 @@ class ParameterizedRatioEstimator(object):
             ]
         )
         xs = torch.stack([torch.tensor(x) for x in xs])
+        if auxs is not None:
+            auxs = torch.stack([torch.tensor(x) for x in auxs])
 
         self.model = self.model.to(device, dtype)
         theta0s = theta0s.to(device, dtype)
         xs = xs.to(device, dtype)
+        if auxs is not None:
+            auxs = auxs.to(device, dtype)
 
         # Evaluate ratio estimator with score or x gradients:
         if evaluate_score or evaluate_grad_x:
@@ -348,6 +358,7 @@ class ParameterizedRatioEstimator(object):
             s, log_r, t, x_grad = self.model(
                 theta0s,
                 xs,
+                aux=auxs,
                 track_score=evaluate_score,
                 return_grad_x=evaluate_grad_x,
                 create_gradient_graph=False,
@@ -378,6 +389,7 @@ class ParameterizedRatioEstimator(object):
                 s, log_r, _, _ = self.model(
                     theta0s,
                     xs,
+                    aux=auxs,
                     track_score=False,
                     return_grad_x=False,
                     create_gradient_graph=False,
@@ -522,6 +534,7 @@ class ParameterizedRatioEstimator(object):
         settings = {
             "resolution": self.resolution,
             "n_parameters": self.n_parameters,
+            "n_aux": self.n_aux,
             "architecture": self.architecture,
             "log_input": self.log_input,
             "rescale_inputs": self.rescale_inputs,
@@ -536,6 +549,7 @@ class ParameterizedRatioEstimator(object):
     def _unwrap_settings(self, settings):
         self.resolution = int(settings["resolution"])
         self.n_parameters = int(settings["n_parameters"])
+        self.n_aux = int(settings["n_aux"])
         self.architecture = str(settings["architecture"])
         self.log_input = bool(settings["log_input"])
         self.rescale_inputs = str(settings["rescale_inputs"])

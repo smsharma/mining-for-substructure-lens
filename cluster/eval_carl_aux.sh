@@ -11,6 +11,6 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-# python -u test.py carl_aux test_prior carl_aux_prior --dir /scratch/jb6504/StrongLensing-Inference
-# python -u test.py carl_aux test_prior carl_aux_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
-python -u test.py carl_aux test_point carl_aux_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
+python -u test.py carl_aux test_prior carl_aux_prior --aux z --dir /scratch/jb6504/StrongLensing-Inference
+python -u test.py carl_aux test_prior carl_aux_shuffledprior --aux z --shuffle --dir /scratch/jb6504/StrongLensing-Inference
+python -u test.py carl_aux test_point carl_aux_grid --grid --aux z --dir /scratch/jb6504/StrongLensing-Inference

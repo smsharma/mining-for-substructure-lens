@@ -10,6 +10,7 @@ import numpy as np
 sys.path.append("./")
 
 from inference.estimator import ParameterizedRatioEstimator
+from inference.utils import load_and_check
 
 
 def make_grid(
@@ -32,6 +33,7 @@ def evaluate(
     model_filename,
     sample_filename,
     result_filename,
+    aux=None,
     grid=True,
     shuffle=False,
     small=False,
@@ -44,6 +46,7 @@ def evaluate(
 
     if grid:
         x = np.load("{}/samples/x_{}.npy".format(data_dir, sample_filename))
+        aux_data, n_aux = load_aux("{}/samples/z_{}.npy".format(data_dir, sample_filename), aux)
         if small:
             x = x[:100]
         theta, grad_x_index = make_grid()
@@ -51,6 +54,7 @@ def evaluate(
 
         llr, _, grad_x = estimator.log_likelihood_ratio(
             x=x,
+            aux=aux,
             theta=theta,
             test_all_combinations=True,
             evaluate_grad_x=True,
@@ -59,16 +63,34 @@ def evaluate(
 
     else:
         x = np.load("{}/samples/x_{}.npy".format(data_dir, sample_filename))
+        aux_data, n_aux = load_aux("{}/samples/z_{}.npy".format(data_dir, sample_filename), aux)
         theta = np.load("{}/samples/theta_{}.npy".format(data_dir, sample_filename))
         if shuffle:
             np.random.shuffle(theta)
 
         llr, _, grad_x = estimator.log_likelihood_ratio(
-            x=x, theta=theta, test_all_combinations=False, evaluate_grad_x=True
+            x=x, aux=aux, theta=theta, test_all_combinations=False, evaluate_grad_x=True
         )
 
     np.save("{}/results/llr_{}.npy".format(data_dir, result_filename), llr)
     np.save("{}/results/grad_x_{}.npy".format(data_dir, result_filename), grad_x)
+
+
+def load_aux(filename, aux=None):
+    if aux is None:
+        return None, 0
+    elif aux == "zs":
+        return load_and_check(filename)[:, 0].reshape(-1, 1), 1
+    elif aux == "zl":
+        return load_and_check(filename)[:, 1].reshape(-1, 1), 1
+    elif aux == "z":
+        return load_and_check(filename)[:, ::2].reshape(-1, 2), 2
+    elif aux == "all":
+        return load_and_check(filename)[:, :].reshape(-1, 3), 3
+    else:
+        raise ValueError(
+            "Unknown aux settings {}, please use 'zs', 'zl', 'z', or 'all'.".format(aux)
+        )
 
 
 def parse_args():
@@ -92,6 +114,14 @@ def parse_args():
         "curves.",
     )
     parser.add_argument(
+        "--aux",
+        type=str,
+        default=None,
+        help='Whether auxiliary information is used during training. Can be "zs" for '
+        'the source redshift, "zl" for the lens redshift, "z" for both redshifts,'
+        ' and "all" for both redshifts as well as sigma_v.',
+    )
+    parser.add_argument(
         "--dir",
         type=str,
         default=".",
@@ -109,7 +139,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
         datefmt="%H:%M",
-        level=logging.DEBUG,
+        level=logging.INFO,
     )
     logging.info("Hi!")
     args = parse_args()
@@ -118,6 +148,7 @@ if __name__ == "__main__":
         args.model,
         args.sample,
         args.result,
+        args.aux,
         args.grid,
         args.shuffle,
         args.small,
