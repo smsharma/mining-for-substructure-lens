@@ -66,7 +66,7 @@ def simulate_train(n=10000, n_thetas_marginal=5000):
     return x, theta, y, r_xz, t_xz, latents
 
 
-def grid_point(i, alpha_min=10., alpha_max=400., beta_min=-1.1, beta_max=-3.0, resolution=21):
+def grid_point(i, alpha_min=10., alpha_max=400., beta_min=-1.1, beta_max=-3.0, resolution=25):
     alpha_test = np.linspace(alpha_min, alpha_max, resolution)
     beta_test = np.linspace(beta_min, beta_max, resolution)
 

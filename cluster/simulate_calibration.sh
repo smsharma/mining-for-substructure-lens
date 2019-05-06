@@ -11,4 +11,4 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-python -u simulate.py -n 5000 --calibrate --theta ${SLURM_ARRAY_TASK_ID} --dir /scratch/jb6504/StrongLensing-Inference
+python -u simulate.py -n 10000 --calibrate --theta ${SLURM_ARRAY_TASK_ID} --dir /scratch/jb6504/StrongLensing-Inference
