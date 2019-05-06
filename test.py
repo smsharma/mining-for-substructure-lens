@@ -139,7 +139,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
         datefmt="%H:%M",
-        level=logging.INFO,
+        level=logging.DEBUG,
     )
     logging.info("Hi!")
     args = parse_args()
