@@ -218,7 +218,8 @@ class ParameterizedRatioEstimator(object):
         aux = load_and_check(aux)
         theta = load_and_check(theta)
 
-        # Rescale theta
+        # Rescale theta and aux
+        aux = self._transform_aux(aux)
         theta = self._transform_theta(theta)
 
         # Evaluate

@@ -49,6 +49,8 @@ def evaluate(
         aux_data, n_aux = load_aux("{}/samples/z_{}.npy".format(data_dir, sample_filename), aux)
         if small:
             x = x[:100]
+            if aux_data is not None:
+                aux_data = aux_data[:100]
         theta, grad_x_index = make_grid()
         np.save("{}/results/theta_grid.npy".format(data_dir), theta)
 
