@@ -138,6 +138,20 @@ def simulate_calibration(i_theta, n=1000):
     return x, theta, None, None, None, latents
 
 
+def simulate_calibration_reference(n=1000):
+    logger.info("Generating calibration data with %s images from prior", n)
+
+    # Parameter points from prior
+    n_calib = uniform(10.0, 400.0).rvs(size=n)
+    beta = uniform(-3.0, 1.9).rvs(size=n)
+
+    theta, x, _, _, _, latents = augmented_data(
+        n_calib=n_calib, beta=beta, n_images=n, inverse=False, mine_gold=False
+    )
+
+    return x, theta, None, None, None, latents
+
+
 def simulate_test_point(n=1000, n_calib=150, beta=-1.9):
     logger.info(
         "Generating point test data with %s images at n_calib = %s, beta = %s",
@@ -217,6 +231,9 @@ def parse_args():
         help="When generating training data, use a fixed reference point rather than the full marginal model.",
     )
     parser.add_argument(
+        "--calref", action="store_true", help="Generate reference sample for calibration."
+    )
+    parser.add_argument(
         "--name", type=str, default=None, help='Sample name, like "train" or "test".'
     )
     parser.add_argument(
@@ -253,6 +270,9 @@ if __name__ == "__main__":
         assert args.theta is not None, "Please provide --theta"
         name = "calibrate_theta{}".format(args.theta) if args.name is None else args.name
         results = simulate_calibration(args.theta, args.n)
+    elif args.calref:
+        name = "calibrate_ref" if args.name is None else args.name
+        results = simulate_calibration_ref(args.n)
     else:
         name = "train" if args.name is None else args.name
         if args.pointref:
