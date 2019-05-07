@@ -85,14 +85,7 @@ def balance_thetas(theta_sets_types, theta_sets_values):
     return theta_sets_types, theta_sets_values
 
 
-def sanitize_array(
-    array,
-    replace_nan=0.0,
-    replace_inf=0.0,
-    replace_neg_inf=0.0,
-    min_value=None,
-    max_value=None,
-):
+def sanitize_array(array, replace_nan=0.0, replace_inf=0.0, replace_neg_inf=0.0, min_value=None, max_value=None):
     array[np.isneginf(array)] = replace_neg_inf
     array[np.isinf(array)] = replace_inf
     array[np.isnan(array)] = replace_nan
@@ -107,22 +100,14 @@ def load_and_check(filename, warning_threshold=1.0e9, memmap=True):
     if filename is None:
         return None
 
-    memmap = (
-        memmap and isinstance(filename, six.string_types) and "x_train.npy" in filename
-    )
+    memmap = memmap and isinstance(filename, six.string_types) and "x_train.npy" in filename
 
     if not isinstance(filename, six.string_types):
         data = filename
     elif memmap:
         logger.debug("Trying to load %s with memmap.", filename)
         data = np.load(filename, mmap_mode="c")
-        logger.debug(
-            "Loaded %s with memmap. Found shape %s, dtype %s, and first entry\n%s",
-            filename,
-            data.shape,
-            data.dtype,
-            data[0],
-        )
+        logger.debug("Loaded %s with memmap. Found shape %s, dtype %s, and first entry\n%s", filename, data.shape, data.dtype, data[0])
     else:
         data = np.load(filename)
 
@@ -134,43 +119,26 @@ def load_and_check(filename, warning_threshold=1.0e9, memmap=True):
         n_finite = np.sum(np.isfinite(data))
 
         if n_nans + n_infs > 0:
-            logger.warning(
-                "Warning: file %s contains %s NaNs and %s Infs, compared to %s finite numbers!",
-                filename,
-                n_nans,
-                n_infs,
-                n_finite,
-            )
+            logger.warning("Warning: file %s contains %s NaNs and %s Infs, compared to %s finite numbers!", filename, n_nans, n_infs, n_finite)
 
         smallest = np.nanmin(data)
         largest = np.nanmax(data)
 
         if np.abs(smallest) > warning_threshold or np.abs(largest) > warning_threshold:
-            logger.warning(
-                "Warning: file %s has some large numbers, rangin from %s to %s",
-                filename,
-                smallest,
-                largest,
-            )
+            logger.warning("Warning: file %s has some large numbers, rangin from %s to %s", filename, smallest, largest)
 
     return data
 
 
 def clean_r(r, log_r_clip=20.0):
-    return np.where(
-        np.isnan(r),
-        np.exp(-log_r_clip) * np.ones_like(r),
-        np.clip(r, np.exp(-log_r_clip), np.exp(log_r_clip)),
-    )
+    return np.where(np.isnan(r), np.exp(-log_r_clip) * np.ones_like(r), np.clip(r, np.exp(-log_r_clip), np.exp(log_r_clip)))
 
 
 def clean_t(t, t_clip=1000.0):
     return np.where(np.isnan(t), np.zeros_like(t), np.clip(t, -t_clip, t_clip))
 
 
-def weighted_quantile(
-    values, quantiles, sample_weight=None, values_sorted=False, old_style=False
-):
+def weighted_quantile(values, quantiles, sample_weight=None, values_sorted=False, old_style=False):
     """
     Calculates quantiles (similar to np.percentile), but supports weights.
 
@@ -200,9 +168,7 @@ def weighted_quantile(
     if sample_weight is None:
         sample_weight = np.ones(len(values))
     sample_weight = np.array(sample_weight, dtype=np.float64)
-    assert np.all(quantiles >= 0) and np.all(
-        quantiles <= 1
-    ), "quantiles should be in [0, 1]"
+    assert np.all(quantiles >= 0) and np.all(quantiles <= 1), "quantiles should be in [0, 1]"
 
     # Sort
     if not values_sorted:
