@@ -14,7 +14,7 @@ from simulation.units import *
 from simulation.wrapper import augmented_data
 
 
-def simulate_train(n=10000, n_thetas_marginal=5000):
+def simulate_train_marginalref(n=10000, n_thetas_marginal=5000):
     logger.info("Generating training data with %s images", n)
 
     # Parameter points from prior
@@ -51,6 +51,52 @@ def simulate_train(n=10000, n_thetas_marginal=5000):
         beta_ref=beta_ref,
         n_images=n // 2,
         n_thetas_marginal=n_thetas_marginal,
+        inverse=True,
+        mine_gold=True,
+    )
+
+    x = np.vstack((x0, x1))
+    y = np.hstack((y0, y1))
+    theta = np.vstack((theta0, theta1))
+    t_xz = np.vstack((t_xz0, t_xz1))
+    log_r_xz = np.hstack((log_r_xz0, log_r_xz1))
+    r_xz = np.exp(log_r_xz, dtype=np.float64)
+    latents = np.vstack((latents0, latents1))
+
+    return x, theta, y, r_xz, t_xz, latents
+
+
+def simulate_train_pointref(n=10000, n_calib_ref=150., beta_ref=-1.9):
+    logger.info("Generating training data with %s images", n)
+
+    # Parameter points from prior
+    n_calib = uniform(10.0, 400.0).rvs(size=n // 2)
+    beta = uniform(-3.0, 1.9).rvs(size=n // 2)
+
+    # Samples from numerator
+    logger.info("Generating %s numerator images", n // 2)
+    y0 = np.zeros(n // 2)
+    theta0, x0, t_xz0, log_r_xz0, _, latents0 = augmented_data(
+        n_calib=n_calib,
+        beta=beta,
+        n_calib_ref=[n_calib_ref],
+        beta_ref=[beta_ref],
+        n_images=n // 2,
+        n_thetas_marginal=1,
+        inverse=False,
+        mine_gold=True,
+    )
+
+    # Samples from denominator / reference
+    logger.info("Generating %s denominator images", n // 2)
+    y1 = np.ones(n // 2)
+    theta1, x1, t_xz1, log_r_xz1, _, latents1 = augmented_data(
+        n_calib=n_calib,
+        beta=beta,
+        n_calib_ref=[n_calib_ref],
+        beta_ref=[beta_ref],
+        n_images=n // 2,
+        n_thetas_marginal=1,
         inverse=True,
         mine_gold=True,
     )
@@ -166,6 +212,11 @@ def parse_args():
         help="Generate test data at specific reference model rather than sampled from the prior.",
     )
     parser.add_argument(
+        "--pointref",
+        action="store_true",
+        help="When generating training data, use a fixed reference point rather than the full marginal model.",
+    )
+    parser.add_argument(
         "--name", type=str, default=None, help='Sample name, like "train" or "test".'
     )
     parser.add_argument(
@@ -207,7 +258,10 @@ if __name__ == "__main__":
         results = simulate_calibration(args.theta, args.n)
     else:
         name = "train" if args.name is None else args.name
-        results = simulate_train(args.n)
+        if args.pointref:
+            results = simulate_train_pointref(args.n)
+        else:
+            results = simulate_train_marginalref(args.n)
     save(args.dir, name, *results)
 
     logger.info("All done! Have a nice day!")
