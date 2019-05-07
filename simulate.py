@@ -138,7 +138,7 @@ def simulate_calibration(i_theta, n=1000):
     return x, theta, None, None, None, latents
 
 
-def simulate_calibration_reference(n=1000):
+def simulate_calibration_ref(n=1000):
     logger.info("Generating calibration data with %s images from prior", n)
 
     # Parameter points from prior

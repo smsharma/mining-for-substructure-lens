@@ -11,6 +11,12 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
+for i in {0..624}
+do
+    python -u test.py alice calibrate_theta$s alice_calibrate_theta$i --dir /scratch/jb6504/StrongLensing-Inference
+done
+python -u test.py alice calibrate_ref alice_calibrate_ref --dir /scratch/jb6504/StrongLensing-Inference
+
 # python -u test.py alice test_prior alice_prior --dir /scratch/jb6504/StrongLensing-Inference
 # python -u test.py alice test_prior alice_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
-python -u test.py alice test_point alice_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
+# python -u test.py alice test_point alice_grid --grid --dir /scratch/jb6504/StrongLensing-Inference

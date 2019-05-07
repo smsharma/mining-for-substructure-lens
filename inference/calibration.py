@@ -35,6 +35,8 @@ class HistogramCalibrator:
         elif mode == "dynamic":
             percentages = 100.0 * np.linspace(0.0, 1.0, nbins)
             edges = np.percentile(data, percentages)
+        else:
+            raise RuntimeError("Unknown mode {}".format(mode))
 
         return (hmin, hmax), edges
 
