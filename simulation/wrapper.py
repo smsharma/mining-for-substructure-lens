@@ -115,6 +115,11 @@ def _pick_param(xs, i, n):
 
 
 def _extract_log_r(sim, n_thetas_marginal):
+    # Just a reference point?
+    if n_thetas_marginal == 1:
+        log_r_xz = sim.joint_log_probs[0] - sim.joint_log_probs[1]
+        return log_r_xz, None
+
     # Evaluate likelihood ratio wrt evidence
     delta_log = np.asarray(
         sim.joint_log_probs[1:] - sim.joint_log_probs[0] - np.log(float(n_thetas_marginal)),
