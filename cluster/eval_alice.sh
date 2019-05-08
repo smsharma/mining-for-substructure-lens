@@ -13,8 +13,18 @@ cd /scratch/jb6504/StrongLensing-Inference/
 
 for i in {0..624}
 do
-    python -u test.py alice calibrate_theta$s alice_calibrate_theta$i --dir /scratch/jb6504/StrongLensing-Inference
+    echo ""
+    echo ""
+    echo ""
+    echo "EVALUATING CALIB $i"
+    echo ""
+    python -u test.py alice calibrate_theta$i alice_calibrate_theta$i --dir /scratch/jb6504/StrongLensing-Inference
 done
+    echo ""
+    echo ""
+    echo ""
+    echo "EVALUATING CALIB REF"
+    echo ""
 python -u test.py alice calibrate_ref alice_calibrate_ref --dir /scratch/jb6504/StrongLensing-Inference
 
 # python -u test.py alice test_prior alice_prior --dir /scratch/jb6504/StrongLensing-Inference
