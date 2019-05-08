@@ -11,6 +11,22 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
+for i in {0..624}
+do
+    echo ""
+    echo ""
+    echo ""
+    echo "EVALUATING CALIB $i"
+    echo ""
+    python -u test.py carl calibrate_theta$i carl_calibrate_theta$i --dir /scratch/jb6504/StrongLensing-Inference
+done
+    echo ""
+    echo ""
+    echo ""
+    echo "EVALUATING CALIB REF"
+    echo ""
+python -u test.py carl calibrate_ref carl_calibrate_ref --dir /scratch/jb6504/StrongLensing-Inference
+
 # python -u test.py carl test_prior carl_prior --dir /scratch/jb6504/StrongLensing-Inference
 # python -u test.py carl test_prior carl_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
-python -u test.py carl test_point carl_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
+# python -u test.py carl test_point carl_grid --grid --dir /scratch/jb6504/StrongLensing-Inference

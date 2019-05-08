@@ -11,6 +11,22 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-python -u test.py alices_aux test_prior alices_aux_prior --aux z --dir /scratch/jb6504/StrongLensing-Inference
-python -u test.py alices_aux test_prior alices_aux_shuffledprior --aux z --shuffle --dir /scratch/jb6504/StrongLensing-Inference
-python -u test.py alices_aux test_point alices_aux_grid --aux z --grid --dir /scratch/jb6504/StrongLensing-Inference
+for i in {0..624}
+do
+    echo ""
+    echo ""
+    echo ""
+    echo "EVALUATING CALIB $i"
+    echo ""
+    python -u test.py alices_aux calibrate_theta$i alices_aux_calibrate_theta$i --aux z --dir /scratch/jb6504/StrongLensing-Inference
+done
+    echo ""
+    echo ""
+    echo ""
+    echo "EVALUATING CALIB REF"
+    echo ""
+python -u test.py alices_aux calibrate_ref alices_aux_calibrate_ref --aux z --dir /scratch/jb6504/StrongLensing-Inference
+
+# python -u test.py alices_aux test_prior alices_aux_prior --aux z --dir /scratch/jb6504/StrongLensing-Inference
+# python -u test.py alices_aux test_prior alices_aux_shuffledprior --aux z --shuffle --dir /scratch/jb6504/StrongLensing-Inference
+# python -u test.py alices_aux test_point alices_aux_grid --aux z --grid --dir /scratch/jb6504/StrongLensing-Inference
