@@ -28,5 +28,5 @@ done
 python -u test.py carl calibrate_ref carl_calibrate_ref --dir /scratch/jb6504/StrongLensing-Inference
 
 # python -u test.py carl test_prior carl_prior --dir /scratch/jb6504/StrongLensing-Inference
-# python -u test.py carl test_prior carl_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
+python -u test.py carl test_prior carl_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
 # python -u test.py carl test_point carl_grid --grid --dir /scratch/jb6504/StrongLensing-Inference

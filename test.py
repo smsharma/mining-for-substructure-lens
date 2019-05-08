@@ -73,7 +73,8 @@ def evaluate(
         llr, _, grad_x = estimator.log_likelihood_ratio(
             x=x, aux=aux_data, theta=theta, test_all_combinations=False, evaluate_grad_x=True
         )
-
+    if shuffle:
+        np.save("{}/results/shuffled_theta_{}.npy".format(data_dir, result_filename), theta)
     np.save("{}/results/llr_{}.npy".format(data_dir, result_filename), llr)
     np.save("{}/results/grad_x_{}.npy".format(data_dir, result_filename), grad_x)
 
