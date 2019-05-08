@@ -103,7 +103,7 @@ def parse_args():
     # Main options
     parser.add_argument("model", type=str, help="Model name.")
     parser.add_argument("sample", type=str, help='Sample name, like "test".')
-    parser.add_argument("result", type=str, help="Model name.")
+    parser.add_argument("result", type=str, help="File name for results.")
     parser.add_argument(
         "--grid",
         action="store_true",
