@@ -34,7 +34,7 @@ def calibrate(
     llr_cal = np.array(llr_cal)
 
     # Save results
-    np.save("{}/llr_calibrated_{}.npy".format(data_dir, raw_filename))
+    np.save("{}/llr_calibrated_{}.npy".format(data_dir, raw_filename), llr_cal)
 
 
 def parse_args():
