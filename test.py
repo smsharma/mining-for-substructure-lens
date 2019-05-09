@@ -14,7 +14,7 @@ from inference.utils import load_and_check
 
 
 def make_grid(
-    alpha_min=10., alpha_max=400., beta_min=-1.0, beta_max=-3.0, resolution=21
+    alpha_min=10., alpha_max=400., beta_min=-1.1, beta_max=-3.0, resolution=25
 ):
     alpha_test = np.linspace(alpha_min, alpha_max, resolution)
     beta_test = np.linspace(beta_min, beta_max, resolution)
