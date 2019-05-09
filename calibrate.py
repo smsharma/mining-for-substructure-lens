@@ -31,8 +31,10 @@ def calibrate(
 
         llr_cal[i] = cal.log_likelihood_ratio(llr_raw)
 
+    llr_cal = np.array(llr_cal)
+
     # Save results
-    llr_cal = np.save("{}/llr_calibrated_{}.npy".format(data_dir, raw_filename))
+    np.save("{}/llr_calibrated_{}.npy".format(data_dir, raw_filename))
 
 
 def parse_args():
