@@ -42,12 +42,12 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 ############################################################
 
 sbatch eval_carl.sh
-# sbatch eval_alice.sh
+sbatch eval_alice.sh
 sbatch eval_alices.sh
 
-sbatch eval_carl_aux.sh
-sbatch eval_alice_aux.sh
-sbatch eval_alices_aux.sh
+# sbatch eval_carl_aux.sh
+# sbatch eval_alice_aux.sh
+# sbatch eval_alices_aux.sh
 
 
 ############################################################
