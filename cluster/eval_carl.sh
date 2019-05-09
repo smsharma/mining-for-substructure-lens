@@ -47,6 +47,6 @@ cd /scratch/jb6504/StrongLensing-Inference/
 echo ""
 echo ""
 echo ""
-echo "EVALUATING POINT SAMPLE ON PARAM GRID
+echo "EVALUATING POINT SAMPLE ON PARAM GRID"
 echo ""
 python -u test.py carl test_point carl_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
