@@ -22,8 +22,9 @@ def train(
     aux=None,
     architecture="resnet",
     log_input=False,
-    batch_size=256,
-    n_epochs=5,
+    initial_batch_size=128,
+    final_batch_size=512,
+    n_epochs=20,
     optimizer="adam",
     initial_lr=0.001,
     final_lr=0.0001,
@@ -54,7 +55,27 @@ def train(
         alpha=alpha,
         optimizer=optimizer,
         n_epochs=n_epochs,
-        batch_size=batch_size,
+        batch_size=initial_batch_size,
+        initial_lr=initial_lr,
+        final_lr=final_lr,
+        nesterov_momentum=None,
+        validation_split=0.25,
+        early_stopping=True,
+        limit_samplesize=limit_samplesize,
+        verbose="all",
+    )
+    estimator.train(
+        method,
+        x="{}/samples/x_{}.npy".format(data_dir, sample_name),
+        y="{}/samples/y_{}.npy".format(data_dir, sample_name),
+        theta="{}/samples/theta_{}.npy".format(data_dir, sample_name),
+        r_xz="{}/samples/r_xz_{}.npy".format(data_dir, sample_name),
+        t_xz="{}/samples/t_xz_{}.npy".format(data_dir, sample_name),
+        aux=aux_data,
+        alpha=alpha,
+        optimizer=optimizer,
+        n_epochs=n_epochs,
+        batch_size=final_batch_size,
         initial_lr=initial_lr,
         final_lr=final_lr,
         nesterov_momentum=None,
@@ -130,18 +151,21 @@ def parse_args():
     parser.add_argument(
         "--alpha",
         type=float,
-        default=1.0,
+        default=0.0001,
         help="alpha parameter weighting the score MSE in the loss function of the SCANDAL, RASCAL, and"
-        "and ALICES inference methods. Default: 1.",
+        "and ALICES inference methods. Default: 0.0001",
     )
     parser.add_argument(
         "--log", action="store_true", help="Whether the log of the input is taken."
     )
     parser.add_argument(
-        "--epochs", type=int, default=20, help="Number of epochs. Default: 20."
+        "--epochs", type=int, default=25, help="Number of epochs per batch size. Default: 25."
     )
     parser.add_argument(
-        "--batch_size", type=int, default=128, help="Batch size. Default: 128."
+        "--initial_batch_size", type=int, default=128, help="Batch size during first half of training. Default: 128."
+    )
+    parser.add_argument(
+        "--final_batch_size", type=int, default=512, help="Batch size during first half of training. Default: 512."
     )
     parser.add_argument(
         "--optimizer",
@@ -151,14 +175,14 @@ def parse_args():
     parser.add_argument(
         "--initial_lr",
         type=float,
-        default=0.0005,
-        help="Initial learning rate. Default: 0.0005.",
+        default=0.001,
+        help="Initial learning rate. Default: 0.001.",
     )
     parser.add_argument(
         "--final_lr",
         type=float,
-        default=0.00001,
-        help="Final learning rate. Default: 0.000005.",
+        default=0.0001,
+        help="Final learning rate. Default: 0.0001.",
     )
     parser.add_argument(
         "--validation_split",
@@ -195,7 +219,8 @@ if __name__ == "__main__":
         sample_name=args.sample,
         model_filename=args.name,
         log_input=args.log,
-        batch_size=args.batch_size,
+        initial_batch_size=args.initial_batch_size,
+        final_batch_size=args.final_batch_size,
         n_epochs=args.epochs,
         optimizer=args.optimizer,
         initial_lr=args.initial_lr,
