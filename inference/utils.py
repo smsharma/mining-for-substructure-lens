@@ -100,7 +100,8 @@ def load_and_check(filename, warning_threshold=1.0e9, memmap=True):
     if filename is None:
         return None
 
-    memmap = memmap and isinstance(filename, six.string_types) and "x_train.npy" in filename
+    # Don't load image files > 1 GB into memory
+    memmap = memmap and isinstance(filename, six.string_types) and filename.startswith("x_") and os.stat(filename).st_size > 1. * 1024**3
 
     if not isinstance(filename, six.string_types):
         data = filename
