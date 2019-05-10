@@ -15,11 +15,14 @@ from inference.calibration import HistogramCalibrator
 def calibrate(
     data_dir,
     raw_filename,
-    calibration_filename="calibrate",
+    calibration_filename=None,
 ):
     # Load data
     llr_raw = np.load("{}/llr_{}.npy".format(data_dir, raw_filename))
     n_grid = llr_raw.shape[0]
+
+    if calibration_filename is None:
+        calibration_filename = "{}_calibrate".format(raw_filename)
 
     # Calibrate every data set
     llr_cal = np.zeros_like(llr_raw)
@@ -44,7 +47,7 @@ def parse_args():
 
     # Main options
     parser.add_argument("filename", type=str, help='Sample name, like "test".')
-    parser.add_argument("--cal", default="calibrate", type=str, help="File name for results.")
+    parser.add_argument("--cal", default=None, type=str, help="File name for results.")
     parser.add_argument(
         "--dir",
         type=str,
