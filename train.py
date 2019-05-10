@@ -64,6 +64,7 @@ def train(
         limit_samplesize=limit_samplesize,
         verbose="all",
     )
+    estimator.save("{}/models/{}_halftrained".format(data_dir, model_filename))
     estimator.train(
         method,
         x="{}/samples/x_{}.npy".format(data_dir, sample_name),
