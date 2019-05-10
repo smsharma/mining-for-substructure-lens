@@ -11,6 +11,6 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-python -u calibrate.py carl_grid --dir /scratch/jb6504/StrongLensing-Inference
-python -u calibrate.py alice_grid --dir /scratch/jb6504/StrongLensing-Inference
-python -u calibrate.py alices_grid --dir /scratch/jb6504/StrongLensing-Inference
+python -u calibrate.py carl_grid carl_calibrate --dir /scratch/jb6504/StrongLensing-Inference
+# python -u calibrate.py alice_grid alice_calibrate --dir /scratch/jb6504/StrongLensing-Inference
+# python -u calibrate.py alices_grid alices_calibrate--dir /scratch/jb6504/StrongLensing-Inference
