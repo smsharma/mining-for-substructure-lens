@@ -16,7 +16,7 @@ class HistogramCalibrator:
     def log_likelihood_ratio(self, data):
         indices = self._find_bins(data)
         num = self.hist_num[indices]
-        den = self.hist_dem[indices]
+        den = self.hist_den[indices]
 
         llr = np.log(num) - np.log(den)
         return llr
