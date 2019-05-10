@@ -18,22 +18,23 @@ def calibrate(
     raw_filename,
     calibration_filename,
     nbins=50,
-    transform_to_s=True,
-    equal_binning=True,
+    transform_to_s=False,
+    equal_binning=False,
 ):
     # Load data
     llr_raw = np.load("{}/llr_{}.npy".format(data_dir, raw_filename))
     n_grid = llr_raw.shape[0]
+    
+    llr_calibration_den = np.load("{}/llr_{}_ref.npy".format(data_dir, calibration_filename))
 
     # Calibrate every data set
     llr_cal = np.zeros_like(llr_raw)
     for i in range(n_grid):
-        llr_cal_num = np.load("{}/llr_{}_theta{}.npy".format(data_dir, calibration_filename, i))
-        llr_cal_den = np.load("{}/llr_{}_ref.npy".format(data_dir, calibration_filename))
+        llr_calibration_num = np.load("{}/llr_{}_theta{}.npy".format(data_dir, calibration_filename, i))
 
         if transform_to_s:
-            s_cal_num = s_from_r(np.exp(llr_cal_num))
-            s_cal_den = s_from_r(np.exp(llr_cal_den))
+            s_cal_num = s_from_r(np.exp(llr_calibration_num))
+            s_cal_den = s_from_r(np.exp(llr_calibration_den[i]))
             s_raw = s_from_r(np.exp(llr_raw[i]))
 
             cal = HistogramCalibrator(
@@ -44,7 +45,7 @@ def calibrate(
             llr_cal[i] = cal.log_likelihood_ratio(s_raw)
 
         else:
-            cal = HistogramCalibrator(llr_cal_num, llr_cal_den, nbins=nbins)
+            cal = HistogramCalibrator(llr_calibration_num, llr_calibration_den[i], nbins=nbins)
             llr_cal[i] = cal.log_likelihood_ratio(llr_raw[i])
 
     llr_cal = np.array(llr_cal)
