@@ -10,12 +10,16 @@ import numpy as np
 sys.path.append("./")
 
 from inference.calibration import HistogramCalibrator
+from inference.utils import s_from_r
 
 
 def calibrate(
     data_dir,
     raw_filename,
     calibration_filename,
+    nbins=50,
+    transform_to_s=True,
+    equal_binning=True,
 ):
     # Load data
     llr_raw = np.load("{}/llr_{}.npy".format(data_dir, raw_filename))
@@ -27,9 +31,21 @@ def calibrate(
         llr_cal_num = np.load("{}/llr_{}_theta{}.npy".format(data_dir, calibration_filename, i))
         llr_cal_den = np.load("{}/llr_{}_ref.npy".format(data_dir, calibration_filename))
 
-        cal = HistogramCalibrator(llr_cal_num, llr_cal_den)
+        if transform_to_s:
+            s_cal_num = s_from_r(np.exp(llr_cal_num))
+            s_cal_den = s_from_r(np.exp(llr_cal_den))
+            s_raw = s_from_r(np.exp(llr_raw[i]))
 
-        llr_cal[i] = cal.log_likelihood_ratio(llr_raw)
+            cal = HistogramCalibrator(
+                s_cal_num, s_cal_den, nbins=nbins, histrange=(0.,1.),
+                mode="fixed" if equal_binning else "dynamic"
+            )
+
+            llr_cal[i] = cal.log_likelihood_ratio(s_raw)
+
+        else:
+            cal = HistogramCalibrator(llr_cal_num, llr_cal_den, nbins=nbins)
+            llr_cal[i] = cal.log_likelihood_ratio(llr_raw[i])
 
     llr_cal = np.array(llr_cal)
 
@@ -45,6 +61,7 @@ def parse_args():
     # Main options
     parser.add_argument("raw", type=str, help='Sample name, like "test".')
     parser.add_argument("calibration", type=str, help="File name for results.")
+    parser.add_argument("--bins", default=50, type=int, help="Number of bins in calibration histogram.")
     parser.add_argument(
         "--dir",
         type=str,
@@ -64,5 +81,5 @@ if __name__ == "__main__":
     )
     logging.info("Hi!")
     args = parse_args()
-    calibrate(args.dir + "/data/results/", args.raw, args.calibration)
+    calibrate(args.dir + "/data/results/", args.raw, args.calibration, nbins=args.bins)
     logging.info("All done! Have a nice day!")
