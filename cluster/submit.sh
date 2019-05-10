@@ -36,6 +36,10 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 # sbatch train_alice_aux.sh
 # sbatch train_alices_aux.sh
 
+sbatch train_carl_pointref_aux.sh
+sbatch train_alice_pointref_aux.sh
+sbatch train_alices_pointref_aux.sh
+
 
 ############################################################
 # Evaluation
@@ -54,4 +58,4 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 # Calibration
 ############################################################
 
-sbatch calibrate.sh
+# sbatch calibrate.sh
