@@ -70,7 +70,7 @@ class Trainer(object):
         self._timer(stop="make dataset", start="make dataloader")
         train_loader, val_loader = self.make_dataloaders(dataset, validation_split, batch_size)
 
-        self._timer(stop="make dataset", start="setup optimizer")
+        self._timer(stop="make dataloader", start="setup optimizer")
         logger.debug("Setting up optimizer")
         optimizer_kwargs = {} if optimizer_kwargs is None else optimizer_kwargs
         opt = optimizer(self.model.parameters(), lr=initial_lr, **optimizer_kwargs)
@@ -318,11 +318,16 @@ class Trainer(object):
         return loss
 
     def optimizer_step(self, optimizer, loss, clip_gradient):
+        self._timer(start="opt: zero grad")
         optimizer.zero_grad()
+        self._timer(stop="opt: zero grad", start="opt: backward")
         loss.backward()
+        self._timer(start="opt: clip grad norm", stop="opt: backward")
         if clip_gradient is not None:
             clip_grad_norm_(self.model.parameters(), clip_gradient)
+        self._timer(stop="opt: clip grad norm", start="opt: step")
         optimizer.step()
+        self._timer(stop="opt: step")
 
     def check_early_stopping(self, best_loss, best_model, best_epoch, loss, i_epoch, early_stopping_patience=None):
         if best_loss is None or loss < best_loss:
@@ -373,8 +378,8 @@ class Trainer(object):
                 raise NanException
 
     def _init_timer(self):
-        self.timer = {}
-        self.time_started = {}
+        self.timer = OrderedDict()
+        self.time_started = OrderedDict()
 
     def _timer(self, start=None, stop=None):
         if start is not None:
@@ -396,7 +401,7 @@ class Trainer(object):
     def _report_timer(self):
         logging.info("Training time spend on:")
         for key, value in six.iteritems(self.timer):
-            logging.info("  {:>20s}: {:5.1f}h".format(key, value / 3600.))
+            logging.info("  {:>32s}: {:6.2f}h".format(key, value / 3600.))
 
 
 class SingleParameterizedRatioTrainer(Trainer):
