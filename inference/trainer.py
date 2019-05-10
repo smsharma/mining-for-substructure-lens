@@ -9,6 +9,7 @@ import torch.optim as optim
 from torch.utils.data import TensorDataset, DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.nn.utils import clip_grad_norm_
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,9 @@ class Trainer(object):
     """ Trainer class. Any subclass has to implement the forward_pass() function. """
 
     def __init__(self, model, run_on_gpu=True, double_precision=False):
+        self._init_timer()
+        self._timer(start="ALL")
+        self._timer(start="initialize model")
         self.model = model
         self.run_on_gpu = run_on_gpu and torch.cuda.is_available()
         self.device = torch.device("cuda" if self.run_on_gpu else "cpu")
@@ -33,6 +37,9 @@ class Trainer(object):
         self.model = self.model.to(self.device, self.dtype)
 
         logger.debug("Training on %s with %s precision", "GPU" if self.run_on_gpu else "CPU", "double" if double_precision else "single")
+
+        self._timer(stop="initialize model")
+        self._timer(stop="ALL")
 
     def train(
         self,
@@ -52,12 +59,18 @@ class Trainer(object):
         clip_gradient=100.0,
         verbose="some",
     ):
+        self._timer(start="ALL")
+        self._timer(start="check data")
+
         logger.debug("Initialising training data")
         self.check_data(data)
         self.report_data(data)
+        self._timer(stop="check data", start="make dataset")
         data_labels, dataset = self.make_dataset(data)
+        self._timer(stop="make dataset", start="make dataloader")
         train_loader, val_loader = self.make_dataloaders(dataset, validation_split, batch_size)
 
+        self._timer(stop="make dataset", start="setup optimizer")
         logger.debug("Setting up optimizer")
         optimizer_kwargs = {} if optimizer_kwargs is None else optimizer_kwargs
         opt = optimizer(self.model.parameters(), lr=initial_lr, **optimizer_kwargs)
@@ -71,6 +84,7 @@ class Trainer(object):
         else:
             logger.debug("No early stopping")
 
+        self._timer(stop="setup optimizer", start="initialize training")
         n_losses = len(loss_functions)
         loss_weights = [1.0] * n_losses if loss_weights is None else loss_weights
 
@@ -91,14 +105,17 @@ class Trainer(object):
 
         logger.debug("Beginning main training loop")
         losses_train, losses_val = [], []
+        self._timer(stop="initialize training")
 
         # Loop over epochs
         for i_epoch in range(epochs):
             logger.debug("Training epoch %s / %s", i_epoch + 1, epochs)
 
+            self._timer(start="set lr")
             lr = self.calculate_lr(i_epoch, epochs, initial_lr, final_lr)
             self.set_lr(opt, lr)
             logger.debug("Learning rate: %s", lr)
+            self._timer(stop="set lr")
 
             try:
                 loss_train, loss_val, loss_contributions_train, loss_contributions_val = self.epoch(
@@ -110,20 +127,28 @@ class Trainer(object):
                 logger.info("Ending training during epoch %s because NaNs appeared", i_epoch + 1)
                 break
 
+            self._timer(start="early stopping")
             if early_stopping:
                 try:
                     best_loss, best_model, best_epoch = self.check_early_stopping(best_loss, best_model, best_epoch, loss_val, i_epoch, early_stopping_patience)
                 except EarlyStoppingException:
                     logger.info("Early stopping: ending training after %s epochs", i_epoch + 1)
                     break
+            self._timer(stop="early stopping", start="report epoch")
 
             verbose_epoch = (i_epoch + 1) % n_epochs_verbose == 0
             self.report_epoch(i_epoch, loss_labels, loss_train, loss_val, loss_contributions_train, loss_contributions_val, verbose=verbose_epoch)
+            self._timer(stop="report epoch")
 
+        self._timer(start="early stopping")
         if early_stopping and len(losses_val) > 0:
             self.wrap_up_early_stopping(best_model, losses_val[-1], best_loss, best_epoch)
+        self._timer(stop="early stopping")
 
         logger.debug("Training finished")
+
+        self._timer(stop="ALL")
+        self._report_timer()
 
         return np.array(losses_train), np.array(losses_val)
 
@@ -195,12 +220,18 @@ class Trainer(object):
         loss_contributions_train = np.zeros(n_losses)
         loss_train = 0.0
 
+        self._timer(start="load training batch")
         for i_batch, batch_data in enumerate(train_loader):
             batch_data = OrderedDict(list(zip(data_labels, batch_data)))
+            self._timer(stop="load training batch")
+
             batch_loss, batch_loss_contributions = self.batch_train(batch_data, loss_functions, loss_weights, optimizer, clip_gradient)
             loss_train += batch_loss
             for i, batch_loss_contribution in enumerate(batch_loss_contributions):
                 loss_contributions_train[i] += batch_loss_contribution
+
+            self._timer(start="load training batch")
+        self._timer(stop="load training batch")
 
         loss_contributions_train /= len(train_loader)
         loss_train /= len(train_loader)
@@ -210,12 +241,18 @@ class Trainer(object):
             loss_contributions_val = np.zeros(n_losses)
             loss_val = 0.0
 
+            self._timer(start="load validation batch")
             for i_batch, batch_data in enumerate(val_loader):
                 batch_data = OrderedDict(list(zip(data_labels, batch_data)))
+                self._timer(stop="load validation batch")
+
                 batch_loss, batch_loss_contributions = self.batch_val(batch_data, loss_functions, loss_weights)
                 loss_val += batch_loss
                 for i, batch_loss_contribution in enumerate(batch_loss_contributions):
                     loss_contributions_val[i] += batch_loss_contribution
+
+                self._timer(start="load validation batch")
+            self._timer(stop="load validation batch")
 
             loss_contributions_val /= len(val_loader)
             loss_val /= len(val_loader)
@@ -227,21 +264,30 @@ class Trainer(object):
         return loss_train, loss_val, loss_contributions_train, loss_contributions_val
 
     def batch_train(self, batch_data, loss_functions, loss_weights, optimizer, clip_gradient=None):
+        self._timer(start="training forward pass")
         loss_contributions = self.forward_pass(batch_data, loss_functions)
+        self._timer(stop="training forward pass", start="training sum losses")
         loss = self.sum_losses(loss_contributions, loss_weights)
+        self._timer(stop="training sum losses", start="optimizer step")
 
         self.optimizer_step(optimizer, loss, clip_gradient)
+        self._timer(stop="optimizer step", start="training sum losses")
 
         loss = loss.item()
         loss_contributions = [contrib.item() for contrib in loss_contributions]
+        self._timer(stop="training sum losses")
+
         return loss, loss_contributions
 
     def batch_val(self, batch_data, loss_functions, loss_weights):
+        self._timer(start="validation forward pass")
         loss_contributions = self.forward_pass(batch_data, loss_functions)
+        self._timer(stop="validation forward pass", start="validation sum losses")
         loss = self.sum_losses(loss_contributions, loss_weights)
 
         loss = loss.item()
         loss_contributions = [contrib.item() for contrib in loss_contributions]
+        self._timer(stop="validation sum losses")
         return loss, loss_contributions
 
     def forward_pass(self, batch_data, loss_functions):
@@ -326,6 +372,32 @@ class Trainer(object):
                 logger.warning("%s contains NaNs, aborting training! Data:\n%s", label, tensor)
                 raise NanException
 
+    def _init_timer(self):
+        self.timer = {}
+        self.time_started = {}
+
+    def _timer(self, start=None, stop=None):
+        if start is not None:
+            self.time_started[start] = time.time()
+
+        if stop is not None:
+            if stop not in list(self.time_started.keys()):
+                logger.warning("Timer for task %s has been stopped without being started before", stop)
+                return
+
+            dt = time.time() - self.time_started[stop]
+            del self.time_started[stop]
+
+            if stop in list(self.timer.keys()):
+                self.timer[stop] += dt
+            else:
+                self.timer[stop] = dt
+
+    def _report_timer(self):
+        logging.info("Training time spend on:")
+        for key, value in six.iteritems(self.timer):
+            logging.info("  {:>20s}: {:5.1f}h".format(key, value / 3600.))
+
 
 class SingleParameterizedRatioTrainer(Trainer):
     def __init__(self, model, run_on_gpu=True, double_precision=False):
@@ -363,6 +435,7 @@ class SingleParameterizedRatioTrainer(Trainer):
         return data_labels, dataset
 
     def forward_pass(self, batch_data, loss_functions):
+        self._timer(start="fwd: move data")
         theta = batch_data["theta"].to(self.device, self.dtype)
         x = batch_data["x"].to(self.device, self.dtype)
         y = batch_data["y"].to(self.device, self.dtype)
@@ -378,15 +451,21 @@ class SingleParameterizedRatioTrainer(Trainer):
             aux = batch_data["aux"].to(self.device, self.dtype)
         except KeyError:
             aux = None
+        self._timer(stop="fwd: move data", start="fwd: check for nans")
         self._check_for_nans("Training data", theta, x, y, aux)
         self._check_for_nans("Augmented training data", r_xz, t_xz)
+        self._timer(start="fwd: model.forward", stop="fwd: check for nans")
 
         s_hat, log_r_hat, t_hat, _ = self.model(theta, x, aux=aux, track_score=self.calculate_model_score, return_grad_x=False)
+        self._timer(stop="fwd: model.forward", start="fwd: check for nans")
         self._check_for_nans("Model output (log r)", log_r_hat)
         self._check_for_nans("Model output (s)", s_hat)
         self._check_for_nans("Model output (t)", t_hat)
+        self._timer(start="fwd: calculate losses", stop="fwd: check for nans")
 
         losses = [loss_function(s_hat, log_r_hat, t_hat, y, r_xz, t_xz) for loss_function in loss_functions]
+        self._timer(stop="fwd: calculate losses", start="fwd: check for nans")
         self._check_for_nans("Loss", *losses)
+        self._timer(stop="fwd: check for nans")
 
         return losses

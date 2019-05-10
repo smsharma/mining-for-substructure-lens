@@ -110,7 +110,7 @@ class ParameterizedRatioEstimator(object):
         n_parameters = theta.shape[1]
         resolution_x = x.shape[1]
         resolution_y = x.shape[2]
-        n_aux = aux.shape[1]
+        n_aux = 0 if aux is None else aux.shape[1]
         logger.info(
             "Found %s samples with %s parameters, image resolution %s x %s, and %s auxiliary parameters",
             n_samples,
@@ -126,7 +126,7 @@ class ParameterizedRatioEstimator(object):
             raise RuntimeError(
                 "Number of auxiliary variables found in data ({}) does not match number of" "auxiliary variables in model ({})".format(n_aux, self.n_aux)
             )
-        if aux.shape[0] != n_samples:
+        if aux is not None and aux.shape[0] != n_samples:
             raise RuntimeError("Number of samples in auxiliary variables does not match number of" "samples ({})".format(aux.shape[0], n_samples))
 
         # Limit sample size

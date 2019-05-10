@@ -24,7 +24,7 @@ def calibrate(
     # Load data
     llr_raw = np.load("{}/llr_{}.npy".format(data_dir, raw_filename))
     n_grid = llr_raw.shape[0]
-    
+
     llr_calibration_den = np.load("{}/llr_{}_ref.npy".format(data_dir, calibration_filename))
 
     # Calibrate every data set
