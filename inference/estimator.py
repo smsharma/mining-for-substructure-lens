@@ -80,12 +80,12 @@ class ParameterizedRatioEstimator(object):
 
         # Load training data
         logger.info("Loading training data")
-        theta = load_and_check(theta)
-        x = load_and_check(x)
-        y = load_and_check(y)
-        r_xz = load_and_check(r_xz)
-        t_xz = load_and_check(t_xz)
-        aux = load_and_check(aux)
+        theta = load_and_check(theta, memmap=False)
+        x = load_and_check(x, memmap=True)
+        y = load_and_check(y, memmap=False)
+        r_xz = load_and_check(r_xz, memmap=False)
+        t_xz = load_and_check(t_xz, memmap=False)
+        aux = load_and_check(aux, memmap=False)
 
         self._check_required_data(method, r_xz, t_xz)
         if update_input_rescaling:
@@ -177,7 +177,7 @@ class ParameterizedRatioEstimator(object):
 
         # Load training data
         logger.debug("Loading evaluation data")
-        x = load_and_check(x)
+        x = load_and_check(x, memmap=True)
         aux = load_and_check(aux)
         theta = load_and_check(theta)
 

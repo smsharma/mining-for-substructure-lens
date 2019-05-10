@@ -162,7 +162,7 @@ def parse_args():
         "--epochs", type=int, default=25, help="Number of epochs per batch size. Default: 25."
     )
     parser.add_argument(
-        "--initial_batch_size", type=int, default=128, help="Batch size during first half of training. Default: 128."
+        "--initial_batch_size", type=int, default=256, help="Batch size during first half of training. Default: 128."
     )
     parser.add_argument(
         "--final_batch_size", type=int, default=512, help="Batch size during first half of training. Default: 512."
