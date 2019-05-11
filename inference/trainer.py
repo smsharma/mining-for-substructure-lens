@@ -430,10 +430,10 @@ class SingleParameterizedRatioTrainer(Trainer):
         data_labels = []
         for key, value in six.iteritems(data):
             data_labels.append(key)
-            if key == "theta":
-                tensor_data.append(torch.tensor(value, requires_grad=True))
-            else:
-                tensor_data.append(torch.from_numpy(value))
+            #if key == "theta":
+            #    tensor_data.append(torch.tensor(value, requires_grad=True))
+            #else:
+            tensor_data.append(torch.from_numpy(value))
         try:
             dataset = TensorDataset(*tensor_data)
         except AssertionError:
@@ -442,25 +442,28 @@ class SingleParameterizedRatioTrainer(Trainer):
 
     def forward_pass(self, batch_data, loss_functions):
         self._timer(start="fwd: move data")
-        theta = batch_data["theta"].to(self.device, self.dtype)
-        x = batch_data["x"].to(self.device, self.dtype)
-        y = batch_data["y"].to(self.device, self.dtype)
+        theta = batch_data["theta"].to(self.device, self.dtype, non_blocking=True)
+        x = batch_data["x"].to(self.device, self.dtype, non_blocking=True)
+        y = batch_data["y"].to(self.device, self.dtype, non_blocking=True)
         try:
-            r_xz = batch_data["r_xz"].to(self.device, self.dtype)
+            r_xz = batch_data["r_xz"].to(self.device, self.dtype, non_blocking=True)
         except KeyError:
             r_xz = None
         try:
-            t_xz = batch_data["t_xz"].to(self.device, self.dtype)
+            t_xz = batch_data["t_xz"].to(self.device, self.dtype, non_blocking=True)
         except KeyError:
             t_xz = None
         try:
-            aux = batch_data["aux"].to(self.device, self.dtype)
+            aux = batch_data["aux"].to(self.device, self.dtype, non_blocking=True)
         except KeyError:
             aux = None
         self._timer(stop="fwd: move data", start="fwd: check for nans")
         self._check_for_nans("Training data", theta, x, y, aux)
         self._check_for_nans("Augmented training data", r_xz, t_xz)
         self._timer(start="fwd: model.forward", stop="fwd: check for nans")
+
+        if self.calculate_model_score:
+            theta.requires_grad = True
 
         s_hat, log_r_hat, t_hat, _ = self.model(theta, x, aux=aux, track_score=self.calculate_model_score, return_grad_x=False)
         self._timer(stop="fwd: model.forward", start="fwd: check for nans")
