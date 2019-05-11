@@ -151,7 +151,7 @@ class ParameterizedRatioEstimator(object):
 
         # Train model
         logger.info("Training model")
-        trainer = SingleParameterizedRatioTrainer(self.model)
+        trainer = SingleParameterizedRatioTrainer(self.model, run_on_gpu=True)
         result = trainer.train(
             data=data,
             loss_functions=loss_functions,

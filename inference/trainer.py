@@ -36,7 +36,8 @@ class Trainer(object):
 
         self.model = self.model.to(self.device, self.dtype)
 
-        logger.debug("Training on %s with %s precision", "GPU" if self.run_on_gpu else "CPU", "double" if double_precision else "single")
+        logger.info("Training on %s with %s precision", "GPU" if self.run_on_gpu else "CPU", "double" if double_precision else "single")
+        logger.info("  Device: %s", self.device)
 
         self._timer(stop="initialize model")
         self._timer(stop="ALL")
@@ -182,7 +183,7 @@ class Trainer(object):
 
     def make_dataloaders(self, dataset, validation_split, batch_size):
         if validation_split is None or validation_split <= 0.0:
-            train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, pin_memory=self.run_on_gpu)
+            train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, pin_memory=self.run_on_gpu, num_workers=8)
             val_loader = None
 
         else:
@@ -197,8 +198,8 @@ class Trainer(object):
             train_sampler = SubsetRandomSampler(train_idx)
             val_sampler = SubsetRandomSampler(valid_idx)
 
-            train_loader = DataLoader(dataset, sampler=train_sampler, batch_size=batch_size, pin_memory=self.run_on_gpu)
-            val_loader = DataLoader(dataset, sampler=val_sampler, batch_size=batch_size, pin_memory=self.run_on_gpu)
+            train_loader = DataLoader(dataset, sampler=train_sampler, batch_size=batch_size, pin_memory=self.run_on_gpu, num_workers=8)
+            val_loader = DataLoader(dataset, sampler=val_sampler, batch_size=batch_size, pin_memory=self.run_on_gpu, num_workers=8)
 
         return train_loader, val_loader
 
