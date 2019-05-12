@@ -213,7 +213,7 @@ class Trainer(object):
         for key, value in six.iteritems(data):
             data_labels.append(key)
             data_arrays.append(value)
-        dataset = NumpyDataset(*data_arrays)
+        dataset = NumpyDataset(*data_arrays, dtype=self.dtype)
         return data_labels, dataset
 
     def make_dataloaders(self, dataset, validation_split, batch_size):
@@ -459,21 +459,6 @@ class SingleParameterizedRatioTrainer(Trainer):
             logger.debug("Model score will be calculated")
         else:
             logger.debug("Model score will not be calculated")
-
-    # def make_dataset(self, data):
-    #     tensor_data = []
-    #     data_labels = []
-    #     for key, value in six.iteritems(data):
-    #         data_labels.append(key)
-    #         #if key == "theta":
-    #         #    tensor_data.append(torch.tensor(value, requires_grad=True))
-    #         #else:
-    #         tensor_data.append(torch.from_numpy(value))
-    #     try:
-    #         dataset = TensorDataset(*tensor_data)
-    #     except AssertionError:
-    #         raise RuntimeError("Size mismatch in data set. Data have shapes %s", {key: value.shape for key, value in six.iteritems(data)})
-    #     return data_labels, dataset
 
     def forward_pass(self, batch_data, loss_functions):
         self._timer(start="fwd: move data")
