@@ -6,7 +6,7 @@ from collections import OrderedDict
 import numpy as np
 import torch
 import torch.optim as optim
-from torch.utils.data import TensorDataset, DataLoader
+from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.nn.utils import clip_grad_norm_
 import time
@@ -20,6 +20,42 @@ class EarlyStoppingException(Exception):
 
 class NanException(Exception):
     pass
+
+
+class NumpyDataset(Dataset):
+    """ Dataset for numpy arrays with explicit memmap support """
+
+    def __init__(self, *arrays, dtype=torch.float):
+        self.dtype = dtype
+        self.memmap = []
+        self.data = []
+        self.n = None
+
+        for array in arrays:
+            if self.n is None:
+                self.n = array.shape[0]
+            assert array.shape[0] == self.n
+
+            if isinstance(array, np.memmap):
+                self.memmap.append(True)
+                self.data.append(array)
+            else:
+                self.memmap.append(False)
+                tensor = torch.from_numpy(array).to(self.dtype)
+                self.data.append(tensor)
+
+    def __getitem__(self, index):
+        items = []
+        for memmap, array in zip(self.memmap, self.data):
+            if memmap:
+                tensor = np.array(array[index])
+                items.append(torch.from_numpy(tensor).to(self.dtype))
+            else:
+                items.append(array[index])
+        return tuple(items)
+
+    def __len__(self):
+        return self.n
 
 
 class Trainer(object):
@@ -171,14 +207,13 @@ class Trainer(object):
     def check_data(data):
         pass
 
-    @staticmethod
-    def make_dataset(data):
-        tensor_data = []
+    def make_dataset(self, data):
+        data_arrays = []
         data_labels = []
         for key, value in six.iteritems(data):
             data_labels.append(key)
-            tensor_data.append(torch.from_numpy(value))
-        dataset = TensorDataset(*tensor_data)
+            data_arrays.append(value)
+        dataset = NumpyDataset(*data_arrays)
         return data_labels, dataset
 
     def make_dataloaders(self, dataset, validation_split, batch_size):
@@ -425,20 +460,20 @@ class SingleParameterizedRatioTrainer(Trainer):
         else:
             logger.debug("Model score will not be calculated")
 
-    def make_dataset(self, data):
-        tensor_data = []
-        data_labels = []
-        for key, value in six.iteritems(data):
-            data_labels.append(key)
-            #if key == "theta":
-            #    tensor_data.append(torch.tensor(value, requires_grad=True))
-            #else:
-            tensor_data.append(torch.from_numpy(value))
-        try:
-            dataset = TensorDataset(*tensor_data)
-        except AssertionError:
-            raise RuntimeError("Size mismatch in data set. Data have shapes %s", {key: value.shape for key, value in six.iteritems(data)})
-        return data_labels, dataset
+    # def make_dataset(self, data):
+    #     tensor_data = []
+    #     data_labels = []
+    #     for key, value in six.iteritems(data):
+    #         data_labels.append(key)
+    #         #if key == "theta":
+    #         #    tensor_data.append(torch.tensor(value, requires_grad=True))
+    #         #else:
+    #         tensor_data.append(torch.from_numpy(value))
+    #     try:
+    #         dataset = TensorDataset(*tensor_data)
+    #     except AssertionError:
+    #         raise RuntimeError("Size mismatch in data set. Data have shapes %s", {key: value.shape for key, value in six.iteritems(data)})
+    #     return data_labels, dataset
 
     def forward_pass(self, batch_data, loss_functions):
         self._timer(start="fwd: move data")
