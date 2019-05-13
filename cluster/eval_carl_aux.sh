@@ -20,13 +20,31 @@ do
     echo ""
     python -u test.py carl_aux calibrate_theta$i carl_aux_calibrate_theta$i --aux z --dir /scratch/jb6504/StrongLensing-Inference
 done
-    echo ""s
-    echo ""
-    echo ""
-    echo "EVALUATING CALIB REF"
-    echo ""
+
+echo ""
+echo ""
+echo ""
+echo "EVALUATING CALIB REF"
+echo ""
 python -u test.py carl_aux calibrate_ref carl_aux_calibrate_ref --aux z --dir /scratch/jb6504/StrongLensing-Inference
 
-# python -u test.py carl_aux test_prior carl_aux_prior --aux z --dir /scratch/jb6504/StrongLensing-Inference
+echo ""
+echo ""
+echo ""
+echo "EVALUATING PRIOR SAMPLE"
+echo ""
+python -u test.py carl_aux test_prior carl_aux_prior --aux z --dir /scratch/jb6504/StrongLensing-Inference
+
+echo ""
+echo ""
+echo ""
+echo "EVALUATING PRIOR SAMPLE (SHUFFLED)"
+echo ""
 python -u test.py carl_aux test_prior carl_aux_shuffledprior --aux z --shuffle --dir /scratch/jb6504/StrongLensing-Inference
-# python -u test.py carl_aux test_point carl_aux_grid --grid --aux z --dir /scratch/jb6504/StrongLensing-Inference
+
+echo ""
+echo ""
+echo ""
+echo "EVALUATING POINT SAMPLE ON PARAM GRID"
+echo ""
+python -u test.py carl_aux test_point carl_aux_grid --aux z --grid --dir /scratch/jb6504/StrongLensing-Inference

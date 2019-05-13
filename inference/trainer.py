@@ -73,7 +73,6 @@ class Trainer(object):
         self.model = self.model.to(self.device, self.dtype)
 
         logger.info("Training on %s with %s precision", "GPU" if self.run_on_gpu else "CPU", "double" if double_precision else "single")
-        logger.info("  Device: %s", self.device)
 
         self._timer(stop="initialize model")
         self._timer(stop="ALL")
@@ -374,6 +373,9 @@ class Trainer(object):
         if early_stopping_patience is not None and i_epoch - best_epoch > early_stopping_patience >= 0:
             raise EarlyStoppingException
 
+        if loss is None or not np.isfinite(loss):
+            raise EarlyStoppingException
+
         return best_loss, best_model, best_epoch
 
     @staticmethod
@@ -396,10 +398,15 @@ class Trainer(object):
             logging_fn(val_report)
 
     def wrap_up_early_stopping(self, best_model, currrent_loss, best_loss, best_epoch):
-        if currrent_loss is None or best_loss is None:
+        if best_loss is None or not np.isfinite(best_loss):
             logger.warning("Loss is None, cannot wrap up early stopping")
-        elif best_loss < currrent_loss:
-            logger.info("Early stopping after epoch %s, with loss %8.5f compared to final loss %8.5f", best_epoch + 1, best_loss, currrent_loss)
+        elif currrent_loss is None or not np.isfinite(currrent_loss) or best_loss < currrent_loss:
+            logger.info(
+                "Early stopping after epoch %s, with loss %8.5f compared to final loss %8.5f",
+                best_epoch + 1,
+                best_loss,
+                currrent_loss,
+            )
             self.model.load_state_dict(best_model)
         else:
             logger.info("Early stopping did not improve performance")
