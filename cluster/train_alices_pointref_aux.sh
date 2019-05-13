@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=as-pa
-#SBATCH --output=log_train_alices_aux.log
+#SBATCH --output=log_train_alices_pointref_aux.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
