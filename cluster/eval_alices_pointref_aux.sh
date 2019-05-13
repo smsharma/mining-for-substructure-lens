@@ -26,7 +26,7 @@ echo ""
 echo ""
 echo "EVALUATING CALIB REF"
 echo ""
-python -u test.py alices_pointref_aux calibrate_ref alices_pointref_aux_calibrate_ref --aux z --dir /scratch/jb6504/StrongLensing-Inference
+python -u test.py alices_pointref_aux calibrate_pointref alices_pointref_aux_calibrate_ref --aux z --dir /scratch/jb6504/StrongLensing-Inference
 
 echo ""
 echo ""
