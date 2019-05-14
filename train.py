@@ -23,11 +23,11 @@ def train(
     architecture="resnet",
     log_input=False,
     initial_batch_size=128,
-    final_batch_size=512,
-    n_epochs=20,
+    final_batch_size=256,
+    n_epochs=120,
     optimizer="adam",
-    initial_lr=0.001,
-    final_lr=0.0001,
+    initial_lrs=[0.0005, 0.0002, 0.0001],
+    final_lrs=[0.0002, 0.0001, 0.00005],
     limit_samplesize=None,
 ):
     aux_data, n_aux = load_aux("{}/samples/z_{}.npy".format(data_dir, sample_name), aux)
@@ -36,6 +36,11 @@ def train(
     else:
         logging.info("%s aux variables with shape %s", n_aux, aux_data.shape)
 
+    logging.info("")
+    logging.info("")
+    logging.info("")
+    logging.info("Creating estimator")
+    logging.info("")
     estimator = ParameterizedRatioEstimator(
         resolution=64,
         n_parameters=2,
@@ -44,47 +49,65 @@ def train(
         log_input=log_input,
         rescale_inputs=True,
     )
-    estimator.train(
-        method,
-        x="{}/samples/x_{}.npy".format(data_dir, sample_name),
-        y="{}/samples/y_{}.npy".format(data_dir, sample_name),
-        theta="{}/samples/theta_{}.npy".format(data_dir, sample_name),
-        r_xz="{}/samples/r_xz_{}.npy".format(data_dir, sample_name),
-        t_xz="{}/samples/t_xz_{}.npy".format(data_dir, sample_name),
-        aux=aux_data,
-        alpha=alpha,
-        optimizer=optimizer,
-        n_epochs=n_epochs,
-        batch_size=initial_batch_size,
-        initial_lr=initial_lr,
-        final_lr=final_lr,
-        nesterov_momentum=None,
-        validation_split=0.25,
-        early_stopping=True,
-        limit_samplesize=limit_samplesize,
-        verbose="all",
-    )
+
+    epochs_per_lr = int(round((n_epochs / 2) / len(initial_lrs), 0))
+    for lr in initial_lrs:
+        logging.info("")
+        logging.info("")
+        logging.info("")
+        logging.info("Starting training with batch size %s and learning rate %s", initial_batch_size, lr)
+        logging.info("")
+        estimator.train(
+            method,
+            x="{}/samples/x_{}.npy".format(data_dir, sample_name),
+            y="{}/samples/y_{}.npy".format(data_dir, sample_name),
+            theta="{}/samples/theta_{}.npy".format(data_dir, sample_name),
+            r_xz="{}/samples/r_xz_{}.npy".format(data_dir, sample_name),
+            t_xz="{}/samples/t_xz_{}.npy".format(data_dir, sample_name),
+            aux=aux_data,
+            alpha=alpha,
+            optimizer=optimizer,
+            n_epochs=epochs_per_lr,
+            batch_size=initial_batch_size,
+            initial_lr=lr,
+            final_lr=lr,
+            nesterov_momentum=None,
+            validation_split=0.25,
+            validation_split_seed=1107,
+            early_stopping=True,
+            limit_samplesize=limit_samplesize,
+            verbose="all",
+        )
     estimator.save("{}/models/{}_halftrained".format(data_dir, model_filename))
-    estimator.train(
-        method,
-        x="{}/samples/x_{}.npy".format(data_dir, sample_name),
-        y="{}/samples/y_{}.npy".format(data_dir, sample_name),
-        theta="{}/samples/theta_{}.npy".format(data_dir, sample_name),
-        r_xz="{}/samples/r_xz_{}.npy".format(data_dir, sample_name),
-        t_xz="{}/samples/t_xz_{}.npy".format(data_dir, sample_name),
-        aux=aux_data,
-        alpha=alpha,
-        optimizer=optimizer,
-        n_epochs=n_epochs,
-        batch_size=final_batch_size,
-        initial_lr=initial_lr,
-        final_lr=final_lr,
-        nesterov_momentum=None,
-        validation_split=0.25,
-        early_stopping=True,
-        limit_samplesize=limit_samplesize,
-        verbose="all",
-    )
+
+    epochs_per_lr = int(round((n_epochs / 2) / len(final_lrs), 0))
+    for lr in final_lrs:
+        logging.info("")
+        logging.info("")
+        logging.info("")
+        logging.info("Starting training with batch size %s and learning rate %s", final_batch_size, lr)
+        logging.info("")
+        estimator.train(
+            method,
+            x="{}/samples/x_{}.npy".format(data_dir, sample_name),
+            y="{}/samples/y_{}.npy".format(data_dir, sample_name),
+            theta="{}/samples/theta_{}.npy".format(data_dir, sample_name),
+            r_xz="{}/samples/r_xz_{}.npy".format(data_dir, sample_name),
+            t_xz="{}/samples/t_xz_{}.npy".format(data_dir, sample_name),
+            aux=aux_data,
+            alpha=alpha,
+            optimizer=optimizer,
+            n_epochs=epochs_per_lr,
+            batch_size=final_batch_size,
+            initial_lr=lr,
+            final_lr=lr,
+            nesterov_momentum=None,
+            validation_split=0.25,
+            validation_split_seed=1107,
+            early_stopping=True,
+            limit_samplesize=limit_samplesize,
+            verbose="all",
+        )
     estimator.save("{}/models/{}".format(data_dir, model_filename))
 
 
@@ -160,13 +183,7 @@ def parse_args():
         "--log", action="store_true", help="Whether the log of the input is taken."
     )
     parser.add_argument(
-        "--epochs", type=int, default=25, help="Number of epochs per batch size. Default: 25."
-    )
-    parser.add_argument(
-        "--initial_batch_size", type=int, default=256, help="Batch size during first half of training. Default: 128."
-    )
-    parser.add_argument(
-        "--final_batch_size", type=int, default=512, help="Batch size during first half of training. Default: 512."
+        "--epochs", type=int, default=120, help="Number of epochs. Default: 120."
     )
     parser.add_argument(
         "--optimizer",
@@ -174,16 +191,24 @@ def parse_args():
         help='Optimizer. "amsgrad", "adam", and "sgd" are supported. Default: "adam".',
     )
     parser.add_argument(
-        "--initial_lr",
-        type=float,
-        default=0.001,
-        help="Initial learning rate. Default: 0.001.",
+        "--initial_batch_size", type=int, default=128, help="Batch size during first half of training. Default: 128."
     )
     parser.add_argument(
-        "--final_lr",
+        "--final_batch_size", type=int, default=256, help="Batch size during second half of training. Default: 512."
+    )
+    parser.add_argument(
+        "--initial_lrs",
         type=float,
-        default=0.0001,
-        help="Final learning rate. Default: 0.0001.",
+        nargs='+',
+        default=[0.0005, 0.0002, 0.0001],
+        help="Learning rate steps during first half of training. Default: [0.0005, 0.0002, 0.0001].",
+    )
+    parser.add_argument(
+        "--final_lrs",
+        type=float,
+        nargs='+',
+        default=[0.0002, 0.0001, 0.00005],
+        help="Learning rate steps during second half of training. Default: [0.0002, 0.0001, 0.00005].",
     )
     parser.add_argument(
         "--validation_split",
@@ -224,8 +249,8 @@ if __name__ == "__main__":
         final_batch_size=args.final_batch_size,
         n_epochs=args.epochs,
         optimizer=args.optimizer,
-        initial_lr=args.initial_lr,
-        final_lr=args.final_lr,
+        initial_lrs=args.initial_lrs,
+        final_lrs=args.final_lrs,
         architecture=architecture,
     )
 

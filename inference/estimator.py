@@ -54,6 +54,7 @@ class ParameterizedRatioEstimator(object):
         final_lr=0.0001,
         nesterov_momentum=None,
         validation_split=0.25,
+        validation_split_seed=None,
         early_stopping=True,
         limit_samplesize=None,
         verbose="some",
@@ -164,6 +165,7 @@ class ParameterizedRatioEstimator(object):
             initial_lr=initial_lr,
             final_lr=final_lr,
             validation_split=validation_split,
+            validation_split_seed=validation_split_seed,
             early_stopping=early_stopping,
             verbose=verbose,
         )

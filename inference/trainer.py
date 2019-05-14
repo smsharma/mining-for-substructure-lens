@@ -90,6 +90,7 @@ class Trainer(object):
         initial_lr=0.001,
         final_lr=0.0001,
         validation_split=0.25,
+        validation_split_seed=None,
         early_stopping=True,
         early_stopping_patience=None,
         clip_gradient=None,
@@ -104,7 +105,7 @@ class Trainer(object):
         self._timer(stop="check data", start="make dataset")
         data_labels, dataset = self.make_dataset(data)
         self._timer(stop="make dataset", start="make dataloader")
-        train_loader, val_loader = self.make_dataloaders(dataset, validation_split, batch_size)
+        train_loader, val_loader = self.make_dataloaders(dataset, validation_split, batch_size, seed=validation_split_seed)
 
         self._timer(stop="make dataloader", start="setup optimizer")
         logger.debug("Setting up optimizer")
@@ -215,7 +216,7 @@ class Trainer(object):
         dataset = NumpyDataset(*data_arrays, dtype=self.dtype)
         return data_labels, dataset
 
-    def make_dataloaders(self, dataset, validation_split, batch_size):
+    def make_dataloaders(self, dataset, validation_split, batch_size, seed=None):
         if validation_split is None or validation_split <= 0.0:
             train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, pin_memory=self.run_on_gpu, num_workers=8)
             val_loader = None
@@ -226,6 +227,7 @@ class Trainer(object):
             n_samples = len(dataset)
             indices = list(range(n_samples))
             split = int(np.floor(validation_split * n_samples))
+            np.random.seed(seed)
             np.random.shuffle(indices)
             train_idx, valid_idx = indices[split:], indices[:split]
 
