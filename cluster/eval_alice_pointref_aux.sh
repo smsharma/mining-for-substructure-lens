@@ -11,22 +11,22 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-# for i in {0..624}
-# do
-#     echo ""
-#     echo ""
-#     echo ""
-#     echo "EVALUATING CALIB $i"
-#     echo ""
-#     python -u test.py alice_pointref_aux calibrate_theta$i alice_pointref_aux_calibrate_theta$i --aux z --dir /scratch/jb6504/StrongLensing-Inference
-# done
-#
-# echo ""
-# echo ""
-# echo ""
-# echo "EVALUATING CALIB REF"
-# echo ""
-# python -u test.py alice_pointref_aux calibrate_pointref alice_pointref_aux_calibrate_ref --aux z --dir /scratch/jb6504/StrongLensing-Inference
+for i in {0..624}
+do
+    echo ""
+    echo ""
+    echo ""
+    echo "EVALUATING CALIB $i"
+    echo ""
+    python -u test.py alice_pointref_aux calibrate_theta$i alice_pointref_aux_calibrate_theta$i --aux z --dir /scratch/jb6504/StrongLensing-Inference
+done
+
+echo ""
+echo ""
+echo ""
+echo "EVALUATING CALIB REF"
+echo ""
+python -u test.py alice_pointref_aux calibrate_pointref alice_pointref_aux_calibrate_ref --aux z --dir /scratch/jb6504/StrongLensing-Inference
 
 echo ""
 echo ""
