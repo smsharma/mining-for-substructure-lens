@@ -59,6 +59,7 @@ class ParameterizedRatioEstimator(object):
         limit_samplesize=None,
         verbose="some",
         update_input_rescaling=True,
+        validation_loss_before=None
     ):
 
         logger.info("Starting training")
@@ -168,6 +169,7 @@ class ParameterizedRatioEstimator(object):
             validation_split_seed=validation_split_seed,
             early_stopping=early_stopping,
             verbose=verbose,
+            validation_loss_before=validation_loss_before
         )
         return result
 

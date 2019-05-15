@@ -95,6 +95,7 @@ class Trainer(object):
         early_stopping_patience=None,
         clip_gradient=None,
         verbose="some",
+        validation_loss_before=None
     ):
         self._timer(start="ALL")
         self._timer(start="check data")
@@ -124,6 +125,9 @@ class Trainer(object):
         self._timer(stop="setup optimizer", start="initialize training")
         n_losses = len(loss_functions)
         loss_weights = [1.0] * n_losses if loss_weights is None else loss_weights
+
+        # Maybe the model is already well trained?
+        self.check_early_stopping(best_loss, best_model, None, validation_loss_before, -1, early_stopping_patience)
 
         # Verbosity
         if verbose == "all":  # Print output after every epoch

@@ -8,6 +8,7 @@ sys.path.append("./")
 
 import logging
 import argparse
+import numpy as np
 
 from inference.estimator import ParameterizedRatioEstimator
 from inference.utils import load_and_check
@@ -50,14 +51,16 @@ def train(
         rescale_inputs=True,
     )
 
+    best_loss = None
     epochs_per_lr = int(round((n_epochs / 2) / len(initial_lrs), 0))
+
     for lr in initial_lrs:
         logging.info("")
         logging.info("")
         logging.info("")
         logging.info("Starting training with batch size %s and learning rate %s", initial_batch_size, lr)
         logging.info("")
-        estimator.train(
+        _, losses = estimator.train(
             method,
             x="{}/samples/x_{}.npy".format(data_dir, sample_name),
             y="{}/samples/y_{}.npy".format(data_dir, sample_name),
@@ -77,7 +80,9 @@ def train(
             early_stopping=True,
             limit_samplesize=limit_samplesize,
             verbose="all",
+            validation_loss_before=best_loss
         )
+        best_loss = np.min(losses)
     estimator.save("{}/models/{}_halftrained".format(data_dir, model_filename))
 
     epochs_per_lr = int(round((n_epochs / 2) / len(final_lrs), 0))
@@ -87,7 +92,7 @@ def train(
         logging.info("")
         logging.info("Starting training with batch size %s and learning rate %s", final_batch_size, lr)
         logging.info("")
-        estimator.train(
+        _, losses = estimator.train(
             method,
             x="{}/samples/x_{}.npy".format(data_dir, sample_name),
             y="{}/samples/y_{}.npy".format(data_dir, sample_name),
@@ -107,7 +112,9 @@ def train(
             early_stopping=True,
             limit_samplesize=limit_samplesize,
             verbose="all",
+            validation_loss_before=best_loss
         )
+        best_loss = np.min(losses)
     estimator.save("{}/models/{}".format(data_dir, model_filename))
 
 
@@ -183,7 +190,7 @@ def parse_args():
         "--log", action="store_true", help="Whether the log of the input is taken."
     )
     parser.add_argument(
-        "--epochs", type=int, default=120, help="Number of epochs. Default: 120."
+        "--epochs", type=int, default=60, help="Number of epochs. Default: 120."
     )
     parser.add_argument(
         "--optimizer",
@@ -194,7 +201,7 @@ def parse_args():
         "--initial_batch_size", type=int, default=128, help="Batch size during first half of training. Default: 128."
     )
     parser.add_argument(
-        "--final_batch_size", type=int, default=256, help="Batch size during second half of training. Default: 512."
+        "--final_batch_size", type=int, default=512, help="Batch size during second half of training. Default: 512."
     )
     parser.add_argument(
         "--initial_lrs",
