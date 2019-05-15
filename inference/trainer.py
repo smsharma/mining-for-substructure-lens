@@ -127,7 +127,8 @@ class Trainer(object):
         loss_weights = [1.0] * n_losses if loss_weights is None else loss_weights
 
         # Maybe the model is already well trained?
-        self.check_early_stopping(best_loss, best_model, None, validation_loss_before, -1, early_stopping_patience)
+        if validation_loss_before is not None:
+            self.check_early_stopping(best_loss, best_model, None, validation_loss_before, -1, early_stopping_patience)
 
         # Verbosity
         if verbose == "all":  # Print output after every epoch
