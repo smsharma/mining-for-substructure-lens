@@ -128,7 +128,8 @@ class Trainer(object):
 
         # Maybe the model is already well trained?
         if validation_loss_before is not None:
-            self.check_early_stopping(best_loss, best_model, None, validation_loss_before, -1, early_stopping_patience)
+            best_loss, best_model, best_epoch = self.check_early_stopping(None, None, None, validation_loss_before, -1, None)
+            logging.info("Initial validation loss: %s", validation_loss_before)
 
         # Verbosity
         if verbose == "all":  # Print output after every epoch
