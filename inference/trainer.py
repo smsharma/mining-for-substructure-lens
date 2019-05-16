@@ -411,7 +411,7 @@ class Trainer(object):
             logger.warning("Best loss is None, cannot wrap up early stopping")
         elif currrent_loss is None or (not np.isfinite(currrent_loss)) or best_loss < currrent_loss:
             logger.info(
-                "Early stopping after epoch %s, with loss %8.5f compared to final loss %8.5f",
+                "Early stopping after epoch %s, with loss %s compared to final loss %s",
                 best_epoch + 1,
                 best_loss,
                 currrent_loss,
@@ -426,7 +426,7 @@ class Trainer(object):
             if tensor is None:
                 continue
             if torch.isnan(tensor).any():
-                logger.warning("%s contains NaNs, aborting training! Data:\n%s", label, tensor)
+                logger.warning("%s contains NaNs, aborting training!", label)
                 raise NanException
 
     def _init_timer(self):
