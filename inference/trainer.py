@@ -158,6 +158,7 @@ class Trainer(object):
             self.set_lr(opt, lr)
             logger.debug("Learning rate: %s", lr)
             self._timer(stop="set lr")
+            loss_val = None
 
             try:
                 loss_train, loss_val, loss_contributions_train, loss_contributions_val = self.epoch(
@@ -184,7 +185,7 @@ class Trainer(object):
 
         self._timer(start="early stopping")
         if early_stopping and len(losses_val) > 0:
-            self.wrap_up_early_stopping(best_model, losses_val[-1], best_loss, best_epoch)
+            self.wrap_up_early_stopping(best_model, loss_val, best_loss, best_epoch)
         self._timer(stop="early stopping")
 
         logger.debug("Training finished")
@@ -405,9 +406,9 @@ class Trainer(object):
             logging_fn(val_report)
 
     def wrap_up_early_stopping(self, best_model, currrent_loss, best_loss, best_epoch):
-        if best_loss is None or not np.isfinite(best_loss):
-            logger.warning("Loss is None, cannot wrap up early stopping")
-        elif currrent_loss is None or not np.isfinite(currrent_loss) or best_loss < currrent_loss:
+        if best_loss is None or (not np.isfinite(best_loss)):
+            logger.warning("Best loss is None, cannot wrap up early stopping")
+        elif currrent_loss is None or (not np.isfinite(currrent_loss)) or best_loss < currrent_loss:
             logger.info(
                 "Early stopping after epoch %s, with loss %8.5f compared to final loss %8.5f",
                 best_epoch + 1,
