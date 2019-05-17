@@ -25,10 +25,10 @@ def train(
     log_input=False,
     initial_batch_size=128,
     final_batch_size=256,
-    n_epochs=120,
+    n_epochs=50,
     optimizer="adam",
     initial_lrs=[0.0005, 0.0002, 0.0001],
-    final_lrs=[0.0002, 0.0001, 0.00005],
+    final_lrs=[0.0001, 0.00005],
     limit_samplesize=None,
 ):
     aux_data, n_aux = load_aux("{}/samples/z_{}.npy".format(data_dir, sample_name), aux)
@@ -52,7 +52,7 @@ def train(
     )
 
     best_loss = None
-    epochs_per_lr = int(round((n_epochs / 2) / len(initial_lrs), 0))
+    epochs_per_lr = int(round(n_epochs / (len(initial_lrs) + len(final_lrs)), 0))
 
     for lr in initial_lrs:
         logging.info("")
@@ -83,10 +83,9 @@ def train(
             validation_loss_before=best_loss
         )
         all_losses = [best_loss + list(losses)] if best_loss is not None else losses
-        best_loss = np.argmin(np.asarray(all_losses))
+        best_loss = np.nanmin(np.asarray(all_losses))
     estimator.save("{}/models/{}_halftrained".format(data_dir, model_filename))
 
-    epochs_per_lr = int(round((n_epochs / 2) / len(final_lrs), 0))
     for lr in final_lrs:
         logging.info("")
         logging.info("")
@@ -115,8 +114,8 @@ def train(
             verbose="all",
             validation_loss_before=best_loss
         )
-        all_losses = [best_loss + list(losses)] if best_loss is not None else losses
-        best_loss = np.argmin(np.asarray(all_losses))
+        all_losses = [best_loss + list(losses)]
+        best_loss = np.nanmin(np.asarray(all_losses))
     estimator.save("{}/models/{}".format(data_dir, model_filename))
 
 
@@ -192,7 +191,7 @@ def parse_args():
         "--log", action="store_true", help="Whether the log of the input is taken."
     )
     parser.add_argument(
-        "--epochs", type=int, default=60, help="Number of epochs. Default: 120."
+        "--epochs", type=int, default=50, help="Number of epochs. Default: 120."
     )
     parser.add_argument(
         "--optimizer",
@@ -203,7 +202,7 @@ def parse_args():
         "--initial_batch_size", type=int, default=128, help="Batch size during first half of training. Default: 128."
     )
     parser.add_argument(
-        "--final_batch_size", type=int, default=512, help="Batch size during second half of training. Default: 512."
+        "--final_batch_size", type=int, default=256, help="Batch size during second half of training. Default: 256."
     )
     parser.add_argument(
         "--initial_lrs",
@@ -216,14 +215,8 @@ def parse_args():
         "--final_lrs",
         type=float,
         nargs='+',
-        default=[0.0002, 0.0001, 0.00005],
+        default=[0.0001, 0.00005],
         help="Learning rate steps during second half of training. Default: [0.0002, 0.0001, 0.00005].",
-    )
-    parser.add_argument(
-        "--validation_split",
-        type=float,
-        default=0.3,
-        help="Validation split. Default: 0.3.",
     )
 
     return parser.parse_args()
