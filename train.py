@@ -82,7 +82,7 @@ def train(
             verbose="all",
             validation_loss_before=best_loss
         )
-        all_losses = [best_loss + list(losses)] if best_loss is not None else losses
+        all_losses = [best_loss] + list(losses) if best_loss is not None else losses
         best_loss = np.nanmin(np.asarray(all_losses))
     estimator.save("{}/models/{}_halftrained".format(data_dir, model_filename))
 
@@ -114,7 +114,7 @@ def train(
             verbose="all",
             validation_loss_before=best_loss
         )
-        all_losses = [best_loss + list(losses)]
+        all_losses = [best_loss] + list(losses)
         best_loss = np.nanmin(np.asarray(all_losses))
     estimator.save("{}/models/{}".format(data_dir, model_filename))
 
