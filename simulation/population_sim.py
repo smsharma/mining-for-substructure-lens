@@ -159,15 +159,18 @@ class LensingObservationWithSubhalos:
         """
         return 10 ** (-0.4 * (mag - mag_zp))
 
-    def M_200_sigma_v(self, sigma_v):
+    def M_200_sigma_v(self, sigma_v, scatter=True):
         """
         Relate central velocity dispersion to halo virial mass
         From https://arxiv.org/pdf/1804.04492.pdf
         """
         a = 0.09
         b = 3.48
-        sigma_log10_M_200 = 0.13  # Lognormal scatter
-        log10_M_200 = np.random.normal(a + b * np.log10(sigma_v / (100 * Kmps)), sigma_log10_M_200)
+        if scatter:
+            sigma_log10_M_200 = 0.13  # Lognormal scatter
+            log10_M_200 = np.random.normal(a + b * np.log10(sigma_v / (100 * Kmps)), sigma_log10_M_200)
+        else:
+            log10_M_200 = a + b * np.log10(sigma_v / (100 * Kmps))
         return (10 ** log10_M_200) * 1e12 * M_s
 
 
