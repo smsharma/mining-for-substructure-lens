@@ -1,7 +1,7 @@
 import math
 import logging
 from simulation.units import *
-from simulation.profiles import MassProfileNFW
+from simulation.profiles import MassProfileNFW, MassProfileSIE
 from simulation.lensing_sim import LensingSim
 from astropy.cosmology import Planck15
 from astropy.convolution import convolve, Gaussian2DKernel
@@ -50,7 +50,7 @@ class LensingObservationWithSubhalos:
             np.random.multivariate_normal(sim_mvgauss_mean, sim_mvgauss_cov)
 
         self.z_l = 10 ** log_z_l
-        theta_E = 10 ** log_theta_E
+        # theta_E = 10 ** log_theta_E
 
         # If fixing the source, these are fixed to reasonable mean-ish quantities
         # and a higher-than-average brightness, for an easier problem
@@ -72,12 +72,20 @@ class LensingObservationWithSubhalos:
             if q < 0.2:
                 q = 0.2
 
+        # Get relevant distances
+        D_l = Planck15.angular_diameter_distance(z=self.z_l).value * Mpc
+        D_s = Planck15.angular_diameter_distance(z=self.z_s).value * Mpc
+        D_ls = Planck15.angular_diameter_distance_z1z2(z1=self.z_l, z2=self.z_s).value * Mpc
+
         # Get properties for NFW host
         M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
         c_200_hst = MassProfileNFW.c_200_SCP(M_200_hst)
         r_s_hst, rho_s_hst = MassProfileNFW.get_r_s_rho_s_NFW(M_200_hst, c_200_hst)
 
-        D_l = Planck15.angular_diameter_distance(z=self.z_l).value * Mpc
+        # Get properties for SIE host
+        theta_E = MassProfileSIE.theta_E(self.sigma_v * Kmps, D_ls, D_s)
+
+        print(np.log10(M_200_hst / M_s), self.sigma_v, theta_E, theta_x_0, theta_y_0, TS)
 
         # Generate a subhalo population...
         ps = SubhaloPopulation(n_calib=n_calib, beta=beta, M_hst=M_200_hst, c_hst=c_200_hst,
