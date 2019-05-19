@@ -16,6 +16,7 @@ class LensingObservationWithSubhalos:
                  fix_source=True,
                  spherical_host=True,
                  m_200_min_sub=1e7 * M_s, n_calib=150, beta=-1.9,
+                 M_200_sigma_v_scatter=True,
                  params_eval=None, calculate_joint_score=False,
                  ):
         """
@@ -37,6 +38,7 @@ class LensingObservationWithSubhalos:
         :param m_200_min_sub: Lowest mass of subhalos to draw
         :param n_calib: Number of subhalos expected between 1e8 and 1e10*M_s for a MW-sized halo, for calibration
         :param beta: Slope in the subhalo mass fn
+        :param M_200_sigma_v_scatter: Whether to have scatter in sigma_v to M_200_host mapping
         :param params_eval: Parameters (n_calib, beta) for which p(x,z|params) will be calculated
         :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         """
@@ -71,7 +73,7 @@ class LensingObservationWithSubhalos:
                 q = 0.2
 
         # Get properties for NFW host
-        M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps)
+        M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
         c_200_hst = MassProfileNFW.c_200_SCP(M_200_hst)
         r_s_hst, rho_s_hst = MassProfileNFW.get_r_s_rho_s_NFW(M_200_hst, c_200_hst)
 
