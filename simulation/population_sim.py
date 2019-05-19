@@ -15,8 +15,8 @@ class LensingObservationWithSubhalos:
                  pixel_size=0.1, n_xy=64,
                  fix_source=True,
                  spherical_host=True,
+                 M_200_sigma_v_scatter=False,
                  m_200_min_sub=1e7 * M_s, n_calib=150, beta=-1.9,
-                 M_200_sigma_v_scatter=True,
                  params_eval=None, calculate_joint_score=False,
                  ):
         """
@@ -35,10 +35,10 @@ class LensingObservationWithSubhalos:
         :param n_xy: Number of pixels (along x and y) of observation
         :param fix_source: Whether to fix source parameters rather than drawing, for an easier problem
         :param spherical_host: Whether to restrict to spherical hosts (q = 1), for an easier problem
+        :param M_200_sigma_v_scatter: Whether to have scatter in sigma_v to M_200_host mapping
         :param m_200_min_sub: Lowest mass of subhalos to draw
         :param n_calib: Number of subhalos expected between 1e8 and 1e10*M_s for a MW-sized halo, for calibration
         :param beta: Slope in the subhalo mass fn
-        :param M_200_sigma_v_scatter: Whether to have scatter in sigma_v to M_200_host mapping
         :param params_eval: Parameters (n_calib, beta) for which p(x,z|params) will be calculated
         :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         """
@@ -56,7 +56,7 @@ class LensingObservationWithSubhalos:
         # and a higher-than-average brightness, for an easier problem
         if fix_source:
             theta_s_e = 0.2
-            self.z_s = 2.
+            self.z_s = 1.5
             mag_s = 23.
         else:
             theta_s_e = 10 ** theta_s_e
