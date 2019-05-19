@@ -8,6 +8,7 @@ import os
 import numpy as np
 import re
 
+logger = logging.getLogger(__name__)
 logging.basicConfig(
     format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
     datefmt="%H:%M",
@@ -16,17 +17,17 @@ logging.basicConfig(
 
 
 def shuffle_and_combine(dir, input_samples, output_sample, regex=False):
-    logging.info("Starting shuffling and combining")
-    logging.info("  Folder:              %s", dir)
-    logging.info("  Input samples:       %s", input_samples[0])
+    logger.info("Starting shuffling and combining")
+    logger.info("  Folder:              %s", dir)
+    logger.info("  Input samples:       %s", input_samples[0])
     for sample in input_samples[1:]:
-        logging.info("                       %s", sample)
-    logging.info("  Output sample:       %s", output_sample)
-    logging.info("  Regular expressions: %s", regex)
+        logger.info("                       %s", sample)
+    logger.info("  Output sample:       %s", output_sample)
+    logger.info("  Regular expressions: %s", regex)
 
     # Path and filenames
     folder = "{}/data/samples/".format(dir)
-    filenames = ["theta", "x", "y", "r_xz", "t_xz", "n_subs", "m_subs"]
+    filenames = ["theta", "x", "y", "r_xz", "t_xz", "z"]
 
     # Parse regular expressions
     if regex:
@@ -58,6 +59,10 @@ def shuffle_and_combine(dir, input_samples, output_sample, regex=False):
             logging.warning("  No matching input samples found!")
             return
 
+    # Clean samples
+    # for input_sample in input_samples:
+    #     remove_infs_and_nans(folder, filenames, input_sample)
+
     # Combine samples
     n_samples = None
     permutation = None
@@ -71,7 +76,7 @@ def shuffle_and_combine(dir, input_samples, output_sample, regex=False):
                 for input_sample in input_samples
             ]
         except FileNotFoundError:
-            logging.info(
+            logger.info(
                 "Object %s does not exist for (some of the) input samples", filename
             )
             continue
@@ -88,7 +93,7 @@ def shuffle_and_combine(dir, input_samples, output_sample, regex=False):
                     "  %s: %s has shape %s", input_sample, filename, individual.shape
                 )
             continue
-        logging.info(
+        logger.info(
             "Combined %s %s files, combined shape: %s",
             len(individuals),
             filename,
@@ -105,7 +110,7 @@ def shuffle_and_combine(dir, input_samples, output_sample, regex=False):
                 raise RuntimeError("Inconsistent shapes!")
 
         combined = combined[permutation]
-        logging.info("Shuffled combined %s results", filename)
+        logger.info("Shuffled combined %s results", filename)
 
         # Save
         try:
@@ -119,9 +124,44 @@ def shuffle_and_combine(dir, input_samples, output_sample, regex=False):
                 folder + "/" + filename + "_" + output_sample + ".npy",
             )
             continue
-        logging.info(
+        logger.info(
             "Saved file %s", folder + "/" + filename + "_" + output_sample + ".npy"
         )
+
+
+def remove_infs_and_nans(folder, filenames, input_sample):
+    data = []
+    out_filenames = []
+    for filename in filenames:
+        try:
+            data.append(np.load(folder + "/" + filename + "_" + input_sample + ".npy"))
+            out_filenames.append(
+                folder + "/" + filename + "_" + input_sample + "_cleaned.npy"
+            )
+        except FileNotFoundError:
+            pass
+
+    cut = None
+    for array in data:
+        this_cut = np.all(np.isfinite(array.reshape(array.shape[0], -1)), axis=1)
+        if cut is None:
+            cut = this_cut
+        else:
+            cut = np.logical_and(cut, this_cut)
+
+    n_pass = np.sum(cut, dtype=np.int)
+    n_fail = len(cut) - n_pass
+    logger.info(
+        "Cleaning up *_%s.npy: %s samples pass, %s samples removed",
+        folder,
+        input_sample,
+        n_pass,
+        n_fail,
+    )
+
+    for array, out_filename in zip(data, out_filenames):
+        cleaned_array = array[cut]
+        np.save(out_filename, cleaned_array)
 
 
 def parse_args():
@@ -155,4 +195,4 @@ if __name__ == "__main__":
 
     shuffle_and_combine(args.dir, args.inputs, args.output, args.regex)
 
-    logging.info("All done! Have a nice day!")
+    logger.info("All done! Have a nice day!")

@@ -97,7 +97,7 @@ class Bottleneck(nn.Module):
 
 
 class ResNetRatioEstimator(nn.Module):
-    def __init__(self, n_parameters, cfg=18, n_hidden=512, input_mean=None, input_std=None, log_input=False, zero_init_residual=False, norm_layer=None):
+    def __init__(self, n_parameters, n_aux=0, cfg=18, n_hidden=512, input_mean=None, input_std=None, log_input=False, zero_init_residual=False, norm_layer=None):
         super(ResNetRatioEstimator, self).__init__()
 
         self.input_mean = input_mean
@@ -118,7 +118,7 @@ class ResNetRatioEstimator(nn.Module):
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2, norm_layer=norm_layer)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2, norm_layer=norm_layer)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc1 = nn.Linear(512 * block.expansion + n_parameters, n_hidden)
+        self.fc1 = nn.Linear(512 * block.expansion + n_parameters + n_aux, n_hidden)
         self.fc2 = nn.Linear(n_hidden, 1)
         self.sigmoid = nn.Sigmoid()
 
@@ -139,7 +139,7 @@ class ResNetRatioEstimator(nn.Module):
                 elif isinstance(m, BasicBlock):
                     nn.init.constant_(m.bn2.weight, 0)
 
-    def forward(self, theta, x, track_score=True, return_grad_x=False, create_gradient_graph=True):
+    def forward(self, theta, x, aux=None, track_score=True, return_grad_x=False, create_gradient_graph=True):
         # Track gradients
         if track_score and not theta.requires_grad:
             theta.requires_grad = True
@@ -162,7 +162,10 @@ class ResNetRatioEstimator(nn.Module):
 
         h = self.avgpool(h)
         h = h.view(h.size(0), -1)
-        h = torch.cat((h, theta), 1)
+        if aux is None:
+            h = torch.cat((h, theta), 1)
+        else:
+            h = torch.cat((h, theta, aux), 1)
         h = self.fc1(h)
         h = self.relu(h)
         log_r = self.fc2(h)

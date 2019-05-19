@@ -96,9 +96,13 @@ class MassProfileNFW:
         """
         Helper function for NFW deflection, from astro-ph/0102341
         TODO: returning warnings for invalid value in sqrt for some reason
+        JB: That's because all of the arguments of np.where are evaluated, including the ones with ngative arguments to
+        sqrt, but only the good ones are then returned. So we can just suppress these warnings
         """
-        return np.where(x == 1, 1, np.where(x < 1, np.arctanh(np.sqrt(1 - x ** 2)) / (np.sqrt(1 - x ** 2)),
-                                            np.arctan(np.sqrt(x ** 2 - 1)) / (np.sqrt(x ** 2 - 1))))
+        with np.errstate(divide='ignore', invalid='ignore'):
+            return np.where(x == 1.0, 1.0,
+                            np.where(x <= 1.0, np.arctanh(np.sqrt(1.0 - x ** 2)) / (np.sqrt(1.0 - x ** 2)),
+                                     np.arctan(np.sqrt(x ** 2 - 1.0)) / (np.sqrt(x ** 2 - 1.0))))
 
     @classmethod
     def get_r_s_rho_s_NFW(self, M_200, c_200):

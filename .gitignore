@@ -133,3 +133,5 @@ venv.bak/
 
 # Data
 data/
+!/simulation/data
+!/simulation/data/sim_mvgauss.npz

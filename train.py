@@ -8,8 +8,10 @@ sys.path.append("./")
 
 import logging
 import argparse
+import numpy as np
 
 from inference.estimator import ParameterizedRatioEstimator
+from inference.utils import load_and_check
 
 
 def train(
@@ -18,42 +20,120 @@ def train(
     data_dir,
     sample_name,
     model_filename,
+    aux=None,
     architecture="resnet",
     log_input=False,
-    batch_size=256,
-    n_epochs=5,
+    initial_batch_size=128,
+    final_batch_size=256,
+    n_epochs=50,
     optimizer="adam",
-    initial_lr=0.001,
-    final_lr=0.0001,
+    initial_lrs=[0.0005, 0.0002, 0.0001],
+    final_lrs=[0.0001, 0.00005],
     limit_samplesize=None,
 ):
+    aux_data, n_aux = load_aux("{}/samples/z_{}.npy".format(data_dir, sample_name), aux)
+    if aux_data is None:
+        logging.info("%s aux variables", n_aux)
+    else:
+        logging.info("%s aux variables with shape %s", n_aux, aux_data.shape)
+
+    logging.info("")
+    logging.info("")
+    logging.info("")
+    logging.info("Creating estimator")
+    logging.info("")
     estimator = ParameterizedRatioEstimator(
         resolution=64,
         n_parameters=2,
+        n_aux=n_aux,
         architecture=architecture,
         log_input=log_input,
         rescale_inputs=True,
     )
-    estimator.train(
-        method,
-        x="{}/samples/x_{}.npy".format(data_dir, sample_name),
-        y="{}/samples/y_{}.npy".format(data_dir, sample_name),
-        theta="{}/samples/theta_{}.npy".format(data_dir, sample_name),
-        r_xz="{}/samples/r_xz_{}.npy".format(data_dir, sample_name),
-        t_xz="{}/samples/t_xz_{}.npy".format(data_dir, sample_name),
-        alpha=alpha,
-        optimizer=optimizer,
-        n_epochs=n_epochs,
-        batch_size=batch_size,
-        initial_lr=initial_lr,
-        final_lr=final_lr,
-        nesterov_momentum=None,
-        validation_split=0.25,
-        early_stopping=True,
-        limit_samplesize=limit_samplesize,
-        verbose="all",
-    )
+
+    best_loss = None
+    epochs_per_lr = int(round(n_epochs / (len(initial_lrs) + len(final_lrs)), 0))
+
+    for lr in initial_lrs:
+        logging.info("")
+        logging.info("")
+        logging.info("")
+        logging.info("Starting training with batch size %s and learning rate %s", initial_batch_size, lr)
+        logging.info("")
+        _, losses = estimator.train(
+            method,
+            x="{}/samples/x_{}.npy".format(data_dir, sample_name),
+            y="{}/samples/y_{}.npy".format(data_dir, sample_name),
+            theta="{}/samples/theta_{}.npy".format(data_dir, sample_name),
+            r_xz="{}/samples/r_xz_{}.npy".format(data_dir, sample_name),
+            t_xz="{}/samples/t_xz_{}.npy".format(data_dir, sample_name),
+            aux=aux_data,
+            alpha=alpha,
+            optimizer=optimizer,
+            n_epochs=epochs_per_lr,
+            batch_size=initial_batch_size,
+            initial_lr=lr,
+            final_lr=lr,
+            nesterov_momentum=None,
+            validation_split=0.25,
+            validation_split_seed=1107,
+            early_stopping=True,
+            limit_samplesize=limit_samplesize,
+            verbose="all",
+            validation_loss_before=best_loss
+        )
+        all_losses = [best_loss] + list(losses) if best_loss is not None else losses
+        best_loss = np.nanmin(np.asarray(all_losses))
+    estimator.save("{}/models/{}_halftrained".format(data_dir, model_filename))
+
+    for lr in final_lrs:
+        logging.info("")
+        logging.info("")
+        logging.info("")
+        logging.info("Starting training with batch size %s and learning rate %s", final_batch_size, lr)
+        logging.info("")
+        _, losses = estimator.train(
+            method,
+            x="{}/samples/x_{}.npy".format(data_dir, sample_name),
+            y="{}/samples/y_{}.npy".format(data_dir, sample_name),
+            theta="{}/samples/theta_{}.npy".format(data_dir, sample_name),
+            r_xz="{}/samples/r_xz_{}.npy".format(data_dir, sample_name),
+            t_xz="{}/samples/t_xz_{}.npy".format(data_dir, sample_name),
+            aux=aux_data,
+            alpha=alpha,
+            optimizer=optimizer,
+            n_epochs=epochs_per_lr,
+            batch_size=final_batch_size,
+            initial_lr=lr,
+            final_lr=lr,
+            nesterov_momentum=None,
+            validation_split=0.25,
+            validation_split_seed=1107,
+            early_stopping=True,
+            limit_samplesize=limit_samplesize,
+            verbose="all",
+            validation_loss_before=best_loss
+        )
+        all_losses = [best_loss] + list(losses)
+        best_loss = np.nanmin(np.asarray(all_losses))
     estimator.save("{}/models/{}".format(data_dir, model_filename))
+
+
+def load_aux(filename, aux=None):
+    if aux is None:
+        return None, 0
+    elif aux == "zs":
+        return load_and_check(filename)[:, 0].reshape(-1, 1), 1
+    elif aux == "zl":
+        return load_and_check(filename)[:, 1].reshape(-1, 1), 1
+    elif aux == "z":
+        return load_and_check(filename)[:, ::2].reshape(-1, 2), 2
+    elif aux == "all":
+        return load_and_check(filename)[:, :].reshape(-1, 3), 3
+    else:
+        raise ValueError(
+            "Unknown aux settings {}, please use 'zs', 'zl', 'z', or 'all'.".format(aux)
+        )
 
 
 def parse_args():
@@ -65,6 +145,14 @@ def parse_args():
     parser.add_argument(
         "method",
         help='Inference method: "carl", "rolr", "alice", "cascal", "rascal", "alices".',
+    )
+    parser.add_argument(
+        "--aux",
+        type=str,
+        default=None,
+        help='Whether auxiliary information is used during training. Can be "zs" for '
+        'the source redshift, "zl" for the lens redshift, "z" for both redshifts,'
+        ' and "all" for both redshifts as well as sigma_v.',
     )
     parser.add_argument(
         "--sample", type=str, default="train", help='Sample name, like "train".'
@@ -79,7 +167,8 @@ def parse_args():
         "--dir",
         type=str,
         default=".",
-        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the data/models subfolder.",
+        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the "
+        "data/models subfolder.",
     )
 
     # Training options
@@ -94,18 +183,15 @@ def parse_args():
     parser.add_argument(
         "--alpha",
         type=float,
-        default=1.0,
+        default=0.0001,
         help="alpha parameter weighting the score MSE in the loss function of the SCANDAL, RASCAL, and"
-        "and ALICES inference methods. Default: 1.",
+        "and ALICES inference methods. Default: 0.0001",
     )
     parser.add_argument(
         "--log", action="store_true", help="Whether the log of the input is taken."
     )
     parser.add_argument(
-        "--epochs", type=int, default=20, help="Number of epochs. Default: 20."
-    )
-    parser.add_argument(
-        "--batch_size", type=int, default=128, help="Batch size. Default: 128."
+        "--epochs", type=int, default=50, help="Number of epochs. Default: 120."
     )
     parser.add_argument(
         "--optimizer",
@@ -113,22 +199,24 @@ def parse_args():
         help='Optimizer. "amsgrad", "adam", and "sgd" are supported. Default: "adam".',
     )
     parser.add_argument(
-        "--initial_lr",
-        type=float,
-        default=0.0005,
-        help="Initial learning rate. Default: 0.0005.",
+        "--initial_batch_size", type=int, default=128, help="Batch size during first half of training. Default: 128."
     )
     parser.add_argument(
-        "--final_lr",
-        type=float,
-        default=0.00001,
-        help="Final learning rate. Default: 0.000005.",
+        "--final_batch_size", type=int, default=256, help="Batch size during second half of training. Default: 256."
     )
     parser.add_argument(
-        "--validation_split",
+        "--initial_lrs",
         type=float,
-        default=0.3,
-        help="Validation split. Default: 0.3.",
+        nargs='+',
+        default=[0.0005, 0.0002, 0.0001],
+        help="Learning rate steps during first half of training. Default: [0.0005, 0.0002, 0.0001].",
+    )
+    parser.add_argument(
+        "--final_lrs",
+        type=float,
+        nargs='+',
+        default=[0.0001, 0.00005],
+        help="Learning rate steps during second half of training. Default: [0.0002, 0.0001, 0.00005].",
     )
 
     return parser.parse_args()
@@ -153,16 +241,18 @@ if __name__ == "__main__":
 
     train(
         method=args.method,
+        aux=args.aux,
         alpha=args.alpha,
         data_dir="{}/data/".format(args.dir),
         sample_name=args.sample,
         model_filename=args.name,
         log_input=args.log,
-        batch_size=args.batch_size,
+        initial_batch_size=args.initial_batch_size,
+        final_batch_size=args.final_batch_size,
         n_epochs=args.epochs,
         optimizer=args.optimizer,
-        initial_lr=args.initial_lr,
-        final_lr=args.final_lr,
+        initial_lrs=args.initial_lrs,
+        final_lrs=args.final_lrs,
         architecture=architecture,
     )
 

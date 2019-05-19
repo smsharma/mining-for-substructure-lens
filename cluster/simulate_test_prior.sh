@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=sim_test
-#SBATCH --output=log_simulate_test_%a.log
+#SBATCH --job-name=sim-epr
+#SBATCH --output=log_simulate_testprior_%a.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB

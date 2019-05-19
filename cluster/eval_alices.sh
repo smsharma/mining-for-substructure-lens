@@ -11,6 +11,42 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
+# for i in {0..624}
+# do
+#     echo ""
+#     echo ""
+#     echo ""
+#     echo "EVALUATING CALIB $i"
+#     echo ""
+#     python -u test.py alices calibrate_theta$i alices_calibrate_theta$i --dir /scratch/jb6504/StrongLensing-Inference
+# done
+#
+# echo ""
+# echo ""
+# echo ""
+# echo "EVALUATING CALIB REF"
+# echo ""
+# # python -u test.py alices calibrate_ref alices_calibrate_ref --dir /scratch/jb6504/StrongLensing-Inference
+#
+# echo ""
+# echo ""
+# echo ""
+# echo "EVALUATING PRIOR SAMPLE"
+# echo ""
 # python -u test.py alices test_prior alices_prior --dir /scratch/jb6504/StrongLensing-Inference
-python -u test.py alices test_prior alices_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
-python -u test.py alices test alices_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
+#
+#
+# echo ""
+# echo ""
+# echo ""
+# echo "EVALUATING PRIOR SAMPLE (SHUFFLED)"
+# echo ""
+# python -u test.py alices test_prior alices_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
+
+
+echo ""
+echo ""
+echo ""
+echo "EVALUATING POINT SAMPLE ON PARAM GRID"
+echo ""
+python -u test.py alices test_point alices_grid --grid --dir /scratch/jb6504/StrongLensing-Inference

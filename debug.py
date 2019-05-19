@@ -5,31 +5,34 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import sys, os
 import logging
 
-sys.path.append("../")
+sys.path.append("./")
 
-from train import train
-
+logger = logging.getLogger(__name__)
 logging.basicConfig(
     format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
     datefmt="%H:%M",
     level=logging.DEBUG,
 )
+
+from train import train
+
 logging.info("Hi!")
 
 train(
-    method="carl",
-    alpha=1.0,
-    data_dir="/Users/johannbrehmer/work/projects/other/strong_lensing/StrongLensing-Inference/data/",
+    method="alices",
+    alpha=0.1,
+    data_dir="./data/",
     sample_name="train",
     model_filename="debug",
+    aux="z",
+    architecture="resnet",
     log_input=False,
     batch_size=128,
-    n_epochs=5,
+    n_epochs=1,
     optimizer="adam",
     initial_lr=0.001,
     final_lr=0.0001,
-    limit_samplesize=10000,
-    architecture="resnet",
+    limit_samplesize=None,
 )
 
 logging.info("All done! Have a nice day!")
