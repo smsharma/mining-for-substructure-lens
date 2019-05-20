@@ -245,7 +245,7 @@ class ParameterizedRatioEstimator(object):
             all_log_r.append(log_r)
             if t is not None:
                 all_t.append(t)
-            if all_x_grad is not None:
+            if x_grad is not None:
                 all_x_grad.append(x_grad)
 
         # mash together
