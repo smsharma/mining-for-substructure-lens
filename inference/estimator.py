@@ -272,9 +272,9 @@ class ParameterizedRatioEstimator(object):
         self.model = self.model.to(device, dtype)
 
         theta0s = torch.from_numpy(theta0s).to(device, dtype)
-        xs = torch.from_numpy(theta0s).to(device, dtype)
+        xs = torch.from_numpy(xs).to(device, dtype)
         if auxs is not None:
-            auxs = torch.from_numpy(theta0s).to(device, dtype)
+            auxs = torch.from_numpy(auxs).to(device, dtype)
 
         # Evaluate ratio estimator with score or x gradients:
         if evaluate_score or evaluate_grad_x:
