@@ -220,7 +220,7 @@ class ParameterizedRatioEstimator(object):
         logger.debug("Evaluation done")
         return all_log_r_hat, all_t_hat, all_grad_x
 
-    def _evaluate(self, theta0s, xs, auxs=None, evaluate_score=False, evaluate_grad_x=False, run_on_gpu=True, double_precision=False, batch_size=1000):
+    def _evaluate(self, theta0s, xs, auxs=None, evaluate_score=False, evaluate_grad_x=False, run_on_gpu=True, double_precision=False, batch_size=4000):
         # Batches
         n_xs = len(xs)
         n_batches = (n_xs - 1) // batch_size + 1
@@ -229,7 +229,7 @@ class ParameterizedRatioEstimator(object):
         all_s, all_log_r, all_t, all_x_grad = [], [], [], []
 
         for i_batch in range(n_batches):
-            x_batch = np.copy(xs[i_batch * batch_size : (i_batch + 1) * batch_size])
+            x_batch = np.asarray(np.copy(xs[i_batch * batch_size : (i_batch + 1) * batch_size]))
             if len(theta0s) == n_xs:
                 theta_batch = np.copy(theta0s[i_batch * batch_size : (i_batch + 1) * batch_size])
             else:
@@ -269,21 +269,21 @@ class ParameterizedRatioEstimator(object):
         dtype = torch.double if double_precision else torch.float
 
         # Prepare data
-        n_xs = len(xs)
-        theta0s = torch.stack([torch.tensor(theta0s[i % len(theta0s)], requires_grad=evaluate_score) for i in range(n_xs)])
-        xs = torch.stack([torch.tensor(x) for x in xs])
-        if auxs is not None:
-            auxs = torch.stack([torch.tensor(x) for x in auxs])
-
         self.model = self.model.to(device, dtype)
-        theta0s = theta0s.to(device, dtype)
-        xs = xs.to(device, dtype)
+
+        theta0s = torch.from_numpy(theta0s).to(device, dtype)
+        xs = torch.from_numpy(theta0s).to(device, dtype)
         if auxs is not None:
-            auxs = auxs.to(device, dtype)
+            auxs = torch.from_numpy(theta0s).to(device, dtype)
 
         # Evaluate ratio estimator with score or x gradients:
         if evaluate_score or evaluate_grad_x:
             self.model.eval()
+
+            if evaluate_score:
+                theta0s.requires_grad = True
+            if evaluate_grad_x:
+                xs.requires_grad = True
 
             s, log_r, t, x_grad = self.model(theta0s, xs, aux=auxs, track_score=evaluate_score, return_grad_x=evaluate_grad_x, create_gradient_graph=False)
 
