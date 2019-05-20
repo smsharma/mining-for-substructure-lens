@@ -37,6 +37,7 @@ def evaluate(
     grid=True,
     shuffle=False,
     small=False,
+    gradx=False,
 ):
     if not os.path.exists("{}/results".format(data_dir)):
         os.mkdir("{}/results".format(data_dir))
@@ -60,7 +61,7 @@ def evaluate(
             theta=theta,
             test_all_combinations=True,
             evaluate_grad_x=True,
-            grad_x_theta_index=grad_x_index,
+            grad_x_theta_index=gradx,
         )
 
     else:
@@ -71,12 +72,13 @@ def evaluate(
             np.random.shuffle(theta)
 
         llr, _, grad_x = estimator.log_likelihood_ratio(
-            x=x, aux=aux_data, theta=theta, test_all_combinations=False, evaluate_grad_x=True
+            x=x, aux=aux_data, theta=theta, test_all_combinations=False, evaluate_grad_x=gradx
         )
     if shuffle:
         np.save("{}/results/shuffled_theta_{}.npy".format(data_dir, result_filename), theta)
     np.save("{}/results/llr_{}.npy".format(data_dir, result_filename), llr)
-    np.save("{}/results/grad_x_{}.npy".format(data_dir, result_filename), grad_x)
+    if gradx:
+        np.save("{}/results/grad_x_{}.npy".format(data_dir, result_filename), grad_x)
 
 
 def load_aux(filename, aux=None):
@@ -134,6 +136,9 @@ def parse_args():
     parser.add_argument(
         "--small", action="store_true", help="Restricts evaluation to first 100 images."
     )
+    parser.add_argument(
+        "--grad", action="store_true", help="Evaluate gradients wrt x."
+    )
 
     return parser.parse_args()
 
@@ -155,5 +160,6 @@ if __name__ == "__main__":
         args.grid,
         args.shuffle,
         args.small,
+        gradx=args.grad
     )
     logging.info("All done! Have a nice day!")
