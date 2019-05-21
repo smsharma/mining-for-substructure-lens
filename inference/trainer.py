@@ -234,7 +234,8 @@ class Trainer(object):
             n_samples = len(dataset)
             indices = list(range(n_samples))
             split = int(np.floor(validation_split * n_samples))
-            np.random.seed(seed)
+            if seed is not None:
+                np.random.seed(seed)
             np.random.shuffle(indices)
             train_idx, valid_idx = indices[split:], indices[:split]
 
