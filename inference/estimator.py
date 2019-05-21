@@ -233,7 +233,7 @@ class ParameterizedRatioEstimator(object):
             if len(theta0s) == n_xs:
                 theta_batch = np.copy(theta0s[i_batch * batch_size : (i_batch + 1) * batch_size])
             else:
-                theta_batch = np.copy(theta0s)
+                theta_batch = np.repeat(np.copy(theta0s).reshape(1,-1), x_batch.shape[0], axis=0)
             if auxs is not None:
                 aux_batch = np.copy(auxs[i_batch * batch_size : (i_batch + 1) * batch_size])
             else:
