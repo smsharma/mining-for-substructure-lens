@@ -10,6 +10,11 @@ class HistogramCalibrator:
     def __init__(self, data_num, data_den, mode="dynamic", nbins=100, histrange=None):
         self.range, self.edges = self._find_binning(data_num, data_den, mode, nbins, histrange)
 
+        logger.debug("Setting up histogram")
+        logger.debug("  Num: mean %s, std %s, min %s, max %s", np.mean(data_num), np.std(data_num), np.min(data_num), np.max(data_num))
+        logger.debug("  Den: mean %s, std %s, min %s, max %s", np.mean(data_den), np.std(data_den), np.min(data_den), np.max(data_den))
+        logger.debug("  Binning: %s", self.edges)
+
         self.hist_num = self._fill_histogram(data_num)
         self.hist_den = self._fill_histogram(data_den)
 

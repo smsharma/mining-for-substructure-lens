@@ -30,7 +30,15 @@ def calibrate(
     # Calibrate every data set
     llr_cal = np.zeros_like(llr_raw)
     for i in range(n_grid):
-        llr_calibration_num = np.load("{}/llr_{}_theta{}.npy".format(data_dir, calibration_filename, i))
+        try:
+            llr_calibration_num = np.load("{}/llr_{}_theta{}.npy".format(data_dir, calibration_filename, i))
+        except FileNotFoundError:
+            logging.warning("Did not find numerator calibration data for i = %s", i)
+            llr_cal[i] = np.copy(llr_raw[i])
+
+        if not np.all(np.isfinite(llr_calibration_num)):
+            logging.warning("Infinite data in numerator calibration data for i = %s", i)
+            llr_cal[i] = np.copy(llr_raw[i])
 
         if transform_to_s:
             s_cal_num = s_from_r(np.exp(llr_calibration_num))
@@ -78,7 +86,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
         datefmt="%H:%M",
-        level=logging.INFO,
+        level=logging.DEBUG,
     )
     logging.info("Hi!")
     args = parse_args()

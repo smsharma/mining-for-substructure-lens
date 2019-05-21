@@ -53,9 +53,9 @@ sbatch eval_carl_aux.sh
 sbatch eval_alice_aux.sh
 sbatch eval_alices_aux.sh
 
-sbatch eval_carl_pointref_aux.sh
-sbatch eval_alice_pointref_aux.sh
-sbatch eval_alices_pointref_aux.sh
+# sbatch eval_carl_pointref_aux.sh
+# sbatch eval_alice_pointref_aux.sh
+# sbatch eval_alices_pointref_aux.sh
 
 
 ############################################################
