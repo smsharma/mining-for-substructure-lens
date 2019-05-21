@@ -174,7 +174,7 @@ class ParameterizedRatioEstimator(object):
         return result
 
     def log_likelihood_ratio(
-        self, x, theta, aux=None, test_all_combinations=True, evaluate_score=False, evaluate_grad_x=False, batch_size=1024, grad_x_theta_index=0
+        self, x, theta, aux=None, test_all_combinations=True, evaluate_score=False, evaluate_grad_x=False, batch_size=10000, grad_x_theta_index=0
     ):
         if self.model is None:
             raise ValueError("No model -- train or load model before evaluating it!")
@@ -220,7 +220,7 @@ class ParameterizedRatioEstimator(object):
         logger.debug("Evaluation done")
         return all_log_r_hat, all_t_hat, all_grad_x
 
-    def _evaluate(self, theta0s, xs, auxs=None, evaluate_score=False, evaluate_grad_x=False, run_on_gpu=True, double_precision=False, batch_size=20000):
+    def _evaluate(self, theta0s, xs, auxs=None, evaluate_score=False, evaluate_grad_x=False, run_on_gpu=True, double_precision=False, batch_size=10000):
         # Batches
         n_xs = len(xs)
         n_batches = (n_xs - 1) // batch_size + 1
