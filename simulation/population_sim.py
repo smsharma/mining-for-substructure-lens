@@ -16,7 +16,7 @@ class LensingObservationWithSubhalos:
                  fix_source=True,
                  spherical_host=True,
                  M_200_sigma_v_scatter=False,
-                 m_200_min_sub=1e7 * M_s, n_calib=150, beta=-1.9,
+                 m_200_min_sub=1e7 * M_s, f_sub=0.15, beta=-1.9,
                  params_eval=None, calculate_joint_score=False,
                  ):
         """
@@ -37,9 +37,9 @@ class LensingObservationWithSubhalos:
         :param spherical_host: Whether to restrict to spherical hosts (q = 1), for an easier problem
         :param M_200_sigma_v_scatter: Whether to have scatter in sigma_v to M_200_host mapping
         :param m_200_min_sub: Lowest mass of subhalos to draw
-        :param n_calib: Number of subhalos expected between 1e8 and 1e10*M_s for a MW-sized halo, for calibration
+        :param f_sub: Fraction of mass in substructure
         :param beta: Slope in the subhalo mass fn
-        :param params_eval: Parameters (n_calib, beta) for which p(x,z|params) will be calculated
+        :param params_eval: Parameters (f_sub, beta) for which p(x,z|params) will be calculated
         :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         """
 
@@ -88,7 +88,7 @@ class LensingObservationWithSubhalos:
         print(np.log10(M_200_hst / M_s), self.sigma_v, theta_E, theta_x_0, theta_y_0, TS)
 
         # Generate a subhalo population...
-        ps = SubhaloPopulation(n_calib=n_calib, beta=beta, M_hst=M_200_hst, c_hst=c_200_hst,
+        ps = SubhaloPopulation(f_sub=f_sub, beta=beta, M_hst=M_200_hst, c_hst=c_200_hst,
                                m_min=m_200_min_sub, theta_s=r_s_hst / D_l, theta_roi=2. * theta_E,
                                params_eval=params_eval, calculate_joint_score=calculate_joint_score)
 
@@ -185,10 +185,11 @@ class LensingObservationWithSubhalos:
 
 
 class SubhaloPopulation:
-    def __init__(self, n_calib=150, M_min_calib=1e8 * M_s, M_max_calib=1e10 * M_s,
+    def __init__(self, f_sub=0.15,
                  beta=-1.9, m_min=1e9 * M_s, theta_roi=2.5,
                  M_hst=1e14 * M_s, theta_s=1e-4, c_hst=6.,
-                 params_eval=None, calculate_joint_score=False):
+                 params_eval=None, calculate_joint_score=False
+                 ):
         """
         Calibrate number of subhalos and generate a mass sample within lensing ROI
 
@@ -197,21 +198,18 @@ class SubhaloPopulation:
         with M_0 = M_MW and m_0 = 1e9 * M_s. Note that this is slightly different
         from what's in the draft at the moment.
 
-        :param n_calib: Number of subhalos expected between M_min_calib and M_max_calib for MW-sized halo
         :param beta: Slope of subhalo mass function
         :param m_min: Minimum mass of subhalos
         :param theta_roi: Radius of lensing ROI, in arcsecs
         :param M_hst: Host halo mass
         :param theta_s: Angular scale radius of host halo, in rad
         :param c_hst: Concentration parameter of host halo
-        :param params_eval: Parameters (n_calib, beta) for which p(x,z|params) will be calculated
+        :param params_eval: Parameters (f_sub, beta) for which p(x,z|params) will be calculated
         :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         """
 
         # Store settings
-        self.n_calib = n_calib
-        self.M_min_calib = M_min_calib
-        self.M_max_calib = M_max_calib
+        self.f_sub = f_sub
         self.beta = beta
         self.m_min = m_min
         self.theta_roi = theta_roi
@@ -220,19 +218,20 @@ class SubhaloPopulation:
         self.c_hst = c_hst
 
         # Alpha corresponding to calibration configuration
-        alpha = self._alpha_calib(M_min_calib, M_max_calib, n_calib, M_MW, beta)
+        alpha = self._alpha_f_sub(self.f_sub, self.M_hst, self.beta, M_MW, 1e9 * M_s, 0.01 * self.M_hst, 1e6 * M_s)
 
         # Total number of subhalos within virial radius of host halo
         n_sub_tot = self._n_sub(m_min, 0.01 * M_hst, M_hst, alpha, beta)
 
         # Fraction and number of subhalos within lensing region of interest specified by theta_roi
-        self.f_sub = max(
+        self.f_sub_roi = max(
             MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s) \
             / MassProfileNFW.M_cyl_div_M0(c_hst * theta_s / theta_s),
             0.0
         )
-        self.n_sub_roi = np.random.poisson(self.f_sub * n_sub_tot)
-        logger.debug("%s subhalos (%s expected)", self.n_sub_roi, self.f_sub * n_sub_tot)
+
+        self.n_sub_roi = np.random.poisson(self.f_sub_roi * n_sub_tot)
+        logger.debug("%s subhalos (%s expected)", self.n_sub_roi, self.f_sub_roi * n_sub_tot)
 
         # Sample of subhalo masses drawn from subhalo mass function
         self.m_sample = self._draw_m_sub(self.n_sub_roi, m_min, beta)
@@ -243,7 +242,7 @@ class SubhaloPopulation:
         # Calculate augmented data
         self.joint_log_probs = self._calculate_joint_log_probs(params_eval)
         if calculate_joint_score:
-            self.joint_score = self._calculate_joint_score([n_calib, beta])
+            self.joint_score = self._calculate_joint_score([f_sub, beta])
         else:
             self.joint_score = None
 
@@ -260,6 +259,17 @@ class SubhaloPopulation:
                 (-m_max_calib**(1.+beta) + m_min_calib**(1.+beta))
 
         return alpha
+
+    @staticmethod
+    def _alpha_f_sub(f_sub, M_hst, beta, M_0, m_0, m_max, m_min):
+        return f_sub * ((2 + beta) * M_0 * m_0 ** beta) / (m_max ** (beta + 2) - m_min ** (beta + 2))
+
+    def f_sub(self, alpha, M_hst, beta, M_0, m_0, m_max, m_min):
+        m_in_sub = alpha * M_hst / ((2 + beta) * M_0 * m_0 ** beta) * (m_max ** (beta + 2) - m_min ** (beta + 2))
+        # m_in_sub_roi = m_in_sub * self.f_sub_roi
+        # M_hst_cyl = self.f_sub_roi * M_hst
+        return m_in_sub / M_hst
+
 
     @staticmethod
     def _n_sub(m_min, m_max, M, alpha, beta, M_0=M_MW, m_0=1e9 * M_s):
@@ -307,9 +317,9 @@ class SubhaloPopulation:
 
         log_probs = [0.0 for _ in params_eval]
 
-        for i_eval, (n_calib, beta) in enumerate(params_eval):
+        for i_eval, (f_sub, beta) in enumerate(params_eval):
             # Poisson term
-            log_probs[i_eval] += self._log_p_n_sub(self.n_sub_roi, n_calib, beta)
+            log_probs[i_eval] += self._log_p_n_sub(self.n_sub_roi, f_sub, beta)
 
             # Power law for subhalo masses
             for m_sub in self.m_sample:
@@ -329,14 +339,14 @@ class SubhaloPopulation:
 
         return np.array([score0, score1])
 
-    def _log_p_n_sub(self, n_sub, n_calib, beta, include_constant=False):
-        alpha = self._alpha_calib(self.M_min_calib, self.M_max_calib, n_calib, M_MW, beta)
+    def _log_p_n_sub(self, n_sub, f_sub, beta, include_constant=False):
+        alpha = self._alpha_f_sub(self.f_sub, self.M_hst, self.beta, M_MW, 1e9 * M_s, 0.01 * self.M_hst, 1e6 * M_s)
         expected_n_sub = self.f_sub * self._n_sub(self.m_min, 0.01 * self.M_hst, self.M_hst, alpha, beta)
 
         if expected_n_sub < 1.e-6:
-            logger.warning("Small expected_n_sub = %s for n_calib = %s, beta = %s, alpha = %s, 0.01 * M_hst = %s, "
+            logger.warning("Small expected_n_sub = %s for f_sub = %s, beta = %s, alpha = %s, 0.01 * M_hst = %s, "
                            "m_min = %s, f_sub = %s",
-                           expected_n_sub, n_calib, beta, alpha,  0.01 * self.M_hst, self.m_min, self.f_sub)
+                           expected_n_sub, f_sub, beta, alpha,  0.01 * self.M_hst, self.m_min, self.f_sub)
 
         log_p_poisson = (
                 n_sub * np.log(expected_n_sub) - expected_n_sub

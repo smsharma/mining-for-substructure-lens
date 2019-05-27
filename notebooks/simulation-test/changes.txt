@@ -5,6 +5,7 @@ Changes proposed to simulator:
 - Have a cut to only use high-fidelity images (TODO)
 - Get Einstein radius straight from sigma_v, no scatter (DONE)
 - Advocate restricting \beta range (-2.5 to -1.5?)
+- Reduce m_min to 1e6 * M_s
 
 Problem(?): n_calib depends on beta. Possible solutions:
 - Have independent pre-factor to dn/dm, then convert (to n_calib, f_sub) as needed?
