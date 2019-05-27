@@ -8,6 +8,7 @@ from astropy.convolution import convolve, Gaussian2DKernel
 
 logger = logging.getLogger(__name__)
 
+import matplotlib.pyplot as plt
 
 class LensingObservationWithSubhalos:
     def __init__(self, sim_mvgauss_mean, sim_mvgauss_cov,
@@ -52,7 +53,6 @@ class LensingObservationWithSubhalos:
             np.random.multivariate_normal(sim_mvgauss_mean, sim_mvgauss_cov)
 
         self.z_l = 10 ** log_z_l
-        # theta_E = 10 ** log_theta_E
 
         # If fixing the source, these are fixed to reasonable mean-ish quantities
         # and a higher-than-average brightness, for an easier problem
@@ -79,19 +79,20 @@ class LensingObservationWithSubhalos:
         D_s = Planck15.angular_diameter_distance(z=self.z_s).value * Mpc
         D_ls = Planck15.angular_diameter_distance_z1z2(z1=self.z_l, z2=self.z_s).value * Mpc
 
-        # Get properties for NFW host
-        M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
+        # Get properties for NFW host DM halo
+        M_200_hst = self._M_200_sigma_v(self.sigma_v * Kmps, M_200_sigma_v_scatter)
         c_200_hst = MassProfileNFW.c_200_SCP(M_200_hst)
         r_s_hst, rho_s_hst = MassProfileNFW.get_r_s_rho_s_NFW(M_200_hst, c_200_hst)
 
         # Get properties for SIE host
         theta_E = MassProfileSIE.theta_E(self.sigma_v * Kmps, D_ls, D_s)
-
-        print(np.log10(M_200_hst / M_s), self.sigma_v, theta_E, theta_x_0, theta_y_0, TS)
+        print(theta_E)
+        print(np.log10(M_200_hst / M_s), self.sigma_v, theta_E, theta_x_0, theta_y_0, self.z_l)
 
         # Generate a subhalo population...
         ps = SubhaloPopulation(f_sub=f_sub, beta=beta, M_hst=M_200_hst, c_hst=c_200_hst,
                                m_min=m_200_min_sub, m_max=m_200_max_sub_div_M_hst * M_200_hst,
+                               # m_min=1e6 * M_s, m_max=1e9 * M_s,
                                theta_s=r_s_hst / D_l, theta_roi=2. * theta_E,
                                params_eval=params_eval, calculate_joint_score=calculate_joint_score)
 
@@ -172,7 +173,8 @@ class LensingObservationWithSubhalos:
         """
         return 10 ** (-0.4 * (mag - mag_zp))
 
-    def M_200_sigma_v(self, sigma_v, scatter=True):
+    @classmethod
+    def _M_200_sigma_v(self, sigma_v, scatter):
         """
         Relate central velocity dispersion to halo virial mass
         From https://arxiv.org/pdf/1804.04492.pdf
@@ -189,7 +191,7 @@ class LensingObservationWithSubhalos:
 
 class SubhaloPopulation:
     def __init__(self, f_sub=0.15, beta=-1.9,
-                 m_min=1e6 * M_s, m_max=1e11 * M_s,
+                 m_min=1e7 * M_s, m_max=1e11 * M_s,
                  theta_roi=2.5,
                  M_hst=1e14 * M_s, theta_s=1e-4, c_hst=6.,
                  params_eval=None, calculate_joint_score=False
@@ -238,10 +240,17 @@ class SubhaloPopulation:
         )
 
         self.n_sub_roi = np.random.poisson(self.f_sub_roi * n_sub_tot)
+        print(self.n_sub_roi)
         logger.debug("%s subhalos (%s expected)", self.n_sub_roi, self.f_sub_roi * n_sub_tot)
 
         # Sample of subhalo masses drawn from subhalo mass function
         self.m_sample = self._draw_m_sub(self.n_sub_roi, m_min, beta)
+        print(np.sum(self.m_sample) / (self.f_sub_roi * M_hst))
+        # print(np.log10(np.sum(self.m_sample / M_s)))
+        # print(np.log10(self.m_sample / M_s))
+        plt.figure()
+        plt.hist(np.log10(self.m_sample / M_s))
+        plt.yscale("log")
 
         # Sample subhalo positions uniformly within ROI
         self.theta_x_sample, self.theta_y_sample = self._draw_sub_coordinates(self.n_sub_roi, r_max=theta_roi)
@@ -269,6 +278,10 @@ class SubhaloPopulation:
         """
         alpha = f_sub * ((2 + beta) * M_0 * m_0 ** beta) / (m_max ** (beta + 2) - m_min ** (beta + 2))
         return alpha
+
+    @staticmethod
+    def _m_in_sub(M_hst, alpha, beta, m_min, m_max, M_0=M_MW, m_0=1e9 * M_s):
+        return M_hst * alpha * (m_max ** (beta + 2) - m_min ** (beta + 2)) / ((2 + beta) * M_0 * m_0 ** beta)
 
     @staticmethod
     def _n_sub(m_min, m_max, M, alpha, beta, M_0=M_MW, m_0=1e9 * M_s):
