@@ -156,10 +156,10 @@ class LensingObservationWithSubhalos:
 
     def _convolve_psf(self, image, fwhm_psf=0.18, pixel_size=0.1):
         """
-        Convolve input map of pixel_size with Gaussian PSF of with FWHM fwhm_psf
+        Convolve input map of pixel_size with Gaussian PSF of with FWHM `fwhm_psf`
         """
-        sigma_psf = fwhm_psf / 2 ** 1.5 * np.sqrt(np.log(2))
-        kernel = Gaussian2DKernel(x_stddev=1 * sigma_psf / pixel_size)
+        sigma_psf = fwhm_psf / 2 ** 1.5 * np.sqrt(np.log(2)) # Convert FWHM to standard deviation
+        kernel = Gaussian2DKernel(x_stddev=1. * sigma_psf / pixel_size)
 
         return convolve(image, kernel)
 
