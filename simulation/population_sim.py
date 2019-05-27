@@ -16,7 +16,8 @@ class LensingObservationWithSubhalos:
                  fix_source=True,
                  spherical_host=True,
                  M_200_sigma_v_scatter=False,
-                 m_200_min_sub=1e7 * M_s, f_sub=0.15, beta=-1.9,
+                 m_200_min_sub=1e6 * M_s, m_200_max_sub_div_M_hst=0.01,
+                 f_sub=0.15, beta=-1.9,
                  params_eval=None, calculate_joint_score=False,
                  ):
         """
@@ -37,6 +38,7 @@ class LensingObservationWithSubhalos:
         :param spherical_host: Whether to restrict to spherical hosts (q = 1), for an easier problem
         :param M_200_sigma_v_scatter: Whether to have scatter in sigma_v to M_200_host mapping
         :param m_200_min_sub: Lowest mass of subhalos to draw
+        :param m_200_max_sub_div_M_hst: Maximum mass of subhalo relative to host mass
         :param f_sub: Fraction of mass in substructure
         :param beta: Slope in the subhalo mass fn
         :param params_eval: Parameters (f_sub, beta) for which p(x,z|params) will be calculated
@@ -89,7 +91,8 @@ class LensingObservationWithSubhalos:
 
         # Generate a subhalo population...
         ps = SubhaloPopulation(f_sub=f_sub, beta=beta, M_hst=M_200_hst, c_hst=c_200_hst,
-                               m_min=m_200_min_sub, theta_s=r_s_hst / D_l, theta_roi=2. * theta_E,
+                               m_min=m_200_min_sub, m_max=m_200_max_sub_div_M_hst * M_200_hst,
+                               theta_s=r_s_hst / D_l, theta_roi=2. * theta_E,
                                params_eval=params_eval, calculate_joint_score=calculate_joint_score)
 
         # ... and grab its properties
@@ -185,8 +188,9 @@ class LensingObservationWithSubhalos:
 
 
 class SubhaloPopulation:
-    def __init__(self, f_sub=0.15,
-                 beta=-1.9, m_min=1e9 * M_s, theta_roi=2.5,
+    def __init__(self, f_sub=0.15, beta=-1.9,
+                 m_min=1e6 * M_s, m_max=1e11 * M_s,
+                 theta_roi=2.5,
                  M_hst=1e14 * M_s, theta_s=1e-4, c_hst=6.,
                  params_eval=None, calculate_joint_score=False
                  ):
@@ -198,8 +202,10 @@ class SubhaloPopulation:
         with M_0 = M_MW and m_0 = 1e9 * M_s. Note that this is slightly different
         from what's in the draft at the moment.
 
+        :param f_sub: Fraction of mass contained in substructure
         :param beta: Slope of subhalo mass function
         :param m_min: Minimum mass of subhalos
+        :param m_max: Maximum mass of subhalos
         :param theta_roi: Radius of lensing ROI, in arcsecs
         :param M_hst: Host halo mass
         :param theta_s: Angular scale radius of host halo, in rad
@@ -212,16 +218,17 @@ class SubhaloPopulation:
         self.f_sub = f_sub
         self.beta = beta
         self.m_min = m_min
+        self.m_max = m_max
         self.theta_roi = theta_roi
         self.M_hst = M_hst
         self.theta_s = theta_s
         self.c_hst = c_hst
 
         # Alpha corresponding to calibration configuration
-        alpha = self._alpha_f_sub(self.f_sub, self.M_hst, self.beta, M_MW, 1e9 * M_s, 0.01 * self.M_hst, 1e6 * M_s)
+        alpha = self._alpha_f_sub(f_sub, beta, m_min, m_max)
 
         # Total number of subhalos within virial radius of host halo
-        n_sub_tot = self._n_sub(m_min, 0.01 * M_hst, M_hst, alpha, beta)
+        n_sub_tot = self._n_sub(m_min, m_max, M_hst, alpha, beta)
 
         # Fraction and number of subhalos within lensing region of interest specified by theta_roi
         self.f_sub_roi = max(
@@ -249,27 +256,19 @@ class SubhaloPopulation:
     @staticmethod
     def _alpha_calib(m_min_calib, m_max_calib, n_calib, M_calib, beta, M_0=M_MW, m_0=1e9 * M_s):
         """
-        Get normalization alpha corresponding calibration configuration
+        Get normalization alpha corresponding calibration configuration specified by {n_calib, beta}
         """
-        # return -M_0 * (m_max_calib * m_min_calib / m_0) ** -beta * n_calib * (-1 + -beta) / \
-        #        (M_calib * (-m_max_calib ** -beta * m_min_calib + m_max_calib * m_min_calib ** -beta))
-        # has flointing point precision issues
-
         alpha = (n_calib * (-1 - beta) * M_0 / M_calib * m_0**beta) / \
                 (-m_max_calib**(1.+beta) + m_min_calib**(1.+beta))
-
         return alpha
 
     @staticmethod
-    def _alpha_f_sub(f_sub, M_hst, beta, M_0, m_0, m_max, m_min):
-        return f_sub * ((2 + beta) * M_0 * m_0 ** beta) / (m_max ** (beta + 2) - m_min ** (beta + 2))
-
-    def f_sub(self, alpha, M_hst, beta, M_0, m_0, m_max, m_min):
-        m_in_sub = alpha * M_hst / ((2 + beta) * M_0 * m_0 ** beta) * (m_max ** (beta + 2) - m_min ** (beta + 2))
-        # m_in_sub_roi = m_in_sub * self.f_sub_roi
-        # M_hst_cyl = self.f_sub_roi * M_hst
-        return m_in_sub / M_hst
-
+    def _alpha_f_sub(f_sub, beta, m_min, m_max, M_0=M_MW, m_0=1e9 * M_s):
+        """
+        Get normalization alpha corresponding calibration configuration specified by {f_sub, beta}
+        """
+        alpha = f_sub * ((2 + beta) * M_0 * m_0 ** beta) / (m_max ** (beta + 2) - m_min ** (beta + 2))
+        return alpha
 
     @staticmethod
     def _n_sub(m_min, m_max, M, alpha, beta, M_0=M_MW, m_0=1e9 * M_s):
