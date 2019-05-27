@@ -11,11 +11,9 @@ logger = logging.getLogger(__name__)
 import matplotlib.pyplot as plt
 
 class LensingObservationWithSubhalos:
-    def __init__(self, sim_mvgauss_mean, sim_mvgauss_cov,
-                 mag_zero=25.5, mag_iso=22.5, exposure=1610, fwhm_psf=0.18,
+    def __init__(self,
+                 mag_zero=25.5, mag_iso=22.5, exposure=1610., fwhm_psf=0.18,
                  pixel_size=0.1, n_xy=64,
-                 fix_source=True,
-                 spherical_host=True,
                  M_200_sigma_v_scatter=False,
                  m_200_min_sub=1e6 * M_s, m_200_max_sub_div_M_hst=0.01,
                  f_sub=0.15, beta=-1.9,
@@ -27,16 +25,12 @@ class LensingObservationWithSubhalos:
         Parameters corresponding to sim_mvgauss_[mean/cov] are:
         log_z_l, z_s, log_theta_E, sigma_v, q, theta_x_0, theta_y_0, log_theta_s_e, mag_s, TS
 
-        :param sim_mvgauss_mean: Mean of drawn parameters
-        :param sim_mvgauss_cov: Covariance matrix of drawn parameters
         :param mag_zero: Zero-point magnitude of observation
         :param mag_iso: Magnitude of isotropic sky brightness
         :param exposure: Exposure time of observation, in seconds
         :param fwhm_psf: FWHM of Gaussian PSF, in arcsecs
         :param pixel_size: Pixel side size, in arcsecs
         :param n_xy: Number of pixels (along x and y) of observation
-        :param fix_source: Whether to fix source parameters rather than drawing, for an easier problem
-        :param spherical_host: Whether to restrict to spherical hosts (q = 1), for an easier problem
         :param M_200_sigma_v_scatter: Whether to have scatter in sigma_v to M_200_host mapping
         :param m_200_min_sub: Lowest mass of subhalos to draw
         :param m_200_max_sub_div_M_hst: Maximum mass of subhalo relative to host mass
@@ -48,31 +42,24 @@ class LensingObservationWithSubhalos:
 
         self.coordinate_limit = pixel_size * n_xy / 2.
 
-        # Draw parameters from multivariate Gaussian
-        log_z_l, log_z_s, log_theta_E, self.sigma_v, q, theta_x_0, theta_y_0, theta_s_e, mag_s, TS = \
-            np.random.multivariate_normal(sim_mvgauss_mean, sim_mvgauss_cov)
+        ## Draw lens properties
 
-        self.z_l = 10 ** log_z_l
+        # Clip lens redshift `z_l` to be less than 1; higher redshift lenses no good!
+        self.z_l = 2.
+        while self.z_l > 1.:
+            self.z_l = 10 ** np.random.normal(-0.25, 0.25)
 
-        # If fixing the source, these are fixed to reasonable mean-ish quantities
-        # and a higher-than-average brightness, for an easier problem
-        if fix_source:
-            theta_s_e = 0.2
-            self.z_s = 1.5
-            mag_s = 23.
-        else:
-            theta_s_e = 10 ** theta_s_e
-            self.z_s = 10 ** log_z_s
+        # Properties consistent with Collett et al [1507.02657]
+        self.sigma_v = np.random.normal(225, 50)
+        theta_x_0 = np.random.normal(0, 0.2)
+        theta_y_0 = np.random.normal(0, 0.2)
 
-        # If only considering spherical host, set q = 1 for a simpler problem
-        if spherical_host:
-            q = 1
-        else:
-            # Clip host ellipticity to be between 0.2 and 1.0; outside values not physical
-            if q > 1:
-                q = 1
-            if q < 0.2:
-                q = 0.2
+        q = 1 # For now, hard-code host to be spherical
+
+        # Fix the source properties to reasonable mean-ish values
+        theta_s_e = 0.2
+        self.z_s = 1.5
+        mag_s = 23.
 
         # Get relevant distances
         D_l = Planck15.angular_diameter_distance(z=self.z_l).value * Mpc
@@ -86,13 +73,11 @@ class LensingObservationWithSubhalos:
 
         # Get properties for SIE host
         theta_E = MassProfileSIE.theta_E(self.sigma_v * Kmps, D_ls, D_s)
-        print(theta_E)
-        print(np.log10(M_200_hst / M_s), self.sigma_v, theta_E, theta_x_0, theta_y_0, self.z_l)
+        # print(np.log10(M_200_hst / M_s), self.sigma_v, theta_E, theta_x_0, theta_y_0, self.z_l)
 
         # Generate a subhalo population...
         ps = SubhaloPopulation(f_sub=f_sub, beta=beta, M_hst=M_200_hst, c_hst=c_200_hst,
                                m_min=m_200_min_sub, m_max=m_200_max_sub_div_M_hst * M_200_hst,
-                               # m_min=1e6 * M_s, m_max=1e9 * M_s,
                                theta_s=r_s_hst / D_l, theta_roi=2. * theta_E,
                                params_eval=params_eval, calculate_joint_score=calculate_joint_score)
 
@@ -100,6 +85,7 @@ class LensingObservationWithSubhalos:
         self.m_subs = ps.m_sample
         self.theta_xs = ps.theta_x_sample
         self.theta_ys = ps.theta_y_sample
+        self.f_sub_realiz = ps.f_sub_realiz
 
         # Convert magnitude for source and isotropic component to expected counts
         S_tot = self._mag_to_flux(mag_s, mag_zero)
@@ -239,19 +225,24 @@ class SubhaloPopulation:
             0.0
         )
 
+        # Fraction and number of subhalos within lensing region of interest specified by theta_roi
+        self.f_sub_roi = max(
+            self.M_hst * MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s) \
+            / self.M_hst,
+            0.0
+        )
+
         self.n_sub_roi = np.random.poisson(self.f_sub_roi * n_sub_tot)
-        print(self.n_sub_roi)
         logger.debug("%s subhalos (%s expected)", self.n_sub_roi, self.f_sub_roi * n_sub_tot)
 
         # Sample of subhalo masses drawn from subhalo mass function
-        self.m_sample = self._draw_m_sub(self.n_sub_roi, m_min, beta)
-        print(np.sum(self.m_sample) / (self.f_sub_roi * M_hst))
-        # print(np.log10(np.sum(self.m_sample / M_s)))
-        # print(np.log10(self.m_sample / M_s))
-        plt.figure()
-        plt.hist(np.log10(self.m_sample / M_s))
-        plt.yscale("log")
+        self.m_sample = self._draw_m_sub(self.n_sub_roi, m_min, m_max, beta)
+        self.f_sub_realiz = np.sum(self.m_sample) / (M_hst * MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s))
+        # print(self.n_sub_roi)
+        # print(self.f_sub_realiz)
 
+        # plt.hist(np.log10(self.m_sample / M_s))
+        # plt.yscale("log")
         # Sample subhalo positions uniformly within ROI
         self.theta_x_sample, self.theta_y_sample = self._draw_sub_coordinates(self.n_sub_roi, r_max=theta_roi)
 
@@ -293,24 +284,20 @@ class SubhaloPopulation:
         return max(n_sub, 0.0)
 
     @staticmethod
-    def _draw_m_sub(n_sub, m_sub_min, beta):
+    def _draw_m_sub(n_sub, m_sub_min, m_sub_max, beta):
         """
-        Draw subhalos from SHMF
+        Draw subhalos from SHMF. Stolen from:
+        https://stackoverflow.com/questions/31114330/python-generating-random-numbers-from-a-power-law-distribution
         """
         u = np.random.uniform(0, 1, size=n_sub)
-        m_sub = m_sub_min * (1 - u) ** (1.0 / (beta + 1.0))
-        return m_sub
+        m_low_u, m_high_u = m_sub_min ** (beta + 1), m_sub_max ** (beta + 1)
+        return (m_low_u + (m_high_u - m_low_u) * u) ** (1./ (beta + 1.0))
 
     @staticmethod
     def _draw_sub_coordinates(n_sub, r_min=0.0, r_max=2.5):
         """
         Draw subhalo n_sub coordinates uniformly within a ring r_min < r < r_max
         """
-        # phi_sub = np.random.uniform(low=0.0, high=2.0 * np.pi, size=n_sub)
-        # r_sub = np.random.uniform(low=r_min, high=r_max, size=n_sub)
-        # x_sub = r_sub * np.cos(phi_sub)
-        # y_sub = r_sub * np.sin(phi_sub)
-
         x_sub = []
         y_sub = []
         while len(x_sub) < n_sub:
