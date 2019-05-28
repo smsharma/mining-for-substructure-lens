@@ -8,8 +8,6 @@ from astropy.convolution import convolve, Gaussian2DKernel
 
 logger = logging.getLogger(__name__)
 
-import matplotlib.pyplot as plt
-
 class LensingObservationWithSubhalos:
     def __init__(self,
                  mag_zero=25.5, mag_iso=22.5, exposure=1610., fwhm_psf=0.18,
@@ -17,6 +15,7 @@ class LensingObservationWithSubhalos:
                  M_200_sigma_v_scatter=False,
                  m_200_min_sub=1e6 * M_s, m_200_max_sub_div_M_hst=0.01,
                  f_sub=0.15, beta=-1.9,
+                 m_min_calib=1e7 * M_s, m_max_sub_div_M_hst_calib=0.01,
                  params_eval=None, calculate_joint_score=False,
                  ):
         """
@@ -31,25 +30,25 @@ class LensingObservationWithSubhalos:
         :param fwhm_psf: FWHM of Gaussian PSF, in arcsecs
         :param pixel_size: Pixel side size, in arcsecs
         :param n_xy: Number of pixels (along x and y) of observation
-        :param M_200_sigma_v_scatter: Whether to have scatter in sigma_v to M_200_host mapping
+        :param M_200_sigma_v_scatter: Whether to simulate scatter in sigma_v to M_200_host mapping
         :param m_200_min_sub: Lowest mass of subhalos to draw
-        :param m_200_max_sub_div_M_hst: Maximum mass of subhalo relative to host mass
-        :param f_sub: Fraction of mass in substructure
-        :param beta: Slope in the subhalo mass fn
+        :param m_200_max_sub_div_M_hst: Maximum mass of subhalo relative to host halo mass
+        :param f_sub: Fraction of total contained mass in substructure
+        :param beta: Slope in the subhalo mass function
         :param params_eval: Parameters (f_sub, beta) for which p(x,z|params) will be calculated
         :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         """
 
         self.coordinate_limit = pixel_size * n_xy / 2.
 
-        ## Draw lens properties
+        # Draw lens properties
+        # Properties consistent with Collett et al [1507.02657]
 
         # Clip lens redshift `z_l` to be less than 1; higher redshift lenses no good!
         self.z_l = 2.
         while self.z_l > 1.:
             self.z_l = 10 ** np.random.normal(-0.25, 0.25)
 
-        # Properties consistent with Collett et al [1507.02657]
         self.sigma_v = np.random.normal(225, 50)
         theta_x_0 = np.random.normal(0, 0.2)
         theta_y_0 = np.random.normal(0, 0.2)
@@ -67,25 +66,30 @@ class LensingObservationWithSubhalos:
         D_ls = Planck15.angular_diameter_distance_z1z2(z1=self.z_l, z2=self.z_s).value * Mpc
 
         # Get properties for NFW host DM halo
-        M_200_hst = self._M_200_sigma_v(self.sigma_v * Kmps, M_200_sigma_v_scatter)
+        M_200_hst = self._M_200_sigma_v(self.sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
         c_200_hst = MassProfileNFW.c_200_SCP(M_200_hst)
         r_s_hst, rho_s_hst = MassProfileNFW.get_r_s_rho_s_NFW(M_200_hst, c_200_hst)
 
         # Get properties for SIE host
         theta_E = MassProfileSIE.theta_E(self.sigma_v * Kmps, D_ls, D_s)
-        # print(np.log10(M_200_hst / M_s), self.sigma_v, theta_E, theta_x_0, theta_y_0, self.z_l)
 
-        # Generate a subhalo population...
-        ps = SubhaloPopulation(f_sub=f_sub, beta=beta, M_hst=M_200_hst, c_hst=c_200_hst,
-                               m_min=m_200_min_sub, m_max=m_200_max_sub_div_M_hst * M_200_hst,
-                               theta_s=r_s_hst / D_l, theta_roi=2. * theta_E,
-                               params_eval=params_eval, calculate_joint_score=calculate_joint_score)
+        # Don't consider configuration with subhalo fraction > 1!
+        self.f_sub_realiz = 2.
+        while self.f_sub_realiz > 1.:
 
-        # ... and grab its properties
-        self.m_subs = ps.m_sample
-        self.theta_xs = ps.theta_x_sample
-        self.theta_ys = ps.theta_y_sample
-        self.f_sub_realiz = ps.f_sub_realiz
+            # Generate a subhalo population...
+            ps = SubhaloPopulation(f_sub=f_sub, beta=beta, M_hst=M_200_hst, c_hst=c_200_hst,
+                                   m_min=m_200_min_sub, m_max=m_200_max_sub_div_M_hst * M_200_hst,
+                                   m_min_calib=m_min_calib, m_max_calib=m_max_sub_div_M_hst_calib * M_200_hst,
+                                   theta_s=r_s_hst / D_l, theta_roi=2. * theta_E,
+                                   params_eval=params_eval, calculate_joint_score=calculate_joint_score)
+
+            # ... and grab its properties
+            self.m_subs = ps.m_sample
+            self.n_sub_roi = ps.n_sub_roi
+            self.theta_xs = ps.theta_x_sample
+            self.theta_ys = ps.theta_y_sample
+            self.f_sub_realiz = ps.f_sub_realiz
 
         # Convert magnitude for source and isotropic component to expected counts
         S_tot = self._mag_to_flux(mag_s, mag_zero)
@@ -155,7 +159,7 @@ class LensingObservationWithSubhalos:
 
     def _mag_to_flux(self, mag, mag_zp):
         """
-        Returns total flux of the integrated profile, in ADU relative to mag_zp
+        Returns total flux of the integrated profile corresponding to magnitude `mag`, in ADU relative to `mag_zp`
         """
         return 10 ** (-0.4 * (mag - mag_zp))
 
@@ -178,6 +182,7 @@ class LensingObservationWithSubhalos:
 class SubhaloPopulation:
     def __init__(self, f_sub=0.15, beta=-1.9,
                  m_min=1e7 * M_s, m_max=1e11 * M_s,
+                 m_min_calib=1e7 * M_s, m_max_calib=1e11 * M_s,
                  theta_roi=2.5,
                  M_hst=1e14 * M_s, theta_s=1e-4, c_hst=6.,
                  params_eval=None, calculate_joint_score=False
@@ -207,42 +212,31 @@ class SubhaloPopulation:
         self.beta = beta
         self.m_min = m_min
         self.m_max = m_max
+        self.m_min_calib = m_min_calib
+        self.m_max_calib = m_max_calib
         self.theta_roi = theta_roi
         self.M_hst = M_hst
         self.theta_s = theta_s
         self.c_hst = c_hst
 
         # Alpha corresponding to calibration configuration
-        alpha = self._alpha_f_sub(f_sub, beta, m_min, m_max)
+        alpha = self._alpha_f_sub(f_sub, beta, m_min_calib, m_max_calib)
 
         # Total number of subhalos within virial radius of host halo
         n_sub_tot = self._n_sub(m_min, m_max, M_hst, alpha, beta)
 
         # Fraction and number of subhalos within lensing region of interest specified by theta_roi
-        self.f_sub_roi = max(
-            MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s) \
-            / MassProfileNFW.M_cyl_div_M0(c_hst * theta_s / theta_s),
-            0.0
-        )
-
-        # Fraction and number of subhalos within lensing region of interest specified by theta_roi
-        self.f_sub_roi = max(
-            self.M_hst * MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s) \
-            / self.M_hst,
-            0.0
-        )
-
+        self.f_sub_roi = max(MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s), 0.0)
         self.n_sub_roi = np.random.poisson(self.f_sub_roi * n_sub_tot)
         logger.debug("%s subhalos (%s expected)", self.n_sub_roi, self.f_sub_roi * n_sub_tot)
 
         # Sample of subhalo masses drawn from subhalo mass function
         self.m_sample = self._draw_m_sub(self.n_sub_roi, m_min, m_max, beta)
-        self.f_sub_realiz = np.sum(self.m_sample) / (M_hst * MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s))
-        # print(self.n_sub_roi)
-        # print(self.f_sub_realiz)
 
-        # plt.hist(np.log10(self.m_sample / M_s))
-        # plt.yscale("log")
+        # Fraction of halo mass in subhalos, for diagnostic purposes
+        self.f_sub_realiz = np.sum(self.m_sample) / (M_hst * MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s))
+        logger.debug("%s Substructure fraction (%s expected)", self.f_sub_realiz, self.f_sub)
+
         # Sample subhalo positions uniformly within ROI
         self.theta_x_sample, self.theta_y_sample = self._draw_sub_coordinates(self.n_sub_roi, r_max=theta_roi)
 

@@ -1,17 +1,17 @@
 Changes proposed to simulator:
 - Turn off scatter in sigma_v to halo mass mapping (DONE, added option)
-- Have upper cutoff (~0.01 * M_host) in subhalo mass (check literature) (TODO)
-- Switch to parameterization based on f_sub rather than n_calib (check literature) (TODO)
-- Have a cut to only use high-fidelity images (TODO)
+- Have upper cutoff (~0.01 * M_host) in subhalo mass (check literature) (DONE)
+- Switch to parameterization based on f_sub rather than n_calib (check literature) (DONE)
 - Get Einstein radius straight from sigma_v, no scatter (DONE)
-- Advocate restricting \beta range (-2.5 to -1.5?)
-- Reduce m_min to 1e6 * M_s (?)
-- Restrict range of lens redshift
-- Increase range of host mass
+- Restrict range of lens redshift (DONE)
+- Increase range of host mass (DONE)
+- Don't draw from mvgauss---put in by hand (DONE)
+- Don't consider configurations with subhalo fraction > 1 (DONE)
 
-Problem(?): n_calib depends on beta. Possible solutions:
-- Have independent pre-factor to dn/dm, then convert (to n_calib, f_sub) as needed?
-- Use f_sub, explore universality
+Advocate:
+- Restricting \beta range (-2.5 to -1.5?)
+- Save distances instead of redshifts?
+- Save f_sub for diagnostic purposes
+- Consider restricted f_sub definition, like n_calib?
 
-Notes:
-- Save D_ls, D_l, D_s instead of redshifts?
+There is less substructure fractions in general compared to before
