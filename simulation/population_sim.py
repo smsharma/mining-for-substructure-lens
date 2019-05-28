@@ -13,16 +13,13 @@ class LensingObservationWithSubhalos:
                  mag_zero=25.5, mag_iso=22.5, exposure=1610., fwhm_psf=0.18,
                  pixel_size=0.1, n_xy=64,
                  M_200_sigma_v_scatter=False,
-                 m_200_min_sub=1e6 * M_s, m_200_max_sub_div_M_hst=0.01,
-                 f_sub=0.15, beta=-1.9,
-                 m_min_calib=1e7 * M_s, m_max_sub_div_M_hst_calib=0.01,
+                 m_200_min_sub=1e7 * M_s, m_200_max_sub_div_M_hst=0.01,
+                 f_sub=0.05, beta=-1.9,
+                 m_min_calib=1e6 * M_s, m_max_sub_div_M_hst_calib=0.01,
                  params_eval=None, calculate_joint_score=False,
                  ):
         """
         Class to simulation an observation strong lensing image, with substructure sprinkled in.
-
-        Parameters corresponding to sim_mvgauss_[mean/cov] are:
-        log_z_l, z_s, log_theta_E, sigma_v, q, theta_x_0, theta_y_0, log_theta_s_e, mag_s, TS
 
         :param mag_zero: Zero-point magnitude of observation
         :param mag_iso: Magnitude of isotropic sky brightness
@@ -34,7 +31,10 @@ class LensingObservationWithSubhalos:
         :param m_200_min_sub: Lowest mass of subhalos to draw
         :param m_200_max_sub_div_M_hst: Maximum mass of subhalo relative to host halo mass
         :param f_sub: Fraction of total contained mass in substructure
-        :param beta: Slope in the subhalo mass function
+        :param beta: Slope in the subhaalo mass function
+        :param m_min_calib: Minimum mass above which subhalo mass fraction is `f_sub`
+        :param m_max_sub_div_M_hst_calib: Maximum mass below which subhalo mass fraction is `f_sub`,
+            in units of the host halo mass
         :param params_eval: Parameters (f_sub, beta) for which p(x,z|params) will be calculated
         :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         """
@@ -164,7 +164,7 @@ class LensingObservationWithSubhalos:
         return 10 ** (-0.4 * (mag - mag_zp))
 
     @classmethod
-    def _M_200_sigma_v(self, sigma_v, scatter):
+    def _M_200_sigma_v(self, sigma_v, scatter=False):
         """
         Relate central velocity dispersion to halo virial mass
         From https://arxiv.org/pdf/1804.04492.pdf
@@ -333,8 +333,8 @@ class SubhaloPopulation:
         return np.array([score0, score1])
 
     def _log_p_n_sub(self, n_sub, f_sub, beta, include_constant=False):
-        alpha = self._alpha_f_sub(self.f_sub, self.M_hst, self.beta, M_MW, 1e9 * M_s, 0.01 * self.M_hst, 1e6 * M_s)
-        expected_n_sub = self.f_sub * self._n_sub(self.m_min, 0.01 * self.M_hst, self.M_hst, alpha, beta)
+        alpha = self._alpha_f_sub(self.f_sub, self.beta, self.m_min_calib, self.m_max_calib)
+        expected_n_sub = self.f_sub_roi * self._n_sub(self.m_min, self.m_max, self.M_hst, alpha, beta)
 
         if expected_n_sub < 1.e-6:
             logger.warning("Small expected_n_sub = %s for f_sub = %s, beta = %s, alpha = %s, 0.01 * M_hst = %s, "
@@ -349,6 +349,7 @@ class SubhaloPopulation:
         return log_p_poisson
 
     def _log_p_m_sub(self, m, beta, include_constant=False):
+        # TODO [SM]: does this need to be changed to account for upper mass cutoff?
         log_p = np.log(- beta - 1.0) + beta * np.log(m / self.m_min)
         if include_constant:
             log_p = log_p - np.log(self.m_min)

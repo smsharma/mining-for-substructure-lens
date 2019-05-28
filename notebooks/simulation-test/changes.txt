@@ -7,6 +7,7 @@ Changes proposed to simulator:
 - Increase range of host mass (DONE)
 - Don't draw from mvgauss---put in by hand (DONE)
 - Don't consider configurations with subhalo fraction > 1 (DONE)
+- Does `_log_p_m_sub` need to be adjusted to account for upper mass cutoff?
 
 Advocate:
 - Restricting \beta range (-2.5 to -1.5?)
