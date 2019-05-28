@@ -12,10 +12,10 @@ class LensingObservationWithSubhalos:
     def __init__(self,
                  mag_zero=25.5, mag_iso=22.5, exposure=1610., fwhm_psf=0.18,
                  pixel_size=0.1, n_xy=64,
-                 M_200_sigma_v_scatter=False,
-                 m_200_min_sub=1e7 * M_s, m_200_max_sub_div_M_hst=0.01,
                  f_sub=0.05, beta=-1.9,
                  m_min_calib=1e6 * M_s, m_max_sub_div_M_hst_calib=0.01,
+                 m_200_min_sub=1e7 * M_s, m_200_max_sub_div_M_hst=0.01,
+                 M_200_sigma_v_scatter=False,
                  params_eval=None, calculate_joint_score=False,
                  ):
         """
@@ -23,33 +23,35 @@ class LensingObservationWithSubhalos:
 
         :param mag_zero: Zero-point magnitude of observation
         :param mag_iso: Magnitude of isotropic sky brightness
-        :param exposure: Exposure time of observation, in seconds
+        :param exposure: Exposure time of observation, in seconds (including gain)
         :param fwhm_psf: FWHM of Gaussian PSF, in arcsecs
         :param pixel_size: Pixel side size, in arcsecs
         :param n_xy: Number of pixels (along x and y) of observation
-        :param M_200_sigma_v_scatter: Whether to simulate scatter in sigma_v to M_200_host mapping
-        :param m_200_min_sub: Lowest mass of subhalos to draw
-        :param m_200_max_sub_div_M_hst: Maximum mass of subhalo relative to host halo mass
+
         :param f_sub: Fraction of total contained mass in substructure
         :param beta: Slope in the subhaalo mass function
         :param m_min_calib: Minimum mass above which subhalo mass fraction is `f_sub`
         :param m_max_sub_div_M_hst_calib: Maximum mass below which subhalo mass fraction is `f_sub`,
             in units of the host halo mass
+        :param m_200_min_sub: Lowest mass of subhalos to draw
+        :param m_200_max_sub_div_M_hst: Maximum mass of subhalos to draw, in units of host halo mass
+
+        :param M_200_sigma_v_scatter: Whether to apply lognormal scatter in sigma_v to M_200_host mapping
+
         :param params_eval: Parameters (f_sub, beta) for which p(x,z|params) will be calculated
         :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         """
 
         self.coordinate_limit = pixel_size * n_xy / 2.
 
-        # Draw lens properties
-        # Properties consistent with Collett et al [1507.02657]
+        ## Draw lens properties consistent with Collett et al [1507.02657]
 
-        # Clip lens redshift `z_l` to be less than 1; higher redshift lenses no good!
+        # Clip lens redshift `z_l` to be less than 1; high-redshift lenses no good for our purposes!
         self.z_l = 2.
         while self.z_l > 1.:
             self.z_l = 10 ** np.random.normal(-0.25, 0.25)
 
-        self.sigma_v = np.random.normal(225, 50)
+        sigma_v = np.random.normal(225, 50)
         theta_x_0 = np.random.normal(0, 0.2)
         theta_y_0 = np.random.normal(0, 0.2)
 
@@ -66,12 +68,12 @@ class LensingObservationWithSubhalos:
         D_ls = Planck15.angular_diameter_distance_z1z2(z1=self.z_l, z2=self.z_s).value * Mpc
 
         # Get properties for NFW host DM halo
-        M_200_hst = self._M_200_sigma_v(self.sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
+        M_200_hst = self.M_200_sigma_v(sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
         c_200_hst = MassProfileNFW.c_200_SCP(M_200_hst)
         r_s_hst, rho_s_hst = MassProfileNFW.get_r_s_rho_s_NFW(M_200_hst, c_200_hst)
 
         # Get properties for SIE host
-        theta_E = MassProfileSIE.theta_E(self.sigma_v * Kmps, D_ls, D_s)
+        theta_E = MassProfileSIE.theta_E(sigma_v * Kmps, D_ls, D_s)
 
         # Don't consider configuration with subhalo fraction > 1!
         self.f_sub_realiz = 2.
@@ -164,7 +166,7 @@ class LensingObservationWithSubhalos:
         return 10 ** (-0.4 * (mag - mag_zp))
 
     @classmethod
-    def _M_200_sigma_v(self, sigma_v, scatter=False):
+    def M_200_sigma_v(cls, sigma_v, scatter=False):
         """
         Relate central velocity dispersion to halo virial mass
         From https://arxiv.org/pdf/1804.04492.pdf
@@ -280,7 +282,7 @@ class SubhaloPopulation:
     @staticmethod
     def _draw_m_sub(n_sub, m_sub_min, m_sub_max, beta):
         """
-        Draw subhalos from SHMF. Stolen from:
+        Draw subhalo masses from SHMF with slope `beta` and min/max masses `m_sub_min` and `m_sub_max` . Stolen from:
         https://stackoverflow.com/questions/31114330/python-generating-random-numbers-from-a-power-law-distribution
         """
         u = np.random.uniform(0, 1, size=n_sub)
@@ -337,9 +339,9 @@ class SubhaloPopulation:
         expected_n_sub = self.f_sub_roi * self._n_sub(self.m_min, self.m_max, self.M_hst, alpha, beta)
 
         if expected_n_sub < 1.e-6:
-            logger.warning("Small expected_n_sub = %s for f_sub = %s, beta = %s, alpha = %s, 0.01 * M_hst = %s, "
+            logger.warning("Small expected_n_sub = %s for f_sub = %s, beta = %s, alpha = %s, m_max = %s, "
                            "m_min = %s, f_sub = %s",
-                           expected_n_sub, f_sub, beta, alpha,  0.01 * self.M_hst, self.m_min, self.f_sub)
+                           expected_n_sub, f_sub, beta, alpha,  self.m_max, self.m_min, self.f_sub)
 
         log_p_poisson = (
                 n_sub * np.log(expected_n_sub) - expected_n_sub
