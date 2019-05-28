@@ -8,16 +8,26 @@ from astropy.convolution import convolve, Gaussian2DKernel
 
 logger = logging.getLogger(__name__)
 
+
 class LensingObservationWithSubhalos:
-    def __init__(self,
-                 mag_zero=25.5, mag_iso=22.5, exposure=1610., fwhm_psf=0.18,
-                 pixel_size=0.1, n_xy=64,
-                 f_sub=0.05, beta=-1.9,
-                 m_min_calib=1e6 * M_s, m_max_sub_div_M_hst_calib=0.01,
-                 m_200_min_sub=1e7 * M_s, m_200_max_sub_div_M_hst=0.01,
-                 M_200_sigma_v_scatter=False,
-                 params_eval=None, calculate_joint_score=False,
-                 ):
+    def __init__(
+        self,
+        mag_zero=25.5,
+        mag_iso=22.5,
+        exposure=1610.0,
+        fwhm_psf=0.18,
+        pixel_size=0.1,
+        n_xy=64,
+        f_sub=0.05,
+        beta=-1.9,
+        m_min_calib=1e6 * M_s,
+        m_max_sub_div_M_hst_calib=0.01,
+        m_200_min_sub=1e7 * M_s,
+        m_200_max_sub_div_M_hst=0.01,
+        M_200_sigma_v_scatter=False,
+        params_eval=None,
+        calculate_joint_score=False,
+    ):
         """
         Class to simulation an observation strong lensing image, with substructure sprinkled in.
 
@@ -42,25 +52,25 @@ class LensingObservationWithSubhalos:
         :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         """
 
-        self.coordinate_limit = pixel_size * n_xy / 2.
+        self.coordinate_limit = pixel_size * n_xy / 2.0
 
         ## Draw lens properties consistent with Collett et al [1507.02657]
 
         # Clip lens redshift `z_l` to be less than 1; high-redshift lenses no good for our purposes!
-        self.z_l = 2.
-        while self.z_l > 1.:
+        self.z_l = 2.0
+        while self.z_l > 1.0:
             self.z_l = 10 ** np.random.normal(-0.25, 0.25)
 
         sigma_v = np.random.normal(225, 50)
         theta_x_0 = np.random.normal(0, 0.2)
         theta_y_0 = np.random.normal(0, 0.2)
 
-        q = 1 # For now, hard-code host to be spherical
+        q = 1  # For now, hard-code host to be spherical
 
         # Fix the source properties to reasonable mean-ish values
         theta_s_e = 0.2
         self.z_s = 1.5
-        mag_s = 23.
+        mag_s = 23.0
 
         # Get relevant distances
         D_l = Planck15.angular_diameter_distance(z=self.z_l).value * Mpc
@@ -76,15 +86,24 @@ class LensingObservationWithSubhalos:
         theta_E = MassProfileSIE.theta_E(sigma_v * Kmps, D_ls, D_s)
 
         # Don't consider configuration with subhalo fraction > 1!
-        self.f_sub_realiz = 2.
-        while self.f_sub_realiz > 1.:
+        self.f_sub_realiz = 2.0
+        while self.f_sub_realiz > 1.0:
 
             # Generate a subhalo population...
-            ps = SubhaloPopulation(f_sub=f_sub, beta=beta, M_hst=M_200_hst, c_hst=c_200_hst,
-                                   m_min=m_200_min_sub, m_max=m_200_max_sub_div_M_hst * M_200_hst,
-                                   m_min_calib=m_min_calib, m_max_calib=m_max_sub_div_M_hst_calib * M_200_hst,
-                                   theta_s=r_s_hst / D_l, theta_roi=2. * theta_E,
-                                   params_eval=params_eval, calculate_joint_score=calculate_joint_score)
+            ps = SubhaloPopulation(
+                f_sub=f_sub,
+                beta=beta,
+                M_hst=M_200_hst,
+                c_hst=c_200_hst,
+                m_min=m_200_min_sub,
+                m_max=m_200_max_sub_div_M_hst * M_200_hst,
+                m_min_calib=m_min_calib,
+                m_max_calib=m_max_sub_div_M_hst_calib * M_200_hst,
+                theta_s=r_s_hst / D_l,
+                theta_roi=2.0 * theta_E,
+                params_eval=params_eval,
+                calculate_joint_score=calculate_joint_score,
+            )
 
             # ... and grab its properties
             self.m_subs = ps.m_sample
@@ -98,9 +117,7 @@ class LensingObservationWithSubhalos:
         f_iso = self._mag_to_flux(mag_iso, mag_zero)
 
         # Set host properties. Host assumed to be at the center of the image.
-        hst_param_dict = {"profile": "SIE",
-                          "theta_x_0": 0.0, "theta_y_0": 0.0,
-                          "theta_E": theta_E, "q": q}
+        hst_param_dict = {"profile": "SIE", "theta_x_0": 0.0, "theta_y_0": 0.0, "theta_E": theta_E, "q": q}
 
         lens_list = [hst_param_dict]
 
@@ -108,39 +125,26 @@ class LensingObservationWithSubhalos:
         for m, theta_x, theta_y in zip(self.m_subs, self.theta_xs, self.theta_ys):
             c = MassProfileNFW.c_200_SCP(m)
             r_s, rho_s = MassProfileNFW.get_r_s_rho_s_NFW(m, c)
-            sub_param_dict = {
-                "profile": "NFW",
-                "theta_x_0": theta_x, "theta_y_0": theta_y,
-                "M_200": m,
-                "r_s": r_s,
-                "rho_s": rho_s
-            }
+            sub_param_dict = {"profile": "NFW", "theta_x_0": theta_x, "theta_y_0": theta_y, "M_200": m, "r_s": r_s, "rho_s": rho_s}
             lens_list.append(sub_param_dict)
 
         # Set source properties
-        src_param_dict = {
-            "profile": "Sersic",
-            "theta_x_0": theta_x_0, "theta_y_0": theta_y_0,
-            "S_tot": S_tot,
-            "theta_e": theta_s_e,
-            "n_srsc": 1,
-        }
+        src_param_dict = {"profile": "Sersic", "theta_x_0": theta_x_0, "theta_y_0": theta_y_0, "S_tot": S_tot, "theta_e": theta_s_e, "n_srsc": 1}
 
         # Set observation and global properties
-        observation_dict = {"n_x": n_xy, "n_y": n_xy,
-                            "theta_x_lims": (-self.coordinate_limit, self.coordinate_limit),
-                            "theta_y_lims": (-self.coordinate_limit, self.coordinate_limit),
-                            "exposure": exposure,
-                            "f_iso": f_iso,
-                            }
+        observation_dict = {
+            "n_x": n_xy,
+            "n_y": n_xy,
+            "theta_x_lims": (-self.coordinate_limit, self.coordinate_limit),
+            "theta_y_lims": (-self.coordinate_limit, self.coordinate_limit),
+            "exposure": exposure,
+            "f_iso": f_iso,
+        }
 
         global_dict = {"z_s": self.z_s, "z_l": self.z_l}
 
         # Inititalize lensing class and produce lensed image
-        lsi = LensingSim(lens_list,
-                         [src_param_dict],
-                         global_dict,
-                         observation_dict)
+        lsi = LensingSim(lens_list, [src_param_dict], global_dict, observation_dict)
 
         self.image = lsi.lensed_image()
         self.image_poiss = np.random.poisson(self.image)  # Poisson fluctuate
@@ -154,8 +158,8 @@ class LensingObservationWithSubhalos:
         """
         Convolve input map of pixel_size with Gaussian PSF of with FWHM `fwhm_psf`
         """
-        sigma_psf = fwhm_psf / 2 ** 1.5 * np.sqrt(np.log(2)) # Convert FWHM to standard deviation
-        kernel = Gaussian2DKernel(x_stddev=1. * sigma_psf / pixel_size)
+        sigma_psf = fwhm_psf / 2 ** 1.5 * np.sqrt(np.log(2))  # Convert FWHM to standard deviation
+        kernel = Gaussian2DKernel(x_stddev=1.0 * sigma_psf / pixel_size)
 
         return convolve(image, kernel)
 
@@ -182,13 +186,21 @@ class LensingObservationWithSubhalos:
 
 
 class SubhaloPopulation:
-    def __init__(self, f_sub=0.15, beta=-1.9,
-                 m_min=1e7 * M_s, m_max=1e11 * M_s,
-                 m_min_calib=1e7 * M_s, m_max_calib=1e11 * M_s,
-                 theta_roi=2.5,
-                 M_hst=1e14 * M_s, theta_s=1e-4, c_hst=6.,
-                 params_eval=None, calculate_joint_score=False
-                 ):
+    def __init__(
+        self,
+        f_sub=0.15,
+        beta=-1.9,
+        m_min=1e7 * M_s,
+        m_max=1e11 * M_s,
+        m_min_calib=1e7 * M_s,
+        m_max_calib=1e11 * M_s,
+        theta_roi=2.5,
+        M_hst=1e14 * M_s,
+        theta_s=1e-4,
+        c_hst=6.0,
+        params_eval=None,
+        calculate_joint_score=False,
+    ):
         """
         Calibrate number of subhalos and generate a mass sample within lensing ROI
 
@@ -224,7 +236,7 @@ class SubhaloPopulation:
         # Alpha corresponding to calibration configuration
         alpha = self._alpha_f_sub(f_sub, beta, m_min_calib, m_max_calib)
 
-        # Total number of subhalos within virial radius of host halo
+        # Total expected number of subhalos within virial radius of host halo
         n_sub_tot = self._n_sub(m_min, m_max, M_hst, alpha, beta)
 
         # Fraction and number of subhalos within lensing region of interest specified by theta_roi
@@ -249,14 +261,14 @@ class SubhaloPopulation:
         else:
             self.joint_score = None
 
-    @staticmethod
-    def _alpha_calib(m_min_calib, m_max_calib, n_calib, M_calib, beta, M_0=M_MW, m_0=1e9 * M_s):
-        """
-        Get normalization alpha corresponding calibration configuration specified by {n_calib, beta}
-        """
-        alpha = (n_calib * (-1 - beta) * M_0 / M_calib * m_0**beta) / \
-                (-m_max_calib**(1.+beta) + m_min_calib**(1.+beta))
-        return alpha
+    # @staticmethod
+    # def _alpha_calib(m_min_calib, m_max_calib, n_calib, M_calib, beta, M_0=M_MW, m_0=1e9 * M_s):
+    #     """
+    #     Get normalization alpha corresponding calibration configuration specified by {n_calib, beta}
+    #     """
+    #     alpha = (n_calib * (-1 - beta) * M_0 / M_calib * m_0**beta) / \
+    #             (-m_max_calib**(1.+beta) + m_min_calib**(1.+beta))
+    #     return alpha
 
     @staticmethod
     def _alpha_f_sub(f_sub, beta, m_min, m_max, M_0=M_MW, m_0=1e9 * M_s):
@@ -275,8 +287,7 @@ class SubhaloPopulation:
         """
         Get (expected) number of subhalos between m_min, m_max
         """
-        n_sub = (alpha * M * (m_max * m_min / m_0) ** beta * (m_max ** -beta * m_min - m_max * m_min ** -beta)
-             / (M_0 * (-1 + -beta)))
+        n_sub = alpha * M * (m_max * m_min / m_0) ** beta * (m_max ** -beta * m_min - m_max * m_min ** -beta) / (M_0 * (-1 + -beta))
         return max(n_sub, 0.0)
 
     @staticmethod
@@ -287,7 +298,7 @@ class SubhaloPopulation:
         """
         u = np.random.uniform(0, 1, size=n_sub)
         m_low_u, m_high_u = m_sub_min ** (beta + 1), m_sub_max ** (beta + 1)
-        return (m_low_u + (m_high_u - m_low_u) * u) ** (1./ (beta + 1.0))
+        return (m_low_u + (m_high_u - m_low_u) * u) ** (1.0 / (beta + 1.0))
 
     @staticmethod
     def _draw_sub_coordinates(n_sub, r_min=0.0, r_max=2.5):
@@ -307,6 +318,9 @@ class SubhaloPopulation:
         return x_sub, y_sub
 
     def _calculate_joint_log_probs(self, params_eval):
+        """
+        Calculates log p(self.n_sub_roi, self.m_sample | f_sub, beta)
+        """
         if params_eval is None:
             params_eval = []
 
@@ -322,7 +336,10 @@ class SubhaloPopulation:
 
         return log_probs
 
-    def _calculate_joint_score(self, params, eps=1.e-3):
+    def _calculate_joint_score(self, params, eps=1.0e-3):
+        """
+        Calculates grad_(f_sub, beta) log p(self.n_sub_roi, self.m_sample | f_sub, beta)
+        """
         eps_vec0 = np.asarray(params).flatten() + np.array([eps, 0.0]).reshape(1, 2)
         eps_vec1 = np.asarray(params).flatten() + np.array([0.0, eps]).reshape(1, 2)
         params = np.asarray(params).reshape(1, 2)
@@ -335,24 +352,26 @@ class SubhaloPopulation:
         return np.array([score0, score1])
 
     def _log_p_n_sub(self, n_sub, f_sub, beta, include_constant=False):
-        alpha = self._alpha_f_sub(self.f_sub, self.beta, self.m_min_calib, self.m_max_calib)
+        """
+        Calculates log p(self.n_sub_roi | f_sub, beta)
+        """
+        alpha = self._alpha_f_sub(f_sub, beta, self.m_min_calib, self.m_max_calib)
         expected_n_sub = self.f_sub_roi * self._n_sub(self.m_min, self.m_max, self.M_hst, alpha, beta)
 
-        if expected_n_sub < 1.e-6:
-            logger.warning("Small expected_n_sub = %s for f_sub = %s, beta = %s, alpha = %s, m_max = %s, "
-                           "m_min = %s, f_sub = %s",
-                           expected_n_sub, f_sub, beta, alpha,  self.m_max, self.m_min, self.f_sub)
-
-        log_p_poisson = (
-                n_sub * np.log(expected_n_sub) - expected_n_sub
-        )
+        log_p_poisson = n_sub * np.log(expected_n_sub) - expected_n_sub
         if include_constant:
             log_p_poisson = log_p_poisson - np.log(math.factorial(n_sub))
         return log_p_poisson
 
-    def _log_p_m_sub(self, m, beta, include_constant=False):
-        # TODO [SM]: does this need to be changed to account for upper mass cutoff?
-        log_p = np.log(- beta - 1.0) + beta * np.log(m / self.m_min)
-        if include_constant:
-            log_p = log_p - np.log(self.m_min)
+    def _log_p_m_sub(self, m, beta, m_0=1e9 * M_s):
+        """
+        Calculates log p(m_i | beta)
+        """
+        if m < self.m_min or m > self.m_max:
+            logger.warning("Calculating probabiility for subhalo mass out of bounds -- this should not happen")
+            return 0.0
+
+        log_p = (
+            beta * np.log(m / m_0) + np.log(-beta - 1.0) - np.log(m_0) + np.log(m_0 ** (beta + 1.0) / (self.m_min ** (beta + 1.0) - self.m_max ** (beta + 1.0)))
+        )
         return log_p
