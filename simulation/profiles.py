@@ -45,6 +45,16 @@ class MassProfileSIE:
         # Return deflection field
         return x_d, y_d
 
+    @classmethod
+    def theta_E(self, sigma_v, D_ls, D_s):
+        """ Einstein radius (in arcsecs) for a SIS halo
+            :param sigma_v: Central velocity dispersion of SIE halo
+            :param D_ls: Angular distance between lens and source, in natural units
+            :param D_s: Angular distance between observer and source, in natural units
+            :return: Einstein radius of lens, in arcsecs
+        """
+        return 4 * np.pi * sigma_v ** 2 * D_ls / D_s * radtoasc
+
 
 class MassProfileNFW:
     def __init__(self, x_0, y_0, M_200, kappa_s, r_s):
