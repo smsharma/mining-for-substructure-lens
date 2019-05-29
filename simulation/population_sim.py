@@ -52,25 +52,42 @@ class LensingObservationWithSubhalos:
         :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         """
 
+        # Store input
+        self.mag_zero = mag_zero
+        self.mag_iso = mag_iso
+        self.exposure = exposure
+        self.fwhm_psf = fwhm_psf
+        self.pixel_size = pixel_size
+        self.n_xy = n_xy
+        self.f_sub = f_sub
+        self.beta = beta
+        self.m_min_calib = m_min_calib
+        self.m_max_sub_div_M_hst_calib = m_max_sub_div_M_hst_calib
+        self.m_200_min_sub = m_200_min_sub
+        self.m_200_max_sub_div_M_hst = m_200_max_sub_div_M_hst
+        self.M_200_sigma_v_scatter = M_200_sigma_v_scatter
+        self.params_eval = params_eval
+        self.calculate_joint_score = calculate_joint_score
+
         self.coordinate_limit = pixel_size * n_xy / 2.0
 
-        ## Draw lens properties consistent with Collett et al [1507.02657]
+        # Draw lens properties consistent with Collett et al [1507.02657]
 
         # Clip lens redshift `z_l` to be less than 1; high-redshift lenses no good for our purposes!
         self.z_l = 2.0
         while self.z_l > 1.0:
             self.z_l = 10 ** np.random.normal(-0.25, 0.25)
 
-        sigma_v = np.random.normal(225, 50)
-        theta_x_0 = np.random.normal(0, 0.2)
-        theta_y_0 = np.random.normal(0, 0.2)
+        self.sigma_v = np.random.normal(225, 50)
+        self.theta_x_0 = np.random.normal(0, 0.2)
+        self.theta_y_0 = np.random.normal(0, 0.2)
 
         q = 1  # For now, hard-code host to be spherical
 
         # Fix the source properties to reasonable mean-ish values
-        theta_s_e = 0.2
+        self.theta_s_e = 0.2
         self.z_s = 1.5
-        mag_s = 23.0
+        self.mag_s = 23.0
 
         # Get relevant distances
         D_l = Planck15.angular_diameter_distance(z=self.z_l).value * Mpc
@@ -78,12 +95,12 @@ class LensingObservationWithSubhalos:
         D_ls = Planck15.angular_diameter_distance_z1z2(z1=self.z_l, z2=self.z_s).value * Mpc
 
         # Get properties for NFW host DM halo
-        M_200_hst = self.M_200_sigma_v(sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
+        M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
         c_200_hst = MassProfileNFW.c_200_SCP(M_200_hst)
         r_s_hst, rho_s_hst = MassProfileNFW.get_r_s_rho_s_NFW(M_200_hst, c_200_hst)
 
         # Get properties for SIE host
-        theta_E = MassProfileSIE.theta_E(sigma_v * Kmps, D_ls, D_s)
+        self.theta_E = MassProfileSIE.theta_E(self.sigma_v * Kmps, D_ls, D_s)
 
         # Don't consider configuration with subhalo fraction > 1!
         self.f_sub_realiz = 2.0
@@ -100,7 +117,7 @@ class LensingObservationWithSubhalos:
                 m_min_calib=m_min_calib,
                 m_max_calib=m_max_sub_div_M_hst_calib * M_200_hst,
                 theta_s=r_s_hst / D_l,
-                theta_roi=2.0 * theta_E,
+                theta_roi=2.0 * self.theta_E,
                 params_eval=params_eval,
                 calculate_joint_score=calculate_joint_score,
             )
@@ -113,8 +130,8 @@ class LensingObservationWithSubhalos:
             self.f_sub_realiz = ps.f_sub_realiz
 
         # Convert magnitude for source and isotropic component to expected counts
-        S_tot = self._mag_to_flux(mag_s, mag_zero)
-        f_iso = self._mag_to_flux(mag_iso, mag_zero)
+        S_tot = self._mag_to_flux(self.mag_s, self.mag_zero)
+        f_iso = self._mag_to_flux(self.mag_iso, self.mag_zero)
 
         # Set host properties. Host assumed to be at the center of the image.
         hst_param_dict = {"profile": "SIE", "theta_x_0": 0.0, "theta_y_0": 0.0, "theta_E": theta_E, "q": q}
@@ -234,41 +251,32 @@ class SubhaloPopulation:
         self.c_hst = c_hst
 
         # Alpha corresponding to calibration configuration
-        alpha = self._alpha_f_sub(f_sub, beta, m_min_calib, m_max_calib)
+        self.alpha = self._alpha_f_sub(f_sub, beta, m_min_calib, m_max_calib)
 
         # Total expected number of subhalos within virial radius of host halo
-        n_sub_tot = self._n_sub(m_min, m_max, M_hst, alpha, beta)
+        self.n_sub_tot = self._n_sub(m_min, m_max, M_hst, self.alpha, self.beta)
 
         # Fraction and number of subhalos within lensing region of interest specified by theta_roi
-        self.f_sub_roi = max(MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s), 0.0)
-        self.n_sub_roi = np.random.poisson(self.f_sub_roi * n_sub_tot)
-        logger.debug("%s subhalos (%s expected)", self.n_sub_roi, self.f_sub_roi * n_sub_tot)
+        self.f_sub_roi = max(MassProfileNFW.M_cyl_div_M0(self.theta_roi * asctorad / theta_s), 0.0)
+        self.n_sub_roi = np.random.poisson(self.f_sub_roi * self.n_sub_tot)
+        logger.debug("%s subhalos (%s expected)", self.n_sub_roi, self.f_sub_roi * self.n_sub_tot)
 
         # Sample of subhalo masses drawn from subhalo mass function
-        self.m_sample = self._draw_m_sub(self.n_sub_roi, m_min, m_max, beta)
+        self.m_sample = self._draw_m_sub(self.n_sub_roi, self.m_min, self.m_max, self.beta)
 
         # Fraction of halo mass in subhalos, for diagnostic purposes
-        self.f_sub_realiz = np.sum(self.m_sample) / (M_hst * MassProfileNFW.M_cyl_div_M0(theta_roi * asctorad / theta_s))
+        self.f_sub_realiz = np.sum(self.m_sample) / (M_hst * MassProfileNFW.M_cyl_div_M0(self.theta_roi * asctorad / self.theta_s))
         logger.debug("%s Substructure fraction (%s expected)", self.f_sub_realiz, self.f_sub)
 
         # Sample subhalo positions uniformly within ROI
-        self.theta_x_sample, self.theta_y_sample = self._draw_sub_coordinates(self.n_sub_roi, r_max=theta_roi)
+        self.theta_x_sample, self.theta_y_sample = self._draw_sub_coordinates(self.n_sub_roi, r_max=self.theta_roi)
 
         # Calculate augmented data
         self.joint_log_probs = self._calculate_joint_log_probs(params_eval)
         if calculate_joint_score:
-            self.joint_score = self._calculate_joint_score([f_sub, beta])
+            self.joint_score = self._calculate_joint_score([self.f_sub, self.beta])
         else:
             self.joint_score = None
-
-    # @staticmethod
-    # def _alpha_calib(m_min_calib, m_max_calib, n_calib, M_calib, beta, M_0=M_MW, m_0=1e9 * M_s):
-    #     """
-    #     Get normalization alpha corresponding calibration configuration specified by {n_calib, beta}
-    #     """
-    #     alpha = (n_calib * (-1 - beta) * M_0 / M_calib * m_0**beta) / \
-    #             (-m_max_calib**(1.+beta) + m_min_calib**(1.+beta))
-    #     return alpha
 
     @staticmethod
     def _alpha_f_sub(f_sub, beta, m_min, m_max, M_0=M_MW, m_0=1e9 * M_s):
