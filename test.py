@@ -13,9 +13,7 @@ from inference.estimator import ParameterizedRatioEstimator
 from inference.utils import load_and_check
 
 
-def make_grid(
-    alpha_min=10., alpha_max=400., beta_min=-1.1, beta_max=-3.0, resolution=25
-):
+def make_grid(alpha_min=10.0, alpha_max=400.0, beta_min=-1.1, beta_max=-3.0, resolution=25):
     alpha_test = np.linspace(alpha_min, alpha_max, resolution)
     beta_test = np.linspace(beta_min, beta_max, resolution)
 
@@ -28,17 +26,7 @@ def make_grid(
     return theta_grid, mid_point
 
 
-def evaluate(
-    data_dir,
-    model_filename,
-    sample_filename,
-    result_filename,
-    aux=None,
-    grid=True,
-    shuffle=False,
-    small=False,
-    gradx=False,
-):
+def evaluate(data_dir, model_filename, sample_filename, result_filename, aux=None, grid=True, shuffle=False, small=False, gradx=False):
     if not os.path.exists("{}/results".format(data_dir)):
         os.mkdir("{}/results".format(data_dir))
 
@@ -56,12 +44,7 @@ def evaluate(
         np.save("{}/results/theta_grid.npy".format(data_dir), theta)
 
         llr, _, grad_x = estimator.log_likelihood_ratio(
-            x=x,
-            aux=aux_data,
-            theta=theta,
-            test_all_combinations=True,
-            evaluate_grad_x=True,
-            grad_x_theta_index=gradx,
+            x=x, aux=aux_data, theta=theta, test_all_combinations=True, evaluate_grad_x=True, grad_x_theta_index=gradx
         )
 
     else:
@@ -71,9 +54,7 @@ def evaluate(
         if shuffle:
             np.random.shuffle(theta)
 
-        llr, _, grad_x = estimator.log_likelihood_ratio(
-            x=x, aux=aux_data, theta=theta, test_all_combinations=False, evaluate_grad_x=gradx
-        )
+        llr, _, grad_x = estimator.log_likelihood_ratio(x=x, aux=aux_data, theta=theta, test_all_combinations=False, evaluate_grad_x=gradx)
     if shuffle:
         np.save("{}/results/shuffled_theta_{}.npy".format(data_dir, result_filename), theta)
     np.save("{}/results/llr_{}.npy".format(data_dir, result_filename), llr)
@@ -93,30 +74,19 @@ def load_aux(filename, aux=None):
     elif aux == "all":
         return load_and_check(filename)[:, :].reshape(-1, 3), 3
     else:
-        raise ValueError(
-            "Unknown aux settings {}, please use 'zs', 'zl', 'z', or 'all'.".format(aux)
-        )
+        raise ValueError("Unknown aux settings {}, please use 'zs', 'zl', 'z', or 'all'.".format(aux))
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Strong lensing experiments: evaluation"
-    )
+    parser = argparse.ArgumentParser(description="Strong lensing experiments: evaluation")
 
     # Main options
     parser.add_argument("model", type=str, help="Model name.")
     parser.add_argument("sample", type=str, help='Sample name, like "test".')
     parser.add_argument("result", type=str, help="File name for results.")
+    parser.add_argument("--grid", action="store_true", help="Evaluates the images on a parameter grid rather than just at the original parameter points.")
     parser.add_argument(
-        "--grid",
-        action="store_true",
-        help="Evaluates the images on a parameter grid rather than just at the original parameter points.",
-    )
-    parser.add_argument(
-        "--shuffle",
-        action="store_true",
-        help="If --grid is not used, shuffles the theta values between the images. This can be useful to make ROC "
-        "curves.",
+        "--shuffle", action="store_true", help="If --grid is not used, shuffles the theta values between the images. This can be useful to make ROC " "curves."
     )
     parser.add_argument(
         "--aux",
@@ -130,36 +100,17 @@ def parse_args():
         "--dir",
         type=str,
         default=".",
-        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the "
-        "data/models subfolder.",
+        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the " "data/models subfolder.",
     )
-    parser.add_argument(
-        "--small", action="store_true", help="Restricts evaluation to first 100 images."
-    )
-    parser.add_argument(
-        "--grad", action="store_true", help="Evaluate gradients wrt x."
-    )
+    parser.add_argument("--small", action="store_true", help="Restricts evaluation to first 100 images.")
+    parser.add_argument("--grad", action="store_true", help="Evaluate gradients wrt x.")
 
     return parser.parse_args()
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
-        datefmt="%H:%M",
-        level=logging.DEBUG,
-    )
+    logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.DEBUG)
     logging.info("Hi!")
     args = parse_args()
-    evaluate(
-        args.dir + "/data",
-        args.model,
-        args.sample,
-        args.result,
-        args.aux,
-        args.grid,
-        args.shuffle,
-        args.small,
-        gradx=args.grad
-    )
+    evaluate(args.dir + "/data", args.model, args.sample, args.result, args.aux, args.grid, args.shuffle, args.small, gradx=args.grad)
     logging.info("All done! Have a nice day!")

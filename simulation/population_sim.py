@@ -90,14 +90,14 @@ class LensingObservationWithSubhalos:
         self.mag_s = 23.0
 
         # Get relevant distances
-        D_l = Planck15.angular_diameter_distance(z=self.z_l).value * Mpc
+        self.D_l = Planck15.angular_diameter_distance(z=self.z_l).value * Mpc
         D_s = Planck15.angular_diameter_distance(z=self.z_s).value * Mpc
         D_ls = Planck15.angular_diameter_distance_z1z2(z1=self.z_l, z2=self.z_s).value * Mpc
 
         # Get properties for NFW host DM halo
-        M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
-        c_200_hst = MassProfileNFW.c_200_SCP(M_200_hst)
-        r_s_hst, rho_s_hst = MassProfileNFW.get_r_s_rho_s_NFW(M_200_hst, c_200_hst)
+        self.M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
+        c_200_hst = MassProfileNFW.c_200_SCP(self.M_200_hst)
+        r_s_hst, rho_s_hst = MassProfileNFW.get_r_s_rho_s_NFW(self.M_200_hst, c_200_hst)
 
         # Get properties for SIE host
         self.theta_E = MassProfileSIE.theta_E(self.sigma_v * Kmps, D_ls, D_s)
@@ -110,13 +110,13 @@ class LensingObservationWithSubhalos:
             ps = SubhaloPopulation(
                 f_sub=f_sub,
                 beta=beta,
-                M_hst=M_200_hst,
+                M_hst=self.M_200_hst,
                 c_hst=c_200_hst,
                 m_min=m_200_min_sub,
-                m_max=m_200_max_sub_div_M_hst * M_200_hst,
+                m_max=m_200_max_sub_div_M_hst * self.M_200_hst,
                 m_min_calib=m_min_calib,
-                m_max_calib=m_max_sub_div_M_hst_calib * M_200_hst,
-                theta_s=r_s_hst / D_l,
+                m_max_calib=m_max_sub_div_M_hst_calib * self.M_200_hst,
+                theta_s=r_s_hst / self.D_l,
                 theta_roi=2.0 * self.theta_E,
                 params_eval=params_eval,
                 calculate_joint_score=calculate_joint_score,
@@ -134,7 +134,7 @@ class LensingObservationWithSubhalos:
         f_iso = self._mag_to_flux(self.mag_iso, self.mag_zero)
 
         # Set host properties. Host assumed to be at the center of the image.
-        hst_param_dict = {"profile": "SIE", "theta_x_0": 0.0, "theta_y_0": 0.0, "theta_E": theta_E, "q": q}
+        hst_param_dict = {"profile": "SIE", "theta_x_0": 0.0, "theta_y_0": 0.0, "theta_E": self.theta_E, "q": q}
 
         lens_list = [hst_param_dict]
 
@@ -146,7 +146,7 @@ class LensingObservationWithSubhalos:
             lens_list.append(sub_param_dict)
 
         # Set source properties
-        src_param_dict = {"profile": "Sersic", "theta_x_0": theta_x_0, "theta_y_0": theta_y_0, "S_tot": S_tot, "theta_e": theta_s_e, "n_srsc": 1}
+        src_param_dict = {"profile": "Sersic", "theta_x_0": self.theta_x_0, "theta_y_0": self.theta_y_0, "S_tot": S_tot, "theta_e": self.theta_s_e, "n_srsc": 1}
 
         # Set observation and global properties
         observation_dict = {

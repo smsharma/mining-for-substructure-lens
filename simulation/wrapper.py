@@ -87,11 +87,13 @@ def augmented_data(
         sub_latents = np.vstack((sim.m_subs, sim.theta_xs, sim.theta_ys)).T
         global_latents = np.asarray(
             [
-                sim.z_l,  # Lens redshift
+                sim.M_200_hst,  # Host mass
+                sim.D_l,  # Host distance
+                sim.z_l,  # Host redshift
                 sim.sigma_v,
-                sim.theta_x_0,  # Lens offset x
-                sim.theta_y_0,  # Lens offset y
-                sim.theta_E,  # Lens Einstein radius
+                sim.theta_x_0,  # Host offset x
+                sim.theta_y_0,  # Host offset y
+                sim.theta_E,  # Host Einstein radius
                 sim.n_sub_roi,  # Number of subhalos
                 sim.f_sub_realiz,  # Fraction of halo mass in subhalos
             ]

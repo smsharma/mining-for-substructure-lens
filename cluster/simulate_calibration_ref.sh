@@ -11,4 +11,4 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-python -u simulate.py -n 100000 --calref --dir /scratch/jb6504/StrongLensing-Inference
+python -u simulate.py -n 10000 --calref --dir /scratch/jb6504/StrongLensing-Inference

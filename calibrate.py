@@ -13,14 +13,7 @@ from inference.calibration import HistogramCalibrator
 from inference.utils import s_from_r
 
 
-def calibrate(
-    data_dir,
-    raw_filename,
-    calibration_filename,
-    nbins=50,
-    transform_to_s=False,
-    equal_binning=False,
-):
+def calibrate(data_dir, raw_filename, calibration_filename, nbins=50, transform_to_s=False, equal_binning=False):
     # Load data
     llr_raw = np.load("{}/llr_{}.npy".format(data_dir, raw_filename))
     n_grid = llr_raw.shape[0]
@@ -45,10 +38,7 @@ def calibrate(
             s_cal_den = s_from_r(np.exp(llr_calibration_den[i]))
             s_raw = s_from_r(np.exp(llr_raw[i]))
 
-            cal = HistogramCalibrator(
-                s_cal_num, s_cal_den, nbins=nbins, histrange=(0.,1.),
-                mode="fixed" if equal_binning else "dynamic"
-            )
+            cal = HistogramCalibrator(s_cal_num, s_cal_den, nbins=nbins, histrange=(0.0, 1.0), mode="fixed" if equal_binning else "dynamic")
 
             llr_cal[i] = cal.log_likelihood_ratio(s_raw)
 
@@ -63,9 +53,7 @@ def calibrate(
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Strong lensing experiments: evaluation"
-    )
+    parser = argparse.ArgumentParser(description="Strong lensing experiments: evaluation")
 
     # Main options
     parser.add_argument("raw", type=str, help='Sample name, like "test".')
@@ -75,19 +63,14 @@ def parse_args():
         "--dir",
         type=str,
         default=".",
-        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the "
-        "data/models subfolder.",
+        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the " "data/models subfolder.",
     )
 
     return parser.parse_args()
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
-        datefmt="%H:%M",
-        level=logging.DEBUG,
-    )
+    logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.DEBUG)
     logging.info("Hi!")
     args = parse_args()
     calibrate(args.dir + "/data/results/", args.raw, args.calibration, nbins=args.bins)

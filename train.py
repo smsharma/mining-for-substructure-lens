@@ -42,14 +42,7 @@ def train(
     logging.info("")
     logging.info("Creating estimator")
     logging.info("")
-    estimator = ParameterizedRatioEstimator(
-        resolution=64,
-        n_parameters=2,
-        n_aux=n_aux,
-        architecture=architecture,
-        log_input=log_input,
-        rescale_inputs=True,
-    )
+    estimator = ParameterizedRatioEstimator(resolution=64, n_parameters=2, n_aux=n_aux, architecture=architecture, log_input=log_input, rescale_inputs=True)
 
     best_loss = None
     epochs_per_lr = int(round(n_epochs / (len(initial_lrs) + len(final_lrs)), 0))
@@ -80,7 +73,7 @@ def train(
             early_stopping=True,
             limit_samplesize=limit_samplesize,
             verbose="all",
-            validation_loss_before=best_loss
+            validation_loss_before=best_loss,
         )
         all_losses = [best_loss] + list(losses) if best_loss is not None else losses
         best_loss = np.nanmin(np.asarray(all_losses))
@@ -112,7 +105,7 @@ def train(
             early_stopping=True,
             limit_samplesize=limit_samplesize,
             verbose="all",
-            validation_loss_before=best_loss
+            validation_loss_before=best_loss,
         )
         all_losses = [best_loss] + list(losses)
         best_loss = np.nanmin(np.asarray(all_losses))
@@ -131,21 +124,14 @@ def load_aux(filename, aux=None):
     elif aux == "all":
         return load_and_check(filename)[:, :].reshape(-1, 3), 3
     else:
-        raise ValueError(
-            "Unknown aux settings {}, please use 'zs', 'zl', 'z', or 'all'.".format(aux)
-        )
+        raise ValueError("Unknown aux settings {}, please use 'zs', 'zl', 'z', or 'all'.".format(aux))
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Strong lensing experiments: simulation"
-    )
+    parser = argparse.ArgumentParser(description="Strong lensing experiments: simulation")
 
     # Main options
-    parser.add_argument(
-        "method",
-        help='Inference method: "carl", "rolr", "alice", "cascal", "rascal", "alices".',
-    )
+    parser.add_argument("method", help='Inference method: "carl", "rolr", "alice", "cascal", "rascal", "alices".')
     parser.add_argument(
         "--aux",
         type=str,
@@ -154,67 +140,40 @@ def parse_args():
         'the source redshift, "zl" for the lens redshift, "z" for both redshifts,'
         ' and "all" for both redshifts as well as sigma_v.',
     )
-    parser.add_argument(
-        "--sample", type=str, default="train", help='Sample name, like "train".'
-    )
-    parser.add_argument(
-        "--name",
-        type=str,
-        default=None,
-        help="Model name. Defaults to the name of the method.",
-    )
+    parser.add_argument("--sample", type=str, default="train", help='Sample name, like "train".')
+    parser.add_argument("--name", type=str, default=None, help="Model name. Defaults to the name of the method.")
     parser.add_argument(
         "--dir",
         type=str,
         default=".",
-        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the "
-        "data/models subfolder.",
+        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the " "data/models subfolder.",
     )
 
     # Training options
-    parser.add_argument(
-        "--vgg", action="store_true", help="Usee VGG rather than ResNet."
-    )
-    parser.add_argument(
-        "--deep",
-        action="store_true",
-        help="Use a deeper variation, i.e. ResNet-50 instead of ResNet-18.",
-    )
+    parser.add_argument("--vgg", action="store_true", help="Usee VGG rather than ResNet.")
+    parser.add_argument("--deep", action="store_true", help="Use a deeper variation, i.e. ResNet-50 instead of ResNet-18.")
     parser.add_argument(
         "--alpha",
         type=float,
         default=0.0001,
-        help="alpha parameter weighting the score MSE in the loss function of the SCANDAL, RASCAL, and"
-        "and ALICES inference methods. Default: 0.0001",
+        help="alpha parameter weighting the score MSE in the loss function of the SCANDAL, RASCAL, and" "and ALICES inference methods. Default: 0.0001",
     )
-    parser.add_argument(
-        "--log", action="store_true", help="Whether the log of the input is taken."
-    )
-    parser.add_argument(
-        "--epochs", type=int, default=50, help="Number of epochs. Default: 120."
-    )
-    parser.add_argument(
-        "--optimizer",
-        default="adam",
-        help='Optimizer. "amsgrad", "adam", and "sgd" are supported. Default: "adam".',
-    )
-    parser.add_argument(
-        "--initial_batch_size", type=int, default=128, help="Batch size during first half of training. Default: 128."
-    )
-    parser.add_argument(
-        "--final_batch_size", type=int, default=256, help="Batch size during second half of training. Default: 256."
-    )
+    parser.add_argument("--log", action="store_true", help="Whether the log of the input is taken.")
+    parser.add_argument("--epochs", type=int, default=50, help="Number of epochs. Default: 120.")
+    parser.add_argument("--optimizer", default="adam", help='Optimizer. "amsgrad", "adam", and "sgd" are supported. Default: "adam".')
+    parser.add_argument("--initial_batch_size", type=int, default=128, help="Batch size during first half of training. Default: 128.")
+    parser.add_argument("--final_batch_size", type=int, default=256, help="Batch size during second half of training. Default: 256.")
     parser.add_argument(
         "--initial_lrs",
         type=float,
-        nargs='+',
+        nargs="+",
         default=[0.0005, 0.0002, 0.0001],
         help="Learning rate steps during first half of training. Default: [0.0005, 0.0002, 0.0001].",
     )
     parser.add_argument(
         "--final_lrs",
         type=float,
-        nargs='+',
+        nargs="+",
         default=[0.0001, 0.00005],
         help="Learning rate steps during second half of training. Default: [0.0002, 0.0001, 0.00005].",
     )
@@ -223,11 +182,7 @@ def parse_args():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
-        datefmt="%H:%M",
-        level=logging.INFO,
-    )
+    logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.INFO)
     logging.info("Hi!")
 
     args = parse_args()
