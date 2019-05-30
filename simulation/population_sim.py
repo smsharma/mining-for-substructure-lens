@@ -266,7 +266,7 @@ class SubhaloPopulation:
 
         # Fraction of halo mass in subhalos, for diagnostic purposes
         self.f_sub_realiz = np.sum(self.m_sample) / (M_hst * MassProfileNFW.M_cyl_div_M0(self.theta_roi * asctorad / self.theta_s))
-        logger.debug("%s Substructure fraction (%s expected)", self.f_sub_realiz, self.f_sub)
+        logger.debug("%s substructure fraction (%s expected)", self.f_sub_realiz, self.f_sub)
 
         # Sample subhalo positions uniformly within ROI
         self.theta_x_sample, self.theta_y_sample = self._draw_sub_coordinates(self.n_sub_roi, r_max=self.theta_roi)
@@ -323,7 +323,7 @@ class SubhaloPopulation:
             x_sub += list(x_candidates[good])
             y_sub += list(y_candidates[good])
 
-        return x_sub, y_sub
+        return np.array(x_sub), np.arrray(y_sub)
 
     def _calculate_joint_log_probs(self, params_eval):
         """
@@ -342,26 +342,26 @@ class SubhaloPopulation:
             for m_sub in self.m_sample:
                 log_probs[i_eval] += self._log_p_m_sub(m_sub, beta)
 
-        return log_probs
+        return np.array(log_probs)
 
-    def _calculate_joint_score(self, params, eps=1.0e-3):
+    def _calculate_joint_score(self, params, eps0=1.0e-5, eps1=1.0e-3):
         """
         Calculates grad_(f_sub, beta) log p(self.n_sub_roi, self.m_sample | f_sub, beta)
         """
-        eps_vec0 = np.asarray(params).flatten() + np.array([eps, 0.0]).reshape(1, 2)
-        eps_vec1 = np.asarray(params).flatten() + np.array([0.0, eps]).reshape(1, 2)
+        eps_vec0 = np.asarray(params).flatten() + np.array([eps0, 0.0]).reshape(1, 2)
+        eps_vec1 = np.asarray(params).flatten() + np.array([0.0, eps1]).reshape(1, 2)
         params = np.asarray(params).reshape(1, 2)
         all_params = np.vstack([params, eps_vec0, eps_vec1])
         log_probs = self._calculate_joint_log_probs(all_params)
 
-        score0 = (log_probs[1] - log_probs[0]) / eps
-        score1 = (log_probs[2] - log_probs[0]) / eps
+        score0 = (log_probs[1] - log_probs[0]) / eps0
+        score1 = (log_probs[2] - log_probs[0]) / eps1
 
         return np.array([score0, score1])
 
     def _log_p_n_sub(self, n_sub, f_sub, beta, include_constant=False):
         """
-        Calculates log p(self.n_sub_roi | f_sub, beta)
+        Calculates log p(n_sub | f_sub, beta)
         """
         alpha = self._alpha_f_sub(f_sub, beta, self.m_min_calib, self.m_max_calib)
         expected_n_sub = self.f_sub_roi * self._n_sub(self.m_min, self.m_max, self.M_hst, alpha, beta)
@@ -376,7 +376,7 @@ class SubhaloPopulation:
         Calculates log p(m_i | beta)
         """
         if m < self.m_min or m > self.m_max:
-            logger.warning("Calculating probabiility for subhalo mass out of bounds -- this should not happen")
+            logger.warning("Calculating probability for subhalo mass out of bounds -- this should not happen")
             return 0.0
 
         log_p = (

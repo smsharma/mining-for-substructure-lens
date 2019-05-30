@@ -20,7 +20,6 @@ def augmented_data(
     n_thetas_marginal=1000,
     inverse=False,
     mine_gold=True,
-    sim_mvgauss_file="simulation/data/sim_mvgauss.npz",
 ):
     # Input
     if (f_sub is None or beta is None) and n_images is None:

@@ -21,7 +21,7 @@ def draw_params_from_prior(n):
 
 
 def get_reference_point():
-    return 0.05, -1.5
+    return 0.05, -1.9
 
 
 def get_grid(resolution=25):
@@ -44,6 +44,7 @@ def simulate_train_marginalref(n=10000, n_thetas_marginal=5000):
     if n_thetas_marginal is None:
         f_sub_ref = f_sub
         beta_ref = beta
+        n_thetas_marginal = n//2
     else:
         f_sub_ref, beta_ref = draw_params_from_prior(n_thetas_marginal)
 
