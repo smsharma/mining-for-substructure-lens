@@ -279,6 +279,15 @@ class SubhaloPopulation:
             self.joint_score = None
 
     @staticmethod
+    def _alpha_calib(m_min_calib, m_max_calib, n_calib, M_calib, beta, M_0=M_MW, m_0=1e9 * M_s):
+        """
+        Get normalization alpha corresponding calibration configuration specified by {n_calib, beta}
+        """
+        alpha = (n_calib * (-1 - beta) * M_0 / M_calib * m_0 ** beta) / \
+                (-m_max_calib ** (1. + beta) + m_min_calib ** (1. + beta))
+        return alpha
+
+    @staticmethod
     def _alpha_f_sub(f_sub, beta, m_min, m_max, M_0=M_MW, m_0=1e9 * M_s):
         """
         Get normalization alpha corresponding calibration configuration specified by {f_sub, beta}
