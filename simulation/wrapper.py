@@ -15,7 +15,7 @@ def augmented_data(
     f_sub_ref=None,
     beta_ref=None,
     f_sub_prior=uniform(0.001, 0.199),
-    beta_prior=norm(-2.5, 1.0),
+    beta_prior=uniform(-2.5, 1.0),
     n_images=None,
     n_thetas_marginal=1000,
     inverse=False,
@@ -41,7 +41,7 @@ def augmented_data(
         f_sub_ref = f_sub_prior.rvs(size=n_thetas_marginal)
     if beta_ref is None:
         beta_ref = beta_prior.rvs(size=n_thetas_marginal)
-    f_sub_ref = np.clip(f_sub_ref, 1.0 - 6, None)
+    f_sub_ref = np.clip(f_sub_ref, 1.0e-6, None)
     beta_ref = np.clip(beta_ref, None, -1.01)
     params_ref = np.vstack((f_sub_ref, beta_ref)).T
 
@@ -69,6 +69,9 @@ def augmented_data(
             this_f_sub, this_beta = params_ref[i_sample]
 
         logger.debug("Running simulation at f_sub = %s, beta = %s", this_f_sub, this_beta)
+
+        if mine_gold:
+            logger.debug("Evaluating joint log likelihood at %s", params_eval)
 
         # Simulate
         sim = LensingObservationWithSubhalos(

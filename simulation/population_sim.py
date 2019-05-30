@@ -295,7 +295,13 @@ class SubhaloPopulation:
         """
         Get (expected) number of subhalos between m_min, m_max
         """
-        n_sub = alpha * M * (m_max * m_min / m_0) ** beta * (m_max ** -beta * m_min - m_max * m_min ** -beta) / (M_0 * (-1 + -beta))
+
+        # n_sub = alpha * M * (m_max * m_min / m_0) ** beta * (m_max ** -beta * m_min - m_max * m_min ** -beta)
+        # / (M_0 * (-1 + -beta))
+        # ... overflows sometimes
+
+        n_sub = alpha / (- beta - 1.0) * m_0 * M / M_0
+        n_sub *= (m_min / m_0) ** (beta + 1.0) - (m_max / m_0) ** (beta + 1.0)
         return max(n_sub, 0.0)
 
     @staticmethod
@@ -323,7 +329,7 @@ class SubhaloPopulation:
             x_sub += list(x_candidates[good])
             y_sub += list(y_candidates[good])
 
-        return np.array(x_sub), np.arrray(y_sub)
+        return np.array(x_sub), np.array(y_sub)
 
     def _calculate_joint_log_probs(self, params_eval):
         """
@@ -359,12 +365,15 @@ class SubhaloPopulation:
 
         return np.array([score0, score1])
 
-    def _log_p_n_sub(self, n_sub, f_sub, beta, include_constant=False):
+    def _log_p_n_sub(self, n_sub, f_sub, beta, include_constant=False, eps=1.e-6):
         """
         Calculates log p(n_sub | f_sub, beta)
         """
         alpha = self._alpha_f_sub(f_sub, beta, self.m_min_calib, self.m_max_calib)
         expected_n_sub = self.f_sub_roi * self._n_sub(self.m_min, self.m_max, self.M_hst, alpha, beta)
+        if expected_n_sub <= eps:
+            logger.warning("Expected number of subs in RoI for f_sub = %s and beta = %s is %s, setting to %s", f_sub, beta, expected_n_sub, eps)
+            expected_n_sub = eps
 
         log_p_poisson = n_sub * np.log(expected_n_sub) - expected_n_sub
         if include_constant:
@@ -379,7 +388,23 @@ class SubhaloPopulation:
             logger.warning("Calculating probability for subhalo mass out of bounds -- this should not happen")
             return 0.0
 
-        log_p = (
-            beta * np.log(m / m_0) + np.log(-beta - 1.0) - np.log(m_0) + np.log(m_0 ** (beta + 1.0) / (self.m_min ** (beta + 1.0) - self.m_max ** (beta + 1.0)))
-        )
+        log_p = beta * np.log(m / m_0)
+        log_p += np.log(-beta - 1.0)
+        log_p -= np.log(m_0)
+        log_p -= np.log((self.m_min / m_0) ** (beta + 1.0) - (self.m_max / m_0) ** (beta + 1.0))
+
+        if not np.isfinite(log_p):
+            logger.warning("Infinite log p(m_sub | beta):")
+            logger.warning("  m       = %s", m)
+            logger.warning("  beta    = %s", beta)
+            logger.warning("  m_0     = %s", m_0)
+            logger.warning("  m_min   = %s", self.m_min)
+            logger.warning("  m_max   = %s", self.m_max)
+            logger.warning("  term 1  = %s", beta * np.log(m / m_0))
+            logger.warning("  term 2  = %s", np.log(-beta - 1.0))
+            logger.warning("  term 3  = %s", - np.log(m_0))
+            logger.warning("  term 4  = %s", - np.log((self.m_min / m_0) ** (beta + 1.0) - (self.m_max / m_0) ** (beta + 1.0)))
+            logger.warning("  term 4a = %s", (self.m_min / m_0) ** (beta + 1.0))
+            logger.warning("  term 4b = %s", - (self.m_max / m_0) ** (beta + 1.0))
+
         return log_p
