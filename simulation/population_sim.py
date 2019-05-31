@@ -118,6 +118,7 @@ class LensingObservationWithSubhalos:
                 m_max_calib=m_max_sub_div_M_hst_calib * self.M_200_hst,
                 theta_s=r_s_hst / self.D_l,
                 theta_roi=2.0 * self.theta_E,
+                theta_E=self.theta_E,
                 params_eval=params_eval,
                 calculate_joint_score=calculate_joint_score,
             )
@@ -128,6 +129,10 @@ class LensingObservationWithSubhalos:
             self.theta_xs = ps.theta_x_sample
             self.theta_ys = ps.theta_y_sample
             self.f_sub_realiz = ps.f_sub_realiz
+            self.n_sub_in_ring = ps.n_sub_in_ring
+            self.f_sub_in_ring = ps.f_sub_in_ring
+            self.n_sub_near_ring = ps.n_sub_near_ring
+            self.f_sub_near_ring = ps.f_sub_near_ring
 
         # Convert magnitude for source and isotropic component to expected counts
         S_tot = self._mag_to_flux(self.mag_s, self.mag_zero)
@@ -215,6 +220,7 @@ class SubhaloPopulation:
         M_hst=1e14 * M_s,
         theta_s=1e-4,
         c_hst=6.0,
+        theta_E=1.,
         params_eval=None,
         calculate_joint_score=False,
     ):
@@ -248,6 +254,7 @@ class SubhaloPopulation:
         self.theta_roi = theta_roi
         self.M_hst = M_hst
         self.theta_s = theta_s
+        self.theta_E = theta_E
         self.c_hst = c_hst
 
         # Alpha corresponding to calibration configuration
@@ -265,11 +272,16 @@ class SubhaloPopulation:
         self.m_sample = self._draw_m_sub(self.n_sub_roi, self.m_min, self.m_max, self.beta)
 
         # Fraction of halo mass in subhalos, for diagnostic purposes
-        self.f_sub_realiz = np.sum(self.m_sample) / (M_hst * MassProfileNFW.M_cyl_div_M0(self.theta_roi * asctorad / self.theta_s))
+        self.M_hst_roi = M_hst * MassProfileNFW.M_cyl_div_M0(self.theta_roi * asctorad / self.theta_s)
+        self.f_sub_realiz = np.sum(self.m_sample) / self.M_hst_roi
         logger.debug("%s substructure fraction (%s expected)", self.f_sub_realiz, self.f_sub)
 
         # Sample subhalo positions uniformly within ROI
         self.theta_x_sample, self.theta_y_sample = self._draw_sub_coordinates(self.n_sub_roi, r_max=self.theta_roi)
+
+        # For debugging: subhalos within Einstein ring and near it
+        self.n_sub_in_ring, self.f_sub_in_ring = self._count_subhalos_in_radius_range(0., 0.9*self.theta_E)
+        self.n_sub_near_ring, self.f_sub_near_ring = self._count_subhalos_in_radius_range(0.9*self.theta_E, 1.1*self.theta_E)
 
         # Calculate augmented data
         self.joint_log_probs = self._calculate_joint_log_probs(params_eval)
@@ -339,6 +351,14 @@ class SubhaloPopulation:
             y_sub += list(y_candidates[good])
 
         return np.array(x_sub), np.array(y_sub)
+
+    def _count_subhalos_in_radius_range(self, min_r, max_r):
+        r = ((self.theta_x_sample**2 + self.theta_y_sample**2)**0.5).flatten()
+        filter = (r >= min_r)*(r < max_r)
+        n_sub = np.sum(filter.astype(np.int))
+        m_sub = np.sum(self.m_sample[filter])
+        f_sub = m_sub / self.M_hst_roi
+        return n_sub, f_sub
 
     def _calculate_joint_log_probs(self, params_eval):
         """

@@ -92,12 +92,16 @@ def augmented_data(
                 sim.M_200_hst,  # Host mass
                 sim.D_l,  # Host distance
                 sim.z_l,  # Host redshift
-                sim.sigma_v,
+                sim.sigma_v,  # sigma_V
                 sim.theta_x_0,  # Source offset x
                 sim.theta_y_0,  # Source offset y
                 sim.theta_E,  # Host Einstein radius
                 sim.n_sub_roi,  # Number of subhalos
                 sim.f_sub_realiz,  # Fraction of halo mass in subhalos
+                sim.n_sub_in_ring,  # Number of subhalos with r < 90% of host Einstein radius
+                sim.f_sub_in_ring,  # Fraction of halo mass in subhalos with r < 90% of host Einstein radius
+                sim.n_sub_near_ring,  # Number of subhalos with r within 10% of host Einstein radius
+                sim.f_sub_near_ring,  # Fraction of halo mass in subhalos with r within 10% of host Einstein radius
             ]
         )
 
