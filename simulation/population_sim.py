@@ -27,6 +27,9 @@ class LensingObservationWithSubhalos:
         M_200_sigma_v_scatter=False,
         params_eval=None,
         calculate_joint_score=False,
+        draw_host_mass=True,
+        draw_host_redshift=True,
+        draw_alignment=True,
     ):
         """
         Class to simulation an observation strong lensing image, with substructure sprinkled in.
@@ -68,19 +71,34 @@ class LensingObservationWithSubhalos:
         self.M_200_sigma_v_scatter = M_200_sigma_v_scatter
         self.params_eval = params_eval
         self.calculate_joint_score = calculate_joint_score
+        self.draw_host_mass = draw_host_mass
+        self.draw_host_redshift = draw_host_redshift
+        self.draw_alignment = draw_alignment
 
         self.coordinate_limit = pixel_size * n_xy / 2.0
 
         # Draw lens properties consistent with Collett et al [1507.02657]
 
         # Clip lens redshift `z_l` to be less than 1; high-redshift lenses no good for our purposes!
-        self.z_l = 2.0
-        while self.z_l > 1.0:
-            self.z_l = 10 ** np.random.normal(-0.25, 0.25)
 
-        self.sigma_v = np.random.normal(225, 50)
-        self.theta_x_0 = np.random.normal(0, 0.2)
-        self.theta_y_0 = np.random.normal(0, 0.2)
+        if self.draw_host_redshift:
+            self.z_l = 2.0
+            while self.z_l > 1.0:
+                self.z_l = 10 ** np.random.normal(-0.25, 0.25)
+        else:
+            self.z_l = 10.**-0.25
+
+        if self.draw_host_mass:
+            self.sigma_v = np.random.normal(225, 50)
+        else:
+            self.sigma_v = 225.
+
+        if self.draw_alignment:
+            self.theta_x_0 = np.random.normal(0, 0.2)
+            self.theta_y_0 = np.random.normal(0, 0.2)
+        else:
+            self.theta_x_0 = 0.
+            self.theta_y_0 = 0.
 
         q = 1  # For now, hard-code host to be spherical
 
@@ -95,7 +113,11 @@ class LensingObservationWithSubhalos:
         D_ls = Planck15.angular_diameter_distance_z1z2(z1=self.z_l, z2=self.z_s).value * Mpc
 
         # Get properties for NFW host DM halo
-        self.M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
+        if draw_host_mass:
+            self.M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
+        else:
+            self.M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps, scatter=0.)
+
         c_200_hst = MassProfileNFW.c_200_SCP(self.M_200_hst)
         r_s_hst, rho_s_hst = MassProfileNFW.get_r_s_rho_s_NFW(self.M_200_hst, c_200_hst)
 
