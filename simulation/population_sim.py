@@ -86,19 +86,19 @@ class LensingObservationWithSubhalos:
             while self.z_l > 1.0:
                 self.z_l = 10 ** np.random.normal(-0.25, 0.25)
         else:
-            self.z_l = 10.**-0.25
+            self.z_l = 10.0 ** -0.25
 
         if self.draw_host_mass:
             self.sigma_v = np.random.normal(225, 50)
         else:
-            self.sigma_v = 225.
+            self.sigma_v = 225.0
 
         if self.draw_alignment:
             self.theta_x_0 = np.random.normal(0, 0.2)
             self.theta_y_0 = np.random.normal(0, 0.2)
         else:
-            self.theta_x_0 = 0.
-            self.theta_y_0 = 0.
+            self.theta_x_0 = 0.0
+            self.theta_y_0 = 0.0
 
         q = 1  # For now, hard-code host to be spherical
 
@@ -116,7 +116,7 @@ class LensingObservationWithSubhalos:
         if draw_host_mass:
             self.M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps, scatter=M_200_sigma_v_scatter)
         else:
-            self.M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps, scatter=0.)
+            self.M_200_hst = self.M_200_sigma_v(self.sigma_v * Kmps, scatter=0.0)
 
         c_200_hst = MassProfileNFW.c_200_SCP(self.M_200_hst)
         r_s_hst, rho_s_hst = MassProfileNFW.get_r_s_rho_s_NFW(self.M_200_hst, c_200_hst)
@@ -242,7 +242,7 @@ class SubhaloPopulation:
         M_hst=1e14 * M_s,
         theta_s=1e-4,
         c_hst=6.0,
-        theta_E=1.,
+        theta_E=1.0,
         params_eval=None,
         calculate_joint_score=False,
     ):
@@ -302,8 +302,8 @@ class SubhaloPopulation:
         self.theta_x_sample, self.theta_y_sample = self._draw_sub_coordinates(self.n_sub_roi, r_max=self.theta_roi)
 
         # For debugging: subhalos within Einstein ring and near it
-        self.n_sub_in_ring, self.f_sub_in_ring = self._count_subhalos_in_radius_range(0., 0.9*self.theta_E)
-        self.n_sub_near_ring, self.f_sub_near_ring = self._count_subhalos_in_radius_range(0.9*self.theta_E, 1.1*self.theta_E)
+        self.n_sub_in_ring, self.f_sub_in_ring = self._count_subhalos_in_radius_range(0.0, 0.9 * self.theta_E)
+        self.n_sub_near_ring, self.f_sub_near_ring = self._count_subhalos_in_radius_range(0.9 * self.theta_E, 1.1 * self.theta_E)
 
         # Calculate augmented data
         self.joint_log_probs = self._calculate_joint_log_probs(params_eval)
@@ -317,8 +317,7 @@ class SubhaloPopulation:
         """
         Get normalization alpha corresponding calibration configuration specified by {n_calib, beta}
         """
-        alpha = (n_calib * (-1 - beta) * M_0 / M_calib * m_0 ** beta) / \
-                (-m_max_calib ** (1. + beta) + m_min_calib ** (1. + beta))
+        alpha = (n_calib * (-1 - beta) * M_0 / M_calib * m_0 ** beta) / (-m_max_calib ** (1.0 + beta) + m_min_calib ** (1.0 + beta))
         return alpha
 
     @staticmethod
@@ -343,7 +342,7 @@ class SubhaloPopulation:
         # / (M_0 * (-1 + -beta))
         # ... overflows sometimes
 
-        n_sub = alpha / (- beta - 1.0) * m_0 * M / M_0
+        n_sub = alpha / (-beta - 1.0) * m_0 * M / M_0
         n_sub *= (m_min / m_0) ** (beta + 1.0) - (m_max / m_0) ** (beta + 1.0)
         return max(n_sub, 0.0)
 
@@ -375,8 +374,8 @@ class SubhaloPopulation:
         return np.array(x_sub), np.array(y_sub)
 
     def _count_subhalos_in_radius_range(self, min_r, max_r):
-        r = ((self.theta_x_sample**2 + self.theta_y_sample**2)**0.5).flatten()
-        filter = (r >= min_r)*(r < max_r)
+        r = ((self.theta_x_sample ** 2 + self.theta_y_sample ** 2) ** 0.5).flatten()
+        filter = (r >= min_r) * (r < max_r)
         n_sub = np.sum(filter.astype(np.int))
         m_sub = np.sum(self.m_sample[filter])
         f_sub = m_sub / self.M_hst_roi
@@ -416,7 +415,7 @@ class SubhaloPopulation:
 
         return np.array([score0, score1])
 
-    def _log_p_n_sub(self, n_sub, f_sub, beta, include_constant=False, eps=1.e-6):
+    def _log_p_n_sub(self, n_sub, f_sub, beta, include_constant=False, eps=1.0e-6):
         """
         Calculates log p(n_sub | f_sub, beta)
         """
@@ -453,9 +452,9 @@ class SubhaloPopulation:
             logger.warning("  m_max   = %s", self.m_max)
             logger.warning("  term 1  = %s", beta * np.log(m / m_0))
             logger.warning("  term 2  = %s", np.log(-beta - 1.0))
-            logger.warning("  term 3  = %s", - np.log(m_0))
-            logger.warning("  term 4  = %s", - np.log((self.m_min / m_0) ** (beta + 1.0) - (self.m_max / m_0) ** (beta + 1.0)))
+            logger.warning("  term 3  = %s", -np.log(m_0))
+            logger.warning("  term 4  = %s", -np.log((self.m_min / m_0) ** (beta + 1.0) - (self.m_max / m_0) ** (beta + 1.0)))
             logger.warning("  term 4a = %s", (self.m_min / m_0) ** (beta + 1.0))
-            logger.warning("  term 4b = %s", - (self.m_max / m_0) ** (beta + 1.0))
+            logger.warning("  term 4b = %s", -(self.m_max / m_0) ** (beta + 1.0))
 
         return log_p

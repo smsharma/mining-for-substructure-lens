@@ -95,7 +95,7 @@ class Trainer(object):
         early_stopping_patience=None,
         clip_gradient=None,
         verbose="some",
-        validation_loss_before=None
+        validation_loss_before=None,
     ):
         self._timer(start="ALL")
         self._timer(start="check data")
@@ -411,12 +411,7 @@ class Trainer(object):
         if best_loss is None or (not np.isfinite(best_loss)):
             logger.warning("Best loss is None, cannot wrap up early stopping")
         elif currrent_loss is None or (not np.isfinite(currrent_loss)) or best_loss < currrent_loss:
-            logger.info(
-                "Early stopping after epoch %s, with loss %s compared to final loss %s",
-                best_epoch + 1,
-                best_loss,
-                currrent_loss,
-            )
+            logger.info("Early stopping after epoch %s, with loss %s compared to final loss %s", best_epoch + 1, best_loss, currrent_loss)
             self.model.load_state_dict(best_model)
         else:
             logger.info("Early stopping did not improve performance")
@@ -454,7 +449,7 @@ class Trainer(object):
     def _report_timer(self):
         logging.info("Training time spend on:")
         for key, value in six.iteritems(self.timer):
-            logging.info("  {:>32s}: {:6.2f}h".format(key, value / 3600.))
+            logging.info("  {:>32s}: {:6.2f}h".format(key, value / 3600.0))
 
 
 class SingleParameterizedRatioTrainer(Trainer):

@@ -19,6 +19,9 @@ def augmented_data(
     n_images=None,
     n_thetas_marginal=1000,
     inverse=False,
+    draw_host_mass=True,
+    draw_host_redshift=True,
+    draw_alignment=True,
     mine_gold=True,
 ):
     # Input
@@ -83,6 +86,9 @@ def augmented_data(
             beta=this_beta,
             params_eval=params_eval,
             calculate_joint_score=mine_gold,
+            draw_host_mass=draw_host_mass,
+            draw_host_redshift=draw_host_redshift,
+            draw_alignment=draw_alignment,
         )
 
         # Store information
