@@ -8,13 +8,9 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 ############################################################
 
 sbatch --array=0-99 simulate_train.sh
-sbatch --array=0-99 simulate_train_pointref.sh
-
 # sbatch --array=0-624 simulate_calibration.sh
 # sbatch simulate_calibration_ref.sh
-
-sbatch --array=0-9 simulate_test_point.sh
-sbatch --array=0-9 simulate_test_prior.sh
+sbatch --array=0-9 simulate_test.sh
 
 
 ############################################################
@@ -32,13 +28,12 @@ sbatch --array=0-9 simulate_test_prior.sh
 # sbatch train_alice.sh
 # sbatch train_alices.sh
 
-# sbatch train_carl_aux.sh
-# sbatch train_alice_aux.sh
-# sbatch train_alices_aux.sh
 
-# sbatch train_carl_pointref_aux.sh
-# sbatch train_alice_pointref_aux.sh
-# sbatch train_alices_pointref_aux.sh
+############################################################
+# Calibration
+############################################################
+
+# sbatch calibrate.sh
 
 
 ############################################################
@@ -48,18 +43,3 @@ sbatch --array=0-9 simulate_test_prior.sh
 # sbatch eval_carl.sh
 # sbatch eval_alice.sh
 # sbatch eval_alices.sh
-
-# sbatch eval_carl_aux.sh
-# sbatch eval_alice_aux.sh
-# sbatch eval_alices_aux.sh
-
-# sbatch eval_carl_pointref_aux.sh
-# sbatch eval_alice_pointref_aux.sh
-# sbatch eval_alices_pointref_aux.sh
-
-
-############################################################
-# Calibration
-############################################################
-
-# sbatch calibrate.sh
