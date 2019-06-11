@@ -20,7 +20,7 @@ def train(
     data_dir,
     sample_name,
     model_filename,
-    aux=None,
+    aux=False,
     architecture="resnet",
     log_input=False,
     initial_batch_size=128,
@@ -112,19 +112,11 @@ def train(
     estimator.save("{}/models/{}".format(data_dir, model_filename))
 
 
-def load_aux(filename, aux=None):
-    if aux is None:
-        return None, 0
-    elif aux == "zs":
-        return load_and_check(filename)[:, 0].reshape(-1, 1), 1
-    elif aux == "zl":
-        return load_and_check(filename)[:, 1].reshape(-1, 1), 1
-    elif aux == "z":
-        return load_and_check(filename)[:, ::2].reshape(-1, 2), 2
-    elif aux == "all":
-        return load_and_check(filename)[:, :].reshape(-1, 3), 3
+def load_aux(filename, aux=False):
+    if aux:
+        return load_and_check(filename)[:, 2].reshape(-1, 1), 1
     else:
-        raise ValueError("Unknown aux settings {}, please use 'zs', 'zl', 'z', or 'all'.".format(aux))
+        return None, 0
 
 
 def parse_args():
@@ -132,16 +124,9 @@ def parse_args():
 
     # Main options
     parser.add_argument("method", help='Inference method: "carl", "rolr", "alice", "cascal", "rascal", "alices".')
-    parser.add_argument(
-        "--aux",
-        type=str,
-        default=None,
-        help='Whether auxiliary information is used during training. Can be "zs" for '
-        'the source redshift, "zl" for the lens redshift, "z" for both redshifts,'
-        ' and "all" for both redshifts as well as sigma_v.',
-    )
-    parser.add_argument("--sample", type=str, default="train", help='Sample name, like "train".')
-    parser.add_argument("--name", type=str, default=None, help="Model name. Defaults to the name of the method.")
+    parser.add_argument("sample", type=str, help='Sample name, like "train".')
+    parser.add_argument("name", type=str, help="Model name. Defaults to the name of the method.")
+    parser.add_argument("-z",action="store_true",help='Proivide lens redshift to the network')
     parser.add_argument(
         "--dir",
         type=str,
@@ -196,7 +181,7 @@ if __name__ == "__main__":
 
     train(
         method=args.method,
-        aux=args.aux,
+        aux=args.z,
         alpha=args.alpha,
         data_dir="{}/data/".format(args.dir),
         sample_name=args.sample,
