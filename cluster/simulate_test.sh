@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=sim-ept
-#SBATCH --output=log_simulate_testpoint_%a.log
+#SBATCH --job-name=sim-eval
+#SBATCH --output=log_simulate_eval_%a.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
@@ -20,4 +20,3 @@ python -u simulate.py --fixz --fixm --fixalign -n 10000 --name test_fix_prior_${
 python -u simulate.py --fixz --fixalign -n 10000 --name test_mass_prior_${SLURM_ARRAY_TASK_ID} --test --dir /scratch/jb6504/StrongLensing-Inference
 python -u simulate.py --fixz --fixm -n 10000 --name test_align_prior_${SLURM_ARRAY_TASK_ID} --test --dir /scratch/jb6504/StrongLensing-Inference
 python -u simulate.py -n 10000 --name test_full_prior_${SLURM_ARRAY_TASK_ID} --test --dir /scratch/jb6504/StrongLensing-Inference
-
