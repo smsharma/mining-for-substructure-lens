@@ -17,7 +17,7 @@ sbatch --array=0-99 simulate_train.sh
 # Combination
 ############################################################
 
-# sbatch combine_samples.sh
+sbatch combine_samples.sh
 
 
 ############################################################
