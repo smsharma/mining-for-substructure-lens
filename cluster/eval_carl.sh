@@ -12,8 +12,8 @@ source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
 # What to do
-tag=fix
-# tag=mass
+# tag=fix
+tag=mass
 # tag=align
 # tag=full
 
