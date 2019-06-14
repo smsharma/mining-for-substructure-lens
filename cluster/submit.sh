@@ -7,7 +7,7 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 # Simulation
 ############################################################
 
-sbatch --array=0-99 simulate_train.sh
+# sbatch --array=0-99 simulate_train.sh
 # sbatch --array=0-624 simulate_calibration.sh
 # sbatch simulate_calibration_ref.sh
 # sbatch --array=0-9 simulate_test.sh
@@ -17,16 +17,16 @@ sbatch --array=0-99 simulate_train.sh
 # Combination
 ############################################################
 
-sbatch combine_samples.sh
+# sbatch combine_samples.sh
 
 
 ############################################################
 # Training
 ############################################################
 
-# sbatch train_carl.sh
-# sbatch train_alice.sh
-# sbatch train_alices.sh
+sbatch train_carl.sh
+sbatch train_alice.sh
+sbatch train_alices.sh
 
 
 ############################################################

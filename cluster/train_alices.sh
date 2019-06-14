@@ -12,7 +12,7 @@ source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
 # python -u train.py alices train_fix alices_fix --alpha 1.e-8  --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py alices train_mass alices_mass --alpha 1.e-8 --dir /scratch/jb6504/StrongLensing-Inference
-# python -u train.py alices train_align alices_align --alpha 1.e-8 --dir /scratch/jb6504/StrongLensing-Inference
+# python -u train.py alices train_mass alices_mass --alpha 1.e-8 --dir /scratch/jb6504/StrongLensing-Inference
+python -u train.py alices train_align alices_align --alpha 1.e-8 --dir /scratch/jb6504/StrongLensing-Inference
 # python -u train.py alices train_full alices_full --alpha 1.e-8 --dir /scratch/jb6504/StrongLensing-Inference
 # python -u train.py alices train_full alices_full_aux -z --alpha 1.e-8 --dir /scratch/jb6504/StrongLensing-Inference
