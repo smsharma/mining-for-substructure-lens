@@ -5,35 +5,13 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import sys, os
 import argparse
 import logging
-from scipy.stats import uniform, norm
 
 logger = logging.getLogger(__name__)
 sys.path.append("./")
 
 from simulation.units import *
 from simulation.wrapper import augmented_data
-
-
-def draw_params_from_prior(n):
-    f_sub = uniform(0.001, 0.199).rvs(size=n)
-    beta = uniform(-2.5, 1.0).rvs(size=n)
-    return f_sub, beta
-
-
-def get_reference_point():
-    return 0.05, -1.9
-
-
-def get_grid(resolution=25):
-    f_sub_1d = np.linspace(0.001, 0.200, resolution)
-    beta_1d = np.linspace(-2.5, -1.5, resolution)
-
-    theta0, theta1 = np.meshgrid(f_sub_1d, beta_1d)
-    return np.vstack((theta0.flatten(), theta1.flatten())).T
-
-
-def get_grid_point(i, resolution=25):
-    return get_grid(resolution)[i]
+from simulation.prior import draw_params_from_prior, get_reference_point, get_grid, get_grid_point
 
 
 def simulate_train_marginalref(n=10000, n_thetas_marginal=5000, fixm=False, fixz=False, fixalign=False):
@@ -149,7 +127,13 @@ def simulate_calibration(i_theta, n=1000, fixm=False, fixz=False, fixalign=False
     f_sub, beta = get_grid_point(i_theta)
     logger.info("Generating calibration data with %s images at theta %s / 625: f_sub = %s, beta = %s", n, i_theta + 1, f_sub, beta)
     theta, x, _, _, _, latents = augmented_data(
-        f_sub=f_sub, beta=beta, n_images=n, mine_gold=False, draw_host_mass=not fixm, draw_host_redshift=not fixz, draw_alignment=not fixalign
+        f_sub=f_sub,
+        beta=beta,
+        n_images=n,
+        mine_gold=False,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
 
     return x, theta, None, None, None, latents
@@ -159,7 +143,14 @@ def simulate_calibration_marginalref(n=1000, fixm=False, fixz=False, fixalign=Fa
     logger.info("Generating calibration data with %s images from prior", n)
     f_sub, beta = draw_params_from_prior(n)
     theta, x, _, _, _, latents = augmented_data(
-        f_sub=f_sub, beta=beta, n_images=n, inverse=False, mine_gold=False, draw_host_mass=not fixm, draw_host_redshift=not fixz, draw_alignment=not fixalign
+        f_sub=f_sub,
+        beta=beta,
+        n_images=n,
+        inverse=False,
+        mine_gold=False,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
     return x, theta, None, None, None, latents
 
@@ -171,7 +162,14 @@ def simulate_calibration_pointref(n=1000, fixm=False, fixz=False, fixalign=False
     f_sub, beta = get_reference_point()
 
     theta, x, _, _, _, latents = augmented_data(
-        f_sub=f_sub, beta=beta, n_images=n, inverse=False, mine_gold=False, draw_host_mass=not fixm, draw_host_redshift=not fixz, draw_alignment=not fixalign
+        f_sub=f_sub,
+        beta=beta,
+        n_images=n,
+        inverse=False,
+        mine_gold=False,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
 
     return x, theta, None, None, None, latents
@@ -181,7 +179,13 @@ def simulate_test_point(n=1000, fixm=False, fixz=False, fixalign=False):
     f_sub, beta = get_reference_point()
     logger.info("Generating point test data with %s images at f_sub = %s, beta = %s", n, f_sub, beta)
     theta, x, _, _, _, latents = augmented_data(
-        f_sub=f_sub, beta=beta, n_images=n, mine_gold=False, draw_host_mass=not fixm, draw_host_redshift=not fixz, draw_alignment=not fixalign
+        f_sub=f_sub,
+        beta=beta,
+        n_images=n,
+        mine_gold=False,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
 
     return x, theta, None, None, None, latents
@@ -191,7 +195,14 @@ def simulate_test_prior(n=1000, fixm=False, fixz=False, fixalign=False):
     logger.info("Generating prior test data with %s images", n)
     f_sub, beta = draw_params_from_prior(n)
     theta, x, _, _, _, latents = augmented_data(
-        f_sub=f_sub, beta=beta, n_images=n, inverse=False, mine_gold=False, draw_host_mass=not fixm, draw_host_redshift=not fixz, draw_alignment=not fixalign
+        f_sub=f_sub,
+        beta=beta,
+        n_images=n,
+        inverse=False,
+        mine_gold=False,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
     return x, theta, None, None, None, latents
 
@@ -224,14 +235,18 @@ def parse_args():
     parser.add_argument("--test", action="store_true", help="Generate test rather than train data.")
     parser.add_argument("--calibrate", action="store_true", help="Generate calibration rather than train data.")
     parser.add_argument("--calref", action="store_true", help="Generate reference sample for calibration.")
-    parser.add_argument("--point", action="store_true", help="Generate test data at specific reference model rather than sampled from the prior.")
+    parser.add_argument(
+        "--point", action="store_true", help="Generate test data at specific reference model rather than sampled from the prior."
+    )
 
     parser.add_argument("-n", type=int, default=10000, help="Number of samples to generate. Default is 10k.")
     parser.add_argument("--fixm", action="store_true", help="Fix host halo mass")
     parser.add_argument("--fixz", action="store_true", help="Fix lens redshift")
     parser.add_argument("--fixalign", action="store_true", help="Fix alignment between lens and source")
     parser.add_argument(
-        "--pointref", action="store_true", help="When generating training or calibration data, use a fixed reference point rather than the full marginal model."
+        "--pointref",
+        action="store_true",
+        help="When generating training or calibration data, use a fixed reference point rather than the full marginal model.",
     )
     parser.add_argument("--name", type=str, default=None, help='Sample name, like "train" or "test".')
     parser.add_argument("--theta", type=int, default=None, help="Theta index for calibration (between 0 and 440)")
@@ -245,7 +260,9 @@ if __name__ == "__main__":
     args = parse_args()
 
     logging.basicConfig(
-        format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.DEBUG if args.debug else logging.INFO
+        format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
+        datefmt="%H:%M",
+        level=logging.DEBUG if args.debug else logging.INFO,
     )
     logger.info("Hi!")
 

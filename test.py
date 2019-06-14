@@ -11,19 +11,7 @@ sys.path.append("./")
 
 from inference.estimator import ParameterizedRatioEstimator
 from inference.utils import load_and_check
-
-
-def make_grid(alpha_min=10.0, alpha_max=400.0, beta_min=-1.1, beta_max=-3.0, resolution=25):
-    alpha_test = np.linspace(alpha_min, alpha_max, resolution)
-    beta_test = np.linspace(beta_min, beta_max, resolution)
-
-    theta0, theta1 = np.meshgrid(alpha_test, beta_test)
-    theta_grid = np.vstack((theta0.flatten(), theta1.flatten())).T
-
-    mid_point = ((resolution - 1) // 2) * resolution + ((resolution - 1) // 2)
-    logging.debug("Grid mid point: %s, %s", mid_point, theta_grid[mid_point])
-
-    return theta_grid, mid_point
+from simulation.prior import draw_params_from_prior, get_reference_point, get_grid, get_grid_point, get_grid_midpoint_index
 
 
 def evaluate(data_dir, model_filename, sample_filename, result_filename, aux=None, grid=True, shuffle=False, small=False, gradx=False):
@@ -40,11 +28,10 @@ def evaluate(data_dir, model_filename, sample_filename, result_filename, aux=Non
             x = x[:100]
             if aux_data is not None:
                 aux_data = aux_data[:100]
-        theta, grad_x_index = make_grid()
-        np.save("{}/results/theta_grid.npy".format(data_dir), theta)
-
+        theta = get_grid()
+        grad_x_index = get_grid_midpoint_index()
         llr, _, grad_x = estimator.log_likelihood_ratio(
-            x=x, aux=aux_data, theta=theta, test_all_combinations=True, evaluate_grad_x=True, grad_x_theta_index=gradx
+            x=x, aux=aux_data, theta=theta, test_all_combinations=True, evaluate_grad_x=True, grad_x_theta_index=grad_x_index
         )
 
     else:
@@ -84,9 +71,13 @@ def parse_args():
     parser.add_argument("model", type=str, help="Model name.")
     parser.add_argument("sample", type=str, help='Sample name, like "test".')
     parser.add_argument("result", type=str, help="File name for results.")
-    parser.add_argument("--grid", action="store_true", help="Evaluates the images on a parameter grid rather than just at the original parameter points.")
     parser.add_argument(
-        "--shuffle", action="store_true", help="If --grid is not used, shuffles the theta values between the images. This can be useful to make ROC " "curves."
+        "--grid", action="store_true", help="Evaluates the images on a parameter grid rather than just at the original parameter points."
+    )
+    parser.add_argument(
+        "--shuffle",
+        action="store_true",
+        help="If --grid is not used, shuffles the theta values between the images. This can be useful to make ROC curves.",
     )
     parser.add_argument(
         "--aux",

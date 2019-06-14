@@ -42,7 +42,9 @@ def train(
     logging.info("")
     logging.info("Creating estimator")
     logging.info("")
-    estimator = ParameterizedRatioEstimator(resolution=64, n_parameters=2, n_aux=n_aux, architecture=architecture, log_input=log_input, rescale_inputs=True)
+    estimator = ParameterizedRatioEstimator(
+        resolution=64, n_parameters=2, n_aux=n_aux, architecture=architecture, log_input=log_input, rescale_inputs=True
+    )
 
     best_loss = None
     epochs_per_lr = int(round(n_epochs / (len(initial_lrs) + len(final_lrs)), 0))
@@ -126,7 +128,7 @@ def parse_args():
     parser.add_argument("method", help='Inference method: "carl", "rolr", "alice", "cascal", "rascal", "alices".')
     parser.add_argument("sample", type=str, help='Sample name, like "train".')
     parser.add_argument("name", type=str, help="Model name. Defaults to the name of the method.")
-    parser.add_argument("-z",action="store_true",help='Proivide lens redshift to the network')
+    parser.add_argument("-z", action="store_true", help="Proivide lens redshift to the network")
     parser.add_argument(
         "--dir",
         type=str,
@@ -141,7 +143,8 @@ def parse_args():
         "--alpha",
         type=float,
         default=0.0001,
-        help="alpha parameter weighting the score MSE in the loss function of the SCANDAL, RASCAL, and" "and ALICES inference methods. Default: 0.0001",
+        help="alpha parameter weighting the score MSE in the loss function of the SCANDAL, RASCAL, and"
+        "and ALICES inference methods. Default: 0.0001",
     )
     parser.add_argument("--log", action="store_true", help="Whether the log of the input is taken.")
     parser.add_argument("--epochs", type=int, default=50, help="Number of epochs. Default: 120.")

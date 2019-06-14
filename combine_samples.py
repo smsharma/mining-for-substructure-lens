@@ -135,7 +135,8 @@ def parse_args():
     parser.add_argument(
         "inputs",
         nargs="+",
-        help='Individual input sample labels (like "train0 train1 train2"). If ' "option --regex is set, inputs can be regular expressions.",
+        help='Individual input sample labels (like "train0 train1 train2"). If '
+        "option --regex is set, inputs can be regular expressions.",
     )
     parser.add_argument("--regex", action="store_true", help="Allows regular expressions in inputs")
     parser.add_argument("--dir", type=str, default=".", help="Directory. Samples will be looked for / saved in the data/samples subfolder.")

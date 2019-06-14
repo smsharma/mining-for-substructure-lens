@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=e-as
-#SBATCH --output=log_eval_alices.log
+#SBATCH --output=log_eval_alices2.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
@@ -12,8 +12,8 @@ source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
 # What to do
-tag=fix
-# tag=mass
+# tag=fix
+tag=mass
 # tag=align
 # tag=full
 
