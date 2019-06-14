@@ -4,12 +4,12 @@ import six
 import logging
 from collections import OrderedDict
 import numpy as np
+import time
 import torch
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.nn.utils import clip_grad_norm_
-import time
 
 logger = logging.getLogger(__name__)
 
