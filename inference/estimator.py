@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 class ParameterizedRatioEstimator(object):
-    theta_mean = np.array([150.0, -1.9])
-    theta_std = np.array([50.0, 0.3])
+    theta_mean = np.array([0.1, -2.0])
+    theta_std = np.array([0.1, 0.5])
 
     def __init__(self, resolution=64, n_parameters=2, n_aux=0, architecture="resnet", log_input=False, rescale_inputs=True, rescale_theta=True):
         self.resolution = resolution
