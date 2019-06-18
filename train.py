@@ -155,14 +155,14 @@ def parse_args():
         "--initial_lrs",
         type=float,
         nargs="+",
-        default=[0.0005, 0.0002, 0.0001],
+        default=[0.001, 0.0005, 0.0002],
         help="Learning rate steps during first half of training. Default: [0.0005, 0.0002, 0.0001].",
     )
     parser.add_argument(
         "--final_lrs",
         type=float,
         nargs="+",
-        default=[0.0001, 0.00005],
+        default=[0.0002, 0.00001],
         help="Learning rate steps during second half of training. Default: [0.0002, 0.0001, 0.00005].",
     )
 
