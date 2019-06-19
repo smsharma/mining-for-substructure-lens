@@ -17,31 +17,31 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 # Combination
 ############################################################
 
-# sbatch combine_samples.sh
+sbatch combine_samples.sh # Run this for align
 
 
 ############################################################
 # Training
 ############################################################
 
-# sbatch train_carl.sh
-# sbatch train_alice.sh
-# sbatch train_alices.sh
-sbatch train_carl2.sh
+sbatch train_carl.sh  # align
+sbatch train_alice.sh
+sbatch train_alices.sh
+sbatch train_carl2.sh  # full, full-aux
 sbatch train_alice2.sh
-sbatch train_alices2.sh
+sbatch train_alices2.sh 
 
 
 ############################################################
 # Evaluation
 ############################################################
 
-sbatch eval_carl.sh
-sbatch eval_alice.sh
+sbatch eval_carl.sh  # align
+sbatch eval_alice.sh 
 sbatch eval_alices.sh
-# sbatch eval_carl2.sh
-# sbatch eval_alice2.sh
-# sbatch eval_alices2.sh
+sbatch eval_carl2.sh  # full, full-aux
+sbatch eval_alice2.sh
+sbatch eval_alices2.sh
 
 
 ############################################################
