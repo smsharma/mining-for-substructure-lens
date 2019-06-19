@@ -7,17 +7,17 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 # Simulation
 ############################################################
 
-# sbatch --array=0-99 simulate_train.sh
-# sbatch --array=0-624 simulate_calibration.sh
-# sbatch simulate_calibration_ref.sh
-# sbatch --array=0-9 simulate_test.sh
+## sbatch --array=0-99 simulate_train.sh
+## sbatch --array=0-624 simulate_calibration.sh
+## sbatch simulate_calibration_ref.sh
+## sbatch --array=0-9 simulate_test.sh
 
 
 ############################################################
 # Combination
 ############################################################
 
-sbatch combine_samples.sh # Run this for align
+sbatch combine_samples.sh # align
 
 
 ############################################################
@@ -39,13 +39,16 @@ sbatch train_alices2.sh
 sbatch eval_carl.sh  # align
 sbatch eval_alice.sh 
 sbatch eval_alices.sh
-sbatch eval_carl2.sh  # full, full-aux
+sbatch eval_carl2.sh  # full
 sbatch eval_alice2.sh
 sbatch eval_alices2.sh
+sbatch eval_carl3.sh  # full-aux
+sbatch eval_alice3.sh
+sbatch eval_alices3.sh
 
 
 ############################################################
 # Calibration
 ############################################################
 
-# sbatch calibrate.sh
+## sbatch calibrate.sh

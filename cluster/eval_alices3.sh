@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=e-as2
-#SBATCH --output=log_eval_alices2.log
+#SBATCH --job-name=e-as3
+#SBATCH --output=log_eval_alices3.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
@@ -17,8 +17,8 @@ cd /scratch/jb6504/StrongLensing-Inference/
 # tag=align
 tag=full
 
-modeltag=${tag}
-# modeltag=${tag}_aux
+# modeltag=${tag}
+modeltag=${tag}_aux
 
 # for i in {0..624}
 # do

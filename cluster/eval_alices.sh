@@ -12,9 +12,9 @@ source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
 # What to do
-tag=fix
+# tag=fix
 # tag=mass
-# tag=align
+tag=align
 # tag=full
 
 modeltag=${tag}
