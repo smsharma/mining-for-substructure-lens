@@ -15,9 +15,9 @@ cd /scratch/jb6504/StrongLensing-Inference/
 #./combine_samples.py --regex test_fix_point "test_fix_\d+" --dir /scratch/jb6504/StrongLensing-Inference
 #./combine_samples.py --regex test_fix_prior "test_fix_prior_\d+" --dir /scratch/jb6504/StrongLensing-Inference
 
-#./combine_samples.py --regex train_mass "train_mass_\d+" --dir /scratch/jb6504/StrongLensing-Inference
-#./combine_samples.py --regex test_mass_point "test_mass_\d+" --dir /scratch/jb6504/StrongLensing-Inference
-#./combine_samples.py --regex test_mass_prior "test_mass_prior_\d+" --dir /scratch/jb6504/StrongLensing-Inference
+./combine_samples.py --regex train_mass "train_mass_\d+" --dir /scratch/jb6504/StrongLensing-Inference
+./combine_samples.py --regex test_mass_point "test_mass_\d+" --dir /scratch/jb6504/StrongLensing-Inference
+./combine_samples.py --regex test_mass_prior "test_mass_prior_\d+" --dir /scratch/jb6504/StrongLensing-Inference
 
 ./combine_samples.py --regex train_align "train_align_\d+" --dir /scratch/jb6504/StrongLensing-Inference
 ./combine_samples.py --regex test_align_point "test_align_\d+" --dir /scratch/jb6504/StrongLensing-Inference

@@ -13,9 +13,9 @@ cd /scratch/jb6504/StrongLensing-Inference/
 
 # What to do
 # tag=fix
-# tag=mass
+tag=mass
 # tag=align
-tag=full
+# tag=full
 
 modeltag=${tag}
 # modeltag=${tag}_aux
