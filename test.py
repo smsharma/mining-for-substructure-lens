@@ -14,7 +14,7 @@ from inference.utils import load_and_check
 from simulation.prior import draw_params_from_prior, get_reference_point, get_grid, get_grid_point, get_grid_midpoint_index
 
 
-def evaluate(data_dir, model_filename, sample_filename, result_filename, aux=None, grid=True, shuffle=False, small=False, gradx=False):
+def evaluate(data_dir, model_filename, sample_filename, result_filename, aux=False, grid=True, shuffle=False, small=False, gradx=False):
     if not os.path.exists("{}/results".format(data_dir)):
         os.mkdir("{}/results".format(data_dir))
 
@@ -49,19 +49,11 @@ def evaluate(data_dir, model_filename, sample_filename, result_filename, aux=Non
         np.save("{}/results/grad_x_{}.npy".format(data_dir, result_filename), grad_x)
 
 
-def load_aux(filename, aux=None):
-    if aux is None:
-        return None, 0
-    elif aux == "zs":
-        return load_and_check(filename)[:, 0].reshape(-1, 1), 1
-    elif aux == "zl":
-        return load_and_check(filename)[:, 1].reshape(-1, 1), 1
-    elif aux == "z":
-        return load_and_check(filename)[:, ::2].reshape(-1, 2), 2
-    elif aux == "all":
-        return load_and_check(filename)[:, :].reshape(-1, 3), 3
+def load_aux(filename, aux=False):
+    if aux:
+        return load_and_check(filename)[:, 2].reshape(-1, 1), 1
     else:
-        raise ValueError("Unknown aux settings {}, please use 'zs', 'zl', 'z', or 'all'.".format(aux))
+        return None, 0
 
 
 def parse_args():
@@ -79,14 +71,7 @@ def parse_args():
         action="store_true",
         help="If --grid is not used, shuffles the theta values between the images. This can be useful to make ROC curves.",
     )
-    parser.add_argument(
-        "--aux",
-        type=str,
-        default=None,
-        help='Whether auxiliary information is used during training. Can be "zs" for '
-        'the source redshift, "zl" for the lens redshift, "z" for both redshifts,'
-        ' and "all" for both redshifts as well as sigma_v.',
-    )
+    parser.add_argument("-z", action="store_true", help="Provide lens redshift to the network")
     parser.add_argument(
         "--dir",
         type=str,
@@ -103,5 +88,5 @@ if __name__ == "__main__":
     logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.DEBUG)
     logging.info("Hi!")
     args = parse_args()
-    evaluate(args.dir + "/data", args.model, args.sample, args.result, args.aux, args.grid, args.shuffle, args.small, gradx=args.grad)
+    evaluate(args.dir + "/data", args.model, args.sample, args.result, args.z, args.grid, args.shuffle, args.small, gradx=args.grad)
     logging.info("All done! Have a nice day!")
