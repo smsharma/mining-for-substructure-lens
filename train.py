@@ -71,7 +71,7 @@ def train(
             final_lr=lr,
             nesterov_momentum=None,
             validation_split=0.25,
-            validation_split_seed=1107,
+            validation_split_seed=3373,
             early_stopping=True,
             limit_samplesize=limit_samplesize,
             verbose="all",
@@ -103,7 +103,7 @@ def train(
             final_lr=lr,
             nesterov_momentum=None,
             validation_split=0.25,
-            validation_split_seed=1107,
+            validation_split_seed=3373,
             early_stopping=True,
             limit_samplesize=limit_samplesize,
             verbose="all",
@@ -147,23 +147,23 @@ def parse_args():
         "and ALICES inference methods. Default: 0.0001",
     )
     parser.add_argument("--log", action="store_true", help="Whether the log of the input is taken.")
-    parser.add_argument("--epochs", type=int, default=50, help="Number of epochs. Default: 120.")
+    parser.add_argument("--epochs", type=int, default=60, help="Number of epochs. Default: 120.")
     parser.add_argument("--optimizer", default="adam", help='Optimizer. "amsgrad", "adam", and "sgd" are supported. Default: "adam".')
     parser.add_argument("--initial_batch_size", type=int, default=128, help="Batch size during first half of training. Default: 128.")
-    parser.add_argument("--final_batch_size", type=int, default=256, help="Batch size during second half of training. Default: 256.")
+    parser.add_argument("--final_batch_size", type=int, default=512, help="Batch size during second half of training. Default: 256.")
     parser.add_argument(
         "--initial_lrs",
         type=float,
         nargs="+",
-        default=[0.001, 0.0005, 0.0002],
-        help="Learning rate steps during first half of training. Default: [0.0005, 0.0002, 0.0001].",
+        default=[0.003, 0.001, 0.0003],
+        help="Learning rate steps during first half of training.",
     )
     parser.add_argument(
         "--final_lrs",
         type=float,
         nargs="+",
-        default=[0.0002, 0.00001],
-        help="Learning rate steps during second half of training. Default: [0.0002, 0.0001, 0.00005].",
+        default=[0.001, 0.0003, 0.0001],
+        help="Learning rate steps during second half of training.",
     )
 
     return parser.parse_args()
