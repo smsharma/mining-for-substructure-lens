@@ -81,6 +81,8 @@ def train(
         best_loss = np.nanmin(np.asarray(all_losses))
     estimator.save("{}/models/{}_halftrained".format(data_dir, model_filename))
 
+    best_loss = None
+
     for lr in final_lrs:
         logging.info("")
         logging.info("")
