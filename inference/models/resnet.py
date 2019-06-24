@@ -97,7 +97,7 @@ class Bottleneck(nn.Module):
 
 
 class ResNetRatioEstimator(nn.Module):
-    def __init__(self, n_parameters, n_aux=0, cfg=18, n_hidden=512, input_mean=None, input_std=None, log_input=False, zero_init_residual=False, norm_layer=None):
+    def __init__(self, n_parameters, n_aux=0, cfg=18, n_hidden=512, input_mean=None, input_std=None, log_input=False, zero_init_residual=False, norm_layer=None, zero_bias=False):
         super(ResNetRatioEstimator, self).__init__()
 
         self.input_mean = input_mean
@@ -125,9 +125,14 @@ class ResNetRatioEstimator(nn.Module):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+                if zero_bias:
+                    nn.init.constant_(m.bias, 0)
             elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
+            else:
+                if zero_bias:
+                    nn.init.constant_(m.bias, 0)
 
         # Zero-initialize the last BN in each residual branch,
         # so that the residual branch starts with zeros, and each residual block behaves like an identity.

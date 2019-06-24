@@ -13,18 +13,29 @@ from inference.calibration import HistogramCalibrator
 from inference.utils import s_from_r
 
 
-def calibrate(data_dir, raw_filename, calibration_filename, nbins=50, transform_to_s=False, equal_binning=False):
+def calibrate(
+    data_dir,
+    raw_filename,
+    calibration_filename,
+    nbins=50,
+    transform_to_s=False,
+    equal_binning=False,
+):
     # Load data
     llr_raw = np.load("{}/llr_{}.npy".format(data_dir, raw_filename))
     n_grid = llr_raw.shape[0]
 
-    llr_calibration_den = np.load("{}/llr_{}_ref.npy".format(data_dir, calibration_filename))
+    llr_calibration_den = np.load(
+        "{}/llr_{}_ref.npy".format(data_dir, calibration_filename)
+    )
 
     # Calibrate every data set
     llr_cal = np.zeros_like(llr_raw)
     for i in range(n_grid):
         try:
-            llr_calibration_num = np.load("{}/llr_{}_theta{}.npy".format(data_dir, calibration_filename, i))
+            llr_calibration_num = np.load(
+                "{}/llr_{}_theta{}.npy".format(data_dir, calibration_filename, i)
+            )
         except FileNotFoundError:
             logging.warning("Did not find numerator calibration data for i = %s", i)
             llr_cal[i] = np.copy(llr_raw[i])
@@ -38,12 +49,20 @@ def calibrate(data_dir, raw_filename, calibration_filename, nbins=50, transform_
             s_cal_den = s_from_r(np.exp(llr_calibration_den[i]))
             s_raw = s_from_r(np.exp(llr_raw[i]))
 
-            cal = HistogramCalibrator(s_cal_num, s_cal_den, nbins=nbins, histrange=(0.0, 1.0), mode="fixed" if equal_binning else "dynamic")
+            cal = HistogramCalibrator(
+                s_cal_num,
+                s_cal_den,
+                nbins=nbins,
+                histrange=(0.0, 1.0),
+                mode="fixed" if equal_binning else "dynamic",
+            )
 
             llr_cal[i] = cal.log_likelihood_ratio(s_raw)
 
         else:
-            cal = HistogramCalibrator(llr_calibration_num, llr_calibration_den[i], nbins=nbins)
+            cal = HistogramCalibrator(
+                llr_calibration_num, llr_calibration_den[i], nbins=nbins
+            )
             llr_cal[i] = cal.log_likelihood_ratio(llr_raw[i])
 
     llr_cal = np.array(llr_cal)
@@ -53,24 +72,33 @@ def calibrate(data_dir, raw_filename, calibration_filename, nbins=50, transform_
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Strong lensing experiments: evaluation")
+    parser = argparse.ArgumentParser(
+        description="Strong lensing experiments: evaluation"
+    )
 
     # Main options
     parser.add_argument("raw", type=str, help='Sample name, like "test".')
     parser.add_argument("calibration", type=str, help="File name for results.")
-    parser.add_argument("--bins", default=50, type=int, help="Number of bins in calibration histogram.")
+    parser.add_argument(
+        "--bins", default=50, type=int, help="Number of bins in calibration histogram."
+    )
     parser.add_argument(
         "--dir",
         type=str,
         default=".",
-        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the " "data/models subfolder.",
+        help="Directory. Training data will be loaded from the data/samples subfolder, the model saved in the "
+        "data/models subfolder.",
     )
 
     return parser.parse_args()
 
 
 if __name__ == "__main__":
-    logging.basicConfig(format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s", datefmt="%H:%M", level=logging.DEBUG)
+    logging.basicConfig(
+        format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
+        datefmt="%H:%M",
+        level=logging.DEBUG,
+    )
     logging.info("Hi!")
     args = parse_args()
     calibrate(args.dir + "/data/results/", args.raw, args.calibration, nbins=args.bins)

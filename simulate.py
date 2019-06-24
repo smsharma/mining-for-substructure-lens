@@ -11,10 +11,17 @@ sys.path.append("./")
 
 from simulation.units import *
 from simulation.wrapper import augmented_data
-from simulation.prior import draw_params_from_prior, get_reference_point, get_grid, get_grid_point
+from simulation.prior import (
+    draw_params_from_prior,
+    get_reference_point,
+    get_grid,
+    get_grid_point,
+)
 
 
-def simulate_train_marginalref(n=10000, n_thetas_marginal=5000, fixm=False, fixz=False, fixalign=False):
+def simulate_train_marginalref(
+    n=10000, n_thetas_marginal=5000, fixm=False, fixz=False, fixalign=False
+):
     logger.info("Generating training data with %s images", n)
 
     # Parameter points from prior
@@ -125,7 +132,13 @@ def simulate_train_pointref(n=10000, fixm=False, fixz=False, fixalign=False):
 
 def simulate_calibration(i_theta, n=1000, fixm=False, fixz=False, fixalign=False):
     f_sub, beta = get_grid_point(i_theta)
-    logger.info("Generating calibration data with %s images at theta %s / 625: f_sub = %s, beta = %s", n, i_theta + 1, f_sub, beta)
+    logger.info(
+        "Generating calibration data with %s images at theta %s / 625: f_sub = %s, beta = %s",
+        n,
+        i_theta + 1,
+        f_sub,
+        beta,
+    )
     theta, x, _, _, _, latents = augmented_data(
         f_sub=f_sub,
         beta=beta,
@@ -177,7 +190,12 @@ def simulate_calibration_pointref(n=1000, fixm=False, fixz=False, fixalign=False
 
 def simulate_test_point(n=1000, fixm=False, fixz=False, fixalign=False):
     f_sub, beta = get_reference_point()
-    logger.info("Generating point test data with %s images at f_sub = %s, beta = %s", n, f_sub, beta)
+    logger.info(
+        "Generating point test data with %s images at f_sub = %s, beta = %s",
+        n,
+        f_sub,
+        beta,
+    )
     theta, x, _, _, _, latents = augmented_data(
         f_sub=f_sub,
         beta=beta,
@@ -230,27 +248,60 @@ def save(data_dir, name, x, theta, y=None, r_xz=None, t_xz=None, latents=None):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Strong lensing experiments: simulation")
-
-    parser.add_argument("--test", action="store_true", help="Generate test rather than train data.")
-    parser.add_argument("--calibrate", action="store_true", help="Generate calibration rather than train data.")
-    parser.add_argument("--calref", action="store_true", help="Generate reference sample for calibration.")
-    parser.add_argument(
-        "--point", action="store_true", help="Generate test data at specific reference model rather than sampled from the prior."
+    parser = argparse.ArgumentParser(
+        description="Strong lensing experiments: simulation"
     )
 
-    parser.add_argument("-n", type=int, default=10000, help="Number of samples to generate. Default is 10k.")
+    parser.add_argument(
+        "--test", action="store_true", help="Generate test rather than train data."
+    )
+    parser.add_argument(
+        "--calibrate",
+        action="store_true",
+        help="Generate calibration rather than train data.",
+    )
+    parser.add_argument(
+        "--calref",
+        action="store_true",
+        help="Generate reference sample for calibration.",
+    )
+    parser.add_argument(
+        "--point",
+        action="store_true",
+        help="Generate test data at specific reference model rather than sampled from the prior.",
+    )
+
+    parser.add_argument(
+        "-n",
+        type=int,
+        default=10000,
+        help="Number of samples to generate. Default is 10k.",
+    )
     parser.add_argument("--fixm", action="store_true", help="Fix host halo mass")
     parser.add_argument("--fixz", action="store_true", help="Fix lens redshift")
-    parser.add_argument("--fixalign", action="store_true", help="Fix alignment between lens and source")
+    parser.add_argument(
+        "--fixalign", action="store_true", help="Fix alignment between lens and source"
+    )
     parser.add_argument(
         "--pointref",
         action="store_true",
         help="When generating training or calibration data, use a fixed reference point rather than the full marginal model.",
     )
-    parser.add_argument("--name", type=str, default=None, help='Sample name, like "train" or "test".')
-    parser.add_argument("--theta", type=int, default=None, help="Theta index for calibration (between 0 and 440)")
-    parser.add_argument("--dir", type=str, default=".", help="Base directory. Results will be saved in the data/samples subfolder.")
+    parser.add_argument(
+        "--name", type=str, default=None, help='Sample name, like "train" or "test".'
+    )
+    parser.add_argument(
+        "--theta",
+        type=int,
+        default=None,
+        help="Theta index for calibration (between 0 and 440)",
+    )
+    parser.add_argument(
+        "--dir",
+        type=str,
+        default=".",
+        help="Base directory. Results will be saved in the data/samples subfolder.",
+    )
     parser.add_argument("--debug", action="store_true", help="Prints debug output.")
 
     return parser.parse_args()
@@ -269,26 +320,42 @@ if __name__ == "__main__":
     if args.test:
         name = "test" if args.name is None else args.name
         if args.point:
-            results = simulate_test_point(args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign)
+            results = simulate_test_point(
+                args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
         else:
-            results = simulate_test_prior(args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign)
+            results = simulate_test_prior(
+                args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
     elif args.calibrate:
         assert args.theta is not None, "Please provide --theta"
-        name = "calibrate_theta{}".format(args.theta) if args.name is None else args.name
-        results = simulate_calibration(args.theta, args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign)
+        name = (
+            "calibrate_theta{}".format(args.theta) if args.name is None else args.name
+        )
+        results = simulate_calibration(
+            args.theta, args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+        )
     elif args.calref:
         if args.pointref:
             name = "calibrate_pointref" if args.name is None else args.name
-            results = simulate_calibration_pointref(args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign)
+            results = simulate_calibration_pointref(
+                args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
         else:
             name = "calibrate_ref" if args.name is None else args.name
-            results = simulate_calibration_marginalref(args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign)
+            results = simulate_calibration_marginalref(
+                args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
     else:
         name = "train" if args.name is None else args.name
         if args.pointref:
-            results = simulate_train_pointref(args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign)
+            results = simulate_train_pointref(
+                args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
         else:
-            results = simulate_train_marginalref(args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign)
+            results = simulate_train_marginalref(
+                args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
     save(args.dir, name, *results)
 
     logger.info("All done! Have a nice day!")

@@ -17,7 +17,9 @@ def ratio_mse_den(s_hat, log_r_hat, t0_hat, y_true, r_true, t0_true):
 
 
 def ratio_mse(s_hat, log_r_hat, t0_hat, y_true, r_true, t0_true):
-    return ratio_mse_num(s_hat, log_r_hat, t0_hat, y_true, r_true, t0_true) + ratio_mse_den(s_hat, log_r_hat, t0_hat, y_true, r_true, t0_true)
+    return ratio_mse_num(
+        s_hat, log_r_hat, t0_hat, y_true, r_true, t0_true
+    ) + ratio_mse_den(s_hat, log_r_hat, t0_hat, y_true, r_true, t0_true)
 
 
 def ratio_score_mse_num(s_hat, log_r_hat, t0_hat, y_true, r_true, t0_true):
