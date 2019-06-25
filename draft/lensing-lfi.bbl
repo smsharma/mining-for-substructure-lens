@@ -48,6 +48,9 @@
 \bibitem[{{Collett}(2015)}]{2015ApJ...811...20C}
 {Collett}, T.~E. 2015, \apj, 811, 20, \dodoi{10.1088/0004-637X/811/1/20}
 
+\bibitem[{{Dalal} \& {Kochanek}(2002)}]{2002ApJ...572...25D}
+{Dalal}, N., \& {Kochanek}, C.~S. 2002, \apj, 572, 25, \dodoi{10.1086/340303}
+
 \bibitem[{{Despali} \& {Vegetti}(2017)}]{2017MNRAS.469.1997D}
 {Despali}, G., \& {Vegetti}, S. 2017, \mnras, 469, 1997,
   \dodoi{10.1093/mnras/stx966}
@@ -57,14 +60,19 @@
 {Han}, J., {Cole}, S., {Frenk}, C.~S., \& {Jing}, Y. 2016, \mnras, 457, 1208,
   \dodoi{10.1093/mnras/stv2900}
 
+\bibitem[{{Hiroshima} {et~al.}(2018){Hiroshima}, {Ando}, \&
+  {Ishiyama}}]{2018PhRvD..97l3002H}
+{Hiroshima}, N., {Ando}, S., \& {Ishiyama}, T. 2018, \prd, 97, 123002,
+  \dodoi{10.1103/PhysRevD.97.123002}
+
+\bibitem[{{Hsueh} {et~al.}(2019){Hsueh}, {Enzi}, {Vegetti}, {Auger},
+  {Fassnacht}, {Despali}, {Koopmans}, \& {McKean}}]{2019arXiv190504182H}
+{Hsueh}, J.-W., {Enzi}, W., {Vegetti}, S., {et~al.} 2019, arXiv e-prints,
+  arXiv:1905.04182.
+\newblock \doarXiv{1905.04182}
+
 \bibitem[{Hunter(2007)}]{Hunter:2007}
 Hunter, J.~D. 2007, Computing In Science \& Engineering, 9, 90
-
-\bibitem[{{H{\"u}tten} {et~al.}(2016){H{\"u}tten}, {Combet}, {Maier}, \&
-  {Maurin}}]{2016JCAP...09..047H}
-{H{\"u}tten}, M., {Combet}, C., {Maier}, G., \& {Maurin}, D. 2016, Journal of
-  Cosmology and Astro-Particle Physics, 2016, 047,
-  \dodoi{10.1088/1475-7516/2016/09/047}
 
 \bibitem[{Jones {et~al.}(2001--)Jones, Oliphant, Peterson,
   {et~al.}}]{Jones:2001ab}
