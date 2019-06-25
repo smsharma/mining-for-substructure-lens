@@ -20,7 +20,7 @@ def train(
     data_dir,
     sample_name,
     model_filename,
-    aux=None,
+    aux=False,
     architecture="resnet",
     log_input=False,
     initial_batch_size=128,
@@ -30,6 +30,8 @@ def train(
     initial_lrs=[0.0005, 0.0002, 0.0001],
     final_lrs=[0.0001, 0.00005],
     limit_samplesize=None,
+    load=None,
+    zero_bias=False,
 ):
     aux_data, n_aux = load_aux("{}/samples/z_{}.npy".format(data_dir, sample_name), aux)
     if aux_data is None:
@@ -49,7 +51,14 @@ def train(
         architecture=architecture,
         log_input=log_input,
         rescale_inputs=True,
+        zero_bias=zero_bias,
     )
+
+    if load is not None:
+        logging.info(
+            "Loading pre-trained model from %s", "{}/models/{}".format(data_dir, load)
+        )
+        estimator.load("{}/models/{}".format(data_dir, load))
 
     best_loss = None
     epochs_per_lr = int(round(n_epochs / (len(initial_lrs) + len(final_lrs)), 0))
@@ -58,7 +67,11 @@ def train(
         logging.info("")
         logging.info("")
         logging.info("")
-        logging.info("Starting training with batch size %s and learning rate %s", initial_batch_size, lr)
+        logging.info(
+            "Starting training with batch size %s and learning rate %s",
+            initial_batch_size,
+            lr,
+        )
         logging.info("")
         _, losses = estimator.train(
             method,
@@ -76,21 +89,27 @@ def train(
             final_lr=lr,
             nesterov_momentum=None,
             validation_split=0.25,
-            validation_split_seed=1107,
+            validation_split_seed=3373,
             early_stopping=True,
             limit_samplesize=limit_samplesize,
             verbose="all",
-            validation_loss_before=best_loss
+            validation_loss_before=best_loss,
         )
         all_losses = [best_loss] + list(losses) if best_loss is not None else losses
         best_loss = np.nanmin(np.asarray(all_losses))
     estimator.save("{}/models/{}_halftrained".format(data_dir, model_filename))
 
+    best_loss = None
+
     for lr in final_lrs:
         logging.info("")
         logging.info("")
         logging.info("")
-        logging.info("Starting training with batch size %s and learning rate %s", final_batch_size, lr)
+        logging.info(
+            "Starting training with batch size %s and learning rate %s",
+            final_batch_size,
+            lr,
+        )
         logging.info("")
         _, losses = estimator.train(
             method,
@@ -108,32 +127,22 @@ def train(
             final_lr=lr,
             nesterov_momentum=None,
             validation_split=0.25,
-            validation_split_seed=1107,
+            validation_split_seed=3373,
             early_stopping=True,
             limit_samplesize=limit_samplesize,
             verbose="all",
-            validation_loss_before=best_loss
+            validation_loss_before=best_loss,
         )
         all_losses = [best_loss] + list(losses)
         best_loss = np.nanmin(np.asarray(all_losses))
     estimator.save("{}/models/{}".format(data_dir, model_filename))
 
 
-def load_aux(filename, aux=None):
-    if aux is None:
-        return None, 0
-    elif aux == "zs":
-        return load_and_check(filename)[:, 0].reshape(-1, 1), 1
-    elif aux == "zl":
-        return load_and_check(filename)[:, 1].reshape(-1, 1), 1
-    elif aux == "z":
-        return load_and_check(filename)[:, ::2].reshape(-1, 2), 2
-    elif aux == "all":
-        return load_and_check(filename)[:, :].reshape(-1, 3), 3
+def load_aux(filename, aux=False):
+    if aux:
+        return load_and_check(filename)[:, 2].reshape(-1, 1), 1
     else:
-        raise ValueError(
-            "Unknown aux settings {}, please use 'zs', 'zl', 'z', or 'all'.".format(aux)
-        )
+        return None, 0
 
 
 def parse_args():
@@ -146,22 +155,12 @@ def parse_args():
         "method",
         help='Inference method: "carl", "rolr", "alice", "cascal", "rascal", "alices".',
     )
+    parser.add_argument("sample", type=str, help='Sample name, like "train".')
     parser.add_argument(
-        "--aux",
-        type=str,
-        default=None,
-        help='Whether auxiliary information is used during training. Can be "zs" for '
-        'the source redshift, "zl" for the lens redshift, "z" for both redshifts,'
-        ' and "all" for both redshifts as well as sigma_v.',
+        "name", type=str, help="Model name. Defaults to the name of the method."
     )
     parser.add_argument(
-        "--sample", type=str, default="train", help='Sample name, like "train".'
-    )
-    parser.add_argument(
-        "--name",
-        type=str,
-        default=None,
-        help="Model name. Defaults to the name of the method.",
+        "-z", action="store_true", help="Proivide lens redshift to the network"
     )
     parser.add_argument(
         "--dir",
@@ -191,7 +190,16 @@ def parse_args():
         "--log", action="store_true", help="Whether the log of the input is taken."
     )
     parser.add_argument(
-        "--epochs", type=int, default=50, help="Number of epochs. Default: 120."
+        "--load",
+        default=None,
+        type=str,
+        help="Path of pretrained model that is loaded before training.",
+    )
+    parser.add_argument(
+        "--zerobias", action="store_true", help="Initialize with zero bias."
+    )
+    parser.add_argument(
+        "--epochs", type=int, default=60, help="Number of epochs. Default: 120."
     )
     parser.add_argument(
         "--optimizer",
@@ -199,24 +207,30 @@ def parse_args():
         help='Optimizer. "amsgrad", "adam", and "sgd" are supported. Default: "adam".',
     )
     parser.add_argument(
-        "--initial_batch_size", type=int, default=128, help="Batch size during first half of training. Default: 128."
+        "--initial_batch_size",
+        type=int,
+        default=128,
+        help="Batch size during first half of training. Default: 128.",
     )
     parser.add_argument(
-        "--final_batch_size", type=int, default=256, help="Batch size during second half of training. Default: 256."
+        "--final_batch_size",
+        type=int,
+        default=512,
+        help="Batch size during second half of training. Default: 256.",
     )
     parser.add_argument(
         "--initial_lrs",
         type=float,
-        nargs='+',
-        default=[0.0005, 0.0002, 0.0001],
-        help="Learning rate steps during first half of training. Default: [0.0005, 0.0002, 0.0001].",
+        nargs="+",
+        default=[0.003, 0.001, 0.0003],
+        help="Learning rate steps during first half of training.",
     )
     parser.add_argument(
         "--final_lrs",
         type=float,
-        nargs='+',
-        default=[0.0001, 0.00005],
-        help="Learning rate steps during second half of training. Default: [0.0002, 0.0001, 0.00005].",
+        nargs="+",
+        default=[0.001, 0.0003, 0.0001],
+        help="Learning rate steps during second half of training.",
     )
 
     return parser.parse_args()
@@ -241,7 +255,7 @@ if __name__ == "__main__":
 
     train(
         method=args.method,
-        aux=args.aux,
+        aux=args.z,
         alpha=args.alpha,
         data_dir="{}/data/".format(args.dir),
         sample_name=args.sample,
@@ -254,6 +268,8 @@ if __name__ == "__main__":
         initial_lrs=args.initial_lrs,
         final_lrs=args.final_lrs,
         architecture=architecture,
+        zero_bias=args.zerobias,
+        load=args.load,
     )
 
     logging.info("All done! Have a nice day!")

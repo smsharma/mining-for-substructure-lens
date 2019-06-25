@@ -11,6 +11,15 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
+# What to do
+# tag=fix
+# tag=mass
+tag=align
+# tag=full
+
+modeltag=${tag}
+# modeltag=${tag}_aux
+
 # for i in {0..624}
 # do
 #     echo ""
@@ -18,7 +27,7 @@ cd /scratch/jb6504/StrongLensing-Inference/
 #     echo ""
 #     echo "EVALUATING CALIB $i"
 #     echo ""
-#     python -u test.py alice calibrate_theta$i alice_calibrate_theta$i --dir /scratch/jb6504/StrongLensing-Inference
+#     python -u test.py alice_${modeltag} calibrate_${tag}_theta$i alice_${modeltag}_calibrate_theta$i --dir /scratch/jb6504/StrongLensing-Inference
 # done
 #
 # echo ""
@@ -26,27 +35,25 @@ cd /scratch/jb6504/StrongLensing-Inference/
 # echo ""
 # echo "EVALUATING CALIB REF"
 # echo ""
-# # python -u test.py alice calibrate_ref alice_calibrate_ref --dir /scratch/jb6504/StrongLensing-Inference
-#
-# echo ""
-# echo ""
-# echo ""
-# echo "EVALUATING PRIOR SAMPLE"
-# echo ""
-# python -u test.py alice test_prior alice_prior --dir /scratch/jb6504/StrongLensing-Inference
-#
-#
-# echo ""
-# echo ""
-# echo ""
-# echo "EVALUATING PRIOR SAMPLE (SHUFFLED)"
-# echo ""
-# python -u test.py alice test_prior alice_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
+# # python -u test.py alice_${modeltag} calibrate_${tag}_ref alice_${modeltag}_calibrate_ref --dir /scratch/jb6504/StrongLensing-Inference
 
+echo ""
+echo ""
+echo ""
+echo "EVALUATING PRIOR SAMPLE"
+echo ""
+python -u test.py alice_${modeltag} test_${tag}_prior alice_${modeltag}_prior --dir /scratch/jb6504/StrongLensing-Inference
+
+echo ""
+echo ""
+echo ""
+echo "EVALUATING PRIOR SAMPLE (SHUFFLED)"
+echo ""
+python -u test.py alice_${modeltag} test_${tag}_prior alice_${modeltag}_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
 
 echo ""
 echo ""
 echo ""
 echo "EVALUATING POINT SAMPLE ON PARAM GRID"
 echo ""
-python -u test.py alice test_point alice_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
+python -u test.py alice_${modeltag} test_${tag}_point alice_${modeltag}_grid --grid --dir /scratch/jb6504/StrongLensing-Inference

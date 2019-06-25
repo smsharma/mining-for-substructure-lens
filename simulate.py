@@ -5,54 +5,66 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import sys, os
 import argparse
 import logging
-from scipy.stats import uniform, norm
 
 logger = logging.getLogger(__name__)
 sys.path.append("./")
 
 from simulation.units import *
 from simulation.wrapper import augmented_data
+from simulation.prior import (
+    draw_params_from_prior,
+    get_reference_point,
+    get_grid,
+    get_grid_point,
+)
 
 
-def simulate_train_marginalref(n=10000, n_thetas_marginal=5000):
+def simulate_train_marginalref(
+    n=10000, n_thetas_marginal=5000, fixm=False, fixz=False, fixalign=False
+):
     logger.info("Generating training data with %s images", n)
 
     # Parameter points from prior
-    n_calib = uniform(10.0, 400.0).rvs(size=n // 2)
-    beta = uniform(-3.0, 1.9).rvs(size=n // 2)
+    f_sub, beta = draw_params_from_prior(n // 2)
     if n_thetas_marginal is None:
-        n_calib_ref = n_calib
+        f_sub_ref = f_sub
         beta_ref = beta
+        n_thetas_marginal = n // 2
     else:
-        n_calib_ref = uniform(10.0, 400.0).rvs(size=n_thetas_marginal)
-        beta_ref = uniform(-3.0, 1.9).rvs(size=n_thetas_marginal)
+        f_sub_ref, beta_ref = draw_params_from_prior(n_thetas_marginal)
 
     # Samples from numerator
     logger.info("Generating %s numerator images", n // 2)
     y0 = np.zeros(n // 2)
     theta0, x0, t_xz0, log_r_xz0, _, latents0 = augmented_data(
-        n_calib=n_calib,
+        f_sub=f_sub,
         beta=beta,
-        n_calib_ref=n_calib_ref,
+        f_sub_ref=f_sub_ref,
         beta_ref=beta_ref,
         n_images=n // 2,
         n_thetas_marginal=n_thetas_marginal,
         inverse=False,
         mine_gold=True,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
 
     # Samples from denominator / reference / marginal
     logger.info("Generating %s denominator images", n // 2)
     y1 = np.ones(n // 2)
     theta1, x1, t_xz1, log_r_xz1, _, latents1 = augmented_data(
-        n_calib=n_calib,
+        f_sub=f_sub,
         beta=beta,
-        n_calib_ref=n_calib_ref,
+        f_sub_ref=f_sub_ref,
         beta_ref=beta_ref,
         n_images=n // 2,
         n_thetas_marginal=n_thetas_marginal,
         inverse=True,
         mine_gold=True,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
 
     x = np.vstack((x0, x1))
@@ -66,39 +78,45 @@ def simulate_train_marginalref(n=10000, n_thetas_marginal=5000):
     return x, theta, y, r_xz, t_xz, latents
 
 
-def simulate_train_pointref(n=10000, n_calib_ref=150., beta_ref=-1.9):
+def simulate_train_pointref(n=10000, fixm=False, fixz=False, fixalign=False):
     logger.info("Generating training data with %s images", n)
 
     # Parameter points from prior
-    n_calib = uniform(10.0, 400.0).rvs(size=n // 2)
-    beta = uniform(-3.0, 1.9).rvs(size=n // 2)
+    f_sub, beta = draw_params_from_prior(n // 2)
+    f_sub_ref, beta_ref = get_reference_point()
 
     # Samples from numerator
     logger.info("Generating %s numerator images", n // 2)
     y0 = np.zeros(n // 2)
     theta0, x0, t_xz0, log_r_xz0, _, latents0 = augmented_data(
-        n_calib=n_calib,
+        f_sub=f_sub,
         beta=beta,
-        n_calib_ref=[n_calib_ref],
+        f_sub_ref=[f_sub_ref],
         beta_ref=[beta_ref],
         n_images=n // 2,
         n_thetas_marginal=1,
         inverse=False,
         mine_gold=True,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
 
     # Samples from denominator / reference
     logger.info("Generating %s denominator images", n // 2)
     y1 = np.ones(n // 2)
     theta1, x1, t_xz1, log_r_xz1, _, latents1 = augmented_data(
-        n_calib=n_calib,
+        f_sub=f_sub,
         beta=beta,
-        n_calib_ref=[n_calib_ref],
+        f_sub_ref=[f_sub_ref],
         beta_ref=[beta_ref],
         n_images=n // 2,
         n_thetas_marginal=1,
         inverse=True,
         mine_gold=True,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
 
     x = np.vstack((x0, x1))
@@ -112,85 +130,98 @@ def simulate_train_pointref(n=10000, n_calib_ref=150., beta_ref=-1.9):
     return x, theta, y, r_xz, t_xz, latents
 
 
-def grid_point(i, alpha_min=10., alpha_max=400., beta_min=-1.1, beta_max=-3.0, resolution=25):
-    alpha_test = np.linspace(alpha_min, alpha_max, resolution)
-    beta_test = np.linspace(beta_min, beta_max, resolution)
-
-    theta0, theta1 = np.meshgrid(alpha_test, beta_test)
-    theta_grid = np.vstack((theta0.flatten(), theta1.flatten())).T
-
-    return theta_grid[i]
-
-
-def simulate_calibration(i_theta, n=1000):
-    n_calib, beta = grid_point(i_theta)
+def simulate_calibration(i_theta, n=1000, fixm=False, fixz=False, fixalign=False):
+    f_sub, beta = get_grid_point(i_theta)
     logger.info(
-        "Generating calibration data with %s images at theta %s / 625: n_calib = %s, beta = %s",
+        "Generating calibration data with %s images at theta %s / 625: f_sub = %s, beta = %s",
         n,
         i_theta + 1,
-        n_calib,
+        f_sub,
         beta,
     )
     theta, x, _, _, _, latents = augmented_data(
-        n_calib=n_calib, beta=beta, n_images=n, mine_gold=False
+        f_sub=f_sub,
+        beta=beta,
+        n_images=n,
+        mine_gold=False,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
 
     return x, theta, None, None, None, latents
 
 
-def simulate_calibration_ref(n=1000):
+def simulate_calibration_marginalref(n=1000, fixm=False, fixz=False, fixalign=False):
+    logger.info("Generating calibration data with %s images from prior", n)
+    f_sub, beta = draw_params_from_prior(n)
+    theta, x, _, _, _, latents = augmented_data(
+        f_sub=f_sub,
+        beta=beta,
+        n_images=n,
+        inverse=False,
+        mine_gold=False,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
+    )
+    return x, theta, None, None, None, latents
+
+
+def simulate_calibration_pointref(n=1000, fixm=False, fixz=False, fixalign=False):
     logger.info("Generating calibration data with %s images from prior", n)
 
     # Parameter points from prior
-    n_calib = uniform(10.0, 400.0).rvs(size=n)
-    beta = uniform(-3.0, 1.9).rvs(size=n)
+    f_sub, beta = get_reference_point()
 
     theta, x, _, _, _, latents = augmented_data(
-        n_calib=n_calib, beta=beta, n_images=n, inverse=False, mine_gold=False
+        f_sub=f_sub,
+        beta=beta,
+        n_images=n,
+        inverse=False,
+        mine_gold=False,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
 
     return x, theta, None, None, None, latents
 
 
-def simulate_calibration_pointref(n=1000):
-    logger.info("Generating calibration data with %s images from prior", n)
-
-    # Parameter points from prior
-    n_calib = 150.
-    beta = -1.9
-
-    theta, x, _, _, _, latents = augmented_data(
-        n_calib=n_calib, beta=beta, n_images=n, inverse=False, mine_gold=False
-    )
-
-    return x, theta, None, None, None, latents
-
-
-def simulate_test_point(n=1000, n_calib=150, beta=-1.9):
+def simulate_test_point(n=1000, fixm=False, fixz=False, fixalign=False):
+    f_sub, beta = get_reference_point()
     logger.info(
-        "Generating point test data with %s images at n_calib = %s, beta = %s",
+        "Generating point test data with %s images at f_sub = %s, beta = %s",
         n,
-        n_calib,
+        f_sub,
         beta,
     )
     theta, x, _, _, _, latents = augmented_data(
-        n_calib=n_calib, beta=beta, n_images=n, mine_gold=False
+        f_sub=f_sub,
+        beta=beta,
+        n_images=n,
+        mine_gold=False,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
 
     return x, theta, None, None, None, latents
 
 
-def simulate_test_prior(n=1000):
+def simulate_test_prior(n=1000, fixm=False, fixz=False, fixalign=False):
     logger.info("Generating prior test data with %s images", n)
-
-    # Parameter points from prior
-    n_calib = uniform(10.0, 400.0).rvs(size=n)
-    beta = uniform(-3.0, 1.9).rvs(size=n)
-
+    f_sub, beta = draw_params_from_prior(n)
     theta, x, _, _, _, latents = augmented_data(
-        n_calib=n_calib, beta=beta, n_images=n, inverse=False, mine_gold=False
+        f_sub=f_sub,
+        beta=beta,
+        n_images=n,
+        inverse=False,
+        mine_gold=False,
+        draw_host_mass=not fixm,
+        draw_host_redshift=not fixz,
+        draw_alignment=not fixalign,
     )
-
     return x, theta, None, None, None, latents
 
 
@@ -221,23 +252,35 @@ def parse_args():
         description="Strong lensing experiments: simulation"
     )
 
-    # Main options
+    parser.add_argument(
+        "--test", action="store_true", help="Generate test rather than train data."
+    )
+    parser.add_argument(
+        "--calibrate",
+        action="store_true",
+        help="Generate calibration rather than train data.",
+    )
+    parser.add_argument(
+        "--calref",
+        action="store_true",
+        help="Generate reference sample for calibration.",
+    )
+    parser.add_argument(
+        "--point",
+        action="store_true",
+        help="Generate test data at specific reference model rather than sampled from the prior.",
+    )
+
     parser.add_argument(
         "-n",
         type=int,
         default=10000,
         help="Number of samples to generate. Default is 10k.",
     )
+    parser.add_argument("--fixm", action="store_true", help="Fix host halo mass")
+    parser.add_argument("--fixz", action="store_true", help="Fix lens redshift")
     parser.add_argument(
-        "--test", action="store_true", help="Generate test rather than train data."
-    )
-    parser.add_argument(
-        "--calibrate", action="store_true", help="Generate calibration rather than train data."
-    )
-    parser.add_argument(
-        "--point",
-        action="store_true",
-        help="Generate test data at specific reference model rather than sampled from the prior.",
+        "--fixalign", action="store_true", help="Fix alignment between lens and source"
     )
     parser.add_argument(
         "--pointref",
@@ -245,13 +288,13 @@ def parse_args():
         help="When generating training or calibration data, use a fixed reference point rather than the full marginal model.",
     )
     parser.add_argument(
-        "--calref", action="store_true", help="Generate reference sample for calibration."
-    )
-    parser.add_argument(
         "--name", type=str, default=None, help='Sample name, like "train" or "test".'
     )
     parser.add_argument(
-        "--theta", type=int, default=None, help='Theta index for calibration (between 0 and 440)'
+        "--theta",
+        type=int,
+        default=None,
+        help="Theta index for calibration (between 0 and 440)",
     )
     parser.add_argument(
         "--dir",
@@ -277,26 +320,42 @@ if __name__ == "__main__":
     if args.test:
         name = "test" if args.name is None else args.name
         if args.point:
-            results = simulate_test_point(args.n)
+            results = simulate_test_point(
+                args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
         else:
-            results = simulate_test_prior(args.n)
+            results = simulate_test_prior(
+                args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
     elif args.calibrate:
         assert args.theta is not None, "Please provide --theta"
-        name = "calibrate_theta{}".format(args.theta) if args.name is None else args.name
-        results = simulate_calibration(args.theta, args.n)
+        name = (
+            "calibrate_theta{}".format(args.theta) if args.name is None else args.name
+        )
+        results = simulate_calibration(
+            args.theta, args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+        )
     elif args.calref:
         if args.pointref:
             name = "calibrate_pointref" if args.name is None else args.name
-            results = simulate_calibration_pointref(args.n)
+            results = simulate_calibration_pointref(
+                args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
         else:
             name = "calibrate_ref" if args.name is None else args.name
-            results = simulate_calibration_ref(args.n)
+            results = simulate_calibration_marginalref(
+                args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
     else:
         name = "train" if args.name is None else args.name
         if args.pointref:
-            results = simulate_train_pointref(args.n)
+            results = simulate_train_pointref(
+                args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
         else:
-            results = simulate_train_marginalref(args.n)
+            results = simulate_train_marginalref(
+                args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
     save(args.dir, name, *results)
 
     logger.info("All done! Have a nice day!")

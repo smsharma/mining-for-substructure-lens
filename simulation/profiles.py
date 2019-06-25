@@ -37,10 +37,8 @@ class MassProfileSIE:
             x_d = self.r_E * x_p / psi
             y_d = self.r_E * y_p / psi
         else:
-            x_d = self.r_E * self.q / np.sqrt(1 - self.q ** 2) * \
-                np.arctan(np.sqrt(1 - self.q ** 2) * x_p / psi)
-            y_d = self.r_E * self.q / np.sqrt(1 - self.q ** 2) * \
-                np.arctanh(np.sqrt(1 - self.q ** 2) * y_p / psi)
+            x_d = self.r_E * self.q / np.sqrt(1 - self.q ** 2) * np.arctan(np.sqrt(1 - self.q ** 2) * x_p / psi)
+            y_d = self.r_E * self.q / np.sqrt(1 - self.q ** 2) * np.arctanh(np.sqrt(1 - self.q ** 2) * y_p / psi)
 
         # Return deflection field
         return x_d, y_d
@@ -109,16 +107,18 @@ class MassProfileNFW:
         JB: That's because all of the arguments of np.where are evaluated, including the ones with ngative arguments to
         sqrt, but only the good ones are then returned. So we can just suppress these warnings
         """
-        with np.errstate(divide='ignore', invalid='ignore'):
-            return np.where(x == 1.0, 1.0,
-                            np.where(x <= 1.0, np.arctanh(np.sqrt(1.0 - x ** 2)) / (np.sqrt(1.0 - x ** 2)),
-                                     np.arctan(np.sqrt(x ** 2 - 1.0)) / (np.sqrt(x ** 2 - 1.0))))
+        with np.errstate(divide="ignore", invalid="ignore"):
+            return np.where(
+                x == 1.0,
+                1.0,
+                np.where(x <= 1.0, np.arctanh(np.sqrt(1.0 - x ** 2)) / (np.sqrt(1.0 - x ** 2)), np.arctan(np.sqrt(x ** 2 - 1.0)) / (np.sqrt(x ** 2 - 1.0))),
+            )
 
     @classmethod
     def get_r_s_rho_s_NFW(self, M_200, c_200):
         """ Get NFW scale radius and density
         """
-        r_200 = (M_200 / (4 / 3. * np.pi * 200 * rho_c)) ** (1 / 3.)
+        r_200 = (M_200 / (4 / 3.0 * np.pi * 200 * rho_c)) ** (1 / 3.0)
         rho_s = M_200 / (4 * np.pi * (r_200 / c_200) ** 3 * (np.log(1 + c_200) - c_200 / (1 + c_200)))
         r_s = r_200 / c_200
         return r_s, rho_s
@@ -128,7 +128,7 @@ class MassProfileNFW:
         """ Concentration-mass relation according to eq. 1 of  Sanchez-Conde & Prada 2014 (1312.1729)
             :param M_200: M_200 mass of halo
         """
-        x = np.log(M_200/(M_s/h))
+        x = np.log(M_200 / (M_s / h))
         pars = [37.5153, -1.5093, 1.636e-2, 3.66e-4, -2.89237e-5, 5.32e-7][::-1]
         return np.polyval(pars, x)
 
@@ -180,8 +180,7 @@ class LightProfileSersic:
         Normalization parameter ensuring that the effective radius contains half of the profile's total light
         From Ciotti & Bertin 1999, A&A, 352, 447
         """
-        return 2 * n_srsc - 1 / 3.0 + 4 / (405 * n_srsc) + 46 / (25515 * n_srsc ** 2) + \
-            131 / (1148175 * n_srsc ** 3) - 2194697 / (30690717750 * n_srsc ** 4)
+        return 2 * n_srsc - 1 / 3.0 + 4 / (405 * n_srsc) + 46 / (25515 * n_srsc ** 2) + 131 / (1148175 * n_srsc ** 3) - 2194697 / (30690717750 * n_srsc ** 4)
 
     @classmethod
     def flux_e(self, S_tot, n_srsc, r_e):
@@ -194,5 +193,4 @@ class LightProfileSersic:
             return S_tot / (7.2 * np.pi * r_e ** 2)
         else:
             b_n = self.b_n(n_srsc)
-            return S_tot * (b_n ** (2 * n_srsc) * np.exp(-b_n)) / \
-                (2 * n_srsc * np.pi * r_e ** 2 * gamma(2 * n_srsc))
+            return S_tot * (b_n ** (2 * n_srsc) * np.exp(-b_n)) / (2 * n_srsc * np.pi * r_e ** 2 * gamma(2 * n_srsc))

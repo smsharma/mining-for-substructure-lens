@@ -8,9 +8,16 @@
 #SBATCH --time=7-00:00:00
 #SBATCH --gres=gpu:1
 
-source activate lensing
-cd /scratch/jb6504/StrongLensing-Inference/
+DIR=/Users/johannbrehmer/work/projects/strong_lensing/StrongLensing-Inference
+# DIR=/scratch/jb6504/StrongLensing-Inference/
 
-python -u calibrate.py carl_grid carl_calibrate --dir /scratch/jb6504/StrongLensing-Inference
-# python -u calibrate.py alice_grid alice_calibrate --dir /scratch/jb6504/StrongLensing-Inference
-# python -u calibrate.py alices_grid alices_calibrate--dir /scratch/jb6504/StrongLensing-Inference
+source activate lensing
+cd $DIR
+
+python -u calibrate.py carl_aux_grid carl_aux_calibrate --dir $DIR
+python -u calibrate.py alice_aux_grid alice_aux_calibrate --dir $DIR
+python -u calibrate.py alices_aux_grid alices_aux_calibrate --dir $DIR
+
+# python -u calibrate.py carl_pointref_aux_grid carl_pointref_aux_calibrate --dir $DIR
+# python -u calibrate.py alice_pointref_aux_grid alice_pointref_aux_calibrate --dir $DIR
+# python -u calibrate.py alices_pointref_aux_grid alices_pointref_aux_calibrate --dir $DIR

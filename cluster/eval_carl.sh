@@ -11,6 +11,15 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
+# What to do
+# tag=fix
+# tag=mass
+tag=align
+# tag=full
+
+modeltag=${tag}
+# modeltag=${tag}_aux
+
 # for i in {0..624}
 # do
 #     echo ""
@@ -18,34 +27,33 @@ cd /scratch/jb6504/StrongLensing-Inference/
 #     echo ""
 #     echo "EVALUATING CALIB $i"
 #     echo ""
-#     python -u test.py carl calibrate_theta$i carl_calibrate_theta$i --dir /scratch/jb6504/StrongLensing-Inference
+#     python -u test.py carl_${modeltag} calibrate_${tag}_theta$i carl_${modeltag}_calibrate_theta$i --dir /scratch/jb6504/StrongLensing-Inference
 # done
-
-echo ""
-echo ""
-echo ""
-echo "EVALUATING CALIB REF"
-echo ""
-python -u test.py carl calibrate_ref carl_calibrate_ref --grid --dir /scratch/jb6504/StrongLensing-Inference
-
-# echo ""
-# echo ""
-# echo ""
-# echo "EVALUATING PRIOR SAMPLE"
-# echo ""
-# python -u test.py carl test_prior carl_prior --dir /scratch/jb6504/StrongLensing-Inference
-#
 #
 # echo ""
 # echo ""
 # echo ""
-# echo "EVALUATING PRIOR SAMPLE (SHUFFLED)"
+# echo "EVALUATING CALIB REF"
 # echo ""
-# python -u test.py carl test_prior carl_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
+# # python -u test.py carl_${modeltag} calibrate_${tag}_ref carl_${modeltag}_calibrate_ref --dir /scratch/jb6504/StrongLensing-Inference
 
-# echo ""
-# echo ""
-# echo ""
-# echo "EVALUATING POINT SAMPLE ON PARAM GRID"
-# echo ""
-# python -u test.py carl test_point carl_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
+echo ""
+echo ""
+echo ""
+echo "EVALUATING PRIOR SAMPLE"
+echo ""
+python -u test.py carl_${modeltag} test_${tag}_prior carl_${modeltag}_prior --dir /scratch/jb6504/StrongLensing-Inference
+
+echo ""
+echo ""
+echo ""
+echo "EVALUATING PRIOR SAMPLE (SHUFFLED)"
+echo ""
+python -u test.py carl_${modeltag} test_${tag}_prior carl_${modeltag}_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
+
+echo ""
+echo ""
+echo ""
+echo "EVALUATING POINT SAMPLE ON PARAM GRID"
+echo ""
+python -u test.py carl_${modeltag} test_${tag}_point carl_${modeltag}_grid --grid --dir /scratch/jb6504/StrongLensing-Inference

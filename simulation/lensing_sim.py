@@ -4,9 +4,7 @@ from simulation.profiles import MassProfileSIE, MassProfileNFW, LightProfileSers
 
 
 class LensingSim:
-    def __init__(
-        self, lenses_list=[{}], sources_list=[{}], global_dict={}, observation_dict={}
-    ):
+    def __init__(self, lenses_list=[{}], sources_list=[{}], global_dict={}, observation_dict={}):
         """
         Class for simulation of strong lensing images
         """
@@ -49,15 +47,12 @@ class LensingSim:
         # x/y-coordinates of grid and pixel area in arcsec**2
 
         self.theta_x, self.theta_y = np.meshgrid(
-            np.linspace(self.theta_x_lims[0], self.theta_x_lims[1], self.n_x),
-            np.linspace(self.theta_y_lims[0], self.theta_y_lims[1], self.n_y),
+            np.linspace(self.theta_x_lims[0], self.theta_x_lims[1], self.n_x), np.linspace(self.theta_y_lims[0], self.theta_y_lims[1], self.n_y)
         )
 
-        self.x, self.y = self.D_l * self.theta_x * asctorad, self.D_l *self.theta_y * asctorad
+        self.x, self.y = self.D_l * self.theta_x * asctorad, self.D_l * self.theta_y * asctorad
 
-        self.pix_area = ((self.theta_x_lims[1] - self.theta_x_lims[0]) / self.n_x) * (
-                (self.theta_y_lims[1] - self.theta_y_lims[0]) / self.n_y
-        )
+        self.pix_area = ((self.theta_x_lims[1] - self.theta_x_lims[0]) / self.n_x) * ((self.theta_y_lims[1] - self.theta_y_lims[0]) / self.n_y)
 
     def lensed_image(self):
         """ Get strongly lensed image
@@ -70,18 +65,18 @@ class LensingSim:
         for lens_dict in self.lenses_list:
             if lens_dict["profile"] == "SIE":
                 _x_d, _y_d = MassProfileSIE(
-                    x_0=lens_dict['theta_x_0']*self.D_l*asctorad,
-                    y_0=lens_dict['theta_y_0']*self.D_l*asctorad,
-                    r_E=lens_dict['theta_E']*self.D_l*asctorad,
-                    q=lens_dict['q']
+                    x_0=lens_dict["theta_x_0"] * self.D_l * asctorad,
+                    y_0=lens_dict["theta_y_0"] * self.D_l * asctorad,
+                    r_E=lens_dict["theta_E"] * self.D_l * asctorad,
+                    q=lens_dict["q"],
                 ).deflection(self.x, self.y)
             elif lens_dict["profile"] == "NFW":
                 _x_d, _y_d = MassProfileNFW(
-                    x_0=lens_dict['theta_x_0']*self.D_l*asctorad,
-                    y_0=lens_dict['theta_y_0']*self.D_l*asctorad,
-                    M_200=lens_dict['M_200'],
-                    kappa_s=lens_dict['rho_s']*lens_dict['r_s']/self.Sigma_crit,
-                    r_s=lens_dict['r_s']
+                    x_0=lens_dict["theta_x_0"] * self.D_l * asctorad,
+                    y_0=lens_dict["theta_y_0"] * self.D_l * asctorad,
+                    M_200=lens_dict["M_200"],
+                    kappa_s=lens_dict["rho_s"] * lens_dict["r_s"] / self.Sigma_crit,
+                    r_s=lens_dict["r_s"],
                 ).deflection(self.x, self.y)
             else:
                 raise Exception("Unknown lens profile specification!")
@@ -95,13 +90,17 @@ class LensingSim:
         for source_dict in self.sources_list:
             if source_dict["profile"] == "Sersic":
 
-                f_lens += LightProfileSersic(
-                    x_0=source_dict['theta_x_0']*self.D_l*asctorad,
-                    y_0=source_dict['theta_y_0']*self.D_l*asctorad,
-                    S_tot=source_dict['S_tot'],
-                    r_e=source_dict['theta_e']*self.D_l*asctorad,
-                    n_srsc=source_dict['n_srsc']
-                ).flux(self.x - x_d, self.y - y_d) * self.D_l ** 2 / radtoasc ** 2
+                f_lens += (
+                    LightProfileSersic(
+                        x_0=source_dict["theta_x_0"] * self.D_l * asctorad,
+                        y_0=source_dict["theta_y_0"] * self.D_l * asctorad,
+                        S_tot=source_dict["S_tot"],
+                        r_e=source_dict["theta_e"] * self.D_l * asctorad,
+                        n_srsc=source_dict["n_srsc"],
+                    ).flux(self.x - x_d, self.y - y_d)
+                    * self.D_l ** 2
+                    / radtoasc ** 2
+                )
             else:
                 raise Exception("Unknown source profile specification!")
 
