@@ -130,7 +130,7 @@ class ResNetRatioEstimator(nn.Module):
             elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
-            else:
+            elif isinstance(m, nn.Linear):
                 if zero_bias:
                     nn.init.constant_(m.bias, 0)
 
