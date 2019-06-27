@@ -204,16 +204,26 @@ class LensingObservationWithSubhalos:
         self.joint_log_probs = ps.joint_log_probs
         self.joint_score = ps.joint_score
 
+        # Optionally, compute derivatives of image wrt each subahlo mass (takes ~1s/subhalo)
         if calculate_msub_derivatives:
             self._calculate_derivs()
 
     def _calculate_derivs(self):
+        """
+        Compute derivatives of the lensing image wrt the mass of each subhalo, evaluated at the given mass
+        """
+
+        # Initialize subhalo properties
         self.theta_xs_0 = self.theta_xs
         self.theta_ys_0 = self.theta_ys
         self.m_subs_0 = self.m_subs
 
+        # Gradient image array
         self.grad_msub_image = np.zeros((self.n_sub_roi, self.n_xy, self.n_xy))
 
+        # Loop over subhalos, setting the first element of subhalo properties array to a given subhalo,
+        # then compute Jacobian (hacky, but seems to be fastest way currently with forward-pass Jacobian
+        # vector product implementation in autograd...
         for i_sub in range(self.n_sub_roi):
             self.theta_xs[[0, i_sub]] = self.theta_xs[[i_sub, 0]]
             self.theta_ys[[0, i_sub]] = self.theta_ys[[i_sub, 0]]
@@ -221,11 +231,15 @@ class LensingObservationWithSubhalos:
 
             self.grad_msub_image[i_sub] = make_jvp(self._deriv_helper_function)(self.m_subs)([1.])[1]
 
+        # Reset subhalo properties to the original ones
         self.theta_xs = self.theta_xs_0
         self.theta_ys = self.theta_ys_0
         self.m_subs = self.m_subs_0
 
     def _deriv_helper_function(self, m_subs):
+        """
+        Helper function for autograd to compute gradients
+        """
 
         lens_list = [self.hst_param_dict]
 
