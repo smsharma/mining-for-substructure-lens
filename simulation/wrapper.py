@@ -24,6 +24,7 @@ def augmented_data(
     draw_alignment=True,
     mine_gold=True,
     calculate_dx_dm=False,
+    roi_size=2.,
 ):
     # Input
     if (f_sub is None or beta is None) and n_images is None:
@@ -91,6 +92,7 @@ def augmented_data(
             draw_host_redshift=draw_host_redshift,
             draw_alignment=draw_alignment,
             calculate_msub_derivatives=calculate_dx_dm,
+            roi_size=roi_size,
         )
 
         # Store information

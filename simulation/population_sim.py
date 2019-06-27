@@ -34,6 +34,7 @@ class LensingObservationWithSubhalos:
         draw_host_mass=True,
         draw_host_redshift=True,
         draw_alignment=True,
+        roi_size=2.,
     ):
         """
         Class to simulation an observation strong lensing image, with substructure sprinkled in.
@@ -144,7 +145,7 @@ class LensingObservationWithSubhalos:
                 m_min_calib=m_min_calib,
                 m_max_calib=m_max_sub_div_M_hst_calib * self.M_200_hst,
                 theta_s=r_s_hst / self.D_l,
-                theta_roi=2.0 * self.theta_E,
+                theta_roi=roi_size * self.theta_E,
                 theta_E=self.theta_E,
                 params_eval=params_eval,
                 calculate_joint_score=calculate_joint_score,
