@@ -24,13 +24,12 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 # Training
 ############################################################
 
-# sbatch train_carl.sh
-# sbatch train_alice.sh
-# sbatch train_alices.sh
+sbatch train_carl.sh
+sbatch train_alice.sh
+sbatch train_alices.sh
 sbatch train_carl_full.sh
 sbatch train_alice_full.sh
 sbatch train_alices_full.sh
-# sbatch train_exp.sh
 
 ############################################################
 # Evaluation
@@ -42,7 +41,6 @@ sbatch train_alices_full.sh
 #sbatch eval_carl_aux.sh
 #sbatch eval_alice_aux.sh
 #sbatch eval_alices_aux.sh
-#sbatch eval_exp.sh
 
 ############################################################
 # Calibration
