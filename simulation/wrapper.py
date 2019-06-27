@@ -24,6 +24,7 @@ def augmented_data(
     draw_alignment=True,
     mine_gold=True,
     calculate_dx_dm=False,
+    return_dx_dm=False,
     roi_size=2.,
 ):
     # Input
@@ -52,6 +53,7 @@ def augmented_data(
 
     # Output
     all_params, all_images, all_t_xz, all_log_r_xz, all_sub_latents, all_global_latents = [], [], [], [], [], []
+    all_dx_dm = []
 
     # Main loop
     for i_sim in range(n_images):
@@ -99,6 +101,8 @@ def augmented_data(
         if calculate_dx_dm:
             sum_abs_dx_dm = np.sum(np.abs(sim.grad_msub_image).reshape(sim.grad_msub_image.shape[0], -1), axis=1)
             sub_latents = np.vstack((sim.m_subs, sim.theta_xs, sim.theta_ys, sum_abs_dx_dm)).T
+            if return_dx_dm:
+                all_dx_dm.append(sim.grad_msub_image)
         else:
             sub_latents = np.vstack((sim.m_subs, sim.theta_xs, sim.theta_ys)).T
         global_latents = [
@@ -132,6 +136,16 @@ def augmented_data(
             logger.debug("t(x,z) = %s", sim.joint_score)
             all_log_r_xz.append(log_r_xz)
 
+    if calculate_dx_dm and return_dx_dm:
+        return (
+            np.array(all_params).reshape((-1, 2)),
+            np.array(all_images),
+            np.array(all_t_xz) if mine_gold else None,
+            np.array(all_log_r_xz) if mine_gold else None,
+            all_sub_latents,
+            np.array(all_global_latents),
+            all_dx_dm
+        )
     return (
         np.array(all_params).reshape((-1, 2)),
         np.array(all_images),
