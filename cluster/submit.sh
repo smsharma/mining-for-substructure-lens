@@ -17,38 +17,35 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 # Combination
 ############################################################
 
-# sbatch combine_samples.sh # align and mass
+# sbatch combine_samples.sh
 
 
 ############################################################
 # Training
 ############################################################
 
-# sbatch train_carl.sh  # align
+# sbatch train_carl.sh
 # sbatch train_alice.sh
 # sbatch train_alices.sh
-# sbatch train_carl2.sh  # mass
-# sbatch train_alice2.sh
-# sbatch train_alices2.sh
+sbatch train_carl_full.sh
+sbatch train_alice_full.sh
+sbatch train_alices_full.sh
 # sbatch train_exp.sh
 
 ############################################################
 # Evaluation
 ############################################################
 
-sbatch eval_carl.sh  # align
-sbatch eval_alice.sh
-sbatch eval_alices.sh
-sbatch eval_carl2.sh  # mass
-sbatch eval_alice2.sh
-sbatch eval_alices2.sh
-## sbatch eval_carl3.sh
-## sbatch eval_alice3.sh
-## sbatch eval_alices3.sh
-# sbatch eval_exp.sh
+#sbatch eval_carl.sh
+#sbatch eval_alice.sh
+#sbatch eval_alices.sh
+#sbatch eval_carl_aux.sh
+#sbatch eval_alice_aux.sh
+#sbatch eval_alices_aux.sh
+#sbatch eval_exp.sh
 
 ############################################################
 # Calibration
 ############################################################
 
-## sbatch calibrate.sh
+# sbatch calibrate.sh

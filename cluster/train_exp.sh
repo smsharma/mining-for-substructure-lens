@@ -11,7 +11,7 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-# python -u train.py alice train_mass alice_mass_pre --load alices_fix --dir /scratch/jb6504/StrongLensing-Inference
+python -u train.py alice train_mass alice_mass_pre --load alices_fix --dir /scratch/jb6504/StrongLensing-Inference
 python -u train.py alice train_mass alice_mass_zb --zerobias --dir /scratch/jb6504/StrongLensing-Inference
 
 python -u train.py alice train_align alice_align_pre --load alices_fix --dir /scratch/jb6504/StrongLensing-Inference
