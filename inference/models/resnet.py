@@ -126,13 +126,19 @@ class ResNetRatioEstimator(nn.Module):
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
                 if zero_bias:
-                    nn.init.constant_(m.bias, 0)
+                    try:
+                        nn.init.constant_(m.bias, 0)
+                    except AttributeError:
+                        pass
             elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
             elif isinstance(m, nn.Linear):
                 if zero_bias:
-                    nn.init.constant_(m.bias, 0)
+                    try:
+                        nn.init.constant_(m.bias, 0)
+                    except AttributeError:
+                        pass
 
         # Zero-initialize the last BN in each residual branch,
         # so that the residual branch starts with zeros, and each residual block behaves like an identity.

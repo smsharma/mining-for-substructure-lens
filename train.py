@@ -96,7 +96,10 @@ def train(
             validation_loss_before=best_loss,
         )
         all_losses = [best_loss] + list(losses) if best_loss is not None else losses
-        best_loss = np.nanmin(np.asarray(all_losses))
+        try:
+            best_loss = np.nanmin(np.asarray(all_losses))
+        except ValueError:
+            pass
     estimator.save("{}/models/{}_halftrained".format(data_dir, model_filename))
 
     best_loss = None
@@ -134,7 +137,10 @@ def train(
             validation_loss_before=best_loss,
         )
         all_losses = [best_loss] + list(losses) if best_loss is not None else losses
-        best_loss = np.nanmin(np.asarray(all_losses))
+        try:
+            best_loss = np.nanmin(np.asarray(all_losses))
+        except ValueError:
+            pass
     estimator.save("{}/models/{}".format(data_dir, model_filename))
 
 
