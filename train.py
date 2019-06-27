@@ -237,7 +237,7 @@ def parse_args():
         help='Optimizer. "amsgrad", "adam", and "sgd" are supported. Default: "adam".',
     )
     parser.add_argument(
-        "--batch_size",
+        "--batchsize",
         type=int,
         default=128,
         help="Batch size. Default: 128.",
@@ -309,7 +309,7 @@ if __name__ == "__main__":
         sample_name=args.sample,
         model_filename=args.name,
         log_input=args.log,
-        batch_size=args.final_batch_size,
+        batch_size=args.batchsize,
         initial_lr=args.lr,
         final_lr=args.lrdecay * args.lr,
         # initial_batch_size=args.initial_batch_size,
