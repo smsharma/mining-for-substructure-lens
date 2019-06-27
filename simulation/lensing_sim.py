@@ -2,6 +2,8 @@ from astropy.cosmology import Planck15
 from simulation.units import *
 from simulation.profiles import MassProfileSIE, MassProfileNFW, LightProfileSersic
 
+import autograd.numpy as np
+
 
 class LensingSim:
     def __init__(self, lenses_list=[{}], sources_list=[{}], global_dict={}, observation_dict={}):
@@ -87,6 +89,7 @@ class LensingSim:
 
         f_lens = np.zeros((self.n_x, self.n_y))
 
+
         for source_dict in self.sources_list:
             if source_dict["profile"] == "Sersic":
 
@@ -103,6 +106,8 @@ class LensingSim:
                 )
             else:
                 raise Exception("Unknown source profile specification!")
+
+
 
         f_iso = self.f_iso * np.ones((self.n_x, self.n_y))  # Isotropic background
         i_tot = (f_lens + f_iso) * self.exposure * self.pix_area  # Total lensed image

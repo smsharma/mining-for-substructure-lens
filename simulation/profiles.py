@@ -1,6 +1,8 @@
 from simulation.units import *
 from scipy.special import gamma
 
+import autograd.numpy as np
+
 
 class MassProfileSIE:
     def __init__(self, x_0, y_0, r_E, q):
@@ -90,7 +92,8 @@ class MassProfileNFW:
         x = r / self.r_s
 
         # Get spherically symmetric deflection field, from astro-ph/0102341
-        phi_r = 4 * self.kappa_s * self.r_s * (np.log(x / 2.0) + self.F(x)) / x
+        F_ary = np.array([[self.F(xi) for xi in x_col] for x_col in x])
+        phi_r = 4 * self.kappa_s * self.r_s * (np.log(x / 2.0) + F_ary) / x
 
         # Get x and y coordinates of deflection
         x_d = phi_r * x_p / r
@@ -103,16 +106,13 @@ class MassProfileNFW:
     def F(self, x):
         """
         Helper function for NFW deflection, from astro-ph/0102341
-        TODO: returning warnings for invalid value in sqrt for some reason
-        JB: That's because all of the arguments of np.where are evaluated, including the ones with ngative arguments to
-        sqrt, but only the good ones are then returned. So we can just suppress these warnings
         """
-        with np.errstate(divide="ignore", invalid="ignore"):
-            return np.where(
-                x == 1.0,
-                1.0,
-                np.where(x <= 1.0, np.arctanh(np.sqrt(1.0 - x ** 2)) / (np.sqrt(1.0 - x ** 2)), np.arctan(np.sqrt(x ** 2 - 1.0)) / (np.sqrt(x ** 2 - 1.0))),
-            )
+        if x == 1:
+            return 1.
+        elif x < 1.:
+            return np.arctanh(np.sqrt(1.0 - x ** 2)) / (np.sqrt(1.0 - x ** 2))
+        else:
+            return np.arctan(np.sqrt(x ** 2 - 1.0)) / (np.sqrt(x ** 2 - 1.0))
 
     @classmethod
     def get_r_s_rho_s_NFW(self, M_200, c_200):
@@ -129,8 +129,8 @@ class MassProfileNFW:
             :param M_200: M_200 mass of halo
         """
         x = np.log(M_200 / (M_s / h))
-        pars = [37.5153, -1.5093, 1.636e-2, 3.66e-4, -2.89237e-5, 5.32e-7][::-1]
-        return np.polyval(pars, x)
+        pars = [37.5153, -1.5093, 1.636e-2, 3.66e-4, -2.89237e-5, 5.32e-7]
+        return pars[0] + pars[1] * x + pars[2] * x ** 2 + pars[3] * x ** 3 + pars[4] * x ** 4 + pars[5] * x ** 5
 
     @classmethod
     def M_cyl_div_M0(self, x):

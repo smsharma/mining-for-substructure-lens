@@ -5,6 +5,9 @@ from simulation.profiles import MassProfileNFW, MassProfileSIE
 from simulation.lensing_sim import LensingSim
 from astropy.cosmology import Planck15
 from astropy.convolution import convolve, Gaussian2DKernel
+from autograd import make_jvp
+
+from tqdm import *
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +30,7 @@ class LensingObservationWithSubhalos:
         M_200_sigma_v_scatter=False,
         params_eval=None,
         calculate_joint_score=False,
+        calculate_msub_derivatives=False,
         draw_host_mass=True,
         draw_host_redshift=True,
         draw_alignment=True,
@@ -53,6 +57,7 @@ class LensingObservationWithSubhalos:
 
         :param params_eval: Parameters (f_sub, beta) for which p(x,z|params) will be calculated
         :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
+        :param calculate_msub_derivatives: Whether to calculate derivatives of image wrt subhalos masses
         """
 
         # Store input
@@ -157,23 +162,24 @@ class LensingObservationWithSubhalos:
             self.f_sub_near_ring = ps.f_sub_near_ring
 
         # Convert magnitude for source and isotropic component to expected counts
-        S_tot = self._mag_to_flux(self.mag_s, self.mag_zero)
-        f_iso = self._mag_to_flux(self.mag_iso, self.mag_zero)
+        self.S_tot = self._mag_to_flux(self.mag_s, self.mag_zero)
+        self.f_iso = self._mag_to_flux(self.mag_iso, self.mag_zero)
 
         # Set host properties. Host assumed to be at the center of the image.
-        hst_param_dict = {"profile": "SIE", "theta_x_0": 0.0, "theta_y_0": 0.0, "theta_E": self.theta_E, "q": q}
+        self.hst_param_dict = {"profile": "SIE", "theta_x_0": 0.0, "theta_y_0": 0.0, "theta_E": self.theta_E, "q": q}
 
-        lens_list = [hst_param_dict]
+        lens_list = [self.hst_param_dict]
 
         # Set subhalo properties
-        for m, theta_x, theta_y in zip(self.m_subs, self.theta_xs, self.theta_ys):
+
+        for i_sub, (m, theta_x, theta_y) in enumerate(zip(self.m_subs, self.theta_xs, self.theta_ys)):
             c = MassProfileNFW.c_200_SCP(m)
             r_s, rho_s = MassProfileNFW.get_r_s_rho_s_NFW(m, c)
             sub_param_dict = {"profile": "NFW", "theta_x_0": theta_x, "theta_y_0": theta_y, "M_200": m, "r_s": r_s, "rho_s": rho_s}
             lens_list.append(sub_param_dict)
 
         # Set source properties
-        src_param_dict = {"profile": "Sersic", "theta_x_0": self.theta_x_0, "theta_y_0": self.theta_y_0, "S_tot": S_tot, "theta_e": self.theta_s_e, "n_srsc": 1}
+        src_param_dict = {"profile": "Sersic", "theta_x_0": self.theta_x_0, "theta_y_0": self.theta_y_0, "S_tot": self.S_tot, "theta_e": self.theta_s_e, "n_srsc": 1}
 
         # Set observation and global properties
         observation_dict = {
@@ -182,7 +188,7 @@ class LensingObservationWithSubhalos:
             "theta_x_lims": (-self.coordinate_limit, self.coordinate_limit),
             "theta_y_lims": (-self.coordinate_limit, self.coordinate_limit),
             "exposure": exposure,
-            "f_iso": f_iso,
+            "f_iso": self.f_iso,
         }
 
         global_dict = {"z_s": self.z_s, "z_l": self.z_l}
@@ -197,6 +203,58 @@ class LensingObservationWithSubhalos:
         # Augmented data
         self.joint_log_probs = ps.joint_log_probs
         self.joint_score = ps.joint_score
+
+        if calculate_msub_derivatives:
+            self._calculate_derivs()
+
+    def _calculate_derivs(self):
+        self.theta_xs_0 = self.theta_xs
+        self.theta_ys_0 = self.theta_ys
+        self.m_subs_0 = self.m_subs
+
+        self.grad_msub_image = np.zeros((self.n_sub_roi, self.n_xy, self.n_xy))
+
+        for i_sub in range(self.n_sub_roi):
+            self.theta_xs[[0, i_sub]] = self.theta_xs[[i_sub, 0]]
+            self.theta_ys[[0, i_sub]] = self.theta_ys[[i_sub, 0]]
+            self.m_subs[[0, i_sub]] = self.m_subs[[i_sub, 0]]
+
+            self.grad_msub_image[i_sub] = make_jvp(self._deriv_helper_function)(self.m_subs)([1.])[1]
+
+        self.theta_xs = self.theta_xs_0
+        self.theta_ys = self.theta_ys_0
+        self.m_subs = self.m_subs_0
+
+    def _deriv_helper_function(self, m_subs):
+
+        lens_list = [self.hst_param_dict]
+
+        # Set subhalo properties
+        for m, theta_x, theta_y in zip(m_subs, self.theta_xs, self.theta_ys):
+            c = MassProfileNFW.c_200_SCP(m)
+            r_s, rho_s = MassProfileNFW.get_r_s_rho_s_NFW(m, c)
+            sub_param_dict = {"profile": "NFW", "theta_x_0": theta_x, "theta_y_0": theta_y, "M_200": m, "r_s": r_s, "rho_s": rho_s}
+            lens_list.append(sub_param_dict)
+
+        # Set source properties
+        src_param_dict = {"profile": "Sersic", "theta_x_0": self.theta_x_0, "theta_y_0": self.theta_y_0, "S_tot": self.S_tot, "theta_e": self.theta_s_e, "n_srsc": 1}
+
+        # Set observation and global properties
+        observation_dict = {
+            "n_x": self.n_xy,
+            "n_y": self.n_xy,
+            "theta_x_lims": (-self.coordinate_limit, self.coordinate_limit),
+            "theta_y_lims": (-self.coordinate_limit, self.coordinate_limit),
+            "exposure": self.exposure,
+            "f_iso": self.f_iso,
+        }
+
+        global_dict = {"z_s": self.z_s, "z_l": self.z_l}
+
+        # Inititalize lensing class and produce lensed image
+        lsi = LensingSim(lens_list, [src_param_dict], global_dict, observation_dict)
+
+        return lsi.lensed_image()
 
     def _convolve_psf(self, image, fwhm_psf=0.18, pixel_size=0.1):
         """
