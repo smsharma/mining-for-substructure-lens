@@ -23,7 +23,7 @@ def augmented_data(
     draw_host_redshift=True,
     draw_alignment=True,
     mine_gold=True,
-    calculate_dx_dm=True,
+    calculate_dx_dm=False,
 ):
     # Input
     if (f_sub is None or beta is None) and n_images is None:
@@ -94,7 +94,11 @@ def augmented_data(
         )
 
         # Store information
-        sub_latents = np.vstack((sim.m_subs, sim.theta_xs, sim.theta_ys)).T
+        if calculate_dx_dm:
+            sum_abs_dx_dm = np.sum(np.abs(sim.grad_msub_image).reshape(sim.grad_msub_image.shape[0], -1), axis=1)
+            sub_latents = np.vstack((sim.m_subs, sim.theta_xs, sim.theta_ys, sum_abs_dx_dm)).T
+        else:
+            sub_latents = np.vstack((sim.m_subs, sim.theta_xs, sim.theta_ys)).T
         global_latents = [
                 sim.M_200_hst,  # Host mass
                 sim.D_l,  # Host distance
@@ -110,9 +114,6 @@ def augmented_data(
                 sim.n_sub_near_ring,  # Number of subhalos with r within 10% of host Einstein radius
                 sim.f_sub_near_ring,  # Fraction of halo mass in subhalos with r within 10% of host Einstein radius
             ]
-        if calculate_dx_dm:
-            sum_abs_dx_dm = np.sum(np.abs(sim.grad_msub_image).reshape(sim.grad_msub_image.shape[0], -1), axis=1)
-            global_latents.append(sum_abs_dx_dm)
         global_latents = np.asarray(global_latents)
 
         all_params.append(params)
