@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=tr-as-f
+#SBATCH --job-name=tr-a-f
 #SBATCH --output=log_train_alices_full.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
