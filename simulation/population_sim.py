@@ -221,7 +221,7 @@ class LensingObservationWithSubhalos:
         # Gradient image array
         self.grad_msub_image = np.zeros((self.n_sub_roi, self.n_xy, self.n_xy))
 
-        # Loop over subhalos, setting the first element of subhalo properties array to a given subhalo,
+        # Loop over subhalos, setting the first element of subhalo properties arrays to a given subhalo,
         # then compute Jacobian (hacky, but seems to be fastest way currently with forward-pass Jacobian
         # vector product implementation in autograd...
         for i_sub in range(self.n_sub_roi):
