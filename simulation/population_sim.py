@@ -231,7 +231,7 @@ class LensingObservationWithSubhalos:
         self.resid_sub_image = np.zeros((self.n_sub_roi, self.n_xy, self.n_xy))
 
         # Loop over subhalos, deleting corresponding subhalo properties andc computing residual image
-        for i_sub in tqdm(range(self.n_sub_roi)):
+        for i_sub in range(self.n_sub_roi):
             self.theta_xs = np.delete(self.theta_xs_0, i_sub)
             self.theta_ys = np.delete(self.theta_ys_0, i_sub)
             self.m_subs = np.delete(self.m_subs_0, i_sub)
@@ -258,7 +258,7 @@ class LensingObservationWithSubhalos:
         # Loop over subhalos, setting the first element of subhalo properties arrays to a given subhalo,
         # then compute Jacobian (hacky, but seems to be fastest way currently with forward-pass Jacobian
         # vector product implementation in autograd...
-        for i_sub in tqdm(range(self.n_sub_roi)):
+        for i_sub in range(self.n_sub_roi):
             self.theta_xs[[0, i_sub]] = self.theta_xs[[i_sub, 0]]
             self.theta_ys[[0, i_sub]] = self.theta_ys[[i_sub, 0]]
             self.m_subs[[0, i_sub]] = self.m_subs[[i_sub, 0]]
@@ -272,7 +272,7 @@ class LensingObservationWithSubhalos:
 
     def _deriv_helper_function(self, m_subs):
         """
-        Helper function for autograd to compute gradients
+        Helper function for autograd to compute gradients and residuals
         """
 
         lens_list = [self.hst_param_dict]
