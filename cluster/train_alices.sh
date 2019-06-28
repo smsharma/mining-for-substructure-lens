@@ -14,6 +14,3 @@ cd /scratch/jb6504/StrongLensing-Inference/
 python -u train.py alices train_fix alices_fix --dir /scratch/jb6504/StrongLensing-Inference
 python -u train.py alices train_mass alices_mass --dir /scratch/jb6504/StrongLensing-Inference
 python -u train.py alices train_align alices_align --dir /scratch/jb6504/StrongLensing-Inference
-
-python -u train.py alices train_mass alices_mass_pre --load alices_fix --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py alices train_align alices_align_pre --load alices_fix --dir /scratch/jb6504/StrongLensing-Inference

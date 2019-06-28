@@ -24,14 +24,10 @@ def train(
     architecture="resnet",
     log_input=False,
     batch_size=128,
-    # initial_batch_size=128,
-    # final_batch_size=256,
     n_epochs=50,
     optimizer="adam",
-    initial_lr=1.e-3,
-    final_lr=1.e-5,
-    # initial_lrs=[0.0005, 0.0002, 0.0001],
-    # final_lrs=[0.0001, 0.00005],
+    initial_lr=1.e-4,
+    final_lr=1.e-6,
     limit_samplesize=None,
     load=None,
     zero_bias=False,
@@ -84,87 +80,6 @@ def train(
         verbose="all",
     )
 
-    # best_loss = None
-    # epochs_per_lr = int(round(n_epochs / (len(initial_lrs) + len(final_lrs)), 0))
-    #
-    # for lr in initial_lrs:
-    #     logging.info("")
-    #     logging.info("")
-    #     logging.info("")
-    #     logging.info(
-    #         "Starting training with batch size %s and learning rate %s",
-    #         initial_batch_size,
-    #         lr,
-    #     )
-    #     logging.info("")
-    #     _, losses = estimator.train(
-    #         method,
-    #         x="{}/samples/x_{}.npy".format(data_dir, sample_name),
-    #         y="{}/samples/y_{}.npy".format(data_dir, sample_name),
-    #         theta="{}/samples/theta_{}.npy".format(data_dir, sample_name),
-    #         r_xz="{}/samples/r_xz_{}.npy".format(data_dir, sample_name),
-    #         t_xz="{}/samples/t_xz_{}.npy".format(data_dir, sample_name),
-    #         aux=aux_data,
-    #         alpha=alpha,
-    #         optimizer=optimizer,
-    #         n_epochs=epochs_per_lr,
-    #         batch_size=initial_batch_size,
-    #         initial_lr=lr,
-    #         final_lr=lr,
-    #         nesterov_momentum=None,
-    #         validation_split=0.25,
-    #         validation_split_seed=3373,
-    #         early_stopping=True,
-    #         limit_samplesize=limit_samplesize,
-    #         verbose="all",
-    #         validation_loss_before=best_loss,
-    #     )
-    #     all_losses = [best_loss] + list(losses) if best_loss is not None else losses
-    #     try:
-    #         best_loss = np.nanmin(np.asarray(all_losses))
-    #     except ValueError:
-    #         pass
-    # estimator.save("{}/models/{}_halftrained".format(data_dir, model_filename))
-    #
-    # best_loss = None
-    # for lr in final_lrs:
-    #     logging.info("")
-    #     logging.info("")
-    #     logging.info("")
-    #     logging.info(
-    #         "Starting training with batch size %s and learning rate %s",
-    #         final_batch_size,
-    #         lr,
-    #     )
-    #     logging.info("")
-    #     _, losses = estimator.train(
-    #         method,
-    #         x="{}/samples/x_{}.npy".format(data_dir, sample_name),
-    #         y="{}/samples/y_{}.npy".format(data_dir, sample_name),
-    #         theta="{}/samples/theta_{}.npy".format(data_dir, sample_name),
-    #         r_xz="{}/samples/r_xz_{}.npy".format(data_dir, sample_name),
-    #         t_xz="{}/samples/t_xz_{}.npy".format(data_dir, sample_name),
-    #         aux=aux_data,
-    #         alpha=alpha,
-    #         optimizer=optimizer,
-    #         n_epochs=epochs_per_lr,
-    #         batch_size=final_batch_size,
-    #         initial_lr=lr,
-    #         final_lr=lr,
-    #         nesterov_momentum=None,
-    #         validation_split=0.25,
-    #         validation_split_seed=3373,
-    #         early_stopping=True,
-    #         limit_samplesize=limit_samplesize,
-    #         verbose="all",
-    #         validation_loss_before=best_loss,
-    #     )
-    #     all_losses = [best_loss] + list(losses) if best_loss is not None else losses
-    #     try:
-    #         best_loss = np.nanmin(np.asarray(all_losses))
-    #     except ValueError:
-    #         pass
-
     estimator.save("{}/models/{}".format(data_dir, model_filename))
 
 
@@ -212,9 +127,9 @@ def parse_args():
     parser.add_argument(
         "--alpha",
         type=float,
-        default=0.001,
+        default=0.0002,
         help="alpha parameter weighting the score MSE in the loss function of the SCANDAL, RASCAL, and"
-        "and ALICES inference methods. Default: 0.001",
+        "and ALICES inference methods. Default: 0.0002",
     )
     parser.add_argument(
         "--log", action="store_true", help="Whether the log of the input is taken."
@@ -229,7 +144,7 @@ def parse_args():
         "--zerobias", action="store_true", help="Initialize with zero bias."
     )
     parser.add_argument(
-        "--epochs", type=int, default=50, help="Number of epochs. Default: 120."
+        "--epochs", type=int, default=100, help="Number of epochs. Default: 100."
     )
     parser.add_argument(
         "--optimizer",
@@ -245,8 +160,8 @@ def parse_args():
     parser.add_argument(
         "--lr",
         type=float,
-        default=1.e-3,
-        help="Initial learning rate. Default: 0.001",
+        default=1.e-4,
+        help="Initial learning rate. Default: 0.0001",
     )
     parser.add_argument(
         "--lrdecay",
@@ -254,32 +169,6 @@ def parse_args():
         default=1.e-2,
         help="Learning rate decay (final LR / initial LR). Default: 0.01",
     )
-    # parser.add_argument(
-    #     "--initial_batch_size",
-    #     type=int,
-    #     default=128,
-    #     help="Batch size during first half of training. Default: 128.",
-    # )
-    # parser.add_argument(
-    #     "--final_batch_size",
-    #     type=int,
-    #     default=512,
-    #     help="Batch size during second half of training. Default: 256.",
-    # )
-    # parser.add_argument(
-    #     "--initial_lrs",
-    #     type=float,
-    #     nargs="+",
-    #     default=[0.003, 0.001, 0.0003],
-    #     help="Learning rate steps during first half of training.",
-    # )
-    # parser.add_argument(
-    #     "--final_lrs",
-    #     type=float,
-    #     nargs="+",
-    #     default=[0.001, 0.0003, 0.0001],
-    #     help="Learning rate steps during second half of training.",
-    # )
 
     return parser.parse_args()
 
@@ -312,12 +201,8 @@ if __name__ == "__main__":
         batch_size=args.batchsize,
         initial_lr=args.lr,
         final_lr=args.lrdecay * args.lr,
-        # initial_batch_size=args.initial_batch_size,
-        # final_batch_size=args.final_batch_size,
         n_epochs=args.epochs,
         optimizer=args.optimizer,
-        # initial_lrs=args.initial_lrs,
-        # final_lrs=args.final_lrs,
         architecture=architecture,
         zero_bias=args.zerobias,
         load=args.load,

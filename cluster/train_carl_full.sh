@@ -13,6 +13,3 @@ cd /scratch/jb6504/StrongLensing-Inference/
 
 python -u train.py carl train_full carl_full --dir /scratch/jb6504/StrongLensing-Inference
 python -u train.py carl train_full carl_full_aux -z --dir /scratch/jb6504/StrongLensing-Inference
-
-python -u train.py carl train_full carl_full_pre --load carl_fix --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py carl train_full carl_full_pre_aux --load carl_fix --dir /scratch/jb6504/StrongLensing-Inference
