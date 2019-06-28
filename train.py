@@ -73,7 +73,7 @@ def train(
         batch_size=batch_size,
         initial_lr=initial_lr,
         final_lr=final_lr,
-        nesterov_momentum=None,
+        nesterov_momentum=0.9,
         validation_split=0.25,
         early_stopping=True,
         limit_samplesize=limit_samplesize,

@@ -288,7 +288,7 @@ def get_optimizer(optimizer, nesterov_momentum):
     elif optimizer == "sgd":
         opt = optim.SGD
         if nesterov_momentum is not None:
-            opt_kwargs = {"momentum": nesterov_momentum}
+            opt_kwargs = {"momentum": nesterov_momentum, "nesterov": True}
     else:
         raise ValueError("Unknown optimizer {}".format(optimizer))
     return opt, opt_kwargs
