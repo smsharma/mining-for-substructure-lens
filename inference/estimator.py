@@ -519,7 +519,10 @@ class ParameterizedRatioEstimator(object):
         return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
 
     def _initialize_input_transform(self, x, aux=None):
-        if self.rescale_inputs:
+        if self.rescale_inputs and self.log_input:
+            self.x_scaling_mean = np.mean(np.log(1. + x))
+            self.x_scaling_std = np.maximum(np.std(np.log(1. + x)), 1.0e-6)
+        elif self.rescale_inputs and (not self.log_input):
             self.x_scaling_mean = np.mean(x)
             self.x_scaling_std = np.maximum(np.std(x), 1.0e-6)
         else:
