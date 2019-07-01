@@ -11,8 +11,8 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-python -u train.py carl train_fix carl_fix_sgd --optimizer sgd --lr 0.01 --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py carl train_mass carl_mass_sgd --optimizer sgd --lr 0.01 --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py carl train_align carl_align_sgd --optimizer sgd --lr 0.01 --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py carl train_full carl_full_sgd --optimizer sgd --lr 0.01 --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py carl train_full carl_full_sgd_aux --optimizer sgd --lr 0.01 -z --dir /scratch/jb6504/StrongLensing-Inference
+python -u train.py carl train_fix carl_fix_sgd --optimizer sgd --lr 0.001 --dir /scratch/jb6504/StrongLensing-Inference
+python -u train.py carl train_mass carl_mass_sgd --optimizer sgd --lr 0.001 --dir /scratch/jb6504/StrongLensing-Inference
+python -u train.py carl train_align carl_align_sgd --optimizer sgd --lr 0.001 --dir /scratch/jb6504/StrongLensing-Inference
+python -u train.py carl train_full carl_full_sgd --optimizer sgd --lr 0.001 --dir /scratch/jb6504/StrongLensing-Inference
+python -u train.py carl train_full carl_full_sgd_aux --optimizer sgd --lr 0.001 -z --dir /scratch/jb6504/StrongLensing-Inference
