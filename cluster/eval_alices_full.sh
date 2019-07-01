@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=e-as-a
-#SBATCH --output=log_eval_alices_aux.log
+#SBATCH --job-name=e-as-f
+#SBATCH --output=log_eval_alices_full.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
@@ -12,10 +12,9 @@ source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
 # What to do
-for tag in full full_pre
+tag=full
+for modeltag in full full_aux
 do
-    modeltag=${tag}_aux
-
     echo ""
     echo ""
     echo ""
@@ -36,4 +35,11 @@ do
     echo "EVALUATING POINT SAMPLE ON PARAM GRID"
     echo ""
     python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_grid -z --grid --dir /scratch/jb6504/StrongLensing-Inference
+
+    echo ""
+    echo ""
+    echo ""
+    echo "EVALUATING POINT SAMPLE ON PARAM GRID (FINE)"
+    echo ""
+    python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_finegrid --grid --fine --dir /scratch/jb6504/StrongLensing-Inference
 done

@@ -12,7 +12,7 @@ source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
 # What to do
-for tag in fix mass align full
+for tag in fix mass align
 do
     modeltag=${tag}
 
@@ -53,5 +53,12 @@ do
     echo "EVALUATING POINT SAMPLE ON PARAM GRID"
     echo ""
     python -u test.py carl_${modeltag} test_${tag}_point carl_${modeltag}_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
+
+    echo ""
+    echo ""
+    echo ""
+    echo "EVALUATING POINT SAMPLE ON PARAM GRID (FINE)"
+    echo ""
+    python -u test.py carl_${modeltag} test_${tag}_point carl_${modeltag}_finegrid --grid --fine --dir /scratch/jb6504/StrongLensing-Inference
 
 done
