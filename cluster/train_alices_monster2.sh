@@ -11,5 +11,5 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
+python -u train.py alices train_full alices_full_monster_aux -z --log --epochs 200 --dir /scratch/jb6504/StrongLensing-Inference
 python -u train.py alices train_full alices_full_monster --log --epochs 200 --load alices_fix_monster --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py alices train_full alices_full_monster_aux -z --log --epochs 200 --load alices_fix_monster --dir /scratch/jb6504/StrongLensing-Inference
