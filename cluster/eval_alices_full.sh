@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=e-as-f
+#SBATCH --job-name=e-a-f
 #SBATCH --output=log_eval_alices_full.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
@@ -13,33 +13,61 @@ cd /scratch/jb6504/StrongLensing-Inference/
 
 # What to do
 tag=full
-for modeltag in full full_aux
-do
-    echo ""
-    echo ""
-    echo ""
-    echo "EVALUATING PRIOR SAMPLE"
-    echo ""
-    python -u test.py alices_${modeltag} test_${tag}_prior alices_${modeltag}_prior -z --dir /scratch/jb6504/StrongLensing-Inference
+modeltag=full
+echo ""
+echo ""
+echo ""
+echo "EVALUATING PRIOR SAMPLE"
+echo ""
+python -u test.py alices_${modeltag} test_${tag}_prior alices_${modeltag}_prior --dir /scratch/jb6504/StrongLensing-Inference
 
-    echo ""
-    echo ""
-    echo ""
-    echo "EVALUATING PRIOR SAMPLE (SHUFFLED)"
-    echo ""
-    python -u test.py alices_${modeltag} test_${tag}_prior alices_${modeltag}_shuffledprior -z --shuffle --dir /scratch/jb6504/StrongLensing-Inference
+echo ""
+echo ""
+echo ""
+echo "EVALUATING PRIOR SAMPLE (SHUFFLED)"
+echo ""
+python -u test.py alices_${modeltag} test_${tag}_prior alices_${modeltag}_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
 
-    echo ""
-    echo ""
-    echo ""
-    echo "EVALUATING POINT SAMPLE ON PARAM GRID"
-    echo ""
-    python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_grid -z --grid --dir /scratch/jb6504/StrongLensing-Inference
+echo ""
+echo ""
+echo ""
+echo "EVALUATING POINT SAMPLE ON PARAM GRID"
+echo ""
+python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
 
-    echo ""
-    echo ""
-    echo ""
-    echo "EVALUATING POINT SAMPLE ON PARAM GRID (FINE)"
-    echo ""
-    python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_finegrid --grid --fine --dir /scratch/jb6504/StrongLensing-Inference
-done
+echo ""
+echo ""
+echo ""
+echo "EVALUATING POINT SAMPLE ON PARAM GRID (FINE)"
+echo ""
+python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_finegrid --grid --fine --dir /scratch/jb6504/StrongLensing-Inference
+
+
+modeltag=full_aux
+echo ""
+echo ""
+echo ""
+echo "EVALUATING PRIOR SAMPLE"
+echo ""
+python -u test.py alices_${modeltag} test_${tag}_prior alices_${modeltag}_prior -z --dir /scratch/jb6504/StrongLensing-Inference
+
+echo ""
+echo ""
+echo ""
+echo "EVALUATING PRIOR SAMPLE (SHUFFLED)"
+echo ""
+python -u test.py alices_${modeltag} test_${tag}_prior alices_${modeltag}_shuffledprior -z --shuffle --dir /scratch/jb6504/StrongLensing-Inference
+
+echo ""
+echo ""
+echo ""
+echo "EVALUATING POINT SAMPLE ON PARAM GRID"
+echo ""
+python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_grid -z --grid --dir /scratch/jb6504/StrongLensing-Inference
+
+echo ""
+echo ""
+echo ""
+echo "EVALUATING POINT SAMPLE ON PARAM GRID (FINE)"
+echo ""
+python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_finegrid -z --grid --fine --dir /scratch/jb6504/StrongLensing-Inference
