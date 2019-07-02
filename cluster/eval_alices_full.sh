@@ -13,7 +13,7 @@ cd /scratch/jb6504/StrongLensing-Inference/
 
 # What to do
 tag=full
-modeltag=full
+modeltag=$tag
 echo ""
 echo ""
 echo ""
@@ -43,7 +43,7 @@ echo ""
 python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_finegrid --grid --fine --dir /scratch/jb6504/StrongLensing-Inference
 
 
-modeltag=full_aux
+modeltag=$tag_aux
 echo ""
 echo ""
 echo ""
