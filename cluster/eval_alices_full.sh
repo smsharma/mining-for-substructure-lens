@@ -12,6 +12,7 @@ source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
 # What to do
+if [ ]; then
 tag=full
 modeltag=$tag
 echo ""
@@ -41,7 +42,7 @@ echo ""
 echo "EVALUATING POINT SAMPLE ON PARAM GRID (FINE)"
 echo ""
 python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_finegrid --grid --fine --dir /scratch/jb6504/StrongLensing-Inference
-
+fi
 
 modeltag=$tag_aux
 echo ""
