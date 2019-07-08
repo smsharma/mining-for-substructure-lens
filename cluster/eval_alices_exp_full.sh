@@ -13,8 +13,7 @@ cd /scratch/jb6504/StrongLensing-Inference/
 
 tag=full
 for modeltag in full_log full_pre full_log_aux
-do:
-
+do
     echo ""
     echo ""
     echo ""
