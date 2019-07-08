@@ -12,5 +12,6 @@ source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
 python -u train.py carl train_fix carl_fix --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py carl train_mass carl_mass --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py carl train_align carl_align --dir /scratch/jb6504/StrongLensing-Inference
+python -u train.py carl train_mass carl_mass_pre --load carl_fix --dir /scratch/jb6504/StrongLensing-Inference
+python -u train.py carl train_align carl_align_pre --load carl_fix --dir /scratch/jb6504/StrongLensing-Inference
+python -u train.py carl train_full carl_full_pre --load carl_fix --dir /scratch/jb6504/StrongLensing-Inference

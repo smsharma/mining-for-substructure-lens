@@ -105,7 +105,7 @@ def parse_args():
         help="Evaluates the images on a parameter grid rather than just at the original parameter points.",
     )
     parser.add_argument(
-        "--fine",
+        "--finegrid",
         action="store_true",
         help="If used with --grid, uses a finer grid centered on the true point.",
     )
@@ -150,6 +150,6 @@ if __name__ == "__main__":
         args.shuffle,
         args.small,
         gradx=args.grad,
-        fine=args.fine,
+        fine=args.finegrid,
     )
     logging.info("All done! Have a nice day!")
