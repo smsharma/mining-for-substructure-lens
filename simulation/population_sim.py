@@ -7,7 +7,7 @@ from astropy.cosmology import Planck15
 from astropy.convolution import convolve, Gaussian2DKernel
 from autograd import make_jvp
 
-from tqdm import *
+# from tqdm import *
 
 logger = logging.getLogger(__name__)
 
