@@ -614,7 +614,7 @@ class RatioTrainer(Trainer):
             aux = None
         self._timer(stop="fwd: move data", start="fwd: check for nans")
         self._check_for_nans("Training data", theta, x, y, aux)
-        self._check_for_nans("Augmented training data", r_xz, t_xz)
+        self._check_for_nans("Augmented training data", log_r_xz, log_r_xz_alt, t_xz, t_xz_alt)
         self._timer(start="fwd: model.forward", stop="fwd: check for nans")
 
         if self.calculate_model_score:

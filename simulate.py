@@ -11,12 +11,8 @@ sys.path.append("./")
 
 from simulation.units import *
 from simulation.wrapper import augmented_data
-from simulation.prior import (
-    draw_params_from_prior,
-    get_reference_point,
-    get_grid,
-    get_grid_point,
-)
+from simulation.prior import draw_params_from_prior, get_reference_point, get_grid_point
+from inference.utils import shuffle
 
 
 def simulate_train(
@@ -25,17 +21,17 @@ def simulate_train(
     logger.info("Generating training data with %s images", n)
 
     # Parameter points from prior
-    f_sub, beta = draw_params_from_prior(n // 2)
-    if n_thetas_marginal is None:
-        f_sub_ref = f_sub
-        beta_ref = beta
-        n_thetas_marginal = n // 2
-    else:
-        f_sub_ref, beta_ref = draw_params_from_prior(n_thetas_marginal)
+    f_sub, beta = draw_params_from_prior(n)
+    f_sub_alt = np.hstack((f_sub[n//2:], f_sub[:n//2]))
+    beta_alt = np.hstack((beta[n//2:], beta[:n//2]))
 
     # Samples from numerator
     logger.info("Generating %s images", n)
     theta, theta_alt, x, t_xz, t_xz_alt, log_r_xz, log_r_xz_alt, _, z = augmented_data(
+        f_sub=f_sub,
+        beta=beta,
+        f_sub_alt=f_sub_alt,
+        beta_alt=beta_alt,
         n_images=n,
         n_thetas_marginal=n_thetas_marginal,
         mine_gold=True,
