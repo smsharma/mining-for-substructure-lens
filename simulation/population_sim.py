@@ -1,7 +1,5 @@
 import math
 import logging
-import numpy as np
-import autograd.numpy as autograd_np
 from simulation.units import *
 from simulation.profiles import MassProfileNFW, MassProfileSIE
 from simulation.lensing_sim import LensingSim
@@ -197,7 +195,7 @@ class LensingObservationWithSubhalos:
         global_dict = {"z_s": self.z_s, "z_l": self.z_l}
 
         # Inititalize lensing class and produce lensed image
-        lsi = LensingSim(lens_list, [src_param_dict], global_dict, observation_dict, np=autograd_np if calculate_msub_derivatives else np)
+        lsi = LensingSim(lens_list, [src_param_dict], global_dict, observation_dict)
 
         self.image = lsi.lensed_image()
         self.image_poiss = np.random.poisson(self.image)  # Poisson fluctuate
