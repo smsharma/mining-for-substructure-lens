@@ -203,7 +203,7 @@ class LensingObservationWithSubhalos:
 
         # Augmented data
         self.joint_log_probs = ps.joint_log_probs
-        self.joint_score = ps.joint_score
+        self.joint_scores = ps.joint_scores
 
         # Optionally, compute derivatives of image wrt each subahlo mass (takes ~1s/subhalo)
         if calculate_msub_derivatives:
@@ -381,9 +381,9 @@ class SubhaloPopulation:
         # Calculate augmented data
         self.joint_log_probs = self._calculate_joint_log_probs(params_eval)
         if calculate_joint_score:
-            self.joint_score = self._calculate_joint_score([self.f_sub, self.beta])
+            self.joint_scores = self._calculate_joint_scores(params_eval[:2, :])
         else:
-            self.joint_score = None
+            self.joint_scores = None
 
     @staticmethod
     def _alpha_calib(m_min_calib, m_max_calib, n_calib, M_calib, beta, M_0=M_MW, m_0=1e9 * M_s):
@@ -473,20 +473,25 @@ class SubhaloPopulation:
 
         return np.array(log_probs)
 
-    def _calculate_joint_score(self, params, eps0=1.0e-5, eps1=1.0e-3):
+    def _calculate_joint_scores(self, params, eps0=1.0e-5, eps1=1.0e-3):
         """
         Calculates grad_(f_sub, beta) log p(self.n_sub_roi, self.m_sample | f_sub, beta)
         """
-        eps_vec0 = np.asarray(params).flatten() + np.array([eps0, 0.0]).reshape(1, 2)
-        eps_vec1 = np.asarray(params).flatten() + np.array([0.0, eps1]).reshape(1, 2)
-        params = np.asarray(params).reshape(1, 2)
-        all_params = np.vstack([params, eps_vec0, eps_vec1])
-        log_probs = self._calculate_joint_log_probs(all_params)
+        joint_scores = []
 
-        score0 = (log_probs[1] - log_probs[0]) / eps0
-        score1 = (log_probs[2] - log_probs[0]) / eps1
+        for param in params:
+            eps_vec0 = np.asarray(param).flatten() + np.array([eps0, 0.0]).reshape(1, 2)
+            eps_vec1 = np.asarray(param).flatten() + np.array([0.0, eps1]).reshape(1, 2)
+            param = np.asarray(param).reshape(1, 2)
+            all_params = np.vstack([param, eps_vec0, eps_vec1])
+            log_probs = self._calculate_joint_log_probs(all_params)
 
-        return np.array([score0, score1])
+            score0 = (log_probs[1] - log_probs[0]) / eps0
+            score1 = (log_probs[2] - log_probs[0]) / eps1
+
+            joint_scores.append([score0, score1])
+
+        return np.array(joint_scores)
 
     def _log_p_n_sub(self, n_sub, f_sub, beta, include_constant=False, eps=1.0e-6):
         """
