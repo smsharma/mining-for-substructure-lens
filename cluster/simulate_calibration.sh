@@ -11,4 +11,7 @@
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
-python -u simulate.py -n 10000 --calibrate --theta ${SLURM_ARRAY_TASK_ID} --dir /scratch/jb6504/StrongLensing-Inference
+python -u simulate.py --calibrate --theta ${SLURM_ARRAY_TASK_ID} --fixz --fixm --fixalign -n 5000 --name calibrate_fix_theta_${SLURM_ARRAY_TASK_ID} --dir /scratch/jb6504/recycling_strong_lensing
+python -u simulate.py --calibrate --theta ${SLURM_ARRAY_TASK_ID} --fixz --fixalign -n 5000 --name calibrate_mass_theta_${SLURM_ARRAY_TASK_ID} --dir /scratch/jb6504/recycling_strong_lensing
+python -u simulate.py --calibrate --theta ${SLURM_ARRAY_TASK_ID} --fixz --fixm -n 5000 --name calibrate_align_theta_${SLURM_ARRAY_TASK_ID} --dir /scratch/jb6504/recycling_strong_lensing
+python -u simulate.py --calibrate --theta ${SLURM_ARRAY_TASK_ID} -n 5000 --name calibrate_full_theta_${SLURM_ARRAY_TASK_ID} --dir /scratch/jb6504/recycling_strong_lensing
