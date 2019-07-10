@@ -9,7 +9,7 @@ import torch
 
 from inference.models.vgg import VGGRatioEstimator
 from inference.models.resnet import ResNetRatioEstimator
-from inference.trainer import SingleParameterizedRatioTrainer
+from inference.trainer import RatioTrainer
 from inference.utils import create_missing_folders, load_and_check, get_optimizer
 from inference.utils import get_loss, clean_r, clean_t
 from inference.utils import restrict_samplesize
@@ -187,7 +187,7 @@ class ParameterizedRatioEstimator(object):
 
         # Train model
         logger.info("Training model")
-        trainer = SingleParameterizedRatioTrainer(self.model, run_on_gpu=True)
+        trainer = RatioTrainer(self.model, run_on_gpu=True)
         result = trainer.train(
             data=data,
             loss_functions=loss_functions,

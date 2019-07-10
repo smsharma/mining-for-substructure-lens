@@ -250,27 +250,27 @@ def create_missing_folders(folders):
 
 def get_loss(method, alpha):
     if method in ["carl"]:
-        loss_functions = [losses.ratio_xe]
+        loss_functions = [losses.xe]
         loss_weights = [1.0]
         loss_labels = ["xe"]
     elif method in ["rolr"]:
-        loss_functions = [losses.ratio_mse]
+        loss_functions = [losses.mse_r]
         loss_weights = [1.0]
         loss_labels = ["mse_r"]
     elif method == "cascal":
-        loss_functions = [losses.ratio_xe, losses.ratio_score_mse_num]
+        loss_functions = [losses.xe, losses.mse_t0]
         loss_weights = [1.0, alpha]
         loss_labels = ["xe", "mse_score"]
     elif method == "rascal":
-        loss_functions = [losses.ratio_mse, losses.ratio_score_mse_num]
+        loss_functions = [losses.mse_r, losses.mse_t0]
         loss_weights = [1.0, alpha]
         loss_labels = ["mse_r", "mse_score"]
     elif method in ["alice"]:
-        loss_functions = [losses.ratio_augmented_xe]
+        loss_functions = [losses.augmented_xe]
         loss_weights = [1.0]
         loss_labels = ["improved_xe"]
     elif method == "alices":
-        loss_functions = [losses.ratio_augmented_xe, losses.ratio_score_mse_num]
+        loss_functions = [losses.augmented_xe, losses.mse_t0]
         loss_weights = [1.0, alpha]
         loss_labels = ["improved_xe", "mse_score"]
     else:
