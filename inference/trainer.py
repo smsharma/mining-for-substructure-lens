@@ -643,7 +643,7 @@ class RatioTrainer(Trainer):
 
         losses = [
             (loss_function(s_hat, log_r_hat, t_hat, 0, log_r_xz, t_xz)
-            + loss_function(s_hat_alt, log_r_hat_alt, 1, t_hat_alt, log_r_xz_alt, t_xz_alt))
+            + loss_function(s_hat_alt, log_r_hat_alt, t_hat_alt, 1, log_r_xz_alt, t_xz_alt))
             for loss_function in loss_functions
         ]
         self._timer(stop="fwd: calculate losses", start="fwd: check for nans")
