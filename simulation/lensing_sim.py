@@ -2,11 +2,11 @@ from astropy.cosmology import Planck15
 from simulation.units import *
 from simulation.profiles import MassProfileSIE, MassProfileNFW, LightProfileSersic
 
-import autograd.numpy as np
+import numpy as standard_np
 
 
 class LensingSim:
-    def __init__(self, lenses_list=[{}], sources_list=[{}], global_dict={}, observation_dict={}):
+    def __init__(self, lenses_list=[{}], sources_list=[{}], global_dict={}, observation_dict={}, np=standard_np):
         """
         Class for simulation of strong lensing images
         """
@@ -20,6 +20,8 @@ class LensingSim:
         self.set_up_global()
         self.set_up_observation()
 
+        self.np = np
+
     def set_up_global(self):
         """ Set some global variables so don't need to recompute each time
         """
@@ -29,7 +31,7 @@ class LensingSim:
         self.D_s = Planck15.angular_diameter_distance(z=self.z_s).value * Mpc
         self.D_l = Planck15.angular_diameter_distance(z=self.z_l).value * Mpc
 
-        self.Sigma_crit = 1.0 / (4 * np.pi * GN) * self.D_s / ((self.D_s - self.D_l) * self.D_l)
+        self.Sigma_crit = 1.0 / (4 * self.np.pi * GN) * self.D_s / ((self.D_s - self.D_l) * self.D_l)
 
     def set_up_observation(self):
         """ Set up observational grid and parameters
@@ -48,8 +50,8 @@ class LensingSim:
 
         # x/y-coordinates of grid and pixel area in arcsec**2
 
-        self.theta_x, self.theta_y = np.meshgrid(
-            np.linspace(self.theta_x_lims[0], self.theta_x_lims[1], self.n_x), np.linspace(self.theta_y_lims[0], self.theta_y_lims[1], self.n_y)
+        self.theta_x, self.theta_y = self.np.meshgrid(
+            self.np.linspace(self.theta_x_lims[0], self.theta_x_lims[1], self.n_x), self.np.linspace(self.theta_y_lims[0], self.theta_y_lims[1], self.n_y)
         )
 
         self.x, self.y = self.D_l * self.theta_x * asctorad, self.D_l * self.theta_y * asctorad
@@ -62,7 +64,7 @@ class LensingSim:
 
         # Get lensing potential gradients
 
-        x_d, y_d = np.zeros((self.n_x, self.n_y)), np.zeros((self.n_x, self.n_y))
+        x_d, y_d = self.np.zeros((self.n_x, self.n_y)), self.np.zeros((self.n_x, self.n_y))
 
         for lens_dict in self.lenses_list:
             if lens_dict["profile"] == "SIE":
@@ -71,6 +73,7 @@ class LensingSim:
                     y_0=lens_dict["theta_y_0"] * self.D_l * asctorad,
                     r_E=lens_dict["theta_E"] * self.D_l * asctorad,
                     q=lens_dict["q"],
+                    np=self.np
                 ).deflection(self.x, self.y)
             elif lens_dict["profile"] == "NFW":
                 _x_d, _y_d = MassProfileNFW(
@@ -79,6 +82,7 @@ class LensingSim:
                     M_200=lens_dict["M_200"],
                     kappa_s=lens_dict["rho_s"] * lens_dict["r_s"] / self.Sigma_crit,
                     r_s=lens_dict["r_s"],
+                    np=self.np
                 ).deflection(self.x, self.y)
             else:
                 raise Exception("Unknown lens profile specification!")
@@ -87,7 +91,7 @@ class LensingSim:
 
         # Evaluate source image on deflected lens plane to get lensed image
 
-        f_lens = np.zeros((self.n_x, self.n_y))
+        f_lens = self.np.zeros((self.n_x, self.n_y))
 
 
         for source_dict in self.sources_list:
@@ -100,6 +104,7 @@ class LensingSim:
                         S_tot=source_dict["S_tot"],
                         r_e=source_dict["theta_e"] * self.D_l * asctorad,
                         n_srsc=source_dict["n_srsc"],
+                        np=self.np
                     ).flux(self.x - x_d, self.y - y_d)
                     * self.D_l ** 2
                     / radtoasc ** 2
@@ -109,7 +114,7 @@ class LensingSim:
 
 
 
-        f_iso = self.f_iso * np.ones((self.n_x, self.n_y))  # Isotropic background
+        f_iso = self.f_iso * self.np.ones((self.n_x, self.n_y))  # Isotropic background
         i_tot = (f_lens + f_iso) * self.exposure * self.pix_area  # Total lensed image
 
         return i_tot
