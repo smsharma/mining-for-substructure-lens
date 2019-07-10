@@ -26,8 +26,8 @@ def train(
     batch_size=128,
     n_epochs=50,
     optimizer="adam",
-    initial_lr=1.e-4,
-    final_lr=1.e-6,
+    initial_lr=1.0e-4,
+    final_lr=1.0e-6,
     limit_samplesize=None,
     load=None,
     zero_bias=False,
@@ -152,21 +152,18 @@ def parse_args():
         help='Optimizer. "amsgrad", "adam", and "sgd" are supported. Default: "adam".',
     )
     parser.add_argument(
-        "--batchsize",
-        type=int,
-        default=128,
-        help="Batch size. Default: 128.",
+        "--batchsize", type=int, default=128, help="Batch size. Default: 128."
     )
     parser.add_argument(
         "--lr",
         type=float,
-        default=1.e-4,
+        default=1.0e-4,
         help="Initial learning rate. Default: 0.0001",
     )
     parser.add_argument(
         "--lrdecay",
         type=float,
-        default=1.e-2,
+        default=1.0e-2,
         help="Learning rate decay (final LR / initial LR). Default: 0.01",
     )
 
