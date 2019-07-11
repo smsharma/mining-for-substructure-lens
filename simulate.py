@@ -12,7 +12,6 @@ sys.path.append("./")
 from simulation.units import *
 from simulation.wrapper import augmented_data
 from simulation.prior import draw_params_from_prior, get_reference_point, get_grid_point
-from inference.utils import shuffle
 
 
 def simulate_train(
