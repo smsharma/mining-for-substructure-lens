@@ -122,13 +122,10 @@ def augmented_data(
         all_global_latents.append(global_latents)
 
         if mine_gold:
-            log_r_xz, log_r_xz_alt = _extract_log_r(sim, n_thetas_marginal)
-            all_log_r_xz.append(log_r_xz)
-            all_log_r_xz_alt.append(log_r_xz_alt)
-
+            all_log_r_xz.append(_extract_log_r(sim, 0, n_thetas_marginal))
+            all_log_r_xz_alt.append(_extract_log_r(sim, 1, n_thetas_marginal))
             all_t_xz.append(sim.joint_scores[0])
             all_t_xz_alt.append(sim.joint_scores[1])
-            logger.debug("t(x,z) = %s", sim.joint_score)
 
     if calculate_dx_dm and return_dx_dm:
         return (
