@@ -21,9 +21,12 @@ def calibrate(
     transform_to_s=False,
     equal_binning=False,
 ):
+    logging.info("Calibrating llr_%s.npy based on calibration data llr_%s_*.npy", raw_filename, calibration_filename)
+
     # Load data
     llr_raw = np.load("{}/llr_{}.npy".format(data_dir, raw_filename))
     n_grid = llr_raw.shape[0]
+    logging.info("  Found %s grid points", n_grid)
 
     llr_calibration_den = np.load(
         "{}/llr_{}_ref.npy".format(data_dir, calibration_filename)
@@ -69,6 +72,8 @@ def calibrate(
 
     # Save results
     np.save("{}/llr_calibrated_{}.npy".format(data_dir, raw_filename), llr_cal)
+
+    logging.info("  Saved results at llr_calibrated_%s.npy", raw_filename)
 
 
 def parse_args():
