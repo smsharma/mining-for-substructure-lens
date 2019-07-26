@@ -80,7 +80,7 @@ def parse_args():
     parser.add_argument("raw", type=str, help='Sample name, like "test".')
     parser.add_argument("calibration", type=str, help="File name for results.")
     parser.add_argument(
-        "--bins", default=50, type=int, help="Number of bins in calibration histogram."
+        "--bins", default=25, type=int, help="Number of bins in calibration histogram."
     )
     parser.add_argument(
         "--dir",
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
         datefmt="%H:%M",
-        level=logging.DEBUG,
+        level=logging.INFO,
     )
     logging.info("Hi!")
     args = parse_args()
