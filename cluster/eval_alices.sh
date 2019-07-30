@@ -27,7 +27,7 @@ do
         echo ""
         echo "Evaluating ${modeltag} on calibration sample $i"
         echo ""
-        python -u test.py alices_${modeltag} calibrate_${tag}_theta_$i alices_${modeltag}_calibrate_theta$i --dir /scratch/jb6504/StrongLensing-Inference
+        python -u test.py alices_${modeltag} calibrate_${tag}_theta_$i alices_${modeltag}_calibrate_theta_$i --dir /scratch/jb6504/StrongLensing-Inference
     done
 
     echo ""
