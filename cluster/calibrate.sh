@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
 #SBATCH --time=7-00:00:00
-# #SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:1
 
 # DIR=/Users/johannbrehmer/work/projects/strong_lensing/StrongLensing-Inference
 DIR=/scratch/jb6504/StrongLensing-Inference/
@@ -14,9 +14,9 @@ DIR=/scratch/jb6504/StrongLensing-Inference/
 source activate lensing
 cd $DIR
 
-for tag in fix mass align full
+for tag in fix align full mass
 do
-    if [ "tag" = "fix" ]; then
+    if [ "$tag" = "fix" ]; then
         modeltag=${tag}
     else
         modeltag=${tag}_pre

@@ -12,7 +12,7 @@ source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/
 
 # What to do
-for tag in fix mass align full
+for tag in fix align full mass
 do
     if [ "tag" = "fix" ]; then
         modeltag=${tag}
@@ -27,7 +27,7 @@ do
         echo ""
         echo "Evaluating ${modeltag} on calibration sample $i"
         echo ""
-        python -u test.py carl_${modeltag} calibrate_${tag}_theta$i carl_${modeltag}_calibrate_theta$i --dir /scratch/jb6504/StrongLensing-Inference
+        python -u test.py carl_${modeltag} calibrate_${tag}_theta$_i carl_${modeltag}_calibrate_theta$i --dir /scratch/jb6504/StrongLensing-Inference
     done
 
     echo ""
@@ -56,7 +56,7 @@ do
     echo ""
     echo "Evaluating ${modeltag} on point sample / param grid"
     echo ""
-    # python -u test.py carl_${modeltag} test_${tag}_point carl_${modeltag}_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
+    python -u test.py carl_${modeltag} test_${tag}_point carl_${modeltag}_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
 
     echo ""
     echo ""
