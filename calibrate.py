@@ -37,7 +37,7 @@ def calibrate(
     for i in range(n_grid):
         try:
             llr_calibration_num = np.load(
-                "{}/llr_{}_theta{}.npy".format(data_dir, calibration_filename, i)
+                "{}/llr_{}_theta_{}.npy".format(data_dir, calibration_filename, i)
             )
         except FileNotFoundError:
             logging.warning("Did not find numerator calibration data for i = %s", i)
