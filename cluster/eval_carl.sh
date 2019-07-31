@@ -20,49 +20,49 @@ do
         modeltag=${tag}_pre
     fi
 
-    for i in {0..624}
-    do
-        echo ""
-        echo ""
-        echo ""
-        echo "Evaluating ${modeltag} on calibration sample $i"
-        echo ""
-        python -u test.py carl_${modeltag} calibrate_${tag}_theta_$i carl_${modeltag}_calibrate_theta_$i --dir /scratch/jb6504/StrongLensing-Inference
-    done
+#    for i in {0..624}
+#    do
+#        echo ""
+#        echo ""
+#        echo ""
+#        echo "Evaluating ${modeltag} on calibration sample $i"
+#        echo ""
+#        python -u test.py carl_${modeltag} calibrate_${tag}_theta_$i carl_${modeltag}_calibrate_theta_$i --dir /scratch/jb6504/StrongLensing-Inference
+#    done
 
     echo ""
     echo ""
     echo ""
         echo "Evaluating ${modeltag} on reference calibration sample"
     echo ""
-    python -u test.py carl_${modeltag} calibrate_${tag}_ref carl_${modeltag}_calibrate_ref --dir /scratch/jb6504/StrongLensing-Inference
+    python -u test.py carl_${modeltag} calibrate_${tag}_ref carl_${modeltag}_calibrate_ref --grid --dir /scratch/jb6504/StrongLensing-Inference
 
-    echo ""
-    echo ""
-    echo ""
-    echo "Evaluating ${modeltag} on big-prior sample"
-    echo ""
-    # python -u test.py carl_${modeltag} test_${tag}_prior carl_${modeltag}_prior --dir /scratch/jb6504/StrongLensing-Inference
-
-    echo ""
-    echo ""
-    echo ""
-    echo "Evaluating ${modeltag} on shuffled big-prior sample"
-    echo ""
-    # python -u test.py carl_${modeltag} test_${tag}_prior carl_${modeltag}_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
-
-    echo ""
-    echo ""
-    echo ""
-    echo "Evaluating ${modeltag} on point sample / param grid"
-    echo ""
-    python -u test.py carl_${modeltag} test_${tag}_point carl_${modeltag}_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
-
-    echo ""
-    echo ""
-    echo ""
-    echo "Evaluating ${modeltag} on point sample / fine param grid"
-    echo ""
-    # python -u test.py carl_${modeltag} test_${tag}_point carl_${modeltag}_finegrid --grid --finegrid --dir /scratch/jb6504/StrongLensing-Inference
+#    echo ""
+#    echo ""
+#    echo ""
+#    echo "Evaluating ${modeltag} on big-prior sample"
+#    echo ""
+#    # python -u test.py carl_${modeltag} test_${tag}_prior carl_${modeltag}_prior --dir /scratch/jb6504/StrongLensing-Inference
+#
+#    echo ""
+#    echo ""
+#    echo ""
+#    echo "Evaluating ${modeltag} on shuffled big-prior sample"
+#    echo ""
+#    # python -u test.py carl_${modeltag} test_${tag}_prior carl_${modeltag}_shuffledprior --shuffle --dir /scratch/jb6504/StrongLensing-Inference
+#
+#    echo ""
+#    echo ""
+#    echo ""
+#    echo "Evaluating ${modeltag} on point sample / param grid"
+#    echo ""
+#    python -u test.py carl_${modeltag} test_${tag}_point carl_${modeltag}_grid --grid --dir /scratch/jb6504/StrongLensing-Inference
+#
+#    echo ""
+#    echo ""
+#    echo ""
+#    echo "Evaluating ${modeltag} on point sample / fine param grid"
+#    echo ""
+#    # python -u test.py carl_${modeltag} test_${tag}_point carl_${modeltag}_finegrid --grid --finegrid --dir /scratch/jb6504/StrongLensing-Inference
 
 done
