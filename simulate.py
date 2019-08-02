@@ -245,6 +245,6 @@ if __name__ == "__main__":
         results = simulate_train(
             args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
         )
-    save(args.dir, name, *results)
+    save(args.dir, name, results)
 
     logger.info("All done! Have a nice day!")
