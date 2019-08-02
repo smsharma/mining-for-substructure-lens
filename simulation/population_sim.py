@@ -61,6 +61,10 @@ class LensingObservationWithSubhalos:
         :param calculate_msub_derivatives: Whether to calculate derivatives of image wrt subhalos masses
         """
 
+        # beta = -2.0 is forbidden!
+        if np.abs((beta + 2.)) < 1.e-3:
+            beta = -2.001
+
         # Store input
         self.mag_zero = mag_zero
         self.mag_iso = mag_iso
