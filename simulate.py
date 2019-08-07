@@ -15,7 +15,7 @@ from simulation.prior import draw_params_from_prior, get_reference_point, get_gr
 
 
 def simulate_train(
-    n=10000, n_thetas_marginal=10000, fixm=False, fixz=False, fixalign=False
+    n=10000, n_thetas_marginal=1000, fixm=False, fixz=False, fixalign=False
 ):
     logger.info("Generating training data with %s images", n)
 

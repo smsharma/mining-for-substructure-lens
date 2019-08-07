@@ -1,13 +1,13 @@
 #!/bin/bash
 
-cd /scratch/jb6504/StrongLensing-Inference/cluster
+cd /scratch/jb6504/recycling_strong_lensing/cluster
 
 
 ############################################################
 # Simulation
 ############################################################
 
-sbatch --array=0-0 simulate_train.sh
+sbatch --array=0-499 simulate_train.sh
 # sbatch --array=0-624 simulate_calibration.sh
 # sbatch simulate_calibration_ref.sh
 # sbatch --array=0-9 simulate_test.sh
