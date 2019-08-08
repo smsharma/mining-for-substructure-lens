@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=e-a
-#SBATCH --output=log_eval_alices.log
+#SBATCH --output=log_eval_alices2.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
@@ -20,15 +20,15 @@ do
         modeltag=${tag}_pre
     fi
 
-#    for i in {0..624}
-#    do
-#        echo ""
-#        echo ""
-#        echo ""
-#        echo "Evaluating ${modeltag} on calibration sample $i"
-#        echo ""
-#        python -u test.py alices_${modeltag} calibrate_${tag}_theta_$i alices_${modeltag}_calibrate_theta_$i --dir /scratch/jb6504/StrongLensing-Inference
-#    done
+    for i in {350..374}
+    do
+        echo ""
+        echo ""
+        echo ""
+        echo "Evaluating ${modeltag} on calibration sample $i"
+        echo ""
+        python -u test.py alices_${modeltag} calibrate_${tag}_theta_$i alices_${modeltag}_calibrate_theta_$i --dir /scratch/jb6504/StrongLensing-Inference
+    done
 
     echo ""
     echo ""

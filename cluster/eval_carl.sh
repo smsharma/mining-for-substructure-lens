@@ -20,15 +20,15 @@ do
         modeltag=${tag}_pre
     fi
 
-#    for i in {0..624}
-#    do
-#        echo ""
-#        echo ""
-#        echo ""
-#        echo "Evaluating ${modeltag} on calibration sample $i"
-#        echo ""
-#        python -u test.py carl_${modeltag} calibrate_${tag}_theta_$i carl_${modeltag}_calibrate_theta_$i --dir /scratch/jb6504/StrongLensing-Inference
-#    done
+    for i in {350..374}
+    do
+        echo ""
+        echo ""
+        echo ""
+        echo "Evaluating ${modeltag} on calibration sample $i"
+        echo ""
+        python -u test.py carl_${modeltag} calibrate_${tag}_theta_$i carl_${modeltag}_calibrate_theta_$i --dir /scratch/jb6504/StrongLensing-Inference
+    done
 
     echo ""
     echo ""
