@@ -13,28 +13,28 @@ cd /scratch/jb6504/StrongLensing-Inference/
 
 filename=calibrate_fix_theta_${SLURM_ARRAY_TASK_ID}
 if test -f "/scratch/jb6504/StrongLensing-Inference/data/samples/x_$filename.npy"; then
-#    echo "$filename exists, skipping simulation"
-#else
-    python -u simulate.py --calibrate --theta ${SLURM_ARRAY_TASK_ID} --fixz --fixm --fixalign -n 1000 --name $filename --dir /scratch/jb6504/StrongLensing-Inference
+    echo "$filename exists, skipping simulation"
+else
+    python -u simulate.py --calibrate --theta ${SLURM_ARRAY_TASK_ID} --fixz --fixm --fixalign -n 10000 --name $filename --dir /scratch/jb6504/StrongLensing-Inference
 fi
 
 filename=calibrate_mass_theta_${SLURM_ARRAY_TASK_ID}
 if test -f "/scratch/jb6504/StrongLensing-Inference/data/samples/x_$filename.npy"; then
-#    echo "$filename exists, skipping simulation"
-#else
-    python -u simulate.py --calibrate --theta ${SLURM_ARRAY_TASK_ID} --fixz --fixalign -n 1000 --name $filename --dir /scratch/jb6504/StrongLensing-Inference
+    echo "$filename exists, skipping simulation"
+else
+    python -u simulate.py --calibrate --theta ${SLURM_ARRAY_TASK_ID} --fixz --fixalign -n 10000 --name $filename --dir /scratch/jb6504/StrongLensing-Inference
 fi
 
 filename=calibrate_align_theta_${SLURM_ARRAY_TASK_ID}
 if test -f "/scratch/jb6504/StrongLensing-Inference/data/samples/x_$filename.npy"; then
-#    echo "$filename exists, skipping simulation"
-#else
-    python -u simulate.py --calibrate --theta ${SLURM_ARRAY_TASK_ID} --fixz --fixm -n 1000 --name $filename --dir /scratch/jb6504/StrongLensing-Inference
+    echo "$filename exists, skipping simulation"
+else
+    python -u simulate.py --calibrate --theta ${SLURM_ARRAY_TASK_ID} --fixz --fixm -n 10000 --name $filename --dir /scratch/jb6504/StrongLensing-Inference
 fi
 
 filename=calibrate_full_theta_${SLURM_ARRAY_TASK_ID}
 if test -f "/scratch/jb6504/StrongLensing-Inference/data/samples/x_$filename.npy"; then
-#    echo "$filename exists, skipping simulation"
-#else
-    python -u simulate.py --calibrate --theta ${SLURM_ARRAY_TASK_ID} -n 1000 --name $filename --dir /scratch/jb6504/StrongLensing-Inference
+    echo "$filename exists, skipping simulation"
+else
+    python -u simulate.py --calibrate --theta ${SLURM_ARRAY_TASK_ID} -n 10000 --name $filename --dir /scratch/jb6504/StrongLensing-Inference
 fi
