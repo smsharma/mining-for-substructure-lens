@@ -85,7 +85,7 @@ def parse_args():
     parser.add_argument("raw", type=str, help='Sample name, like "test".')
     parser.add_argument("calibration", type=str, help="File name for results.")
     parser.add_argument(
-        "--bins", default=20, type=int, help="Number of bins in calibration histogram."
+        "--bins", default=40, type=int, help="Number of bins in calibration histogram."
     )
     parser.add_argument(
         "--dir",

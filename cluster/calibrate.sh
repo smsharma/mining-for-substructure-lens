@@ -21,6 +21,6 @@ do
     else
         modeltag=${tag}_pre
     fi
-    python -u calibrate.py carl_${modeltag}_grid carl_${modeltag}_calibrate --dir $DIR
+    # python -u calibrate.py carl_${modeltag}_grid carl_${modeltag}_calibrate --dir $DIR
     python -u calibrate.py alices_${modeltag}_grid alices_${modeltag}_calibrate --dir $DIR
 done
