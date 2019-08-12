@@ -247,6 +247,35 @@ def save(data_dir, name, x, theta, y=None, r_xz=None, t_xz=None, latents=None):
         np.save("{}/data/samples/z_{}.npy".format(data_dir, name), latents)
 
 
+def load_previous_results(data_dir, name):
+    try:
+        x = np.load("{}/data/samples/x_{}.npy".format(data_dir, name))
+        theta = np.load("{}/data/samples/theta_{}.npy".format(data_dir, name))
+        latents = np.load("{}/data/samples/z_{}.npy".format(data_dir, name))
+        return (x, theta, latents), x.shape[0]
+    except FileNotFoundError:
+        return None, 0
+
+
+def combine_results_with_previous(previous_results, results):
+    if previous_results is None:
+        return results
+
+    x_old, theta_old, latents_old = previous_results
+    x_new, theta_new, _, _, _, latents_new = results
+
+    x = np.concatenate((x_old, x_new), 0)
+    theta = np.concatenate((theta_old, theta_new), 0)
+    latents = np.concatenate((latents_old, latents_new), 0)
+
+    logger.debug("Combining results:")
+    logger.debug("  x shapes: %s + %s -> %s", x_old.shape, x_new.shape, x.shape)
+    logger.debug("  theta shapes: %s + %s -> %s", theta_old.shape, theta_new.shape, theta.shape)
+    logger.debug("  latents shapes: %s + %s -> %s", latents_old.shape, latents_new.shape, latents.shape)
+
+    return x, theta, None, None, None, latents
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Strong lensing experiments: simulation"
@@ -332,9 +361,20 @@ if __name__ == "__main__":
         name = (
             "calibrate_theta{}".format(args.theta) if args.name is None else args.name
         )
-        results = simulate_calibration(
-            args.theta, args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
-        )
+
+        previous_results, n_previous = load_previous_results(args.dir, name)
+
+        if n_previous >= args.n:
+            logger.info("Found %s samples, that's enough", n_previous)
+            results = None
+        else:
+            logger.info("Found %s samples, generating %s more", n_previous, args.n - n_previous)
+            results = simulate_calibration(
+                args.theta, args.n - n_previous, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
+            )
+            results = combine_results_with_previous(previous_results, results)
+
+            name += "_updated"
     elif args.calref:
         if args.pointref:
             name = "calibrate_pointref" if args.name is None else args.name
@@ -356,6 +396,8 @@ if __name__ == "__main__":
             results = simulate_train_marginalref(
                 args.n, fixm=args.fixm, fixz=args.fixz, fixalign=args.fixalign
             )
-    save(args.dir, name, *results)
+
+    if results is not None:
+        save(args.dir, name, *results)
 
     logger.info("All done! Have a nice day!")
