@@ -4,44 +4,44 @@ The top-level auxiliary file: lensing-lfi.aux
 The style file: aasjournal.bst
 Database file #1: lensing-lfi.bib
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
-You've used 19 entries,
+You've used 85 entries,
             3166 wiz_defined-function locations,
-            810 strings with 12032 characters,
-and the built_in function-call counts, 10654 in all, are:
-= -- 730
-> -- 1066
-< -- 8
-+ -- 354
-- -- 368
-* -- 1060
-:= -- 2029
-add.period$ -- 23
-call.type$ -- 19
-change.case$ -- 103
-chr.to.int$ -- 19
-cite$ -- 19
-duplicate$ -- 318
-empty$ -- 549
-format.name$ -- 399
-if$ -- 2077
-int.to.chr$ -- 1
+            1230 strings with 37178 characters,
+and the built_in function-call counts, 49952 in all, are:
+= -- 3499
+> -- 4999
+< -- 20
++ -- 1671
+- -- 1779
+* -- 5094
+:= -- 9419
+add.period$ -- 96
+call.type$ -- 85
+change.case$ -- 505
+chr.to.int$ -- 83
+cite$ -- 85
+duplicate$ -- 1434
+empty$ -- 2488
+format.name$ -- 1872
+if$ -- 9770
+int.to.chr$ -- 3
 int.to.str$ -- 0
-missing$ -- 17
-newline$ -- 69
-num.names$ -- 76
-pop$ -- 119
+missing$ -- 83
+newline$ -- 274
+num.names$ -- 340
+pop$ -- 557
 preamble$ -- 1
-purify$ -- 103
+purify$ -- 505
 quote$ -- 0
-skip$ -- 286
+skip$ -- 1325
 stack$ -- 0
-substring$ -- 387
-swap$ -- 0
+substring$ -- 1938
+swap$ -- 4
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 171
+type$ -- 765
 warning$ -- 0
-while$ -- 71
+while$ -- 321
 width$ -- 0
-write$ -- 212
+write$ -- 937
