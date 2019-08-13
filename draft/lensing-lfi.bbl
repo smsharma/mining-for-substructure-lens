@@ -114,11 +114,6 @@
 {Astropy Collaboration}, {Price-Whelan}, A.~M., {Sip{\H o}cz}, B.~M., {et~al.}
   2018, \aj, 156, 123, \dodoi{10.3847/1538-3881/aabc4f}
 
-\bibitem[{{Bar-Or} {et~al.}(2019){Bar-Or}, {Fouvry}, \&
-  {Tremaine}}]{2019ApJ...871...28B}
-{Bar-Or}, B., {Fouvry}, J.-B., \& {Tremaine}, S. 2019, \apj, 871, 28,
-  \dodoi{10.3847/1538-4357/aaf28c}
-
 \bibitem[{{Bechtol} {et~al.}(2015){Bechtol}, {Drlica-Wagner}, {Balbinot},
   {Pieres}, {Simon}, {Yanny}, {Santiago}, {Wechsler}, {Frieman}, {Walker},
   {Williams}, {Rozo}, {Rykoff}, {Queiroz}, {Luque}, {Benoit-L{\'e}vy},
@@ -167,6 +162,21 @@
 \bibitem[{{Boyanovsky} \& {Wu}(2011)}]{1008.0992}
 {Boyanovsky}, D., \& {Wu}, J. 2011, \prd, 83, 043524,
   \dodoi{10.1103/PhysRevD.83.043524}
+
+\bibitem[{{Brehmer} {et~al.}(2018{\natexlab{a}}){Brehmer}, {Cranmer}, {Louppe},
+  \& {Pavez}}]{1805.00013}
+{Brehmer}, J., {Cranmer}, K., {Louppe}, G., \& {Pavez}, J. 2018{\natexlab{a}},
+  \prl, 121, 111801, \dodoi{10.1103/PhysRevLett.121.111801}
+
+\bibitem[{{Brehmer} {et~al.}(2018{\natexlab{b}}){Brehmer}, {Cranmer}, {Louppe},
+  \& {Pavez}}]{1805.00020}
+---. 2018{\natexlab{b}}, \prd, 98, 052004, \dodoi{10.1103/PhysRevD.98.052004}
+
+\bibitem[{{Brehmer} {et~al.}(2018{\natexlab{c}}){Brehmer}, {Louppe}, {Pavez},
+  \& {Cranmer}}]{1805.12244}
+{Brehmer}, J., {Louppe}, G., {Pavez}, J., \& {Cranmer}, K. 2018{\natexlab{c}},
+  arXiv e-prints, arXiv:1805.12244.
+\newblock \doarXiv{1805.12244}
 
 \bibitem[{{Brennan} {et~al.}(2019){Brennan}, {Benson}, {Cyr-Racine}, {Keeton},
   {Moustakas}, \& {Pullen}}]{1808.03501}
@@ -279,10 +289,6 @@
   e-prints, arXiv:1902.01055.
 \newblock \doarXiv{1902.01055}
 
-\bibitem[{{Du} {et~al.}(2017){Du}, {Behrens}, \& {Niemeyer}}]{1608.02575}
-{Du}, X., {Behrens}, C., \& {Niemeyer}, J.~C. 2017, \mnras, 465, 941,
-  \dodoi{10.1093/mnras/stw2724}
-
 \bibitem[{{Efstathiou}(1992)}]{1992MNRAS.256P..43E}
 {Efstathiou}, G. 1992, \mnras, 256, 43P, \dodoi{10.1093/mnras/256.1.43P}
 
@@ -336,26 +342,11 @@
 {Hiroshima}, N., {Ando}, S., \& {Ishiyama}, T. 2018, \prd, 97, 123002,
   \dodoi{10.1103/PhysRevD.97.123002}
 
-\bibitem[{{Hsueh} {et~al.}(2019{\natexlab{a}}){Hsueh}, {Enzi}, {Vegetti},
-  {Auger}, {Fassnacht}, {Despali}, {Koopmans}, \& {McKean}}]{1905.04182}
-{Hsueh}, J.-W., {Enzi}, W., {Vegetti}, S., {et~al.} 2019{\natexlab{a}}, arXiv
-  e-prints, arXiv:1905.04182.
+\bibitem[{{Hsueh} {et~al.}(2019){Hsueh}, {Enzi}, {Vegetti}, {Auger},
+  {Fassnacht}, {Despali}, {Koopmans}, \& {McKean}}]{2019arXiv190504182H}
+{Hsueh}, J.-W., {Enzi}, W., {Vegetti}, S., {et~al.} 2019, arXiv e-prints,
+  arXiv:1905.04182.
 \newblock \doarXiv{1905.04182}
-
-\bibitem[{{Hsueh} {et~al.}(2019{\natexlab{b}}){Hsueh}, {Enzi}, {Vegetti},
-  {Auger}, {Fassnacht}, {Despali}, {Koopmans}, \&
-  {McKean}}]{2019arXiv190504182H}
----. 2019{\natexlab{b}}, arXiv e-prints, arXiv:1905.04182.
-\newblock \doarXiv{1905.04182}
-
-\bibitem[{{Hu} {et~al.}(2000){Hu}, {Barkana}, \& {Gruzinov}}]{astro-ph/0003365}
-{Hu}, W., {Barkana}, R., \& {Gruzinov}, A. 2000, \prl, 85, 1158,
-  \dodoi{10.1103/PhysRevLett.85.1158}
-
-\bibitem[{{Hui} {et~al.}(2017){Hui}, {Ostriker}, {Tremaine}, \&
-  {Witten}}]{2017PhRvD..95d3541H}
-{Hui}, L., {Ostriker}, J.~P., {Tremaine}, S., \& {Witten}, E. 2017, \prd, 95,
-  043541, \dodoi{10.1103/PhysRevD.95.043541}
 
 \bibitem[{Hunter(2007)}]{Hunter:2007}
 Hunter, J.~D. 2007, Computing In Science \& Engineering, 9, 90
@@ -414,11 +405,6 @@ Jones, E., Oliphant, T., Peterson, P., {et~al.} 2001--, {SciPy}: Open source
   arXiv e-prints, arXiv:0912.0201.
 \newblock \doarXiv{0912.0201}
 
-\bibitem[{{Mocz} {et~al.}(2017){Mocz}, {Vogelsberger}, {Robles}, {Zavala},
-  {Boylan-Kolchin}, {Fialkov}, \& {Hernquist}}]{1705.05845}
-{Mocz}, P., {Vogelsberger}, M., {Robles}, V.~H., {et~al.} 2017, \mnras, 471,
-  4559, \dodoi{10.1093/mnras/stx1887}
-
 \bibitem[{{Navarro} {et~al.}(1996){Navarro}, {Frenk}, \&
   {White}}]{1996ApJ...462..563N}
 {Navarro}, J.~F., {Frenk}, C.~S., \& {White}, S.~D.~M. 1996, \apj, 462, 563,
@@ -427,6 +413,10 @@ Jones, E., Oliphant, T., Peterson, P., {et~al.} 2001--, {SciPy}: Open source
 \bibitem[{{Navarro} {et~al.}(1997){Navarro}, {Frenk}, \&
   {White}}]{1997ApJ...490..493N}
 ---. 1997, \apj, 490, 493, \dodoi{10.1086/304888}
+
+\bibitem[{{Neyman} \& {Pearson}(1933)}]{1933RSPTA.231..289N}
+{Neyman}, J., \& {Pearson}, E.~S. 1933, Philosophical Transactions of the Royal
+  Society of London Series A, 231, 289, \dodoi{10.1098/rsta.1933.0009}
 
 \bibitem[{Paszke {et~al.}(2017)Paszke, Gross, Chintala, Chanan, Yang, DeVito,
   Lin, Desmaison, Antiga, \& Lerer}]{paszke2017automatic}

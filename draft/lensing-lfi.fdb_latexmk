@@ -1,13 +1,13 @@
 # Fdb version 3
-["bibtex lensing-lfi"] 1565713103 "lensing-lfi.aux" "lensing-lfi.bbl" "lensing-lfi" 1565714641
+["bibtex lensing-lfi"] 1565722372 "lensing-lfi.aux" "lensing-lfi.bbl" "lensing-lfi" 1565722653
   "./aasjournal.bst" 1558289527 37514 eb8cd7d6002e174d031081537b4ccfa9 ""
-  "lensing-lfi.aux" 1565714640 22063 26b1595e2fbde4722ae35b7c4be6995f ""
+  "lensing-lfi.aux" 1565722652 21584 300a851a138f93e635d3ed20f3c61e25 ""
   "lensing-lfi.bcf" 0 -1 0 ""
-  "lensing-lfi.bib" 1565708817 81763 3f97963d5d38d7fbe61d4092e69885ea ""
+  "lensing-lfi.bib" 1565721539 84318 dc93a60fec296265ff3de987034006c3 ""
   (generated)
   "lensing-lfi.blg"
   "lensing-lfi.bbl"
-["pdflatex"] 1565714639 "lensing-lfi.tex" "lensing-lfi.pdf" "lensing-lfi" 1565714641
+["pdflatex"] 1565722652 "lensing-lfi.tex" "lensing-lfi.pdf" "lensing-lfi" 1565722653
   "/usr/local/texlive/2016/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/helvetic/phvr.tfm" 1136768653 2504 ba6584b616b92101c768b6c4ffb32dd0 ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -116,10 +116,10 @@
   "/usr/local/texlive/2016/texmf-var/web2c/pdftex/pdflatex.fmt" 1463979169 3873397 413fbfbbedb8e719ddc392043a7add02 ""
   "/usr/local/texlive/2016/texmf.cnf" 1463979140 577 2938757e76f31531e65cc647e3507693 ""
   "aastex62.cls" 1558289527 210522 3ccb99937c19b008a65ac39ebedf9ee4 ""
-  "lensing-lfi.aux" 1565714640 22063 26b1595e2fbde4722ae35b7c4be6995f ""
-  "lensing-lfi.bbl" 1565713103 26618 7523c1b789a0b181861f9888e789c643 "bibtex lensing-lfi"
-  "lensing-lfi.tex" 1565714638 26358 96982f6512aa5dfa80200bcbdf1e531c ""
+  "lensing-lfi.aux" 1565722652 21584 300a851a138f93e635d3ed20f3c61e25 ""
+  "lensing-lfi.bbl" 1565722372 26218 3100a8a8b9e95bcedc8e059160958b2e "bibtex lensing-lfi"
+  "lensing-lfi.tex" 1565722651 27819 7dd1540115a70f8b95be913adf4a7aba ""
   (generated)
+  "lensing-lfi.aux"
   "lensing-lfi.pdf"
   "lensing-lfi.log"
-  "lensing-lfi.aux"
