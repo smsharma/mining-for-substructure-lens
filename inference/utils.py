@@ -161,11 +161,11 @@ def load_and_check(filename, warning_threshold=1.0e9, memmap=False):
     return data
 
 
-def clean_r(r, log_r_clip=20.0):
+def clean_log_r(log_r, log_r_clip=20.0):
     return np.where(
-        np.isnan(r),
-        np.exp(-log_r_clip) * np.ones_like(r),
-        np.clip(r, np.exp(-log_r_clip), np.exp(log_r_clip)),
+        np.isnan(log_r),
+        -log_r_clip * np.ones_like(log_r),
+        np.clip(log_r, -log_r_clip, log_r_clip),
     )
 
 
