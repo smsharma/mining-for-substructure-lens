@@ -131,6 +131,11 @@ def load_and_check(filename, warning_threshold=1.0e9, memmap=False):
     else:
         data = np.load(filename)
 
+    # Change dtype
+    if not memmap:
+        data = data.astype(np.float)
+
+    # Clean data
     if memmap:
         logger.debug("Skipping NaN check for memmap-ed data")
     else:
