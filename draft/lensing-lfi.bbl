@@ -446,6 +446,11 @@ Paszke, A., Gross, S., Chintala, S., {et~al.} 2017, in NIPS-W
 {S{\'a}nchez-Conde}, M.~A., \& {Prada}, F. 2014, \mnras, 442, 2271,
   \dodoi{10.1093/mnras/stu1014}
 
+\bibitem[{{Schneider} {et~al.}(1992){Schneider}, {Ehlers}, \&
+  {Falco}}]{1992grle.book.....S}
+{Schneider}, P., {Ehlers}, J., \& {Falco}, E.~E. 1992, {Gravitational Lenses},
+  \dodoi{10.1007/978-3-662-03758-4}
+
 \bibitem[{{Sirunyan} {et~al.}(2017){Sirunyan}, {Tumasyan}, {Adam}, {Asilar},
   {Bergauer}, {Brandstetter}, {Brondolin}, {Dragicevic}, {Er{\"o}}, {Flechl},
   \& et~al.}]{2017PhLB..769..520S}
