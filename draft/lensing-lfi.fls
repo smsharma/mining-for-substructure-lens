@@ -166,6 +166,9 @@ INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/latex-fonts/lasyb10.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmbx9.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmbx6.tfm
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/simulations.pdf
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/simulations.pdf
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/simulations.pdf
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmti12.tfm
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.bbl
@@ -173,6 +176,7 @@ INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.aux
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
