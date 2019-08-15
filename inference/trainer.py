@@ -613,7 +613,7 @@ class RatioTrainer(Trainer):
         except KeyError:
             aux = None
         self._timer(stop="fwd: move data", start="fwd: check for nans")
-        self._check_for_nans("Training data", theta, x, y, aux)
+        self._check_for_nans("Training data", theta, x, theta_alt, aux)
         self._check_for_nans("Augmented training data", log_r_xz, log_r_xz_alt, t_xz, t_xz_alt)
         self._timer(start="fwd: model.forward", stop="fwd: check for nans")
 
