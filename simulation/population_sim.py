@@ -31,6 +31,7 @@ class LensingObservationWithSubhalos:
         params_eval=None,
         calculate_joint_score=False,
         calculate_msub_derivatives=False,
+        calculate_sub_residuals=False,
         draw_host_mass=True,
         draw_host_redshift=True,
         draw_alignment=True,
@@ -58,6 +59,7 @@ class LensingObservationWithSubhalos:
         :param params_eval: Parameters (f_sub, beta) for which p(x,z|params) will be calculated
         :param calculate_joint_score: Whether grad_params log p(x,z|params) will be calculated
         :param calculate_msub_derivatives: Whether to calculate derivatives of image wrt subhalos masses
+        :param calculate_residuals: Whether to calculate residual images wrt subhalos
         """
 
         # Store input
@@ -208,6 +210,38 @@ class LensingObservationWithSubhalos:
         if calculate_msub_derivatives:
             self._calculate_derivs()
 
+        # Optionally, compute derivatives of image wrt each subahlo mass (takes ~1s/subhalo)
+        if calculate_sub_residuals:
+            self._calculate_residuals()
+
+    def _calculate_residuals(self):
+        """
+        Compute residual images wrt each subhalo
+        """
+
+        # Recompute base image (mostly for debugging, but doesn't take much time)
+        self.image_0 = self._deriv_helper_function(self.m_subs)
+
+        # Initialize subhalo properties
+        self.theta_xs_0 = self.theta_xs
+        self.theta_ys_0 = self.theta_ys
+        self.m_subs_0 = self.m_subs
+
+        # Residual image array
+        self.resid_sub_image = np.zeros((self.n_sub_roi, self.n_xy, self.n_xy))
+
+        # Loop over subhalos, deleting corresponding subhalo properties andc computing residual image
+        for i_sub in range(self.n_sub_roi):
+            self.theta_xs = np.delete(self.theta_xs_0, i_sub)
+            self.theta_ys = np.delete(self.theta_ys_0, i_sub)
+            self.m_subs = np.delete(self.m_subs_0, i_sub)
+            self.resid_sub_image[i_sub] = self.image_0 - self._deriv_helper_function(self.m_subs)
+
+        # Reset subhalo properties to the original ones
+        self.theta_xs = self.theta_xs_0
+        self.theta_ys = self.theta_ys_0
+        self.m_subs = self.m_subs_0
+
     def _calculate_derivs(self):
         """
         Compute derivatives of the lensing image wrt the mass of each subhalo, evaluated at the given mass
@@ -221,7 +255,7 @@ class LensingObservationWithSubhalos:
         # Gradient image array
         self.grad_msub_image = np.zeros((self.n_sub_roi, self.n_xy, self.n_xy))
 
-        # Loop over subhalos, setting the first element of subhalo properties array to a given subhalo,
+        # Loop over subhalos, setting the first element of subhalo properties arrays to a given subhalo,
         # then compute Jacobian (hacky, but seems to be fastest way currently with forward-pass Jacobian
         # vector product implementation in autograd...
         for i_sub in range(self.n_sub_roi):
@@ -238,7 +272,7 @@ class LensingObservationWithSubhalos:
 
     def _deriv_helper_function(self, m_subs):
         """
-        Helper function for autograd to compute gradients
+        Helper function for autograd to compute gradients and residuals
         """
 
         lens_list = [self.hst_param_dict]

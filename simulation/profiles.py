@@ -77,7 +77,6 @@ class MassProfileNFW:
         """
         Calculate deflection vectors, from astro-ph/0102341
         TODO: deal with origin singularity
-
         :param x: x-coordinate at which deflection computed, in same units as r_E
         :param y: y-coordinate at which deflection computed, in same units as r_E
         :return: Deflections at positions specified by x, y
@@ -92,8 +91,7 @@ class MassProfileNFW:
         x = r / self.r_s
 
         # Get spherically symmetric deflection field, from astro-ph/0102341
-        F_ary = np.array([[self.F(xi) for xi in x_col] for x_col in x])
-        phi_r = 4 * self.kappa_s * self.r_s * (np.log(x / 2.0) + F_ary) / x
+        phi_r = 4 * self.kappa_s * self.r_s * (np.log(x / 2.0) + self.F(x)) / x
 
         # Get x and y coordinates of deflection
         x_d = phi_r * x_p / r
@@ -106,13 +104,17 @@ class MassProfileNFW:
     def F(self, x):
         """
         Helper function for NFW deflection, from astro-ph/0102341
+        TODO: returning warnings for invalid value in sqrt for some reason
+        JB: That's because all of the arguments of np.where are evaluated, including the ones with ngative arguments to
+        sqrt, but only the good ones are then returned. So we can just suppress these warnings
         """
-        if x == 1:
-            return 1.
-        elif x < 1.:
-            return np.arctanh(np.sqrt(1.0 - x ** 2)) / (np.sqrt(1.0 - x ** 2))
-        else:
-            return np.arctan(np.sqrt(x ** 2 - 1.0)) / (np.sqrt(x ** 2 - 1.0))
+        with np.errstate(divide="ignore", invalid="ignore"):
+            return np.where(
+                x == 1.0,
+                1.0,
+                np.where(x <= 1.0, np.arctanh(np.sqrt(1.0 - x ** 2)) / (np.sqrt(1.0 - x ** 2)),
+                         np.arctan(np.sqrt(x ** 2 - 1.0)) / (np.sqrt(x ** 2 - 1.0))),
+            )
 
     @classmethod
     def get_r_s_rho_s_NFW(self, M_200, c_200):

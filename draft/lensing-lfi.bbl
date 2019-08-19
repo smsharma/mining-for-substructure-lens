@@ -5,6 +5,78 @@
 \providecommand{\doeprint}[1]{\href{http://ascl.net/#1}{\nolinkurl{http://ascl.net/#1}}}
 \providecommand{\doarXiv}[1]{\href{https://arxiv.org/abs/#1}{\nolinkurl{https://arxiv.org/abs/#1}}}
 
+\bibitem[{{Aaboud} {et~al.}(2019){Aaboud}, {Aad}, {Abbott}, {Abbott},
+  {Abdinov}, {Abhayasinghe}, {Abidi}, {AbouZeid}, {Abraham}, {Abramowicz}, \&
+  et~al.}]{2019arXiv190301400A}
+{Aaboud}, M., {Aad}, G., {Abbott}, B., {et~al.} 2019, Journal of High Energy
+  Physics, 2019, 142, \dodoi{10.1007/JHEP05(2019)142}
+
+\bibitem[{{Agrawal} {et~al.}(2017){Agrawal}, {Cyr-Racine}, {Randall}, \&
+  {Scholtz}}]{1702.05482}
+{Agrawal}, P., {Cyr-Racine}, F.-Y., {Randall}, L., \& {Scholtz}, J. 2017,
+  \jcap, 2017, 021, \dodoi{10.1088/1475-7516/2017/08/021}
+
+\bibitem[{{Agrawal} \& {Randall}(2017)}]{1706.04195}
+{Agrawal}, P., \& {Randall}, L. 2017, \jcap, 2017, 019,
+  \dodoi{10.1088/1475-7516/2017/12/019}
+
+\bibitem[{{Akerib} {et~al.}(2017){Akerib}, {Alsum}, {Ara{\'u}jo}, {Bai},
+  {Bailey}, {Balajthy}, {Beltrame}, {Bernard}, {Bernstein}, {Biesiadzinski},
+  {Boulton}, {Bramante}, {Br{\'a}s}, {Byram}, {Cahn}, {Carmona-Benitez},
+  {Chan}, {Chiller}, {Chiller}, {Currie}, {Cutter}, {Davison}, {Dobi},
+  {Dobson}, {Druszkiewicz}, {Edwards}, {Faham}, {Fiorucci}, {Gaitskell},
+  {Gehman}, {Ghag}, {Gibson}, {Gilchriese}, {Hall}, {Hanhardt},
+  {Haselschwardt}, {Hertel}, {Hogan}, {Horn}, {Huang}, {Ignarra}, {Ihm},
+  {Jacobsen}, {Ji}, {Kamdin}, {Kazkaz}, {Khaitan}, {Knoche}, {Larsen}, {Lee},
+  {Lenardo}, {Lesko}, {Lindote}, {Lopes}, {Manalaysay}, {Mannino}, {Marzioni},
+  {McKinsey}, {Mei}, {Mock}, {Moongweluwan}, {Morad}, {Murphy}, {Nehrkorn},
+  {Nelson}, {Neves}, {O'Sullivan}, {Oliver-Mallory}, {Palladino}, {Pease},
+  {Phelps}, {Reichhart}, {Rhyne}, {Shaw}, {Shutt}, {Silva}, {Solmaz},
+  {Solovov}, {Sorensen}, {Stephenson}, {Sumner}, {Szydagis}, {Taylor},
+  {Taylor}, {Tennyson}, {Terman}, {Tiedt}, {To}, {Tripathi}, {Tvrznikova},
+  {Uvarov}, {Verbus}, {Webb}, {White}, {Whitis}, {Witherell}, {Wolfs}, {Xu},
+  {Yazdani}, {Young}, {Zhang}, \& {LUX Collaboration}}]{2017PhRvL.118b1303A}
+{Akerib}, D.~S., {Alsum}, S., {Ara{\'u}jo}, H.~M., {et~al.} 2017, \prl, 118,
+  021303, \dodoi{10.1103/PhysRevLett.118.021303}
+
+\bibitem[{{Albert} {et~al.}(2017){Albert}, {Anderson}, {Bechtol},
+  {Drlica-Wagner}, {Meyer}, {S{\'a}nchez-Conde}, {Strigari}, {Wood}, {Abbott},
+  {Abdalla}, {Benoit-L{\'e}vy}, {Bernstein}, {Bernstein}, {Bertin}, {Brooks},
+  {Burke}, {Carnero Rosell}, {Carrasco Kind}, {Carretero}, {Crocce}, {Cunha},
+  {D'Andrea}, {da Costa}, {Desai}, {Diehl}, {Dietrich}, {Doel}, {Eifler},
+  {Evrard}, {Fausti Neto}, {Finley}, {Flaugher}, {Fosalba}, {Frieman},
+  {Gerdes}, {Goldstein}, {Gruen}, {Gruendl}, {Honscheid}, {James}, {Kent},
+  {Kuehn}, {Kuropatkin}, {Lahav}, {Li}, {Maia}, {March}, {Marshall}, {Martini},
+  {Miller}, {Miquel}, {Neilsen}, {Nord}, {Ogando}, {Plazas}, {Reil}, {Romer},
+  {Rykoff}, {Sanchez}, {Santiago}, {Schubnell}, {Sevilla-Noarbe}, {Smith},
+  {Soares-Santos}, {Sobreira}, {Suchyta}, {Swanson}, {Tarle}, {Vikram},
+  {Walker}, {Wechsler}, {Fermi-LAT Collaboration}, \& {DES
+  Collaboration}}]{2017ApJ...834..110A}
+{Albert}, A., {Anderson}, B., {Bechtol}, K., {et~al.} 2017, \apj, 834, 110,
+  \dodoi{10.3847/1538-4357/834/2/110}
+
+\bibitem[{{Aprile} {et~al.}(2018){Aprile}, {Aalbers}, {Agostini}, {Alfonsi},
+  {Althueser}, {Amaro}, {Anthony}, {Arneodo}, {Baudis}, {Bauermeister},
+  {Benabderrahmane}, {Berger}, {Breur}, {Brown}, {Brown}, {Brown}, {Bruenner},
+  {Bruno}, {Budnik}, {Capelli}, {Cardoso}, {Cichon}, {Coderre}, {Colijn},
+  {Conrad}, {Cussonneau}, {Decowski}, {de Perio}, {di Gangi}, {di Giovanni},
+  {Diglio}, {Elykov}, {Eurin}, {Fei}, {Ferella}, {Fieguth}, {Fulgione}, {Gallo
+  Rosso}, {Galloway}, {Gao}, {Garbini}, {Geis}, {Grandi}, {Greene}, {Qiu},
+  {Hasterok}, {Hogenbirk}, {Howlett}, {Itay}, {Joerg}, {Kaminsky}, {Kazama},
+  {Kish}, {Koltman}, {Landsman}, {Lang}, {Levinson}, {Lin}, {Lindemann},
+  {Lindner}, {Lombardi}, {Lopes}, {Mahlstedt}, {Manfredini}, {Marrod{\'a}n
+  Undagoitia}, {Masbou}, {Masson}, {Messina}, {Micheneau}, {Miller},
+  {Molinario}, {Mor{\^a}}, {Murra}, {Naganoma}, {Ni}, {Oberlack}, {Pelssers},
+  {Piastra}, {Pienaar}, {Pizzella}, {Plante}, {Podviianiuk}, {Priel},
+  {Ram{\'\i}rez Garc{\'\i}a}, {Rauch}, {Reichard}, {Reuter}, {Riedel}, {Rizzo},
+  {Rocchetti}, {Rupp}, {Dos Santos}, {Sartorelli}, {Scheibelhut}, {Schindler},
+  {Schreiner}, {Schulte}, {Schumann}, {Scotto Lavina}, {Selvi}, {Shagin},
+  {Shockley}, {Silva}, {Simgen}, {Thers}, {Toschi}, {Trinchero}, {Tunnell},
+  {Upole}, {Vargas}, {Wack}, {Wang}, {Wang}, {Wei}, {Weinheimer}, {Wittweg},
+  {Wulf}, {Ye}, {Zhang}, {Zhu}, \& {Xenon Collaboration}}]{2018PhRvL.121k1302A}
+{Aprile}, E., {Aalbers}, J., {Agostini}, F., {et~al.} 2018, \prl, 121, 111302,
+  \dodoi{10.1103/PhysRevLett.121.111302}
+
 \bibitem[{{Astropy Collaboration} {et~al.}(2013){Astropy Collaboration},
   {Robitaille}, {Tollerud}, {Greenfield}, {Droettboom}, {Bray}, {Aldcroft},
   {Davis}, {Ginsburg}, {Price-Whelan}, {Kerzendorf}, {Conley}, {Crighton},
@@ -42,23 +114,228 @@
 {Astropy Collaboration}, {Price-Whelan}, A.~M., {Sip{\H o}cz}, B.~M., {et~al.}
   2018, \aj, 156, 123, \dodoi{10.3847/1538-3881/aabc4f}
 
+\bibitem[{{Bechtol} {et~al.}(2015){Bechtol}, {Drlica-Wagner}, {Balbinot},
+  {Pieres}, {Simon}, {Yanny}, {Santiago}, {Wechsler}, {Frieman}, {Walker},
+  {Williams}, {Rozo}, {Rykoff}, {Queiroz}, {Luque}, {Benoit-L{\'e}vy},
+  {Tucker}, {Sevilla}, {Gruendl}, {da Costa}, {Fausti Neto}, {Maia}, {Abbott},
+  {Allam}, {Armstrong}, {Bauer}, {Bernstein}, {Bernstein}, {Bertin}, {Brooks},
+  {Buckley-Geer}, {Burke}, {Carnero Rosell}, {Castander}, {Covarrubias},
+  {D'Andrea}, {DePoy}, {Desai}, {Diehl}, {Eifler}, {Estrada}, {Evrard},
+  {Fernandez}, {Finley}, {Flaugher}, {Gaztanaga}, {Gerdes}, {Girardi},
+  {Gladders}, {Gruen}, {Gutierrez}, {Hao}, {Honscheid}, {Jain}, {James},
+  {Kent}, {Kron}, {Kuehn}, {Kuropatkin}, {Lahav}, {Li}, {Lin}, {Makler},
+  {March}, {Marshall}, {Martini}, {Merritt}, {Miller}, {Miquel}, {Mohr},
+  {Neilsen}, {Nichol}, {Nord}, {Ogando}, {Peoples}, {Petravick}, {Plazas},
+  {Romer}, {Roodman}, {Sako}, {Sanchez}, {Scarpine}, {Schubnell}, {Smith},
+  {Soares-Santos}, {Sobreira}, {Suchyta}, {Swanson}, {Tarle}, {Thaler},
+  {Thomas}, {Wester}, {Zuntz}, \& {DES Collaboration}}]{1503.02584}
+{Bechtol}, K., {Drlica-Wagner}, A., {Balbinot}, E., {et~al.} 2015, \apj, 807,
+  50, \dodoi{10.1088/0004-637X/807/1/50}
+
+\bibitem[{{Birrer} {et~al.}(2017){Birrer}, {Amara}, \&
+  {Refregier}}]{1702.00009}
+{Birrer}, S., {Amara}, A., \& {Refregier}, A. 2017, \jcap, 2017, 037,
+  \dodoi{10.1088/1475-7516/2017/05/037}
+
+\bibitem[{{Bode} {et~al.}(2001){Bode}, {Ostriker}, \&
+  {Turok}}]{2001ApJ...556...93B}
+{Bode}, P., {Ostriker}, J.~P., \& {Turok}, N. 2001, \apj, 556, 93,
+  \dodoi{10.1086/321541}
+
+\bibitem[{{Bonaca} \& {Hogg}(2018)}]{1804.06854}
+{Bonaca}, A., \& {Hogg}, D.~W. 2018, \apj, 867, 101,
+  \dodoi{10.3847/1538-4357/aae4da}
+
+\bibitem[{{Bonaca} {et~al.}(2019){Bonaca}, {Hogg}, {Price-Whelan}, \&
+  {Conroy}}]{1811.03631}
+{Bonaca}, A., {Hogg}, D.~W., {Price-Whelan}, A.~M., \& {Conroy}, C. 2019, \apj,
+  880, 38, \dodoi{10.3847/1538-4357/ab2873}
+
+\bibitem[{{Bond} \& {Szalay}(1983)}]{1983ApJ...274..443B}
+{Bond}, J.~R., \& {Szalay}, A.~S. 1983, \apj, 274, 443, \dodoi{10.1086/161460}
+
+\bibitem[{{Boyanovsky} {et~al.}(2008){Boyanovsky}, {de Vega}, \&
+  {Sanchez}}]{0807.0622}
+{Boyanovsky}, D., {de Vega}, H.~J., \& {Sanchez}, N.~G. 2008, \prd, 78, 063546,
+  \dodoi{10.1103/PhysRevD.78.063546}
+
+\bibitem[{{Boyanovsky} \& {Wu}(2011)}]{1008.0992}
+{Boyanovsky}, D., \& {Wu}, J. 2011, \prd, 83, 043524,
+  \dodoi{10.1103/PhysRevD.83.043524}
+
+\bibitem[{{Brehmer} {et~al.}(2018{\natexlab{a}}){Brehmer}, {Cranmer}, {Louppe},
+  \& {Pavez}}]{1805.00013}
+{Brehmer}, J., {Cranmer}, K., {Louppe}, G., \& {Pavez}, J. 2018{\natexlab{a}},
+  \prl, 121, 111801, \dodoi{10.1103/PhysRevLett.121.111801}
+
+\bibitem[{{Brehmer} {et~al.}(2018{\natexlab{b}}){Brehmer}, {Cranmer}, {Louppe},
+  \& {Pavez}}]{1805.00020}
+---. 2018{\natexlab{b}}, \prd, 98, 052004, \dodoi{10.1103/PhysRevD.98.052004}
+
+\bibitem[{{Brehmer} {et~al.}(2018{\natexlab{c}}){Brehmer}, {Louppe}, {Pavez},
+  \& {Cranmer}}]{1805.12244}
+{Brehmer}, J., {Louppe}, G., {Pavez}, J., \& {Cranmer}, K. 2018{\natexlab{c}},
+  arXiv e-prints, arXiv:1805.12244.
+\newblock \doarXiv{1805.12244}
+
+\bibitem[{{Brennan} {et~al.}(2019){Brennan}, {Benson}, {Cyr-Racine}, {Keeton},
+  {Moustakas}, \& {Pullen}}]{1808.03501}
+{Brennan}, S., {Benson}, A.~J., {Cyr-Racine}, F.-Y., {et~al.} 2019, \mnras,
+  2044, \dodoi{10.1093/mnras/stz1607}
+
+\bibitem[{{Brewer} {et~al.}(2016){Brewer}, {Huijser}, \& {Lewis}}]{1508.00662}
+{Brewer}, B.~J., {Huijser}, D., \& {Lewis}, G.~F. 2016, \mnras, 455, 1819,
+  \dodoi{10.1093/mnras/stv2370}
+
+\bibitem[{{Brooks}(2018)}]{1812.00044}
+{Brooks}, A.~M. 2018, arXiv e-prints, arXiv:1812.00044.
+\newblock \doarXiv{1812.00044}
+
+\bibitem[{{Buckley} \& {DiFranzo}(2018)}]{1707.03829}
+{Buckley}, M.~R., \& {DiFranzo}, A. 2018, \prl, 120, 051102,
+  \dodoi{10.1103/PhysRevLett.120.051102}
+
+\bibitem[{{Buschmann} {et~al.}(2018){Buschmann}, {Kopp}, {Safdi}, \&
+  {Wu}}]{1711.03554}
+{Buschmann}, M., {Kopp}, J., {Safdi}, B.~R., \& {Wu}, C.-L. 2018, \prl, 120,
+  211101, \dodoi{10.1103/PhysRevLett.120.211101}
+
+\bibitem[{{Carlberg}(2012)}]{1109.6022}
+{Carlberg}, R.~G. 2012, \apj, 748, 20, \dodoi{10.1088/0004-637X/748/1/20}
+
+\bibitem[{{Carlberg} \& {Grillmair}(2013)}]{1303.4342}
+{Carlberg}, R.~G., \& {Grillmair}, C.~J. 2013, \apj, 768, 171,
+  \dodoi{10.1088/0004-637X/768/2/171}
+
+\bibitem[{{Chang} {et~al.}(2018){Chang}, {Lisanti}, \&
+  {Mishra-Sharma}}]{2018PhRvD..98l3004C}
+{Chang}, L.~J., {Lisanti}, M., \& {Mishra-Sharma}, S. 2018, \prd, 98, 123004,
+  \dodoi{10.1103/PhysRevD.98.123004}
+
+\bibitem[{{Chatterjee} \& {Koopmans}(2018)}]{1710.03075}
+{Chatterjee}, S., \& {Koopmans}, L. V.~E. 2018, \mnras, 474, 1762,
+  \dodoi{10.1093/mnras/stx2674}
+
 \bibitem[{{Ciotti} \& {Bertin}(1999)}]{1999A&A...352..447C}
 {Ciotti}, L., \& {Bertin}, G. 1999, \aap, 352, 447
 
 \bibitem[{{Collett}(2015)}]{2015ApJ...811...20C}
 {Collett}, T.~E. 2015, \apj, 811, 20, \dodoi{10.1088/0004-637X/811/1/20}
 
+\bibitem[{{Cui} {et~al.}(2017){Cui}, {Abdukerim}, {Chen}, {Chen}, {Chen},
+  {Dong}, {Fang}, {Fu}, {Giboni}, {Giuliani}, {Gu}, {Gu}, {Guo}, {Guo}, {Han},
+  {He}, {Huang}, {He}, {Huang}, {Huang}, {Ji}, {Ju}, {Li}, {Li}, {Lin}, {Liu},
+  {Liu}, {Ma}, {Mao}, {Ni}, {Ning}, {Ren}, {Shi}, {Tan}, {Wang}, {Wang},
+  {Wang}, {Wang}, {Wang}, {Wang}, {Wang}, {Wu}, {Wu}, {Xiao}, {Xie}, {Yan},
+  {Yang}, {Yue}, {Zhang}, {Zhang}, {Zhang}, {Zhang}, {Zhao}, {Zhou}, {Zhou}, \&
+  {Zhou}}]{2017PhRvL.119r1302C}
+{Cui}, X., {Abdukerim}, A., {Chen}, W., {et~al.} 2017, \prl, 119, 181302,
+  \dodoi{10.1103/PhysRevLett.119.181302}
+
+\bibitem[{{Cyr-Racine} {et~al.}(2019){Cyr-Racine}, {Keeton}, \&
+  {Moustakas}}]{1806.07897}
+{Cyr-Racine}, F.-Y., {Keeton}, C.~R., \& {Moustakas}, L.~A. 2019, \prd, 100,
+  023013, \dodoi{10.1103/PhysRevD.100.023013}
+
+\bibitem[{{Cyr-Racine} {et~al.}(2016){Cyr-Racine}, {Moustakas}, {Keeton},
+  {Sigurdson}, \& {Gilman}}]{1506.01724}
+{Cyr-Racine}, F.-Y., {Moustakas}, L.~A., {Keeton}, C.~R., {Sigurdson}, K., \&
+  {Gilman}, D.~A. 2016, \prd, 94, 043505, \dodoi{10.1103/PhysRevD.94.043505}
+
 \bibitem[{{Dalal} \& {Kochanek}(2002)}]{2002ApJ...572...25D}
 {Dalal}, N., \& {Kochanek}, C.~S. 2002, \apj, 572, 25, \dodoi{10.1086/340303}
+
+\bibitem[{{Dalcanton} \& {Hogan}(2001)}]{astro-ph/0004381}
+{Dalcanton}, J.~J., \& {Hogan}, C.~J. 2001, \apj, 561, 35,
+  \dodoi{10.1086/323207}
+
+\bibitem[{{Daylan} {et~al.}(2018){Daylan}, {Cyr-Racine}, {Diaz Rivero},
+  {Dvorkin}, \& {Finkbeiner}}]{1706.06111}
+{Daylan}, T., {Cyr-Racine}, F.-Y., {Diaz Rivero}, A., {Dvorkin}, C., \&
+  {Finkbeiner}, D.~P. 2018, \apj, 854, 141, \dodoi{10.3847/1538-4357/aaaa1e}
 
 \bibitem[{{Despali} \& {Vegetti}(2017)}]{2017MNRAS.469.1997D}
 {Despali}, G., \& {Vegetti}, S. 2017, \mnras, 469, 1997,
   \dodoi{10.1093/mnras/stx966}
 
+\bibitem[{{Diaz Rivero} {et~al.}(2018){Diaz Rivero}, {Cyr-Racine}, \&
+  {Dvorkin}}]{1707.04590}
+{Diaz Rivero}, A., {Cyr-Racine}, F.-Y., \& {Dvorkin}, C. 2018, \prd, 97,
+  023001, \dodoi{10.1103/PhysRevD.97.023001}
+
+\bibitem[{{D{\'\i}az Rivero} {et~al.}(2018){D{\'\i}az Rivero}, {Dvorkin},
+  {Cyr-Racine}, {Zavala}, \& {Vogelsberger}}]{1809.00004}
+{D{\'\i}az Rivero}, A., {Dvorkin}, C., {Cyr-Racine}, F.-Y., {Zavala}, J., \&
+  {Vogelsberger}, M. 2018, \prd, 98, 103517, \dodoi{10.1103/PhysRevD.98.103517}
+
+\bibitem[{{Drlica-Wagner} {et~al.}(2019){Drlica-Wagner}, {Mao}, {Adhikari},
+  {Armstrong}, {Banerjee}, {Banik}, {Bechtol}, {Bird}, {Boddy}, {Bonaca},
+  {Bovy}, {Buckley}, {Bulbul}, {Chang}, {Chapline}, {Cohen-Tanugi}, {Cuoco},
+  {Cyr-Racine}, {Dawson}, {D{\'\i}az Rivero}, {Dvorkin}, {Erkal}, {Fassnacht},
+  {Garc{\'\i}a-Bellido}, {Giannotti}, {Gluscevic}, {Golovich}, {Hendel},
+  {Hezaveh}, {Horiuchi}, {Jee}, {Kaplinghat}, {Keeton}, {Koposov}, {Lam}, {Li},
+  {Lu}, {Mandelbaum}, {McDermott}, {McNanna}, {Medford}, {Meyer}, {Marc},
+  {Murgia}, {Nadler}, {Necib}, {Nuss}, {Pace}, {Peter}, {Polin},
+  {Prescod-Weinstein}, {Read}, {Rosenfeld}, {Shipp}, {Simon}, {Slatyer},
+  {Straniero}, {Strigari}, {Tollerud}, {Tyson}, {Wang}, {Wechsler}, {Wittman},
+  {Yu}, {Zaharijas}, {Ali-Ha{\"\i}moud}, {Annis}, {Birrer}, {Biswas}, {Blazek},
+  {Brooks}, {Buckley-Geer}, {Caputo}, {Charles}, {Digel}, {Dodelson},
+  {Flaugher}, {Frieman}, {Gawiser}, {Hearin}, {Hlo{\v{z}}ek}, {Jain},
+  {Jeltema}, {Koushiappas}, {Lisanti}, {LoVerde}, {Mishra-Sharma}, {Newman},
+  {Nord}, {Nourbakhsh}, {Ritz}, {Robertson}, {S{\'a}nchez-Conde}, {Slosar},
+  {Tait}, {Verma}, {Vilalta}, {Walter}, {Yanny}, \&
+  {Zentner}}]{2019arXiv190201055D}
+{Drlica-Wagner}, A., {Mao}, Y.-Y., {Adhikari}, S., {et~al.} 2019, arXiv
+  e-prints, arXiv:1902.01055.
+\newblock \doarXiv{1902.01055}
+
+\bibitem[{{Efstathiou}(1992)}]{1992MNRAS.256P..43E}
+{Efstathiou}, G. 1992, \mnras, 256, 43P, \dodoi{10.1093/mnras/256.1.43P}
+
+\bibitem[{{Errani} {et~al.}(2017){Errani}, {Pe{\~n}arrubia}, {Laporte}, \&
+  {G{\'o}mez}}]{1608.01849}
+{Errani}, R., {Pe{\~n}arrubia}, J., {Laporte}, C. F.~P., \& {G{\'o}mez}, F.~A.
+  2017, \mnras, 465, L59, \dodoi{10.1093/mnrasl/slw211}
+
+\bibitem[{{Fan} {et~al.}(2013){Fan}, {Katz}, {Randall}, \& {Reece}}]{1303.1521}
+{Fan}, J., {Katz}, A., {Randall}, L., \& {Reece}, M. 2013, Physics of the Dark
+  Universe, 2, 139, \dodoi{10.1016/j.dark.2013.07.001}
+
+\bibitem[{{Fitts} {et~al.}(2017){Fitts}, {Boylan-Kolchin}, {Elbert}, {Bullock},
+  {Hopkins}, {O{\~n}orbe}, {Wetzel}, {Wheeler}, {Faucher-Gigu{\`e}re},
+  {Kere{\v{s}}}, {Skillman}, \& {Weisz}}]{1611.02281}
+{Fitts}, A., {Boylan-Kolchin}, M., {Elbert}, O.~D., {et~al.} 2017, \mnras, 471,
+  3547, \dodoi{10.1093/mnras/stx1757}
+
+\bibitem[{{Fitts} {et~al.}(2018){Fitts}, {Boylan-Kolchin}, {Bozek}, {Bullock},
+  {Graus}, {Robles}, {Hopkins}, {El-Badry}, {Garrison-Kimmel},
+  {Faucher-Gigu{\`e}re}, {Wetzel}, \& {Kere{\v{s}}}}]{1811.11791}
+{Fitts}, A., {Boylan-Kolchin}, M., {Bozek}, B., {et~al.} 2018, arXiv e-prints,
+  arXiv:1811.11791.
+\newblock \doarXiv{1811.11791}
+
+\bibitem[{{Garrison-Kimmel} {et~al.}(2017){Garrison-Kimmel}, {Wetzel},
+  {Bullock}, {Hopkins}, {Boylan-Kolchin}, {Faucher-Gigu{\`e}re}, {Kere{\v{s}}},
+  {Quataert}, {Sanderson}, {Graus}, \& {Kelley}}]{1701.03792}
+{Garrison-Kimmel}, S., {Wetzel}, A., {Bullock}, J.~S., {et~al.} 2017, \mnras,
+  471, 1709, \dodoi{10.1093/mnras/stx1710}
+
 \bibitem[{{Han} {et~al.}(2016){Han}, {Cole}, {Frenk}, \&
   {Jing}}]{2016MNRAS.457.1208H}
 {Han}, J., {Cole}, S., {Frenk}, C.~S., \& {Jing}, Y. 2016, \mnras, 457, 1208,
   \dodoi{10.1093/mnras/stv2900}
+
+\bibitem[{{Hezaveh} {et~al.}(2016{\natexlab{a}}){Hezaveh}, {Dalal}, {Holder},
+  {Kisner}, {Kuhlen}, \& {Perreault Levasseur}}]{1403.2720}
+{Hezaveh}, Y., {Dalal}, N., {Holder}, G., {et~al.} 2016{\natexlab{a}}, \jcap,
+  2016, 048, \dodoi{10.1088/1475-7516/2016/11/048}
+
+\bibitem[{{Hezaveh} {et~al.}(2016{\natexlab{b}}){Hezaveh}, {Dalal}, {Marrone},
+  {Mao}, {Morningstar}, {Wen}, {Bland ford}, {Carlstrom}, {Fassnacht},
+  {Holder}, {Kemball}, {Marshall}, {Murray}, {Perreault Levasseur}, {Vieira},
+  \& {Wechsler}}]{1601.01388}
+{Hezaveh}, Y.~D., {Dalal}, N., {Marrone}, D.~P., {et~al.} 2016{\natexlab{b}},
+  \apj, 823, 37, \dodoi{10.3847/0004-637X/823/1/37}
 
 \bibitem[{{Hiroshima} {et~al.}(2018){Hiroshima}, {Ando}, \&
   {Ishiyama}}]{2018PhRvD..97l3002H}
@@ -74,15 +351,59 @@
 \bibitem[{Hunter(2007)}]{Hunter:2007}
 Hunter, J.~D. 2007, Computing In Science \& Engineering, 9, 90
 
+\bibitem[{{Johnston} {et~al.}(1999){Johnston}, {Zhao}, {Spergel}, \&
+  {Hernquist}}]{astro-ph/9807243}
+{Johnston}, K.~V., {Zhao}, H., {Spergel}, D.~N., \& {Hernquist}, L. 1999,
+  \apjl, 512, L109, \dodoi{10.1086/311876}
+
 \bibitem[{Jones {et~al.}(2001--)Jones, Oliphant, Peterson,
   {et~al.}}]{Jones:2001ab}
 Jones, E., Oliphant, T., Peterson, P., {et~al.} 2001--, {SciPy}: Open source
   scientific tools for {Python}.
 \newblock \url{http://www.scipy.org/}
 
+\bibitem[{{Kahlhoefer} {et~al.}(2019){Kahlhoefer}, {Kaplinghat}, {Slatyer}, \&
+  {Wu}}]{1904.10539}
+{Kahlhoefer}, F., {Kaplinghat}, M., {Slatyer}, T.~R., \& {Wu}, C.-L. 2019,
+  arXiv e-prints, arXiv:1904.10539.
+\newblock \doarXiv{1904.10539}
+
+\bibitem[{{Kaplinghat} {et~al.}(2014){Kaplinghat}, {Keeley}, {Linden}, \&
+  {Yu}}]{1311.6524}
+{Kaplinghat}, M., {Keeley}, R.~E., {Linden}, T., \& {Yu}, H.-B. 2014, \prl,
+  113, 021302, \dodoi{10.1103/PhysRevLett.113.021302}
+
+\bibitem[{{Kaplinghat} {et~al.}(2016){Kaplinghat}, {Tulin}, \&
+  {Yu}}]{1508.03339}
+{Kaplinghat}, M., {Tulin}, S., \& {Yu}, H.-B. 2016, \prl, 116, 041302,
+  \dodoi{10.1103/PhysRevLett.116.041302}
+
 \bibitem[{{Keeton}(2001)}]{2001astro.ph..2341K}
 {Keeton}, C.~R. 2001, arXiv e-prints, astro.
 \newblock \doarXiv{astro-ph/0102341}
+
+\bibitem[{{Koposov} {et~al.}(2008){Koposov}, {Belokurov}, {Evans}, {Hewett},
+  {Irwin}, {Gilmore}, {Zucker}, {Rix}, {Fellhauer}, {Bell}, \&
+  {Glushkova}}]{0706.2687}
+{Koposov}, S., {Belokurov}, V., {Evans}, N.~W., {et~al.} 2008, \apj, 686, 279,
+  \dodoi{10.1086/589911}
+
+\bibitem[{{Koposov} {et~al.}(2015){Koposov}, {Belokurov}, {Torrealba}, \&
+  {Evans}}]{1503.02079}
+{Koposov}, S.~E., {Belokurov}, V., {Torrealba}, G., \& {Evans}, N.~W. 2015,
+  \apj, 805, 130, \dodoi{10.1088/0004-637X/805/2/130}
+
+\bibitem[{{Lisanti} {et~al.}(2018){Lisanti}, {Mishra-Sharma}, {Rodd}, \&
+  {Safdi}}]{2018PhRvL.120j1101L}
+{Lisanti}, M., {Mishra-Sharma}, S., {Rodd}, N.~L., \& {Safdi}, B.~R. 2018,
+  \prl, 120, 101101, \dodoi{10.1103/PhysRevLett.120.101101}
+
+\bibitem[{{LSST Science Collaboration} {et~al.}(2009){LSST Science
+  Collaboration}, {Abell}, {Allison}, {Anderson}, {Andrew}, {Angel}, {Armus},
+  {Arnett}, {Asztalos}, {Axelrod}, \& et~al.}]{0912.0201}
+{LSST Science Collaboration}, {Abell}, P.~A., {Allison}, J., {et~al.} 2009,
+  arXiv e-prints, arXiv:0912.0201.
+\newblock \doarXiv{0912.0201}
 
 \bibitem[{{Navarro} {et~al.}(1996){Navarro}, {Frenk}, \&
   {White}}]{1996ApJ...462..563N}
@@ -93,27 +414,104 @@ Jones, E., Oliphant, T., Peterson, P., {et~al.} 2001--, {SciPy}: Open source
   {White}}]{1997ApJ...490..493N}
 ---. 1997, \apj, 490, 493, \dodoi{10.1086/304888}
 
+\bibitem[{{Neyman} \& {Pearson}(1933)}]{1933RSPTA.231..289N}
+{Neyman}, J., \& {Pearson}, E.~S. 1933, Philosophical Transactions of the Royal
+  Society of London Series A, 231, 289, \dodoi{10.1098/rsta.1933.0009}
+
 \bibitem[{Paszke {et~al.}(2017)Paszke, Gross, Chintala, Chanan, Yang, DeVito,
   Lin, Desmaison, Antiga, \& Lerer}]{paszke2017automatic}
 Paszke, A., Gross, S., Chintala, S., {et~al.} 2017, in NIPS-W
 
-\bibitem[{P\'erez \& Granger(2007)}]{PER-GRA:2007}
-P\'erez, F., \& Granger, B.~E. 2007, Computing in Science and Engineering, 9,
+\bibitem[{{Perez} \& {Granger}(2007)}]{PER-GRA:2007}
+{Perez}, F., \& {Granger}, B.~E. 2007, Computing in Science and Engineering, 9,
   21, \dodoi{10.1109/MCSE.2007.53}
+
+\bibitem[{{Peter} {et~al.}(2013){Peter}, {Rocha}, {Bullock}, \&
+  {Kaplinghat}}]{1208.3026}
+{Peter}, A. H.~G., {Rocha}, M., {Bullock}, J.~S., \& {Kaplinghat}, M. 2013,
+  \mnras, 430, 105, \dodoi{10.1093/mnras/sts535}
+
+\bibitem[{{Read} {et~al.}(2017){Read}, {Iorio}, {Agertz}, \&
+  {Fraternali}}]{1607.03127}
+{Read}, J.~I., {Iorio}, G., {Agertz}, O., \& {Fraternali}, F. 2017, \mnras,
+  467, 2019, \dodoi{10.1093/mnras/stx147}
+
+\bibitem[{{Refregier} {et~al.}(2010){Refregier}, {Amara}, {Kitching}, {Rassat},
+  {Scaramella}, {Weller}, \& {Euclid Imaging Consortium}}]{1001.0061}
+{Refregier}, A., {Amara}, A., {Kitching}, T.~D., {et~al.} 2010, arXiv e-prints,
+  arXiv:1001.0061.
+\newblock \doarXiv{1001.0061}
 
 \bibitem[{{S{\'a}nchez-Conde} \& {Prada}(2014)}]{2014MNRAS.442.2271S}
 {S{\'a}nchez-Conde}, M.~A., \& {Prada}, F. 2014, \mnras, 442, 2271,
   \dodoi{10.1093/mnras/stu1014}
 
-\bibitem[{{Van Der Walt} {et~al.}(2011){Van Der Walt}, {Colbert}, \&
+\bibitem[{{Schneider} {et~al.}(1992){Schneider}, {Ehlers}, \&
+  {Falco}}]{1992grle.book.....S}
+{Schneider}, P., {Ehlers}, J., \& {Falco}, E.~E. 1992, {Gravitational Lenses},
+  \dodoi{10.1007/978-3-662-03758-4}
+
+\bibitem[{{Sirunyan} {et~al.}(2017){Sirunyan}, {Tumasyan}, {Adam}, {Asilar},
+  {Bergauer}, {Brandstetter}, {Brondolin}, {Dragicevic}, {Er{\"o}}, {Flechl},
+  \& et~al.}]{2017PhLB..769..520S}
+{Sirunyan}, A.~M., {Tumasyan}, A., {Adam}, W., {et~al.} 2017, Physics Letters
+  B, 769, 520, \dodoi{10.1016/j.physletb.2017.02.012}
+
+\bibitem[{{van der Walt} {et~al.}(2011){van der Walt}, {Colbert}, \&
   {Varoquaux}}]{numpy:2011}
-{Van Der Walt}, S., {Colbert}, S.~C., \& {Varoquaux}, G. 2011, ArXiv e-prints,
-  arXiv:1102.1523.
-\newblock \doarXiv{1102.1523}
+{van der Walt}, S., {Colbert}, S.~C., \& {Varoquaux}, G. 2011, Computing in
+  Science and Engineering, 13, 22, \dodoi{10.1109/MCSE.2011.37}
+
+\bibitem[{{Van Tilburg} {et~al.}(2018){Van Tilburg}, {Taki}, \&
+  {Weiner}}]{2018JCAP...07..041V}
+{Van Tilburg}, K., {Taki}, A.-M., \& {Weiner}, N. 2018, \jcap, 2018, 041,
+  \dodoi{10.1088/1475-7516/2018/07/041}
+
+\bibitem[{{Vegetti} {et~al.}(2010){Vegetti}, {Koopmans}, {Bolton}, {Treu}, \&
+  {Gavazzi}}]{0910.0760}
+{Vegetti}, S., {Koopmans}, L.~V.~E., {Bolton}, A., {Treu}, T., \& {Gavazzi}, R.
+  2010, \mnras, 408, 1969, \dodoi{10.1111/j.1365-2966.2010.16865.x}
+
+\bibitem[{{Vegetti} {et~al.}(2012){Vegetti}, {Lagattuta}, {McKean}, {Auger},
+  {Fassnacht}, \& {Koopmans}}]{1201.3643}
+{Vegetti}, S., {Lagattuta}, D.~J., {McKean}, J.~P., {et~al.} 2012, \nat, 481,
+  341, \dodoi{10.1038/nature10669}
+
+\bibitem[{{Verma} {et~al.}(2019){Verma}, {Collett}, {Smith}, {Strong Lensing
+  Science Collaboration}, \& {the DESC Strong Lensing Science Working
+  Group}}]{1902.05141}
+{Verma}, A., {Collett}, T., {Smith}, G.~P., {Strong Lensing Science
+  Collaboration}, \& {the DESC Strong Lensing Science Working Group}. 2019,
+  arXiv e-prints, arXiv:1902.05141.
+\newblock \doarXiv{1902.05141}
+
+\bibitem[{{Vogelsberger} {et~al.}(2016){Vogelsberger}, {Zavala}, {Cyr-Racine},
+  {Pfrommer}, {Bringmann}, \& {Sigurdson}}]{1512.05349}
+{Vogelsberger}, M., {Zavala}, J., {Cyr-Racine}, F.-Y., {et~al.} 2016, \mnras,
+  460, 1399, \dodoi{10.1093/mnras/stw1076}
+
+\bibitem[{{Vogelsberger} {et~al.}(2012){Vogelsberger}, {Zavala}, \&
+  {Loeb}}]{1201.5892}
+{Vogelsberger}, M., {Zavala}, J., \& {Loeb}, A. 2012, \mnras, 423, 3740,
+  \dodoi{10.1111/j.1365-2966.2012.21182.x}
+
+\bibitem[{{Vogelsberger} {et~al.}(2019){Vogelsberger}, {Zavala}, {Schutz}, \&
+  {Slatyer}}]{1805.03203}
+{Vogelsberger}, M., {Zavala}, J., {Schutz}, K., \& {Slatyer}, T.~R. 2019,
+  \mnras, 484, 5437, \dodoi{10.1093/mnras/stz340}
+
+\bibitem[{{Wechsler} \& {Tinker}(2018)}]{1804.03097}
+{Wechsler}, R.~H., \& {Tinker}, J.~L. 2018, \araa, 56, 435,
+  \dodoi{10.1146/annurev-astro-081817-051756}
 
 \bibitem[{{Zahid} {et~al.}(2018){Zahid}, {Sohn}, \&
   {Geller}}]{2018ApJ...859...96Z}
 {Zahid}, H.~J., {Sohn}, J., \& {Geller}, M.~J. 2018, \apj, 859, 96,
   \dodoi{10.3847/1538-4357/aabe31}
+
+\bibitem[{{Zavala} {et~al.}(2013){Zavala}, {Vogelsberger}, \&
+  {Walker}}]{1211.6426}
+{Zavala}, J., {Vogelsberger}, M., \& {Walker}, M.~G. 2013, \mnras, 431, L20,
+  \dodoi{10.1093/mnrasl/sls053}
 
 \end{thebibliography}
