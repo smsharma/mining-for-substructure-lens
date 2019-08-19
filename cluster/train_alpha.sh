@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=slr-t-a
-#SBATCH --output=log_train_alices.log
+#SBATCH --output=log_train_alpha.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB

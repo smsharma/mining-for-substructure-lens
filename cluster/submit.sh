@@ -24,12 +24,12 @@ cd /scratch/jb6504/recycling_strong_lensing/cluster
 # Training
 ############################################################
 
-sbatch train_carl.sh
-sbatch train_alices.sh
-# sbatch train_alpha.sh
-# sbatch train_lr.sh
-# sbatch train_sgd.sh
-# sbatch train_other.sh
+# sbatch train_carl.sh
+# sbatch train_alices.sh
+sbatch train_alpha.sh
+sbatch train_lr.sh
+sbatch train_sgd.sh
+sbatch train_other.sh
 
 
 ############################################################
