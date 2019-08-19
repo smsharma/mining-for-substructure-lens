@@ -23,6 +23,10 @@
 \newcommand{\rtwo}{r_{200}}
 \newcommand{\Rtwo}{R_{200}}
 
+\newcommand{\diff}{\mathrm{d}}
+\newcommand{\fsub}{f_{\mathrm{sub}}}
+
+
 \shorttitle{Inferring dark matter substructure with machine learning}
 \shortauthors{Brehmer and Mishra-Sharma et al.}
 %@arxiver{}
@@ -70,12 +74,14 @@ cosmology (343)
 dark matter (353)
 }
 
+\tableofcontents{}
+
 \section{Introduction}
 \label{sec:intro}
 
 Dark matter (DM) accounts for nearly a quarter of the energy budget of the Universe, and pinning down its fundamental nature and interactions is one of the most pressing problems in cosmology and particle physics today. Despite an organized effort to do so through terrestrial~\citep{2018PhRvL.121k1302A,2017PhRvL.119r1302C,2017PhRvL.118b1303A}, astrophysical~\citep{2017ApJ...834..110A,2018PhRvD..98l3004C,2018PhRvL.120j1101L}, and collider searches~\citep{2019arXiv190301400A,2017PhLB..769..520S}, no conclusive evidence of interactions between the Standard Model (SM) and dark matter exists to-date.
 
-An alternative and complementary approach involves studying dark matter directly through its irreducible gravitational interactions. The concordance Cold Dark Matter (CDM) framework of non-relativistic, collisionless dark matter particles provides an excellent description of the observed distribution of matter on large scales. However, many well-motivated models predict deviations from CDM on smaller scales. Fundamental dark matter microphysical properties, such as its particle mass and self-interaction cross-section, can imprint themselves onto its macroscopic distribution in ways that can be probed by current and future experiments~\citep{2019arXiv190201055D}. As motivating examples, theories where dark matter has a significant free-streaming length would lead to a dearth of subhalos at lower masses ($\lesssim 10^9\,\mathrm{M}_\odot$)~\citep{1983ApJ...274..443B,2001ApJ...556...93B,astro-ph/0004381,0807.0622,1008.0992}, and self-interactions~\citep{1508.03339,1311.6524,1211.6426,1208.3026,1201.5892,1805.03203,1904.10539} or dissipative dynamics~\citep{1706.04195,1702.05482,1707.03829,1303.1521,1512.05349} in the dark sector would modify the structure of the inner core of subhalos as compared to CDM predictions. 
+An alternative and complementary approach involves studying dark matter directly through its irreducible gravitational interactions. The concordance Cold Dark Matter (CDM) framework of non-relativistic, collisionless dark matter particles provides an excellent description of the observed distribution of matter on large scales. However, many well-motivated models predict deviations from CDM on smaller scales. Fundamental dark matter microphysical properties, such as its particle mass and self-interaction cross-section, can imprint themselves onto its macroscopic distribution in ways that can be probed by current and future experiments~\citep{2019arXiv190201055D}. As motivating examples, theories where dark matter has a significant free-streaming length would lead to a dearth of subhalos at lower masses ($\lesssim 10^9\,\mathrm{M}_\odot$)~\citep{1983ApJ...274..443B,2001ApJ...556...93B,astro-ph/0004381,0807.0622,1008.0992}, and self-interactions~\citep{1508.03339,1311.6524,1211.6426,1208.3026,1201.5892,1805.03203,1904.10539} or dissipative dynamics~\citep{1706.04195,1702.05482,1707.03829,1303.1521,1512.05349} in the dark sector would modify the structure of the inner core of subhalos as compared to CDM predictions.
 
 There exist several avenues for probing the structure of dark matter on small scales. While the detection of ultrafaint dwarf galaxies through the study of stellar overdensities and kinematics~\citep{1503.02584,0706.2687,1503.02079} can be used to make statements about the underlying dark matter properties, theoretical uncertainties in the connection between stellar and halo masses~\citep{1804.03097} and the effect of baryons on the satellite galaxy population~\citep{1812.00044,1811.11791,1701.03792,1608.01849} pose a challenge. Furthermore, suppressed star-formation in smaller halos means that there exists a threshold ($\lesssim 10^8\,\mathrm{M}_\odot$) below which subhalos are expected to be mostly dark and devoid of stars~\citep{1992MNRAS.256P..43E,1611.02281,1607.03127}. This makes studying the imprints of gravitational interaction the \emph{only} viable avenue for probing substructure at smaller scales. In this spirit, the study of perturbations to the stellar phase-space distribution in cold stellar streams~\citep{1804.06854,astro-ph/9807243,1109.6022,1303.4342,1811.03631}, and in stellar fields in the disk and halo~\citep{1711.03554} have been proposed as methods to look for low-mass subhalos through their gravitational interactions in the Milky Way.
 
@@ -83,7 +89,7 @@ Complementary to the study of locally-induced gravitational effects, gravitation
 
 A complementary approach relies on probing the collective effect of sub-threshold (\emph{i.e}, not individually resolvable) subhalos on extended arcs in strongly lensed systems. A particular challenge here is the high dimensionality of the latent parameter space associated with the large number of subhalos and their (potentially covariant) individual as well as population properties, a consequence of which is the intractability of the likelihood of high-level substructure parameters conditional on the data. Methods based on summary statistics~\citep{1702.00009} and studying the amplitude of spatial fluctuations on different scales through power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724} have been proposed as ways to reduce the dimensionality of the problem and enable substructure inference in a tractable way. Trans-dimensional techniques may also be able to efficiently map out the parameter space associated with multiple sub-threshold subhalos in these systems~\citep{1508.00662,1706.06111}. This class of methods is well-suited to studying dark matter substructure since they can be sensitive to the \emph{population} properties of low-mass subhalos in strongly lensed galaxies which are directly correlated with the underlying dark matter particle physics. Furthermore, near-future observatories like LSST~\citep{0912.0201,2019arXiv190201055D,1902.05141} and \Euclid~\citep{1001.0061} are expected to find tens of thousands of galaxy-galaxy strong lenses~\citep{2015ApJ...811...20C}, making substructure inference in these systems (and high-resolution followups on a subset) one of the key ways to investigate dark matter substructure and stress-test the Cold Dark Matter paradigm in the near future. This calls for methods that can efficiently analyze large samples of lensed images to infer the underlying substructure properties with minimal loss of information stemming from dimensional reduction.
 
-In this paper we apply a powerful recently-developed class of techniques for simulation-based inference~\citep{1805.00013,1805.00020,1805.12244} to the problem of extracting high-level substructure properties from an ensemble of galaxy-galaxy strong lensing images. In contrast to traditional simulation-based (or ``likelihood-free'') approaches, these methods do not rely on summary statistics and instead leverage additional information extracted from the simulator in order to train neural networks that can be used to efficiently estimate the likelihood ratio. This provides an elegant bridge between machine learning and the ubiquitous likelihood ratio, which is provably the most powerful statistic for hypothesis testing~\citep{1933RSPTA.231..289N}. 
+In this paper we apply a powerful recently-developed class of techniques for simulation-based inference~\citep{1805.00013,1805.00020,1805.12244} to the problem of extracting high-level substructure properties from an ensemble of galaxy-galaxy strong lensing images. In contrast to traditional simulation-based (or ``likelihood-free'') approaches, these methods do not rely on summary statistics and instead leverage additional information extracted from the simulator in order to train neural networks that can be used to efficiently estimate the likelihood ratio. This provides an elegant bridge between machine learning and the ubiquitous likelihood ratio, which is provably the most powerful statistic for hypothesis testing~\citep{1933RSPTA.231..289N}.
 
 This paper is organized as follows. In Sec.~\ref{sec:lensing-formalism} we briefly review the formalism of gravitational strong lensing and describe our simulation setup, including the assumptions we make about the population of lensed sources and host galaxies, the substructure population and observational parameters. In Sec.~\ref{sec:lfi-formalism} we describe the simulation-based analysis technique used and its particular application to the problem of mining substructure properties from an ensemble of extended lensed arcs. We show a proof-of-principle application of this method to simulated data in Sec.~\ref{sec:results} and comment on how these methods can be extended to more ``realistic'' scenarios in Sec.~\ref{sec:extensions}. We conclude in Sec.~\ref{sec:conclusions}.
 
@@ -102,7 +108,7 @@ We briefly review here the mathematical formalism behind strong lensing. For mor
 \end{equation}
 The lensed position of the source can be determined through the lens equation,
 \begin{equation}
-\mathbf{u}=\mathbf{x}-\nabla \psi(\mathbf{x})	
+\mathbf{u}=\mathbf{x}-\nabla \psi(\mathbf{x})
 \end{equation}
 where $\mathbf{u}$ is the position of the source and $\nabla \psi$ is typically referred to as the deflection, which we will denote as $\boldsymbol\phi$ for brevity. For an extended source brightness profile $f_\mathrm{src}$, the final lensed image can be obtained as the the source profile evaluated on the image plane,
 \begin{equation}
@@ -125,7 +131,7 @@ where $r_e$ is the effective circular half-light radius, $n$ is the S\'{e}rsic i
 b_n \approx 2 n &- \frac{1}{3} + \frac{4}{405 n} + \frac{46}{25515 n^2} \nonumber \\ &+ \frac{131}{1148175 n^3} - \frac{2194697}{30690717750 n^4}. \nonumber
 \end{align}
 
-We assume $n=1$ for the source galaxies, corresponding to a flattened exponential profile and consistent with expectation for blue-type galaxies at the relevant redshifts. $f_{e}$ encodes the flux at half-light radius, which can be mapped onto the total flux (or magnitude) associated with a given galaxy. 
+We assume $n=1$ for the source galaxies, corresponding to a flattened exponential profile and consistent with expectation for blue-type galaxies at the relevant redshifts. $f_{e}$ encodes the flux at half-light radius, which can be mapped onto the total flux (or magnitude) associated with a given galaxy.
 
 The total unlensed magnitude $M$ (in a given band) of a galaxy can be mapped on to $f_{e}$ as follows. For a detector with zero-point magnitude $M_0$, which specifies the magnitude of a source giving 1 count\,s$^{-1}$ in expectation, by definition the total counts are given by $S_\mathrm{tot}=10^{0.4(M-M_0)}$. Requiring the half-light radius to contain half the expected counts, for $n=1$ we have the relation $f_{e} \approx 0.526\,t_\mathrm{exp}S_\mathrm{tot} /(2\pi r_e^2)$ in counts\,arcsec$^{-2}$, where $t_\mathrm{exp}$ is the exposure length.
 
@@ -143,12 +149,12 @@ where $\sigma_{v}$ is the central 1-D velocity dispersion of the lens galaxy and
 \theta_{{E}}=4 \pi\left(\frac{\sigma_{v}}{c}\right)^{2} \frac{D_{l s}\left(z_{l}, z_{s}\right)}{D_{s}\left(z_{s}\right)}
 \label{eq:siethetae}
 \end{equation}
-where $D_{ls}$ and $D_s$ are respectively the angular diameter distances from the source to the lens planes and from the source plane to the observer respectively. 
+where $D_{ls}$ and $D_s$ are respectively the angular diameter distances from the source to the lens planes and from the source plane to the observer respectively.
 
 The deflection field for the SIE profile is given by~\citep{2001astro.ph..2341K}
-\begin{align} 
-\phi_{x} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tan ^{-1}\left[\frac{\sqrt{1-q^{2}} x}{\psi}\right] \\ 
-\phi_{y} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tanh ^{-1}\left[\frac{\sqrt{1-q^{2}} y}{\psi+q^{2} }\right] 
+\begin{align}
+\phi_{x} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tan ^{-1}\left[\frac{\sqrt{1-q^{2}} x}{\psi}\right] \\
+\phi_{y} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tanh ^{-1}\left[\frac{\sqrt{1-q^{2}} y}{\psi+q^{2} }\right]
 \end{align}
 with $\psi \equiv \sqrt{x^2 q^2 + y^2}$.
 
@@ -157,7 +163,7 @@ Although the total galaxy mass (baryons + dark matter) describe the macro lensin
 \log\left(\frac{M_{200}}{10^{12}\,\Msun}\right) = \alpha + \beta\left(\frac{\sigma_v}{100\,\kmps}\right)
 \label{eq:sigma_v_M_200_relation}
 \end{equation}
-with $\alpha = 0.09$ and $\beta = 3.48$. % with a mean log-normal scatter of 0.13\,dex. 
+with $\alpha = 0.09$ and $\beta = 3.48$. % with a mean log-normal scatter of 0.13\,dex.
 We model the host dark matter halo with a Navarro-Frenk-White (NFW) profile~\citep{1996ApJ...462..563N,1997ApJ...490..493N}
 
 \begin{equation}
@@ -189,9 +195,9 @@ The ultimate goal of our method is to characterize the substructure population i
 \end{equation}
 where $\alpha$ encodes the overall substructure abundance, with larger $\alpha$ corresponding to more substructure, and the slope $\beta$ encodes the relative contribution of subhalos at different masses, with more negative $\beta$ corresponding to a steeper slope with more low-mass subhalos. The normalization factors $m_{200, 0}$ and $M_{200, 0}$ are arbitrarily set to $10^9\,\Msun$ and the Milky Way mass $\MMW \simeq 1.1\times10^{12}\,\Msun$, respectively.
 
-Theory and simulations within the framework of \lcdm~predict a slope $\beta\sim-0.9$, giving a nearly scale-invariant spectrum of subhalos, which we assume in our fiducial setup. 
+Theory and simulations within the framework of \lcdm~predict a slope $\beta\sim-0.9$, giving a nearly scale-invariant spectrum of subhalos, which we assume in our fiducial setup.
 
-% We follow the specifications in~\citet{2016JCAP...09..047H} in order to set the overall fiducial abundance of subhalos, normalizing $\alpha$ to give 150 subhalos in expectation between $10^{8}\,\Msun$ and $10^{10}\,\Msun$ for a Milky Way-sized host halo. 
+% We follow the specifications in~\citet{2016JCAP...09..047H} in order to set the overall fiducial abundance of subhalos, normalizing $\alpha$ to give 150 subhalos in expectation between $10^{8}\,\Msun$ and $10^{10}\,\Msun$ for a Milky Way-sized host halo.
 We parameterize the overall subhalo abundance through the mass fraction contained in subhalos, $f_\mathrm{sub}$, defined as the fraction of the total dark matter halo mass contained in bound substructure in a given mass range. We have
 \begin{equation}
 f_\mathrm{sub} = \frac{\int_{m_\mathrm{200, min}}^{m_\mathrm{200, max}}d\mtwo\,\mtwo\,\frac{dn}{d\mtwo}}{M_\mathrm{200,host}}
@@ -216,7 +222,7 @@ These properties, in particular the exposure, sky background and PSF shape are e
 \subsection{Population statistics of the lens and source samples}
 \label{sec:populations}
 
-The fact that the strong lens population is expected to be dominated by higher-redshift ($z\gtrsim1$) blue source galaxies lensed by intermediate-redshift ($z\sim 0.5$--$1$) elliptical galaxies presents significant challenges for quantifying the lens population obtainable with future observations. Specifically, planned ground-based surveys like LSST and space telescopes like \Euclid~present complementary challenges for delivering images of strong lensing systems suitable for substructure studies. LSST is expected to image in six bands, allowing efficient source selection and distinguishing source and lens emission, but at the cost of lower resolution by virtue of being a ground-based instrument. \Euclid~imaging is expected be much higher in resolution but with a single optical passband (VIS). Near-IR imaging from WFIRST may deliver a high-resolution, multi-wavelength dataset that is more suitable for substructure studies, although the lens and source populations may differ from those probed by optical telescopes. 
+The fact that the strong lens population is expected to be dominated by higher-redshift ($z\gtrsim1$) blue source galaxies lensed by intermediate-redshift ($z\sim 0.5$--$1$) elliptical galaxies presents significant challenges for quantifying the lens population obtainable with future observations. Specifically, planned ground-based surveys like LSST and space telescopes like \Euclid~present complementary challenges for delivering images of strong lensing systems suitable for substructure studies. LSST is expected to image in six bands, allowing efficient source selection and distinguishing source and lens emission, but at the cost of lower resolution by virtue of being a ground-based instrument. \Euclid~imaging is expected be much higher in resolution but with a single optical passband (VIS). Near-IR imaging from WFIRST may deliver a high-resolution, multi-wavelength dataset that is more suitable for substructure studies, although the lens and source populations may differ from those probed by optical telescopes.
 
 % In light of these uncertainties, we limit the scope of the present study to developing a class of methods that can be adapted to the specifications of a galaxy-galaxy strong lensing population obtained with the next generation of optical, near-IR and radio telescopes. In particular, we confine ourselves to a setting where the main methodological points can be made without detailed modeling of the detector capabilities and the deliverable lensing dataset, which is outside of the scope of the current paper.
 
@@ -230,10 +236,53 @@ We draw the lens redshifts $z_l$ from a log-normal distribution with mean 0.56 a
 \caption{}
 \label{fig:simulations}
 \end{figure*}
-  
+
 
 \section{Statistical formalism and simulation-based inference}
 \label{sec:lfi-formalism}
+
+% % From introduction
+% A complementary approach relies on probing the collective effect of sub-threshold (\emph{i.e}, not individually resolvable) subhalos on extended arcs in strongly lensed systems. A particular challenge here is the high dimensionality of the latent parameter space associated with the large number of subhalos and their (potentially covariant) individual as well as population properties, a consequence of which is the intractability of the likelihood of high-level substructure parameters conditional on the data. Methods based on summary statistics~\citep{1702.00009} and studying the amplitude of spatial fluctuations on different scales through power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724} have been proposed as ways to reduce the dimensionality of the problem and enable substructure inference in a tractable way. Trans-dimensional techniques may also be able to efficiently map out the parameter space associated with multiple sub-threshold subhalos in these systems~\citep{1508.00662,1706.06111}. This class of methods is well-suited to studying dark matter substructure since they can be sensitive to the \emph{population} properties of low-mass subhalos in strongly lensed galaxies which are directly correlated with the underlying dark matter particle physics. Furthermore, near-future observatories like LSST~\citep{0912.0201,2019arXiv190201055D,1902.05141} and \Euclid~\citep{1001.0061} are expected to find tens of thousands of galaxy-galaxy strong lenses~\citep{2015ApJ...811...20C}, making substructure inference in these systems (and high-resolution followups on a subset) one of the key ways to investigate dark matter substructure and stress-test the Cold Dark Matter paradigm in the near future. This calls for methods that can efficiently analyze large samples of lensed images to infer the underlying substructure properties with minimal loss of information stemming from dimensional reduction.
+%
+% In this paper we apply a powerful recently-developed class of techniques for simulation-based inference~\citep{1805.00013,1805.00020,1805.12244} to the problem of extracting high-level substructure properties from an ensemble of galaxy-galaxy strong lensing images. In contrast to traditional simulation-based (or ``likelihood-free'') approaches, these methods do not rely on summary statistics and instead leverage additional information extracted from the simulator in order to train neural networks that can be used to efficiently estimate the likelihood ratio. This provides an elegant bridge between machine learning and the ubiquitous likelihood ratio, which is provably the most powerful statistic for hypothesis testing~\citep{1933RSPTA.231..289N}.
+
+Our goal is to infer the subhalo mass function parameters from a catalog of images of observed lenses. In this section we will describe the challenges of this inference problem and our approach of simulation-based inference. For brevity we will use the symbol $\theta = (\fsub, \beta)^T$ for the vector of parameters of the subhalo mass function and $x$ for the observed lens image.
+
+As described in the previous section, we have implemented a simulator for the lensing process in the ``forward'' direction: for given parameters $\theta$, the simulator samples observed images $x \sim p(x|\theta)$. The likelihood function $p(x|\theta)$ implicitly defined by the simulator can be symbolically written as
+%
+\begin{equation}
+ p(x|\theta) = \int \diff z \; p(x, z|\theta) \,,
+ \label{eq:likelihood_latent}
+\end{equation}
+%
+where $z$ is the vector of all latent variables that appear in the simulation of the lensing system: the mass and offset of the host galaxy, the number of subhalos in the region of interest, the position and mass of each subhalo, the random variables affecting the point spread function, and so on, and $p(x, z|\theta)$ is the joint probability density of the observed image and all latent variables. Even in our somewhat simplified simulator, each run of the simulation easily involves more than a thousand latent variables, and the integral over this enormeous space clearly cannot be computed explicitly. The likelihood function is thus intractable, providing a major challenge for both frequentist and Bayesian inference.
+
+This issue is often tackled by reducing the high-dimensional data $x$ to lower-dimensional summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724}. The likelihood $p(v|\theta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
+
+We follow an alternative approach of simulation-based inference introduced in Refs.~\cite{1805.00013,1805.00020,1805.12244}. It consists of four steps:
+%
+\begin{enumerate}
+  \item During each run of the simulator, additional information that characterizes the subhalo population and lensing process is stored together with the simulated observed image.
+  \item This information is used to train a neural network to approximate the likelihood ratio function.
+  \item The neural network output is calibrated, ensuring that errors during training do not lead to wrong inference results.
+  \item The calibrated network output is then used in either frequentist or Bayesian inference techniques.
+\end{enumerate}
+%
+Let us go through all these four steps in detail.
+
+First, \dots
+
+% 1: Joint likelihood ratio and score. Comment on joint ratio wrt prior.
+
+% How to mine the gold for our simulator.
+
+% 2: then train NN by minimizing the ALICES loss. In limit of infinite data and efficient minimization, this is guaranteed to give us the correct answer.
+
+% Architecture and hyperparams
+
+% 3: Calibration based on histograms. Comment on computational cost vs statistical guarantees.
+
+% 4: Frequentist and Bayesian inference. Neyman-Pearson. Give posterior in terms of likelihood ratio estimator.
 
 \section{Results}
 \label{sec:results}
@@ -244,7 +293,7 @@ We draw the lens redshifts $z_l$ from a log-normal distribution with mean 0.56 a
 % \caption{\SM{Placeholder for individual predictions}}
 % \label{fig:profiles}
 % \end{figure*}
-    
+
 % \begin{figure*}[tbp]
 % \centering
 % \includegraphics[width=0.45\textwidth]{figures/combined}
@@ -259,7 +308,7 @@ We draw the lens redshifts $z_l$ from a log-normal distribution with mean 0.56 a
 % \caption{}
 % \label{fig:bayesian}
 % \end{figure*}
-    
+
 \section{Extensions}
 \label{sec:extensions}
 
@@ -267,7 +316,7 @@ We draw the lens redshifts $z_l$ from a log-normal distribution with mean 0.56 a
 \label{sec:conclusions}
 
 \acknowledgements
-We thank Simon~Birrer, Christopher~Fassnacht, Daniel~Gilman, and Neal~Weiner for useful conversations. SM is partially supported by the NSF CAREER grant PHY-1554858 and NSF grant PHY-1620727. 
+We thank Simon~Birrer, Christopher~Fassnacht, Daniel~Gilman, and Neal~Weiner for useful conversations. SM is partially supported by the NSF CAREER grant PHY-1554858 and NSF grant PHY-1620727.
 
 \software{
 \package{Astropy} \citep{2013A&A...558A..33A,2018AJ....156..123A},
