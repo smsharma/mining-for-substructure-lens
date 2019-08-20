@@ -466,6 +466,11 @@ Paszke, A., Gross, S., Chintala, S., {et~al.} 2017, in NIPS-W
 {Sirunyan}, A.~M., {Tumasyan}, A., {Adam}, W., {et~al.} 2017, Physics Letters
   B, 769, 520, \dodoi{10.1016/j.physletb.2017.02.012}
 
+\bibitem[{Stoye {et~al.}(2018)Stoye, Brehmer, Louppe, Pavez, \&
+  Cranmer}]{Stoye:2018ovl}
+Stoye, M., Brehmer, J., Louppe, G., Pavez, J., \& Cranmer, K. 2018.
+\newblock \doarXiv{1808.00973}
+
 \bibitem[{{van der Walt} {et~al.}(2011){van der Walt}, {Colbert}, \&
   {Varoquaux}}]{numpy:2011}
 {van der Walt}, S., {Colbert}, S.~C., \& {Varoquaux}, G. 2011, Computing in

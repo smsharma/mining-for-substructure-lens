@@ -259,7 +259,7 @@ where the latent variables are marginalised out. Being able to compute this like
 
 This issue is often tackled by reducing the high-dimensional data $x$ to lower-dimensional summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724}. The likelihood $p(v|\theta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
 
-We follow an alternative approach of simulation-based inference introduced in Refs.~\cite{1805.00013,1805.00020,1805.12244}. It consists of four steps:
+We follow an alternative approach of simulation-based inference introduced in \citep{1805.00013,1805.00020,1805.12244}. It consists of four steps:
 %
 \begin{enumerate}
   \item During each run of the simulator, additional information that characterizes the subhalo population and lensing process is stored together with the simulated observed image.
@@ -282,7 +282,7 @@ Next, the simulator is run for the parameter point $\theta$, generating an obser
 %
 \begin{equation}
   r(x,z | \theta) = \frac {p(x,z | \theta)} {p_\mathrm{ref}(x,z)}
-  = \frac {p(x,z | \theta)} {\int\!\diff\tilde{\theta} \, \pi(\tilde{\theta}) \, p(x,z | \tilde{\theta}) }
+  \equiv \frac {p(x,z | \theta)} {\int\!\diff\tilde{\theta} \, \pi(\tilde{\theta}) \, p(x,z | \tilde{\theta}) }
 \end{equation}
 %
 and the joint score
@@ -298,6 +298,24 @@ We compute the joint likelihood ratio and joint score with Eq.~\eqref{eq:joint_l
 
 \subsection{Machine learning}
 \label{sec:lfi-ml}
+
+How are the joint likelihood ratio and joint score, which are conditional on the latent variables $z$, useful to learn about the likelihood function $p(x|\theta)$, which only depends on the observed lens images and the parameters of interest? Consider the functional
+%
+\begin{multline}
+  L[g(x, \theta)] = \int\!\diff\theta\! \int\!\diff x\! \int\!\diff z \; \pi(\theta) \; p(x,z|\theta) \\
+    \times \Bigl[ \dots \Bigr]  \,,
+\end{multline}
+%
+introduced in \citep{Stoye:2018ovl}. Note that the test function $g(x, \theta)$ is a function of $x$ and $\theta$ only. With calculus of variation it can be shown that this functional is minimized by the function
+%
+\begin{equation}
+  \argmin_g L[g(x, \theta)]
+  = r(x|\theta)
+  \equiv \frac {p(x|\theta)} {p_\mathrm{ref}(x)}
+  \equiv \frac {p(x|\theta)} {\int\!\diff\tilde{\theta} \, \pi(\tilde{\theta}) \, p(x | \tilde{\theta}) } \,.
+\end{equation}
+
+\dots
 
 % 2: then train NN by minimizing the ALICES loss. In limit of infinite data and efficient minimization, this is guaranteed to give us the correct answer.
 
