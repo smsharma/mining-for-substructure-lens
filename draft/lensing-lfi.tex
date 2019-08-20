@@ -259,7 +259,7 @@ where the latent variables are marginalised out. Being able to compute this like
 
 This issue is often tackled by reducing the high-dimensional data $x$ to lower-dimensional summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724}. The likelihood $p(v|\theta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
 
-We follow an alternative approach of simulation-based inference introduced in \citep{1805.00013,1805.00020,1805.12244}. It consists of four steps:
+We follow an alternative approach of simulation-based inference introduced in \cite{1805.00013,1805.00020,1805.12244}. It consists of four steps:
 %
 \begin{enumerate}
   \item During each run of the simulator, additional information that characterizes the subhalo population and lensing process is stored together with the simulated observed image.
@@ -291,7 +291,7 @@ and the joint score
   t(x, z | \theta) = \nabla_{\theta} \log p(x,z | \theta) \,.
 \end{equation}
 %
-The joint likelihood ratio quantifies how much more or less likely a particular simulation chain including the latent variables $z$ is for the parameter point $\theta$ compared to a reference distribution. For this we choose the marginal distribution of latent variables and observables corresponding to the proposal distribution $\pi(\theta)$, which has support for every potential outcome of the simulation~\cite{Hermans:2019ioj}. The joint score is the gradient of the joint log likelihood in model parameter space and quantifies if a particular simulation chain becomes more or less likely with infinitesimal changes of the parameters of interest. Both quantities depend on the latent variables of the simulation chain.
+The joint likelihood ratio quantifies how much more or less likely a particular simulation chain including the latent variables $z$ is for the parameter point $\theta$ compared to a reference distribution. For this we choose the marginal distribution of latent variables and observables corresponding to the proposal distribution $\pi(\theta)$, which has support for every potential outcome of the simulation~\citep{Hermans:2019ioj}. The joint score is the gradient of the joint log likelihood in model parameter space and quantifies if a particular simulation chain becomes more or less likely with infinitesimal changes of the parameters of interest. Both quantities depend on the latent variables of the simulation chain.
 
 We compute the joint likelihood ratio and joint score with Eq.~\eqref{eq:joint_likelihood}. Conveniently, many steps in the simulator do not explicitly depend on the parameters of interest $\theta$ and cancel in the joint likelihood ratio and joint score, and the remaining terms can be evaluated with little overhead to the simulation code. We also calculate the joint likelihood ratio $r(x,z|\theta')$ and the joint score $t(x,z|\theta')$ for the second parameter point $\theta'$ and store the parameter points $\theta$ and $\theta'$, the simulated image $x$, as well as the joint likelihood ratios and joint scores.
 
@@ -313,7 +313,9 @@ How are the joint likelihood ratio and joint score, which are conditional on the
    \label{eq:alices_loss}
 \end{multline}
 %
-where we have abbreviated $s \equiv s(x,z|\theta) \equiv 1 / (1 + r(x,z|\theta))$,  $s' \equiv s(x,z|\theta') \equiv 1 / (1 + r(x,z|\theta'))$, $g \equiv g(x, \theta)$, $g' \equiv g(x, \theta')$, $t = t(x,z | \theta)$, and $t' \equiv t(x,z | \theta')$ for readability. Note that the test function $g(x, \theta)$ is a function of $x$ and $\theta$ only. In \citep{Stoye:2018ovl} it was shown that this modified cross-entropy or ``ALICES'' loss functional is minimized by the function
+where we have abbreviated $s \equiv s(x,z|\theta) \equiv 1 / (1 + r(x,z|\theta))$,  $s' \equiv s(x,z|\theta') \equiv 1 / (1 + r(x,z|\theta'))$, $g \equiv g(x, \theta)$, $g' \equiv g(x, \theta')$, $t = t(x,z | \theta)$, and $t' \equiv t(x,z | \theta')$ for readability. Note that the test function $g(x, \theta)$ is a function of $x$ and $\theta$ only. $\alpha$ is a hyperparameter that weights gradient information in the loss function.
+
+In \citep{Stoye:2018ovl} it was shown that this modified cross-entropy or ``ALICES'' loss functional is minimized by the function
 %
 \begin{equation}
   g^*(x, \theta) \equiv \argmin_g L[g(x, \theta)] = \frac 1 {1 + r(x|\theta)} \,,
@@ -321,18 +323,17 @@ where we have abbreviated $s \equiv s(x,z|\theta) \equiv 1 / (1 + r(x,z|\theta))
 %
 one-to-one with the likelihood ratio function
 %
-\begin{align}
+\begin{equation}
   r(x|\theta)
-  &\equiv \frac {p(x|\theta)} {p_\mathrm{ref}(x)}
-  \equiv \frac {p(x|\theta)} {\int\!\diff\tilde{\theta} \, \pi(\tilde{\theta}) \, p(x | \tilde{\theta}) } \notag \\
-  &= \frac {1 - g^*(x, \theta)}{g^*(x, \theta)} \,.
-\end{align}
+  \equiv \frac {p(x|\theta)} {p_\mathrm{ref}(x)}
+  = \frac {1 - g^*(x, \theta)}{g^*(x, \theta)} \,.
+\end{equation}
+%
+This means that if we can construct the functional in Eq.~\eqref{eq:alices_loss} with the joint likelihood ratio and joint score extracted from the simulator and numerically minimize it, the resulting function lets us reconstruct the (otherwise intractable) likelihood function $r(x|\theta)$! Essentially, this step lets us integrate out the dependence on latent variables $z$ from the joint likelihood ratio and score, but in a general, functional form that does not depend on a set of observed images.
 
-This means that if we can construct the functional in Eq.~\eqref{eq:alices_loss} with the joint likelihood ratio and joint score extracted from the simulator and numerically minimize it, the resulting function lets us reconstruct the (otherwise intractable) likelihood function $r(x|\theta)$. Essentially, this step lets us integrate out the dependence on latent variables $z$ from the joint likelihood ratio and score, but in a general, functional form that does not depend on a set of observed images.
+In practice, we implement this minimization with machine learning. A neural network plays the role of the test function $g(x, \theta)$, the integrals in Eq.~\eqref{eq:alices_loss} are approximated with a sum over training data sampled according to $\pi(\theta) \pi(\theta') p(x,z|\theta)$, and we minimize the loss numerically through a stochastic gradient descent algorithm. The neural network trained in this way provides an estimator $\hat{r}(x|\theta)$ of the likelihood ratio function that is exact in the limit of infinite training samples, sufficient network capacity, and efficient minimization. For a thorough discussion of this approach, we refer the reader to \cite{1805.00013,1805.00020,1805.12244,Stoye:2018ovl}.
 
-In practice, we implement this minimization with machine learning. A neural network plays the role of the test function $g(x, \theta)$, the integrals in Eq.~\eqref{eq:alices_loss} are approximated with a sum over training data sampled according to $\pi(\theta) \pi(\theta') p(x,z|\theta)$, and we minimize it numerically through a stochastic gradient descent algorithm. The neural network trained in this way provides an estimator $\hat{r}(x|\theta)$ of the likelihood ratio function that is exact in the limit of infinite training samples, sufficient network capacity, and efficient minimization. For a thorough discussion of this approach, we refer the reader to \cite{1805.00013,1805.00020,1805.12244,Stoye:2018ovl}.
-
-Given the image nature of the lensing data, we choose a convolutional network architecture based on the ResNet-18~\cite{he2016deep} implementation in pyTorch~\cite{paszke2017automatic}. The parameters $\theta$ enter as additional inputs in the fully connected layers of the network. Compared to the original ResNet-18 architecture, we add another fully connected layer at the end to ensure that the relation between parameters of interest and image data can be modeled. All inputs are normalized to zero mean and unit variance. We train the networks over 100 epochs with a batch size of 128 with the Adam optimizer~\cite{}, exponentially decaying the learning rate from $3\cdot 10^{-4}$ to $3 \cdot 10^{-6}$, and use early stopping. This architecture and hyperparameter configuration performed best during a rough hyperparameter scan, though for this proof-of-concept study we have not performed an exhaustive optimization.
+Given the image nature of the lensing data, we choose a convolutional network architecture based on the ResNet-18~\citep{he2016deep} implementation in pyTorch~\citep{paszke2017automatic}. The parameters $\theta$ enter as additional inputs in the fully connected layers of the network. Compared to the original ResNet-18 architecture, we add another fully connected layer at the end to ensure that the relation between parameters of interest and image data can be modeled. All inputs are normalized to zero mean and unit variance. We train the networks by minimizing the loss in Eq.~\eqref{eq:alices_loss} with $\alpha = 2 \cdot 10^{-3}$ over 100 epochs with a batch size of 128 using the Adam optimizer~\citep{2014arXiv1412.6980K}, exponentially decaying the learning rate from $3\cdot 10^{-4}$ to $3 \cdot 10^{-6}$ with early stopping. This architecture and hyperparameter configuration performed best during a rough hyperparameter scan, though for this proof-of-concept study we have not performed an exhaustive optimization.
 
 
 \subsection{Calibration}

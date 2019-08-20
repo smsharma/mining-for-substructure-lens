@@ -8,45 +8,45 @@ Warning--empty journal in Brehmer:2019xox
 Warning--empty journal in Hermans:2019ioj
 Warning--empty publisher in 1992grle.book.....S
 Warning--empty journal in Stoye:2018ovl
-You've used 87 entries,
+You've used 89 entries,
             3166 wiz_defined-function locations,
-            1239 strings with 37554 characters,
-and the built_in function-call counts, 50591 in all, are:
-= -- 3555
-> -- 5040
-< -- 21
-+ -- 1684
-- -- 1795
-* -- 5141
-:= -- 9529
-add.period$ -- 101
-call.type$ -- 87
-change.case$ -- 512
-chr.to.int$ -- 84
-cite$ -- 91
-duplicate$ -- 1465
-empty$ -- 2538
-format.name$ -- 1890
-if$ -- 9898
+            1250 strings with 37898 characters,
+and the built_in function-call counts, 51747 in all, are:
+= -- 3665
+> -- 5100
+< -- 22
++ -- 1704
+- -- 1817
+* -- 5230
+:= -- 9707
+add.period$ -- 104
+call.type$ -- 89
+change.case$ -- 524
+chr.to.int$ -- 86
+cite$ -- 93
+duplicate$ -- 1509
+empty$ -- 2621
+format.name$ -- 1916
+if$ -- 10154
 int.to.chr$ -- 4
 int.to.str$ -- 0
-missing$ -- 85
-newline$ -- 283
-num.names$ -- 348
-pop$ -- 575
+missing$ -- 86
+newline$ -- 290
+num.names$ -- 356
+pop$ -- 593
 preamble$ -- 1
-purify$ -- 512
+purify$ -- 524
 quote$ -- 0
-skip$ -- 1345
+skip$ -- 1396
 stack$ -- 0
-substring$ -- 1938
-swap$ -- 5
+substring$ -- 2030
+swap$ -- 13
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 780
+type$ -- 798
 warning$ -- 4
-while$ -- 325
+while$ -- 335
 width$ -- 0
-write$ -- 955
+write$ -- 976
 (There were 4 warnings)

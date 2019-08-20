@@ -330,6 +330,10 @@ Brehmer, J., Kling, F., Espejo, I., \& Cranmer, K. 2019.
 {Han}, J., {Cole}, S., {Frenk}, C.~S., \& {Jing}, Y. 2016, \mnras, 457, 1208,
   \dodoi{10.1093/mnras/stv2900}
 
+\bibitem[{He {et~al.}(2016)He, Zhang, Ren, \& Sun}]{he2016deep}
+He, K., Zhang, X., Ren, S., \& Sun, J. 2016, in Proceedings of the IEEE
+  conference on computer vision and pattern recognition, 770--778
+
 \bibitem[{Hermans {et~al.}(2019)Hermans, Begy, \& Louppe}]{Hermans:2019ioj}
 Hermans, J., Begy, V., \& Louppe, G. 2019.
 \newblock \doarXiv{1903.04057}
@@ -390,6 +394,10 @@ Jones, E., Oliphant, T., Peterson, P., {et~al.} 2001--, {SciPy}: Open source
 \bibitem[{{Keeton}(2001)}]{2001astro.ph..2341K}
 {Keeton}, C.~R. 2001, arXiv e-prints, astro.
 \newblock \doarXiv{astro-ph/0102341}
+
+\bibitem[{{Kingma} \& {Ba}(2014)}]{2014arXiv1412.6980K}
+{Kingma}, D.~P., \& {Ba}, J. 2014, arXiv e-prints, arXiv:1412.6980.
+\newblock \doarXiv{1412.6980}
 
 \bibitem[{{Koposov} {et~al.}(2008){Koposov}, {Belokurov}, {Evans}, {Hewett},
   {Irwin}, {Gilmore}, {Zucker}, {Rix}, {Fellhauer}, {Bell}, \&
