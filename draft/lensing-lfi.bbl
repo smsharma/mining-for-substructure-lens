@@ -227,6 +227,10 @@ Brehmer, J., Kling, F., Espejo, I., \& Cranmer, K. 2019.
 \bibitem[{{Collett}(2015)}]{2015ApJ...811...20C}
 {Collett}, T.~E. 2015, \apj, 811, 20, \dodoi{10.1088/0004-637X/811/1/20}
 
+\bibitem[{Cowan {et~al.}(2011)Cowan, Cranmer, Gross, \& Vitells}]{Cowan:2010js}
+Cowan, G., Cranmer, K., Gross, E., \& Vitells, O. 2011, Eur. Phys. J., C71,
+  1554, \dodoi{10.1140/epjc/s10052-011-1554-0, 10.1140/epjc/s10052-013-2501-z}
+
 \bibitem[{Cranmer {et~al.}(2015)Cranmer, Pavez, \& Louppe}]{Cranmer:2015bka}
 Cranmer, K., Pavez, J., \& Louppe, G. 2015.
 \newblock \doarXiv{1506.02169}
@@ -526,9 +530,16 @@ Stoye, M., Brehmer, J., Louppe, G., Pavez, J., \& Cranmer, K. 2018.
 {Vogelsberger}, M., {Zavala}, J., {Schutz}, K., \& {Slatyer}, T.~R. 2019,
   \mnras, 484, 5437, \dodoi{10.1093/mnras/stz340}
 
+\bibitem[{Wald(1943)}]{Wald}
+Wald, A. 1943, Transactions of the American Mathematical Society, 54, 426
+
 \bibitem[{{Wechsler} \& {Tinker}(2018)}]{1804.03097}
 {Wechsler}, R.~H., \& {Tinker}, J.~L. 2018, \araa, 56, 435,
   \dodoi{10.1146/annurev-astro-081817-051756}
+
+\bibitem[{Wilks(1938)}]{Wilks:1938dza}
+Wilks, S.~S. 1938, Annals Math. Statist., 9, 60,
+  \dodoi{10.1214/aoms/1177732360}
 
 \bibitem[{{Zahid} {et~al.}(2018){Zahid}, {Sohn}, \&
   {Geller}}]{2018ApJ...859...96Z}

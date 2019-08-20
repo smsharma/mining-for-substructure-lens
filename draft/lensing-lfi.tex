@@ -354,7 +354,22 @@ This additional calibration stage comes with a certain computational cost that i
 \subsection{Inference}
 \label{sec:lfi-inference}
 
-% 4: Frequentist and Bayesian inference. Neyman-Pearson. Give posterior in terms of likelihood ratio estimator.
+After a neural network has been trained (and optionally calibrated) to estimate the likelihood ratio function, it provides the basic ingredient to both frequentist and Bayesian inference. For frequentist hypothesis tests, the likelihood ratio provides the most powerful test statistic~\citep{1933RSPTA.231..289N}. In addition, its asymptotic properties allow us in many cases to directly translate a value of the likelihood ratio into a $p$-value and thus into exclusion limits at a given confidence level~\citep{Wilks:1938dza, Wald, Cowan:2010js}.
+
+For Bayesian inference, note that we can write Bayes' theorem as
+%
+\begin{align}
+  p(\theta | \{x_i\})
+  &= \frac {p(\theta) \; \prod_i p(x_i | \theta)} {\int\!\diff \tilde{\theta} \, p(\tilde{\theta}) \, \prod_i p(x_i | \tilde{\theta})} \notag \\
+  &= p(\theta) \Biggl[
+    \int\!\diff\tilde{\theta} \, p(\tilde{\theta}) \, \prod_i \frac {p(x_i | \tilde{\theta})}{p(x_i | \theta)}
+  \Biggr]^{-1} \notag \\
+  &\approx p(\theta) \Biggl[
+    \int\!\diff\tilde{\theta} \, p(\tilde{\theta}) \, \prod_i \frac {\hat{r}(x_i | \tilde{\theta})}{\hat{r}(x_i | \theta)}
+  \Biggr]^{-1} \,,
+\end{align}
+%
+where $\{x_i\}$ is the set of observed lens images and $p(\theta)$ is the prior on the parameters of interest, which may be different from the proposal distribution $\pi(\theta)$ used during the generation of training data. The posterior can thus be directly calculated given an estimator $\hat{r}$, provided that the space of the parameters of interest is low-dimensional enough to calculate the integral, or with MCMC or variational inference techniques otherwise.
 
 
 \section{Results}
