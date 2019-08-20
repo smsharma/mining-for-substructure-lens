@@ -5,48 +5,49 @@ The style file: aasjournal.bst
 Database file #1: lensing-lfi.bib
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Warning--empty journal in Brehmer:2019xox
+Warning--empty journal in Cranmer:2015bka
 Warning--empty journal in Hermans:2019ioj
 Warning--empty publisher in 1992grle.book.....S
 Warning--empty journal in Stoye:2018ovl
-You've used 89 entries,
+You've used 90 entries,
             3166 wiz_defined-function locations,
-            1250 strings with 37898 characters,
-and the built_in function-call counts, 51747 in all, are:
-= -- 3665
-> -- 5100
+            1255 strings with 38062 characters,
+and the built_in function-call counts, 52148 in all, are:
+= -- 3701
+> -- 5130
 < -- 22
-+ -- 1704
-- -- 1817
-* -- 5230
-:= -- 9707
-add.period$ -- 104
-call.type$ -- 89
-change.case$ -- 524
-chr.to.int$ -- 86
-cite$ -- 93
-duplicate$ -- 1509
-empty$ -- 2621
-format.name$ -- 1916
-if$ -- 10154
++ -- 1714
+- -- 1828
+* -- 5264
+:= -- 9782
+add.period$ -- 106
+call.type$ -- 90
+change.case$ -- 530
+chr.to.int$ -- 87
+cite$ -- 95
+duplicate$ -- 1525
+empty$ -- 2644
+format.name$ -- 1928
+if$ -- 10232
 int.to.chr$ -- 4
 int.to.str$ -- 0
-missing$ -- 86
-newline$ -- 290
-num.names$ -- 356
-pop$ -- 593
+missing$ -- 87
+newline$ -- 294
+num.names$ -- 360
+pop$ -- 602
 preamble$ -- 1
-purify$ -- 524
+purify$ -- 530
 quote$ -- 0
-skip$ -- 1396
+skip$ -- 1406
 stack$ -- 0
-substring$ -- 2030
+substring$ -- 2037
 swap$ -- 13
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 798
-warning$ -- 4
-while$ -- 335
+type$ -- 807
+warning$ -- 5
+while$ -- 338
 width$ -- 0
-write$ -- 976
-(There were 4 warnings)
+write$ -- 986
+(There were 5 warnings)

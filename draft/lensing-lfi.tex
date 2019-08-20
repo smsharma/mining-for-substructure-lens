@@ -295,7 +295,7 @@ The joint likelihood ratio quantifies how much more or less likely a particular 
 
 We compute the joint likelihood ratio and joint score with Eq.~\eqref{eq:joint_likelihood}. Conveniently, many steps in the simulator do not explicitly depend on the parameters of interest $\theta$ and cancel in the joint likelihood ratio and joint score, and the remaining terms can be evaluated with little overhead to the simulation code. We also calculate the joint likelihood ratio $r(x,z|\theta')$ and the joint score $t(x,z|\theta')$ for the second parameter point $\theta'$ and store the parameter points $\theta$ and $\theta'$, the simulated image $x$, as well as the joint likelihood ratios and joint scores.
 
-Our training samples consist of $10^6$ images, with parameter points chosen from a uniform range in $0.001 < \fsub < 0.2$ and $-1.5 < \beta < 0$.
+Our training samples consist of $10^6$ images, with parameter points chosen from a uniform range in $0.001 < \fsub < 0.2$ and $-1.5 < \beta < -0.5$.
 
 
 \subsection{Machine learning}
@@ -313,9 +313,9 @@ How are the joint likelihood ratio and joint score, which are conditional on the
    \label{eq:alices_loss}
 \end{multline}
 %
-where we have abbreviated $s \equiv s(x,z|\theta) \equiv 1 / (1 + r(x,z|\theta))$,  $s' \equiv s(x,z|\theta') \equiv 1 / (1 + r(x,z|\theta'))$, $g \equiv g(x, \theta)$, $g' \equiv g(x, \theta')$, $t = t(x,z | \theta)$, and $t' \equiv t(x,z | \theta')$ for readability. Note that the test function $g(x, \theta)$ is a function of $x$ and $\theta$ only. $\alpha$ is a hyperparameter that weights gradient information in the loss function.
+where we have abbreviated $s \equiv s(x,z|\theta) \equiv 1 / (1 + r(x,z|\theta))$,  $s' \equiv s(x,z|\theta') \equiv 1 / (1 + r(x,z|\theta'))$, $g \equiv g(x, \theta)$, $g' \equiv g(x, \theta')$, $t = t(x,z | \theta)$, and $t' \equiv t(x,z | \theta')$ for readability. Note that the test function $g(x, \theta)$ is a function of $x$ and $\theta$ only. The first two lines are an improved version of the cross-entropy loss, in which the joint likelihood ratio is used to decrease the variance compared to the canonical cross-entropy~\cite{Stoye:2018ovl}. The last line adds gradient information, weighted by a hyperparameter $\alpha$.
 
-In \citep{Stoye:2018ovl} it was shown that this modified cross-entropy or ``ALICES'' loss functional is minimized by the function
+In \citep{Stoye:2018ovl} it was shown that this ``ALICES'' loss functional is minimized by the function
 %
 \begin{equation}
   g^*(x, \theta) \equiv \argmin_g L[g(x, \theta)] = \frac 1 {1 + r(x|\theta)} \,,
@@ -339,7 +339,17 @@ Given the image nature of the lensing data, we choose a convolutional network ar
 \subsection{Calibration}
 \label{sec:lfi-calibration}
 
-% 3: Calibration based on histograms. Comment on computational cost vs statistical guarantees.
+In reality, the neural network might not learn the likelihood ratio function $r(x|\theta)$ exactly, for instance due to limited training data or inefficient training. To make sure that our inference results are correct even in this case, we calibrate the network output with histograms~\citep{Cranmer:2015bka, 1805.00020}. For every parameter point $\theta$ that we want to test, we simulate a set of images $\{x\} \sim p(x|\theta)$ from this parameter point and calculate the network prediction $\hat{r} \equiv \hat{r}(x|\theta)$ for each image. We also simulate a set of images $\{x\} \sim p_{\mathrm{ref}}(x)$ from the reference model, that is, drawing a new parameter points from $\pi(\theta)$ for each image, and again calculate the network prediction $\hat{r}$ for each of these lenses as well. We then calculate the calibrated likelihood ratio from histograms of the network predictions as
+%
+\begin{equation}
+  \hat{r}_\mathrm{cal}(x|\theta)
+  = \frac {\hat{p}( \hat{r} | \theta )} {\hat{p}_\mathrm{ref}(\hat{r})}
+\end{equation}
+%
+where the $\hat{p}(\dots)$ denote probability densities estimated with univariate histograms.
+
+This additional calibration stage comes with a certain computational cost that increases linearly with the number of evaluated parameter points. However, it guarantees that as long as the simulator accurately models the process, the inference results may be perfect or conservative, but not be too optimistic, even if the neural network output is substantially different from the true likelihood ratio.
+
 
 \subsection{Inference}
 \label{sec:lfi-inference}
