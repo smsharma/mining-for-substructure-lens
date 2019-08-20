@@ -11,8 +11,8 @@
 \contentsline {section}{\numberline {3}Statistical formalism and simulation-based inference}{6}{section.3}
 \contentsline {subsection}{\numberline {3.1}Extracting additional information from the simulator}{7}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}Machine learning}{8}{subsection.3.2}
-\contentsline {subsection}{\numberline {3.3}Calibration}{8}{subsection.3.3}
-\contentsline {subsection}{\numberline {3.4}Inference}{8}{subsection.3.4}
-\contentsline {section}{\numberline {4}Results}{8}{section.4}
-\contentsline {section}{\numberline {5}Extensions}{8}{section.5}
-\contentsline {section}{\numberline {6}Conclusions}{8}{section.6}
+\contentsline {subsection}{\numberline {3.3}Calibration}{9}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Inference}{9}{subsection.3.4}
+\contentsline {section}{\numberline {4}Results}{9}{section.4}
+\contentsline {section}{\numberline {5}Extensions}{9}{section.5}
+\contentsline {section}{\numberline {6}Conclusions}{9}{section.6}

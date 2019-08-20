@@ -295,6 +295,8 @@ The joint likelihood ratio quantifies how much more or less likely a particular 
 
 We compute the joint likelihood ratio and joint score with Eq.~\eqref{eq:joint_likelihood}. Conveniently, many steps in the simulator do not explicitly depend on the parameters of interest $\theta$ and cancel in the joint likelihood ratio and joint score, and the remaining terms can be evaluated with little overhead to the simulation code. We also calculate the joint likelihood ratio $r(x,z|\theta')$ and the joint score $t(x,z|\theta')$ for the second parameter point $\theta'$ and store the parameter points $\theta$ and $\theta'$, the simulated image $x$, as well as the joint likelihood ratios and joint scores.
 
+Our training samples consist of $10^6$ images, with parameter points chosen from a uniform range in $0.001 < \fsub < 0.2$ and $-1.5 < \beta < 0$.
+
 
 \subsection{Machine learning}
 \label{sec:lfi-ml}
@@ -302,24 +304,35 @@ We compute the joint likelihood ratio and joint score with Eq.~\eqref{eq:joint_l
 How are the joint likelihood ratio and joint score, which are conditional on the latent variables $z$, useful to learn about the likelihood function $p(x|\theta)$, which only depends on the observed lens images and the parameters of interest? Consider the functional
 %
 \begin{multline}
-  L[g(x, \theta)] = \int\!\diff\theta\! \int\!\diff x\! \int\!\diff z \; \pi(\theta) \; p(x,z|\theta) \\
-    \times \Bigl[ \dots \Bigr]  \,,
+  L[g(x, \theta)] = \int\!\diff\theta\! \int\!\diff\theta'\! \int\!\diff x\! \int\!\diff z \; \pi(\theta) \; \pi(\theta') \; p(x,z|\theta) \\
+    \times \Biggl[
+    - s \log g  - (1 - s) \log (1 - g) - s' \log g'  - (1 - s') \log (1 - g') \\
+    + \alpha \Bigl\{ \left| t - \nabla_\theta \log \tfrac{1 - g}g \Bigr|_{\theta}  \right|^2
+    + \left| t' - \nabla_\theta \log \tfrac{1 - g}g \Bigr|_{\theta'} \right|^2 \Bigr\}
+   \Biggr]  \,,
+   \label{eq:alices_loss}
 \end{multline}
 %
-introduced in \citep{Stoye:2018ovl}. Note that the test function $g(x, \theta)$ is a function of $x$ and $\theta$ only. With calculus of variation it can be shown that this functional is minimized by the function
+where we have abbreviated $s \equiv s(x,z|\theta) \equiv 1 / (1 + r(x,z|\theta))$,  $s' \equiv s(x,z|\theta') \equiv 1 / (1 + r(x,z|\theta'))$, $g \equiv g(x, \theta)$, $g' \equiv g(x, \theta')$, $t = t(x,z | \theta)$, and $t' \equiv t(x,z | \theta')$ for readability. Note that the test function $g(x, \theta)$ is a function of $x$ and $\theta$ only. In \citep{Stoye:2018ovl} it was shown that this modified cross-entropy or ``ALICES'' loss functional is minimized by the function
 %
 \begin{equation}
-  \argmin_g L[g(x, \theta)]
-  = r(x|\theta)
-  \equiv \frac {p(x|\theta)} {p_\mathrm{ref}(x)}
-  \equiv \frac {p(x|\theta)} {\int\!\diff\tilde{\theta} \, \pi(\tilde{\theta}) \, p(x | \tilde{\theta}) } \,.
+  g^*(x, \theta) \equiv \argmin_g L[g(x, \theta)] = \frac 1 {1 + r(x|\theta)} \,,
 \end{equation}
+%
+one-to-one with the likelihood ratio function
+%
+\begin{align}
+  r(x|\theta)
+  &\equiv \frac {p(x|\theta)} {p_\mathrm{ref}(x)}
+  \equiv \frac {p(x|\theta)} {\int\!\diff\tilde{\theta} \, \pi(\tilde{\theta}) \, p(x | \tilde{\theta}) } \notag \\
+  &= \frac {1 - g^*(x, \theta)}{g^*(x, \theta)} \,.
+\end{align}
 
-\dots
+This means that if we can construct the functional in Eq.~\eqref{eq:alices_loss} with the joint likelihood ratio and joint score extracted from the simulator and numerically minimize it, the resulting function lets us reconstruct the (otherwise intractable) likelihood function $r(x|\theta)$. Essentially, this step lets us integrate out the dependence on latent variables $z$ from the joint likelihood ratio and score, but in a general, functional form that does not depend on a set of observed images.
 
-% 2: then train NN by minimizing the ALICES loss. In limit of infinite data and efficient minimization, this is guaranteed to give us the correct answer.
+In practice, we implement this minimization with machine learning. A neural network plays the role of the test function $g(x, \theta)$, the integrals in Eq.~\eqref{eq:alices_loss} are approximated with a sum over training data sampled according to $\pi(\theta) \pi(\theta') p(x,z|\theta)$, and we minimize it numerically through a stochastic gradient descent algorithm. The neural network trained in this way provides an estimator $\hat{r}(x|\theta)$ of the likelihood ratio function that is exact in the limit of infinite training samples, sufficient network capacity, and efficient minimization. For a thorough discussion of this approach, we refer the reader to \cite{1805.00013,1805.00020,1805.12244,Stoye:2018ovl}.
 
-% Architecture and hyperparams
+Given the image nature of the lensing data, we choose a convolutional network architecture based on the ResNet-18~\cite{he2016deep} implementation in pyTorch~\cite{paszke2017automatic}. The parameters $\theta$ enter as additional inputs in the fully connected layers of the network. Compared to the original ResNet-18 architecture, we add another fully connected layer at the end to ensure that the relation between parameters of interest and image data can be modeled. All inputs are normalized to zero mean and unit variance. We train the networks over 100 epochs with a batch size of 128 with the Adam optimizer~\cite{}, exponentially decaying the learning rate from $3\cdot 10^{-4}$ to $3 \cdot 10^{-6}$, and use early stopping. This architecture and hyperparameter configuration performed best during a rough hyperparameter scan, though for this proof-of-concept study we have not performed an exhaustive optimization.
 
 
 \subsection{Calibration}
