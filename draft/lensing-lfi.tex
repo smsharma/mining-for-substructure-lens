@@ -251,11 +251,11 @@ where $p_{\mathrm{host}}$ summarizes the distribution of the host halo parameter
 Inference with Markov Chain Monte Carlo (MCMC) methods based directly on this joint likelihood function $p(x,z | \theta)$ is feasible, but requires a large number of simulations for every observed lens. Instead, we use an approach that is based on the likelihood function of only the observables,
 %
 \begin{equation}
- p(x|\theta) = \int \diff z \; p(x, z|\theta) \,,
+ p(x|\theta) = \int\!\diff z \; p(x, z|\theta) \,,
  \label{eq:likelihood_latent}
 \end{equation}
 %
-where the latent variables are marginalised out. If we are able to evaluate this likelihood function efficiently enables efficient frequentist and Bayesian inference. Unfortunately, even in our somewhat simplified simulator, each run of the simulation easily involves more than a thousand latent variables, and the integral over this enormeous space clearly cannot be computed explicitly. The likelihood function $p(x | \theta)$ is thus intractable, providing a major challenge for both frequentist and Bayesian inference.
+where the latent variables are marginalised out. Being able to compute this likelihood function enables efficient frequentist and Bayesian inference. Unfortunately, even in our somewhat simplified simulator, each run of the simulation easily involves more than a thousand latent variables, and the integral over this enormeous space clearly cannot be computed explicitly. The likelihood function $p(x | \theta)$ is thus intractable, providing a major challenge for both frequentist and Bayesian inference.
 
 This issue is often tackled by reducing the high-dimensional data $x$ to lower-dimensional summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724}. The likelihood $p(v|\theta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
 
@@ -268,7 +268,7 @@ We follow an alternative approach of simulation-based inference introduced in Re
   \item The calibrated network output is then used in either frequentist or Bayesian inference techniques.
 \end{enumerate}
 
-This approach enables amortized inference: after an upfront simulation and training phase, the neural network that estimates the likelihood ratio function can be evaluated very efficiently for any parameter point and observed image. Unlike MCMC based on the joint likelihood, this scales well to the expected large number of lenses expected in upcoming surveys. 
+This approach enables amortized inference: after an upfront simulation and training phase, the neural network that estimates the likelihood ratio function can be evaluated very efficiently for any parameter point and observed image. Unlike MCMC based on the joint likelihood, this scales well to the expected large number of lenses expected in upcoming surveys.
 
 In the remainder of this section, we will explain these four steps in detail.
 
@@ -276,9 +276,24 @@ In the remainder of this section, we will explain these four steps in detail.
 \subsection{Extracting additional information from the simulator}
 \label{sec:lfi-gold}
 
-% 1: Joint likelihood ratio and score. Comment on joint ratio wrt prior.
+In a first step, we generate training data by simulating a large number of observed lenses. For each lens, we first draw two parameter point from a proposal distribution, $\theta, \theta' \sim \pi(\theta)$. This proposal distribution should cover the region of interest in the parameter space, but does not have to be identical to the prior in a Bayesian inference setting, which allows us to be agnostic about the inference setup at this stage.
 
-% How to mine the gold for our simulator.
+Next, the simulator is run for the parameter point $\theta$, generating an observed image $x \sim p(x|\theta)$. In addition, we calculate and save two quantities: the joint likelihood ratio
+%
+\begin{equation}
+  r(x,z | \theta) = \frac {p(x,z | \theta)} {p_\mathrm{ref}(x,z)}
+  = \frac {p(x,z | \theta)} {\int\!\diff\tilde{\theta} \, \pi(\tilde{\theta}) \, p(x,z | \tilde{\theta}) }
+\end{equation}
+%
+and the joint score
+%
+\begin{equation}
+  t(x, z | \theta) = \nabla_{\theta} \log p(x,z | \theta) \,.
+\end{equation}
+%
+The joint likelihood ratio quantifies how much more or less likely a particular simulation chain including the latent variables $z$ is for the parameter point $\theta$ compared to a reference distribution. For this we choose the marginal distribution of latent variables and observables corresponding to the proposal distribution $\pi(\theta)$, which has support for every potential outcome of the simulation~\cite{Hermans:2019ioj}. The joint score is the gradient of the joint log likelihood in model parameter space and quantifies if a particular simulation chain becomes more or less likely with infinitesimal changes of the parameters of interest. Both quantities depend on the latent variables of the simulation chain.
+
+We compute the joint likelihood ratio and joint score with Eq.~\eqref{eq:joint_likelihood}. Conveniently, many steps in the simulator do not explicitly depend on the parameters of interest $\theta$ and cancel in the joint likelihood ratio and joint score, and the remaining terms can be evaluated with little overhead to the simulation code. We also calculate the joint likelihood ratio $r(x,z|\theta')$ and the joint score $t(x,z|\theta')$ for the second parameter point $\theta'$ and store the parameter points $\theta$ and $\theta'$, the simulated image $x$, as well as the joint likelihood ratios and joint scores.
 
 
 \subsection{Machine learning}
@@ -338,6 +353,7 @@ We thank Simon~Birrer, Christopher~Fassnacht, Daniel~Gilman, and Neal~Weiner for
 \package{Astropy} \citep{2013A&A...558A..33A,2018AJ....156..123A},
 \package{IPython} \citep{PER-GRA:2007},
 \package{LensPop} \citep{2015ApJ...811...20C},
+\package{MadMiner} \citep{Brehmer:2019xox},
 \package{matplotlib} \citep{Hunter:2007},
 \package{NumPy} \citep{numpy:2011},
 \package{PyTorch} \citep{paszke2017automatic},
