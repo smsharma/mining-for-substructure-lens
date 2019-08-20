@@ -4,27 +4,7 @@
 
 \usepackage{amsmath, amsthm, amssymb, amsfonts}
 
-\newcommand{\SM}[1]{{\bf \color{blue}{[SM: #1]}}}
-
-\newcommand{\acronym}[1]{{\small{#1}}}
-\newcommand{\package}[1]{\textsl{#1}}
-\newcommand{\Euclid}{\textsl{Euclid}}
-\newcommand{\lcdm}{\acronym{$\Lambda$CDM}}
-\newcommand{\kpc}{\textrm{kpc}}
-\newcommand{\Msun}{\textrm{M}_\odot}
-\newcommand{\kmps}{\textrm{km\,s}^{-1}}
-\newcommand{\zl}{z_l}
-\newcommand{\zs}{z_s}
-\newcommand{\sv}{\sigma_v}
-\newcommand{\mtwo}{m_{200}}
-\newcommand{\MMW}{M_\textrm{MW}}
-\newcommand{\Mtwo}{M_{200}}
-\newcommand{\ctwo}{c_{200}}
-\newcommand{\rtwo}{r_{200}}
-\newcommand{\Rtwo}{R_{200}}
-
-\newcommand{\diff}{\mathrm{d}}
-\newcommand{\fsub}{f_{\mathrm{sub}}}
+\input{definitions}
 
 
 \shorttitle{Inferring dark matter substructure with machine learning}
@@ -246,16 +226,36 @@ We draw the lens redshifts $z_l$ from a log-normal distribution with mean 0.56 a
 %
 % In this paper we apply a powerful recently-developed class of techniques for simulation-based inference~\citep{1805.00013,1805.00020,1805.12244} to the problem of extracting high-level substructure properties from an ensemble of galaxy-galaxy strong lensing images. In contrast to traditional simulation-based (or ``likelihood-free'') approaches, these methods do not rely on summary statistics and instead leverage additional information extracted from the simulator in order to train neural networks that can be used to efficiently estimate the likelihood ratio. This provides an elegant bridge between machine learning and the ubiquitous likelihood ratio, which is provably the most powerful statistic for hypothesis testing~\citep{1933RSPTA.231..289N}.
 
-Our goal is to infer the subhalo mass function parameters from a catalog of images of observed lenses. In this section we will describe the challenges of this inference problem and our approach of simulation-based inference. For brevity we will use the symbol $\theta = (\fsub, \beta)^T$ for the vector of parameters of the subhalo mass function and $x$ for the observed lens image.
+Our goal is to infer the subhalo mass function parameters from a catalog of images of observed lenses. In this section we will describe the challenges of this inference problem and our approach of simulation-based inference. For simplicity, we will use a more abstract notation, distinguishing between three sets of quantities in the lensing system:
+%
+\begin{description}
+  \item[Parameters of interest $\theta$] The vector $\theta = (\fsub, \beta)^T$ parameterizes the subhalo mass function given, our goal is to infer their values.
+  %
+  \item[Latent variables $z$] A vector of all other unobservable random variables in the simulator. These include the mass and offset of the host galaxy, the number of subhalos in the region of interest, the position and mass of each subhalo, and the random variables related to the point spread function and Poisson fluctuations.
+  %
+  \item[Observables $x$] The observed lens images.
+\end{description}
 
-As described in the previous section, we have implemented a simulator for the lensing process in the ``forward'' direction: for given parameters $\theta$, the simulator samples observed images $x \sim p(x|\theta)$. The likelihood function $p(x|\theta)$ implicitly defined by the simulator can be symbolically written as
+As described in the previous section, we have implemented a simulator for the lensing process in the ``forward'' direction: for given parameters $\theta$, the simulator samples latent variables $z$ and observed images $x, z \sim p(x, z|\theta)$. The joint likelihood of observables and latents $p(x, z|\theta)$ is schematically given by
+%
+\begin{multline}
+  p(x,z | \theta)
+  = p_{\mathrm{host}}(z_{\mathrm{host}}) \; \pois(n | \bar{n}_{\mathrm{ROI}}(\theta)) \\
+   \prod_i^{n} \left[ p_m \left( m_{200, i} \middle| \theta \right) \; \uniform \left( r_i \right) \right] \\
+  \times p_\mathrm{obs} \left( x \middle| f(z_{\mathrm{host}},\{(m_{200, i},r_i)\}) \right)
+  \label{eq:joint_likelihood}
+\end{multline}
+%
+where $p_{\mathrm{host}}$ summarizes the distribution of the host halo parameters $z_{\mathrm{host}}$ such as its mass, offset and redshift; $n$ is the actual number of subhalos in the region of interest,  $\bar{n}_{\mathrm{ROI}}( \fsub, \beta )$ is the mean number of subhalos in the region of interest as a function of the parameters $\theta = (\fsub, \beta)^T$; $m_{200, i}$ and $r_i$ are the subhalo masses and positions; $p_m(m) = 1/n \, \diff n / \diff m_{200}$ is the normalized subhalo mass function given in Eq.~\eqref{eq:shmf}; and in the last line $p_\mathrm{obs}$ is the probability of observing an image $x$ based on the true lensed image $f(z_{\mathrm{host}},\{(m_{200, i},r_i)\})$ due to the point spread function and Poisson fluctuations.
+
+Inference with Markov Chain Monte Carlo (MCMC) methods based directly on this joint likelihood function $p(x,z | \theta)$ is feasible, but requires a large number of simulations for every observed lens. Instead, we use an approach that is based on the likelihood function of only the observables,
 %
 \begin{equation}
  p(x|\theta) = \int \diff z \; p(x, z|\theta) \,,
  \label{eq:likelihood_latent}
 \end{equation}
 %
-where $z$ is the vector of all latent variables that appear in the simulation of the lensing system: the mass and offset of the host galaxy, the number of subhalos in the region of interest, the position and mass of each subhalo, the random variables affecting the point spread function, and so on, and $p(x, z|\theta)$ is the joint probability density of the observed image and all latent variables. Even in our somewhat simplified simulator, each run of the simulation easily involves more than a thousand latent variables, and the integral over this enormeous space clearly cannot be computed explicitly. The likelihood function is thus intractable, providing a major challenge for both frequentist and Bayesian inference.
+where the latent variables are marginalised out. If we are able to evaluate this likelihood function efficiently enables efficient frequentist and Bayesian inference. Unfortunately, even in our somewhat simplified simulator, each run of the simulation easily involves more than a thousand latent variables, and the integral over this enormeous space clearly cannot be computed explicitly. The likelihood function $p(x | \theta)$ is thus intractable, providing a major challenge for both frequentist and Bayesian inference.
 
 This issue is often tackled by reducing the high-dimensional data $x$ to lower-dimensional summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724}. The likelihood $p(v|\theta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
 
@@ -267,22 +267,38 @@ We follow an alternative approach of simulation-based inference introduced in Re
   \item The neural network output is calibrated, ensuring that errors during training do not lead to wrong inference results.
   \item The calibrated network output is then used in either frequentist or Bayesian inference techniques.
 \end{enumerate}
-%
-Let us go through all these four steps in detail.
 
-First, \dots
+This approach enables amortized inference: after an upfront simulation and training phase, the neural network that estimates the likelihood ratio function can be evaluated very efficiently for any parameter point and observed image. Unlike MCMC based on the joint likelihood, this scales well to the expected large number of lenses expected in upcoming surveys. 
+
+In the remainder of this section, we will explain these four steps in detail.
+
+
+\subsection{Extracting additional information from the simulator}
+\label{sec:lfi-gold}
 
 % 1: Joint likelihood ratio and score. Comment on joint ratio wrt prior.
 
 % How to mine the gold for our simulator.
 
+
+\subsection{Machine learning}
+\label{sec:lfi-ml}
+
 % 2: then train NN by minimizing the ALICES loss. In limit of infinite data and efficient minimization, this is guaranteed to give us the correct answer.
 
 % Architecture and hyperparams
 
+
+\subsection{Calibration}
+\label{sec:lfi-calibration}
+
 % 3: Calibration based on histograms. Comment on computational cost vs statistical guarantees.
 
+\subsection{Inference}
+\label{sec:lfi-inference}
+
 % 4: Frequentist and Bayesian inference. Neyman-Pearson. Give posterior in terms of likelihood ratio estimator.
+
 
 \section{Results}
 \label{sec:results}
