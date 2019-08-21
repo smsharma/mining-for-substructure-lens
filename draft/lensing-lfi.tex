@@ -236,30 +236,30 @@ Our goal is to infer the subhalo mass function parameters from a catalog of imag
   \item[Observables $x$] The observed lens images.
 \end{description}
 
-As described in the previous section, we have implemented a simulator for the lensing process in the ``forward'' direction: for given parameters $\theta$, the simulator samples latent variables $z$ and observed images $x, z \sim p(x, z|\theta)$. The joint likelihood of observables and latents $p(x, z|\theta)$ is schematically given by
-%
-\begin{multline}
-  p(x,z | \theta)
-  = p_{\mathrm{host}}(z_{\mathrm{host}}) \; \pois(n | \bar{n}_{\mathrm{ROI}}(\theta)) \\
-   \prod_i^{n} \left[ p_m \left( m_{200, i} \middle| \theta \right) \; \uniform \left( r_i \right) \right] \\
-  \times p_\mathrm{obs} \left( x \middle| f(z_{\mathrm{host}},\{(m_{200, i},r_i)\}) \right)
-  \label{eq:joint_likelihood}
-\end{multline}
-%
-where $p_{\mathrm{host}}$ summarizes the distribution of the host halo parameters $z_{\mathrm{host}}$ such as its mass, offset and redshift; $n$ is the actual number of subhalos in the region of interest,  $\bar{n}_{\mathrm{ROI}}( \fsub, \beta )$ is the mean number of subhalos in the region of interest as a function of the parameters $\theta = (\fsub, \beta)^T$; $m_{200, i}$ and $r_i$ are the subhalo masses and positions; $p_m(m) = 1/n \, \diff n / \diff m_{200}$ is the normalized subhalo mass function given in Eq.~\eqref{eq:shmf}; and in the last line $p_\mathrm{obs}$ is the probability of observing an image $x$ based on the true lensed image $f(z_{\mathrm{host}},\{(m_{200, i},r_i)\})$ due to the point spread function and Poisson fluctuations.
-
-Inference with Markov Chain Monte Carlo (MCMC) methods based directly on this joint likelihood function $p(x,z | \theta)$ is feasible, but requires a large number of simulations for every observed lens. Instead, we use an approach that is based on the likelihood function of only the observables,
+As described in the previous section, we have implemented a simulator for the lensing process in the ``forward'' direction: for given parameters $\theta$, the simulator samples latent variables $z$ and finally observed images $x \sim p(x|\theta)$. Here $p(x|\theta)$ is the probability density or likelihood function of observing a lens image $x$ given parameters $\theta$. It can be schematically written as
 %
 \begin{equation}
  p(x|\theta) = \int\!\diff z \; p(x, z|\theta) \,,
  \label{eq:likelihood_latent}
 \end{equation}
 %
-where the latent variables are marginalised out. Being able to compute this likelihood function enables efficient frequentist and Bayesian inference. Unfortunately, even in our somewhat simplified simulator, each run of the simulation easily involves more than a thousand latent variables, and the integral over this enormeous space clearly cannot be computed explicitly. The likelihood function $p(x | \theta)$ is thus intractable, providing a major challenge for both frequentist and Bayesian inference.
+where we integrate over the latent variables $z$ and $p(x, z|\theta)$ is the joint likelihood of observables and latent variables:
+%
+\begin{multline}
+  p(x,z | \theta)
+  = p_{\mathrm{host}}(z_{\mathrm{host}}) \; \pois(n | \bar{n}_{\mathrm{ROI}}(\theta)) \\
+   \prod_i^{n} \left[ p_m \left( m_{200, i} \middle| \theta \right) \; \uniform \left( r_i \right) \right] \\
+  \times p_\mathrm{obs} \left( x \middle| f(z_{\mathrm{host}},\{(m_{200, i},r_i)\}) \right) \,.
+  \label{eq:joint_likelihood}
+\end{multline}
+%
+In this schematic form $p_{\mathrm{host}}$ summarizes the distribution of the host halo parameters $z_{\mathrm{host}}$ such as its mass, offset and redshift; $n$ is the actual number of subhalos in the region of interest,  $\bar{n}_{\mathrm{ROI}}(\theta)$ is the mean number of subhalos in the region of interest as a function of the parameters $\theta = (\fsub, \beta)^T$; $m_{200, i}$ and $r_i$ are the subhalo masses and positions; $p_m(m|\theta) = 1/n \, \diff n / \diff m_{200}$ is the normalized subhalo mass function given in Eq.~\eqref{eq:shmf}; and in the last line $p_\mathrm{obs}$ is the probability of observing an image $x$ based on the true lensed image $f(z_{\mathrm{host}},\{(m_{200, i},r_i)\})$ due to the point spread function and Poisson fluctuations.
 
-This issue is often tackled by reducing the high-dimensional data $x$ to lower-dimensional summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724}. The likelihood $p(v|\theta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
+Most frequentist and Bayesian inference methods rely on evaluating the likelihood function $p(x|\theta)$. Unfortunately, even in our somewhat simplified simulator, each run of the simulation easily involves more than a thousand latent variables, and the integral over this enormeous space clearly cannot be computed explicitly. The likelihood function $p(x | \theta)$ is thus intractable, providing a major challenge for both frequentist and Bayesian inference. Similarly, inference with Markov Chain Monte Carlo (MCMC) methods based directly on the joint likelihood function $p(x,z | \theta)$ requires unfeasibly many simulations before converging because the latent space is so large. Systems defined through a forward simulator that does not admit a tractable likelihood are known as ``implicit models'', inference techniques for this case as ``likelihood-free inference''.
 
-We follow an alternative approach of simulation-based inference introduced in \cite{1805.00013,1805.00020,1805.12244}. It consists of four steps:
+One way to tackle this issue is to reduce the high-dimensional data $x$ to lower-dimensional summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724}. The likelihood $p(v|\theta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
+
+Instead, we follow an approach in which we approximate the likelihood function with a neural network, which has to be trained only once and can be evaluated efficiently for any parameter point and observed image (``amortized inference''). This method scales well to the expected large number of lenses expected in upcoming surveys. In particular, we use a new simulation-based inference technique introduced in \cite{1805.00013,1805.00020,1805.12244} that consists of four steps:
 %
 \begin{enumerate}
   \item During each run of the simulator, additional information that characterizes the subhalo population and lensing process is stored together with the simulated observed image.
@@ -267,16 +267,18 @@ We follow an alternative approach of simulation-based inference introduced in \c
   \item The neural network output is calibrated, ensuring that errors during training do not lead to wrong inference results.
   \item The calibrated network output is then used in either frequentist or Bayesian inference techniques.
 \end{enumerate}
-
-This approach enables amortized inference: after an upfront simulation and training phase, the neural network that estimates the likelihood ratio function can be evaluated very efficiently for any parameter point and observed image. Unlike MCMC based on the joint likelihood, this scales well to the expected large number of lenses expected in upcoming surveys.
-
+%
 In the remainder of this section, we will explain these four steps in detail.
+
+\JB{Comment on novel features compared to our past gold-mining papers: marginal reference model, ``flipped'' term in loss, ResNet architecture, Bayesian inference. Where do we do this?}
+
+\JB{Mention ``gold mining''}
 
 
 \subsection{Extracting additional information from the simulator}
 \label{sec:lfi-gold}
 
-In a first step, we generate training data by simulating a large number of observed lenses. For each lens, we first draw two parameter point from a proposal distribution, $\theta, \theta' \sim \pi(\theta)$. This proposal distribution should cover the region of interest in the parameter space, but does not have to be identical to the prior in a Bayesian inference setting, which allows us to be agnostic about the inference setup at this stage.
+In a first step, we generate training data by simulating a large number of observed lenses. For each lens, we first draw two parameter points from a proposal distribution, $\theta, \theta' \sim \pi(\theta)$. This proposal distribution should cover the region of interest in the parameter space, but does not have to be identical to the prior in a Bayesian inference setting, which allows us to be agnostic about the inference setup at this stage.
 
 Next, the simulator is run for the parameter point $\theta$, generating an observed image $x \sim p(x|\theta)$. In addition, we calculate and save two quantities: the joint likelihood ratio
 %
@@ -329,11 +331,15 @@ one-to-one with the likelihood ratio function
   = \frac {1 - g^*(x, \theta)}{g^*(x, \theta)} \,.
 \end{equation}
 %
-This means that if we can construct the functional in Eq.~\eqref{eq:alices_loss} with the joint likelihood ratio and joint score extracted from the simulator and numerically minimize it, the resulting function lets us reconstruct the (otherwise intractable) likelihood function $r(x|\theta)$! Essentially, this step lets us integrate out the dependence on latent variables $z$ from the joint likelihood ratio and score, but in a general, functional form that does not depend on a set of observed images.
+\JB{Show this explicitly in appendix.}
+%
+This means that if we can construct the functional in Eq.~\eqref{eq:alices_loss} with the joint likelihood ratio and joint score extracted from the simulator and numerically minimize it, the resulting function lets us reconstruct the (otherwise intractable) likelihood ratio function $r(x|\theta)$! Essentially, this step lets us integrate out the dependence on latent variables $z$ from the joint likelihood ratio and score, but in a general, functional form that does not depend on a set of observed images.
+
+\JB{Stress parameterized nature of network}
 
 In practice, we implement this minimization with machine learning. A neural network plays the role of the test function $g(x, \theta)$, the integrals in Eq.~\eqref{eq:alices_loss} are approximated with a sum over training data sampled according to $\pi(\theta) \pi(\theta') p(x,z|\theta)$, and we minimize the loss numerically through a stochastic gradient descent algorithm. The neural network trained in this way provides an estimator $\hat{r}(x|\theta)$ of the likelihood ratio function that is exact in the limit of infinite training samples, sufficient network capacity, and efficient minimization. For a thorough discussion of this approach, we refer the reader to \cite{1805.00013,1805.00020,1805.12244,Stoye:2018ovl}.
 
-Given the image nature of the lensing data, we choose a convolutional network architecture based on the ResNet-18~\citep{he2016deep} implementation in pyTorch~\citep{paszke2017automatic}. The parameters $\theta$ enter as additional inputs in the fully connected layers of the network. Compared to the original ResNet-18 architecture, we add another fully connected layer at the end to ensure that the relation between parameters of interest and image data can be modeled. All inputs are normalized to zero mean and unit variance. We train the networks by minimizing the loss in Eq.~\eqref{eq:alices_loss} with $\alpha = 2 \cdot 10^{-3}$ over 100 epochs with a batch size of 128 using the Adam optimizer~\citep{2014arXiv1412.6980K}, exponentially decaying the learning rate from $3\cdot 10^{-4}$ to $3 \cdot 10^{-6}$ with early stopping. This architecture and hyperparameter configuration performed best during a rough hyperparameter scan, though for this proof-of-concept study we have not performed an exhaustive optimization.
+Given the image nature of the lensing data, we choose a convolutional network architecture based on the ResNet-18~\citep{he2016deep} implementation in PyTorch~\citep{paszke2017automatic}. The parameters $\theta$ enter as additional inputs in the fully connected layers of the network. Compared to the original ResNet-18 architecture, we add another fully connected layer at the end to ensure that the relation between parameters of interest and image data can be modeled. All inputs are normalized to zero mean and unit variance. We train the networks by minimizing the loss in Eq.~\eqref{eq:alices_loss} with $\alpha = 2 \cdot 10^{-3}$ over 100 epochs with a batch size of 128 using the Adam optimizer~\citep{2014arXiv1412.6980K}, exponentially decaying the learning rate from $3\cdot 10^{-4}$ to $3 \cdot 10^{-6}$ with early stopping. This architecture and hyperparameter configuration performed best during a rough hyperparameter scan, though for this proof-of-concept study we have not performed an exhaustive optimization.
 
 
 \subsection{Calibration}
