@@ -443,7 +443,7 @@ We thank Simon~Birrer, Christopher~Fassnacht, Daniel~Gilman, and Neal~Weiner for
 
 
 \appendix
-\section{Minimization of the loss functional}
+\section{Minimum of the loss functional}
 \label{app:variation}
 
 A central step in our inference technique is numerically minimizing the functional $L[g(x, \theta)]$ given in Eq.~\eqref{eq:alices_loss} to obtain an estimator for the likelihood ratio function. Here we will use calculus of variation to explicitly show that the solution given in Eq.~\eqref{eq:loss_minimum} in fact minimizes this loss.
@@ -490,7 +490,7 @@ and finally
   {1 + r(x|\theta)} \,,
 \end{align}
 %
-as claimed in Eq.~\eqref{eq:loss_minimum}. Note that this result is independent of the choise of $\pi(\theta)$, as long as this proposal distribution has support at all relevant parameter points.
+in agreement with Eq.~\eqref{eq:loss_minimum}. Note that this result is independent of the choise of $\pi(\theta)$, as long as this proposal distribution has support at all relevant parameter points.
 
 Similarly it can be shown that the gradient term in the loss functional weighted by $\alpha$ is minimized when the gradient of the log likelihood ratio estimated by the neural network is equal to the true score,
 %
@@ -498,7 +498,7 @@ Similarly it can be shown that the gradient term in the loss functional weighted
   \nabla_\theta \log \hat{r}(x|\theta) \equiv \nabla_\theta \log \frac {1 - g^*(x, \theta)}{g^*(x, \theta)} = \nabla_\theta \log r(x|\theta) \,.
 \end{equation}
 %
-We refer the reader to \citep{1805.00020} for the derivation. While not strictly necessary for the inference technique, including this term in the loss function substantially improves the sample efficiency of the algorithm, similar to how gradient information makes any fit converge faster.
+We refer the reader to \citep{1805.00020} for the derivation. While not strictly necessary for the inference technique, including this term in the loss function substantially improves the sample efficiency of the algorithm, similar to how gradient information makes any fit converge faster. Varying the hyperparameter $\alpha$, we found a good performance for $\alpha \approx 2 \cdot 10^{-3}$, with the network performance being insensitive to small variations.
 
 
 \section{Simplified scenarios}
