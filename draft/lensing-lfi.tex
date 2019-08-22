@@ -317,10 +317,11 @@ How are the joint likelihood ratio and joint score, which are conditional on the
 %
 where we have abbreviated $s \equiv s(x,z|\theta) \equiv 1 / (1 + r(x,z|\theta))$,  $s' \equiv s(x,z|\theta') \equiv 1 / (1 + r(x,z|\theta'))$, $g \equiv g(x, \theta)$, $g' \equiv g(x, \theta')$, $t = t(x,z | \theta)$, and $t' \equiv t(x,z | \theta')$ for readability. Note that the test function $g(x, \theta)$ is a function of $x$ and $\theta$ only. The first two lines are an improved version of the cross-entropy loss, in which the joint likelihood ratio is used to decrease the variance compared to the canonical cross-entropy~\cite{Stoye:2018ovl}. The last line adds gradient information, weighted by a hyperparameter $\alpha$.
 
-In \citep{Stoye:2018ovl} it was shown that this ``ALICES'' loss functional is minimized by the function
+As shown in \cite{Stoye:2018ovl}, this ``ALICES'' loss functional is minimized by the function
 %
 \begin{equation}
   g^*(x, \theta) \equiv \argmin_g L[g(x, \theta)] = \frac 1 {1 + r(x|\theta)} \,,
+  \label{eq:loss_minimum}
 \end{equation}
 %
 one-to-one with the likelihood ratio function
@@ -331,9 +332,7 @@ one-to-one with the likelihood ratio function
   = \frac {1 - g^*(x, \theta)}{g^*(x, \theta)} \,.
 \end{equation}
 %
-\JB{Show this explicitly in appendix.}
-%
-This means that if we can construct the functional in Eq.~\eqref{eq:alices_loss} with the joint likelihood ratio and joint score extracted from the simulator and numerically minimize it, the resulting function lets us reconstruct the (otherwise intractable) likelihood ratio function $r(x|\theta)$! Essentially, this step lets us integrate out the dependence on latent variables $z$ from the joint likelihood ratio and score, but in a general, functional form that does not depend on a set of observed images.
+We demonstrate the minimization of this functional explicitly in Appendix~\ref{app:variation}. This means that if we can construct the functional in Eq.~\eqref{eq:alices_loss} with the joint likelihood ratio and joint score extracted from the simulator and numerically minimize it, the resulting function lets us reconstruct the (otherwise intractable) likelihood ratio function $r(x|\theta)$! Essentially, this step lets us integrate out the dependence on latent variables $z$ from the joint likelihood ratio and score, but in a general, functional form that does not depend on a set of observed images.
 
 \JB{Stress parameterized nature of network}
 
@@ -381,6 +380,19 @@ where $\{x_i\}$ is the set of observed lens images and $p(\theta)$ is the prior 
 \section{Results}
 \label{sec:results}
 
+
+% \subsection{Individual lenses}
+%
+%
+% \subsection{Combined likelihood}
+%
+%
+% \subsection{Impact of simplifications}
+%
+%
+% \subsection{Bayesian inference}
+
+
 % \begin{figure*}[tbp]
 % \centering
 % \includegraphics[width=0.95\textwidth]{figures/placeholder}
@@ -403,11 +415,14 @@ where $\{x_i\}$ is the set of observed lens images and $p(\theta)$ is the prior 
 % \label{fig:bayesian}
 % \end{figure*}
 
+
 \section{Extensions}
 \label{sec:extensions}
 
+
 \section{Conclusions}
 \label{sec:conclusions}
+
 
 \acknowledgements
 We thank Simon~Birrer, Christopher~Fassnacht, Daniel~Gilman, and Neal~Weiner for useful conversations. SM is partially supported by the NSF CAREER grant PHY-1554858 and NSF grant PHY-1620727.
@@ -422,6 +437,75 @@ We thank Simon~Birrer, Christopher~Fassnacht, Daniel~Gilman, and Neal~Weiner for
 \package{PyTorch} \citep{paszke2017automatic},
 \package{SciPy} \citep{Jones:2001ab}.
 }
+
+
+\appendix
+\section{Minimization of the loss functional}
+\label{app:variation}
+
+A central step in our inference technique is numerically minimizing the functional $L[g(x, \theta)]$ given in Eq.~\eqref{eq:alices_loss} to obtain an estimator for the likelihood ratio function. Here we will use calculus of variation to explicitly show that the solution given in Eq.~\eqref{eq:loss_minimum} in fact minimizes this loss.
+
+First consider the case of $\alpha = 0$, \ie the functional
+%
+\begin{align}
+  L[g(x, \theta)]
+  &= \int\!\!\diff\theta\!\!\int\!\!\diff\theta'\!\!\int\!\!\diff x\!\! \int\!\!\diff z \, \pi(\theta) \pi(\theta') p(x,z|\theta)
+  \Bigl(- s \log g  - (1 - s) \log (1 - g) - s' \log g'  - (1 - s') \log (1 - g') \Bigr) \notag \\
+  &= \int\!\!\diff\theta\!\!\int\!\!\diff x
+  \underbrace{ \Biggl[
+    \int\!\!\diff z \, \pi(\theta) \, \Bigl( p(x,z|\theta) + p_{\mathrm{ref}}(x,z) \Bigr)
+    \Bigl(- s \log g  - (1 - s) \log (1 - g) \Bigr)
+  \Biggr] }_{
+  \equiv F(x,\theta)
+  } \,,
+\end{align}
+%
+where we use the shorthand notation $s \equiv s(x,z|\theta) \equiv 1 / (1 + r(x,z|\theta))$,  $s' \equiv s(x,z|\theta') \equiv 1 / (1 + r(x,z|\theta'))$, $g \equiv g(x, \theta)$, $g' \equiv g(x, \theta')$. The function $g^*(x|\theta)$ that minimizes  this functional has to satisfy
+%
+\begin{equation}
+  0 \stackrel{!}{=} \frac {\delta F}{\delta g} \Biggr|_{g^*}
+  =  \int\!\!\diff z \, \pi(\theta) \Bigl( p(x,z|\theta) + p_{\mathrm{ref}}(x,z) \Bigr) \Bigl( - \frac s {g^*} + \frac {1-s}{1-g^*} \Bigr)
+\end{equation}
+%
+As long as $\pi(\theta) > 0$, this is equivalent to
+%
+\begin{equation}
+  (1-g^*) \int\!\diff z \Bigl( p(x,z|\theta) + p_{\mathrm{ref}}(x,z) \Bigr) s
+  = g^* \int\!\diff z \Bigl( p(x,z|\theta) + p_{\mathrm{ref}}(x,z) \Bigr) (1-s)
+\end{equation}
+%
+and finally
+%
+\begin{align}
+  g^*(x | \theta)
+  &= \frac {\int\!\diff z \, \Bigl(p(x,z|\theta)+\pref(x,z)\Bigr) s(x,z|\theta)} {\int \! \diff z \, \Bigl(p(x,z|\theta)+\pref(x,z)\Bigr)} \notag \\
+  &= \frac
+  {\int\!\diff z \, \Bigl(p(x,z|\theta) + \pref(x,z)\Bigr) \frac{1}{1+p(x,z|\theta)/p_{\mathrm{ref}}(x,z)}}
+  {\int\!\diff z \, \Bigl(p(x,z|\theta) + \pref(x,z)\Bigr)} \notag \\
+  &= \frac {\pref(x)} {p(x|\theta) + \pref(x)}
+  = \frac{1}
+  {1 + r(x|\theta)} \,,
+\end{align}
+%
+as claimed in Eq.~\eqref{eq:loss_minimum}. Note that this result is independent of the choise of $\pi(\theta)$, as long as this proposal distribution has support at all relevant parameter points.
+
+Similarly it can be shown that the gradient term in the loss functional weighted by $\alpha$ is minimized when the gradient of the log likelihood ratio estimated by the neural network is equal to the true score,
+%
+\begin{equation}
+  \nabla_\theta \log \hat{r}(x|\theta) \equiv \nabla_\theta \log \frac {1 - g^*(x, \theta)}{g^*(x, \theta)} = \nabla_\theta \log r(x|\theta) \,.
+\end{equation}
+%
+We refer the reader to \citep{1805.00020} for the derivation. While not strictly necessary for the inference technique, including this term in the loss function substantially improves the sample efficiency of the algorithm, similar to how gradient information makes any fit converge faster.
+
+
+\section{Simplified scenarios}
+
+
+\section{Comparison to CARL}
+
+
+\section{Calibration curves}
+
 
 \bibliographystyle{aasjournal}
 \bibliography{lensing-lfi}

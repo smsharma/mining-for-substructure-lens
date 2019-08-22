@@ -5,7 +5,7 @@
 \contentsline {subsection}{\numberline {2.1}Strong lensing formalism}{3}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}Background source}{3}{subsection.2.2}
 \contentsline {subsection}{\numberline {2.3}Lensing host galaxy}{4}{subsection.2.3}
-\contentsline {subsection}{\numberline {2.4}Lensing substructure}{4}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.4}Lensing substructure}{5}{subsection.2.4}
 \contentsline {subsection}{\numberline {2.5}Observational considerations}{5}{subsection.2.5}
 \contentsline {subsection}{\numberline {2.6}Population statistics of the lens and source samples}{6}{subsection.2.6}
 \contentsline {section}{\numberline {3}Statistical formalism and simulation-based inference}{6}{section.3}
@@ -16,3 +16,7 @@
 \contentsline {section}{\numberline {4}Results}{9}{section.4}
 \contentsline {section}{\numberline {5}Extensions}{9}{section.5}
 \contentsline {section}{\numberline {6}Conclusions}{9}{section.6}
+\contentsline {section}{\numberline {A}Minimization of the loss functional}{10}{appendix.A}
+\contentsline {section}{\numberline {B}Simplified scenarios}{11}{appendix.B}
+\contentsline {section}{\numberline {C}Comparison to CARL}{11}{appendix.C}
+\contentsline {section}{\numberline {D}Calibration curves}{11}{appendix.D}
