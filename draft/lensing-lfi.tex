@@ -270,10 +270,6 @@ Instead, we follow an approach in which we approximate the likelihood function w
 %
 In the remainder of this section, we will explain these four steps in detail.
 
-\JB{Comment on novel features compared to our past gold-mining papers: marginal reference model, ``flipped'' term in loss, ResNet architecture, Bayesian inference. Where do we do this?}
-
-\JB{Mention ``gold mining''}
-
 
 \subsection{Extracting additional information from the simulator}
 \label{sec:lfi-gold}
@@ -334,11 +330,11 @@ one-to-one with the likelihood ratio function
 %
 We demonstrate the minimization of this functional explicitly in Appendix~\ref{app:variation}. This means that if we can construct the functional in Eq.~\eqref{eq:alices_loss} with the joint likelihood ratio and joint score extracted from the simulator and numerically minimize it, the resulting function lets us reconstruct the (otherwise intractable) likelihood ratio function $r(x|\theta)$! Essentially, this step lets us integrate out the dependence on latent variables $z$ from the joint likelihood ratio and score, but in a general, functional form that does not depend on a set of observed images.
 
-\JB{Stress parameterized nature of network}
+This is why extraction of the joint likelihood ratio and joint score has been described with the analogy of ``mining gold'' from the simulator~\citep{1805.12244}: while calculating these quantities may require some effort and changes to the simulator code, through the minimization of a suitable functional they allow us to calculate the otherwise intractable likelihood ratio function.
 
-In practice, we implement this minimization with machine learning. A neural network plays the role of the test function $g(x, \theta)$, the integrals in Eq.~\eqref{eq:alices_loss} are approximated with a sum over training data sampled according to $\pi(\theta) \pi(\theta') p(x,z|\theta)$, and we minimize the loss numerically through a stochastic gradient descent algorithm. The neural network trained in this way provides an estimator $\hat{r}(x|\theta)$ of the likelihood ratio function that is exact in the limit of infinite training samples, sufficient network capacity, and efficient minimization. For a thorough discussion of this approach, we refer the reader to \cite{1805.00013,1805.00020,1805.12244,Stoye:2018ovl}.
+In practice, we implement this minimization with machine learning. A neural network plays the role of the test function $g(x, \theta)$, the integrals in Eq.~\eqref{eq:alices_loss} are approximated with a sum over training data sampled according to $\pi(\theta) \pi(\theta') p(x,z|\theta)$, and we minimize the loss numerically through a stochastic gradient descent algorithm. The neural network trained in this way provides an estimator $\hat{r}(x|\theta)$ of the likelihood ratio function that is exact in the limit of infinite training samples, sufficient network capacity, and efficient minimization. Note the ``parameterized'' structure of the network, in which a single neural network is trained to estimate the likelihood ratio over all of the parameter space, with the tested parameter point $\theta$ being an input to the network \citep{Cranmer:2015bka, Baldi:2016fzo}. This approach is more efficient than a point-by-point analysis of a grid of parameter points: it allows the network to ``borrow'' information from neighboring parameter points, benefitting from the typically smooth structure of the parameter space.
 
-Given the image nature of the lensing data, we choose a convolutional network architecture based on the ResNet-18~\citep{he2016deep} implementation in PyTorch~\citep{paszke2017automatic}. The parameters $\theta$ enter as additional inputs in the fully connected layers of the network. Compared to the original ResNet-18 architecture, we add another fully connected layer at the end to ensure that the relation between parameters of interest and image data can be modeled. All inputs are normalized to zero mean and unit variance. We train the networks by minimizing the loss in Eq.~\eqref{eq:alices_loss} with $\alpha = 2 \cdot 10^{-3}$ over 100 epochs with a batch size of 128 using the Adam optimizer~\citep{2014arXiv1412.6980K}, exponentially decaying the learning rate from $3\cdot 10^{-4}$ to $3 \cdot 10^{-6}$ with early stopping. This architecture and hyperparameter configuration performed best during a rough hyperparameter scan, though for this proof-of-concept study we have not performed an exhaustive optimization.
+Given the image nature of the lensing data, we choose a convolutional network architecture based on the ResNet-18 \citep{he2016deep} implementation in PyTorch~\citep{paszke2017automatic}. The parameters $\theta$ enter as additional inputs in the fully connected layers of the network. Compared to the original ResNet-18 architecture, we add another fully connected layer at the end to ensure that the relation between parameters of interest and image data can be modeled. All inputs are normalized to zero mean and unit variance. We train the networks by minimizing the loss in Eq.~\eqref{eq:alices_loss} with $\alpha = 2 \cdot 10^{-3}$ over 100 epochs with a batch size of 128 using the Adam optimizer~\citep{2014arXiv1412.6980K}, exponentially decaying the learning rate from $3\cdot 10^{-4}$ to $3 \cdot 10^{-6}$ with early stopping. This architecture and hyperparameter configuration performed best during a rough hyperparameter scan, though for this proof-of-concept study we have not performed an exhaustive optimization.
 
 
 \subsection{Calibration}
@@ -375,6 +371,9 @@ For Bayesian inference, note that we can write Bayes' theorem as
 \end{align}
 %
 where $\{x_i\}$ is the set of observed lens images and $p(\theta)$ is the prior on the parameters of interest, which may be different from the proposal distribution $\pi(\theta)$ used during the generation of training data. The posterior can thus be directly calculated given an estimator $\hat{r}$, provided that the space of the parameters of interest is low-dimensional enough to calculate the integral, or with MCMC or variational inference techniques otherwise.
+
+\bigskip
+While our approach to inference is strongly based on the ideas in \cite{1805.00013,1805.00020,1805.12244,Stoye:2018ovl}, there are some novel features in our analysis that we would like to highlight briefly. Unlike in those earlier papers, we use a marginal model based on the proposal distribution $\pi(\theta)$ as reference model in the denominator of the likelihood ratio, which reduces numerical issues due to the joint likelihood ratio evaluating as zero or infinity substantially. It also allows us to include the ``flipped'' terms involving $s'$ and $g'$ in the loss function in Eq.~\eqref{eq:alices_loss}; we found that this new, improved version of the ALICES loss improves the sample efficiency of our algorithms. Finally, this is the first application of the ``gold mining'' idea to image data, the first combination with a convolutional network architecture, and the first use for Bayesian inference.
 
 
 \section{Results}
