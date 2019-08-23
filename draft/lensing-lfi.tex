@@ -213,21 +213,16 @@ In light of these uncertainties, we confine ourselves to a setting where the mai
 
 We draw the lens redshifts $z_l$ from a log-normal distribution with mean 0.56 and scatter 0.25 dex, discarding lenses with $z_l > 1$ as these tend to have a small angular size over which substructure perturbations are relevant. The source offsets $\theta_x$ and $\theta_y$ are drawn from a normal distribution with zero mean and standard deviation 0.2. These are consistent with the lens sample generated from the \package{LensPop} code packaged with~\citet{2015ApJ...811...20C}.
 
-\begin{figure*}[tbp]
+\begin{figure*}
 \centering
 \includegraphics[width=1.\textwidth]{figures/simulations}
-\caption{Simulated lenses. The cross markers show the offset of the host galaxy, its color its mass. The simulated subhalos are shown as dots, the color again indicates their masses. The greyscale images show the corresponding observed images. We show eleven images randomly generated for $\fsub = 0.05$ and $\beta = -0.9$.}
+\caption{Simulated lenses. The cross markers show the offset of the host galaxy, its color its mass. The simulated subhalos are shown as dots, the color again indicates their masses. The greyscale images show the corresponding observed images. We show seven images randomly generated for $\fsub = 0.05$ and $\beta = -0.9$.}
 \label{fig:simulations}
 \end{figure*}
 
 
 \section{Statistical formalism and simulation-based inference}
 \label{sec:lfi-formalism}
-
-% % From introduction
-% A complementary approach relies on probing the collective effect of sub-threshold (\emph{i.e}, not individually resolvable) subhalos on extended arcs in strongly lensed systems. A particular challenge here is the high dimensionality of the latent parameter space associated with the large number of subhalos and their (potentially covariant) individual as well as population properties, a consequence of which is the intractability of the likelihood of high-level substructure parameters conditional on the data. Methods based on summary statistics~\citep{1702.00009} and studying the amplitude of spatial fluctuations on different scales through power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724} have been proposed as ways to reduce the dimensionality of the problem and enable substructure inference in a tractable way. Trans-dimensional techniques may also be able to efficiently map out the parameter space associated with multiple sub-threshold subhalos in these systems~\citep{1508.00662,1706.06111}. This class of methods is well-suited to studying dark matter substructure since they can be sensitive to the \emph{population} properties of low-mass subhalos in strongly lensed galaxies which are directly correlated with the underlying dark matter particle physics. Furthermore, near-future observatories like LSST~\citep{0912.0201,2019arXiv190201055D,1902.05141} and \Euclid~\citep{1001.0061} are expected to find tens of thousands of galaxy-galaxy strong lenses~\citep{2015ApJ...811...20C}, making substructure inference in these systems (and high-resolution followups on a subset) one of the key ways to investigate dark matter substructure and stress-test the Cold Dark Matter paradigm in the near future. This calls for methods that can efficiently analyze large samples of lensed images to infer the underlying substructure properties with minimal loss of information stemming from dimensional reduction.
-%
-% In this paper we apply a powerful recently-developed class of techniques for simulation-based inference~\citep{1805.00013,1805.00020,1805.12244} to the problem of extracting high-level substructure properties from an ensemble of galaxy-galaxy strong lensing images. In contrast to traditional simulation-based (or ``likelihood-free'') approaches, these methods do not rely on summary statistics and instead leverage additional information extracted from the simulator in order to train neural networks that can be used to efficiently estimate the likelihood ratio. This provides an elegant bridge between machine learning and the ubiquitous likelihood ratio, which is provably the most powerful statistic for hypothesis testing~\citep{1933RSPTA.231..289N}.
 
 Our goal is to infer the subhalo mass function parameters from a catalog of images of observed lenses. In this section we will describe the challenges of this inference problem and our approach of simulation-based inference. For simplicity, we will use a more abstract notation, distinguishing between three sets of quantities in the lensing system:
 %
@@ -382,17 +377,12 @@ While our approach to inference is strongly based on the ideas in \cite{1805.000
 \section{Results}
 \label{sec:results}
 
-
-% \subsection{Individual lenses}
-%
-%
-% \subsection{Combined likelihood}
-%
-%
-% \subsection{Impact of simplifications}
-%
-%
-% \subsection{Bayesian inference}
+\begin{figure*}
+\centering
+\includegraphics[width=1.\textwidth]{figures/individual_lens_predictions}
+\caption{Four simulated lens images (upper panels) and the corresponding estimated likelihood maps (lower panels). The star marks the true point used to generate the images, the black line shows $95 \%$~CL contours in parameter space based on each image.}
+\label{fig:individual_predictions}
+\end{figure*}
 
 
 % \begin{figure*}[tbp]

@@ -17,6 +17,6 @@
 \contentsline {section}{\numberline {5}Extensions}{10}{section.5}
 \contentsline {section}{\numberline {6}Conclusions}{10}{section.6}
 \contentsline {section}{\numberline {A}Minimum of the loss functional}{10}{appendix.A}
-\contentsline {section}{\numberline {B}Simplified scenarios}{11}{appendix.B}
-\contentsline {section}{\numberline {C}Comparison to CARL}{11}{appendix.C}
-\contentsline {section}{\numberline {D}Calibration curves}{11}{appendix.D}
+\contentsline {section}{\numberline {B}Simplified scenarios}{12}{appendix.B}
+\contentsline {section}{\numberline {C}Comparison to CARL}{12}{appendix.C}
+\contentsline {section}{\numberline {D}Calibration curves}{12}{appendix.D}
