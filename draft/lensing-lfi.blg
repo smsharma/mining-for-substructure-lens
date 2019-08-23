@@ -1,53 +1,53 @@
 This is BibTeX, Version 0.99d (TeX Live 2016)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: lensing-lfi.aux
-The style file: lensing-lfi.bst
+The style file: aasjournal_mod.bst
 Database file #1: lensing-lfi.bib
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Warning--empty journal in Brehmer:2019xox
 Warning--empty journal in Cranmer:2015bka
 Warning--empty journal in Hermans:2019ioj
-Warning--missing publisher in 1992grle.book.....S
+Warning--empty publisher in 1992grle.book.....S
 Warning--empty journal in Stoye:2018ovl
 You've used 94 entries,
-            3270 wiz_defined-function locations,
-            1280 strings with 39193 characters,
-and the built_in function-call counts, 69609 in all, are:
-= -- 5830
-> -- 3619
-< -- 63
-+ -- 1759
-- -- 970
-* -- 4811
-:= -- 9770
-add.period$ -- 339
+            3166 wiz_defined-function locations,
+            1289 strings with 38904 characters,
+and the built_in function-call counts, 54661 in all, are:
+= -- 3943
+> -- 5238
+< -- 24
++ -- 1751
+- -- 1868
+* -- 5610
+:= -- 10122
+add.period$ -- 95
 call.type$ -- 94
-change.case$ -- 794
-chr.to.int$ -- 95
+change.case$ -- 553
+chr.to.int$ -- 91
 cite$ -- 99
-duplicate$ -- 5169
-empty$ -- 4731
-format.name$ -- 1267
-if$ -- 14539
+duplicate$ -- 1679
+empty$ -- 2892
+format.name$ -- 1969
+if$ -- 10807
 int.to.chr$ -- 4
-int.to.str$ -- 1
-missing$ -- 957
-newline$ -- 631
+int.to.str$ -- 0
+missing$ -- 91
+newline$ -- 291
 num.names$ -- 376
-pop$ -- 2370
+pop$ -- 650
 preamble$ -- 1
-purify$ -- 699
+purify$ -- 553
 quote$ -- 0
-skip$ -- 3068
+skip$ -- 1462
 stack$ -- 0
-substring$ -- 1763
-swap$ -- 3015
-text.length$ -- 39
+substring$ -- 2105
+swap$ -- 13
+text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 843
 warning$ -- 5
-while$ -- 361
+while$ -- 354
 width$ -- 0
-write$ -- 1527
+write$ -- 1078
 (There were 5 warnings)
