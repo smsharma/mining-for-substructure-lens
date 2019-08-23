@@ -1,13 +1,21 @@
 from matplotlib import pyplot as plt
 from matplotlib import gridspec
 
+import palettable
 
-COLOR_FULL = "#B3004A"
-COLOR_ALIGN = "#5B4CFF"
-COLOR_MASS = "#4CBFAC"
-COLOR_FIX = "#B7B7B7"
 
-COLOR_BKG = "#B7B7B7"
+#CMAP1 = palettable.cartocolors.sequential.Teal_7.mpl_colormap
+#CMAP2 = palettable.cartocolors.sequential.Teal_7.mpl_colormap
+#COLORS = palettable.cartocolors.sequential.Teal_4_r.mpl_colors
+
+CMAP1 = palettable.cmocean.sequential.Ice_20_r.mpl_colormap
+CMAP2 = palettable.cmocean.sequential.Ice_20.mpl_colormap
+COLORS = palettable.cmocean.sequential.Ice_6_r.mpl_colors
+COLOR_FULL = COLORS[4]  # "#B3004A"
+COLOR_MASS = COLORS[3]  # "#4CBFAC"
+COLOR_ALIGN = COLORS[2]  # "#5B4CFF"
+COLOR_FIX = COLORS[1]  # "#B7B7B7"
+COLOR_BKG = "0.7"  # "#B7B7B7"
 
 def figure(cbar=False, height=4.0,  large_margin=0.15, small_margin=0.04, cbar_sep=0.04, cbar_width=0.04):
     if cbar:
