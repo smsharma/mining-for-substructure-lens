@@ -6,7 +6,6 @@
 
 \input{definitions}
 
-
 \shorttitle{Inferring dark matter substructure with machine learning}
 \shortauthors{Brehmer and Mishra-Sharma et al.}
 
@@ -21,7 +20,6 @@ Inferring subhalo population properties from strong lenses with machine learning
 \email{johann.brehmer@nyu.edu}
 \correspondingauthor{Siddharth Mishra-Sharma}
 \email{sm8383@nyu.edu}
-
 
 \author[0000-0003-3344-4209]{Johann Brehmer}
 \affil{Center for Cosmology and Particle Physics, Department of Physics, New York University, 726~Broadway, New York, NY 10003, USA}
@@ -88,49 +86,32 @@ We now briefly review the basic strong lensing formalism before describing in tu
 
 \subsection{Strong lensing formalism}
 
-We briefly review here the mathematical formalism behind strong lensing. For more details see, \emph{e.g.},~\cite{2001astro.ph..2341K,1992grle.book.....S}. For a mass distribution with dimensionless projected surface mass density $\kappa(\mathbf{x})=\Sigma(\mathbf{x}) / \Sigma_{\mathrm{cr}}$, where $\Sigma_{\mathrm{cr}}\equiv \frac{1}{4 \pi G_N} \frac{D_{\mathrm{s}}}{D_{\mathrm{ls}} D_{\mathrm{l}}}$ the critical lensing surface density, the two-dimensional lensing potential is given by
+We briefly review here the mathematical formalism behind strong lensing. For more details see, \emph{e.g.},~\cite{2001astro.ph..2341K,1992grle.book.....S}. For a mass distribution with dimensionless projected surface mass density $\kappa(\mathbf{r})=\Sigma(\mathbf{r}) / \Sigma_{\mathrm{cr}}$, where $\Sigma_{\mathrm{cr}}\equiv \frac{1}{4 \pi G_N} \frac{D_{\mathrm{s}}}{D_{\mathrm{ls}} D_{\mathrm{l}}}$ is the critical lensing surface density, the two-dimensional lensing potential is given by
 \begin{equation}
-\psi(\mathbf{x})=\frac{1}{\pi} \int \ln |\mathbf{x}-\mathbf{y}| \kappa(\mathbf{y}) d \mathbf{y}.
+\psi(\mathbf{r})=\frac{1}{\pi} \int \diff \mathbf{r^\prime}\,\ln |\mathbf{r}-\mathbf{r^\prime}| \kappa(\mathbf{y}) .
 \end{equation}
 The lensed position of the source can be determined through the lens equation,
 \begin{equation}
-\mathbf{u}=\mathbf{x}-\nabla \psi(\mathbf{x})
+\mathbf{u}=\mathbf{r}-\nabla \psi(\mathbf{r})
 \end{equation}
 where $\mathbf{u}$ is the position of the source and $\nabla \psi$ is typically referred to as the deflection, which we will denote as $\boldsymbol\phi$ for brevity. For an extended source brightness profile $f_\mathrm{src}$, the final lensed image can be obtained as the the source profile evaluated on the image plane,
 \begin{equation}
-f^\prime_\mathrm{src}(\mathbf x) = f_\mathrm{src}(\mathbf{x}-\nabla \psi(\mathbf{x})).
+f^\prime_\mathrm{src}(\mathbf r) = f_\mathrm{src}\left(\mathbf{r}-\nabla \psi(\mathbf{r})\right).
 \end{equation}
 For a spherically symmetric, the radial deflection field is given by
 \begin{equation}
-\phi_{r}(r)=\frac{2}{r} \int_{0}^{r}du\,u \kappa(u) =\frac{1}{\pi \Sigma_{\mathrm{cr}}} \frac{M_{\mathrm{cyl}}(r)}{r}
+\phi_{r}(r)=\frac{2}{r} \int_{0}^{r}\diff r^\prime\,r^\prime\,\kappa(r^\prime) =\frac{1}{\pi \Sigma_{\mathrm{cr}}} \frac{M_{\mathrm{cyl}}(r)}{r}
 \end{equation}
 where $M_{\mathrm{cyl}}(r)$ is the mass enclosed within a cylinder or radius $r$. Extension to the slightly more general case of elliptical symmetry is straightforward (see, \emph{e.g.},~\cite{2001astro.ph..2341K}).
-
-\subsection{Background source}
-
-We model the emission from background source galaxies using a S\'{e}rsic profile, with the surface brightness given by
-\begin{equation}
-f_\mathrm{src}(r)=f_{e} \exp \left\{-b_{n}\left[\left(\frac{r}{r_{e}}\right)^{1 / n}-1\right]\right\},
-\end{equation}
-where $r_e$ is the effective circular half-light radius, $n$ is the S\'{e}rsic index, and $b_n$ is a factor depending on $n$ that ensures that $r_e$ contains half the total intensity from the source galaxy, given by~\citep{1999A&A...352..447C}
-\begin{align}
-b_n \approx 2 n &- \frac{1}{3} + \frac{4}{405 n} + \frac{46}{25515 n^2} \nonumber \\ &+ \frac{131}{1148175 n^3} - \frac{2194697}{30690717750 n^4}. \nonumber
-\end{align}
-
-We assume $n=1$ for the source galaxies, corresponding to a flattened exponential profile and consistent with expectation for blue-type galaxies at the relevant redshifts. $f_{e}$ encodes the flux at half-light radius, which can be mapped onto the total flux (or magnitude) associated with a given galaxy.
-
-The total unlensed magnitude $M$ (in a given band) of a galaxy can be mapped on to $f_{e}$ as follows. For a detector with zero-point magnitude $M_0$, which specifies the magnitude of a source giving 1 count\,s$^{-1}$ in expectation, by definition the total counts are given by $S_\mathrm{tot}=10^{0.4(M-M_0)}$. Requiring the half-light radius to contain half the expected counts, for $n=1$ we have the relation $f_{e} \approx 0.526\,t_\mathrm{exp}S_\mathrm{tot} /(2\pi r_e^2)$ in counts\,arcsec$^{-2}$, where $t_\mathrm{exp}$ is the exposure length.
-
-Treatment of the other S\'{e}rsic parameters, in particular the total emission and half-light radius, in the context of population studies is described in Secs.~\ref{sec:observations} and~\ref{sec:populations} below.
 
 \subsection{Lensing host galaxy}
 
 Cosmological $N$-body simulations suggest that the dark matter distribution in structures at galactic scales can be well-described by a universal, spherically symmetric NFW profile. However, strong lensing probes a region of the host galaxy much smaller than the typical virial radii of galaxy-scale dark matter halo, and the mass budget here is dominated by the baryonic bulge component of the galaxy. Taking this into account, the total mass budget of the lensing host galaxy, being early-type, can be well describe by a singular isothermal ellipsoid (SIE) profile, known as the bulge-halo conspiracy since neither the dark matter nor the baryonic components are individually isothermal. The host profile is thus described as
 \begin{equation}
-\rho(x, y)=\frac{\sigma_{v}^{2}}{2 \pi G\left(x^{2} / q+q y^{2}\right)}
+\rho(\theta_x, \theta_y)=\frac{\sigma_{v}^{2}}{2 \pi G\left(\theta_x^{2} / q+q \theta_y^{2}\right)}
 \label{eq:hostprofile}
 \end{equation}
-where $\sigma_{v}$ is the central 1-D velocity dispersion of the lens galaxy and $q$ is the ellipsoid axis ratio, with $q=1$ corresponding to a spherical profile. The Einstein radius for this profile, giving the characteristic lensing scale, is given by
+where $\sigma_{v}$ is the central 1-D velocity dispersion of the lens galaxy and $q$ is the ellipsoid axis ratio, with $q=1$ corresponding to a spherical profile. We explicitly denote our angular coordinates as $\left\{\theta_x, \theta_y\right\}$. The Einstein radius for this profile, giving the characteristic lensing scale, is given by
 \begin{equation}
 \theta_{{E}}=4 \pi\left(\frac{\sigma_{v}}{c}\right)^{2} \frac{D_{l s}\left(z_{l}, z_{s}\right)}{D_{s}\left(z_{s}\right)}
 \label{eq:siethetae}
@@ -139,10 +120,10 @@ where $D_{ls}$ and $D_s$ are respectively the angular diameter distances from th
 
 The deflection field for the SIE profile is given by~\citep{2001astro.ph..2341K}
 \begin{align}
-\phi_{x} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tan ^{-1}\left[\frac{\sqrt{1-q^{2}} x}{\psi}\right] \\
-\phi_{y} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tanh ^{-1}\left[\frac{\sqrt{1-q^{2}} y}{\psi+q^{2} }\right]
+\phi_{x} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tan ^{-1}\left[\frac{\sqrt{1-q^{2}} \theta_x}{\psi}\right] \\
+\phi_{y} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tanh ^{-1}\left[\frac{\sqrt{1-q^{2}} \theta_y}{\psi+q^{2} }\right]
 \end{align}
-with $\psi \equiv \sqrt{x^2 q^2 + y^2}$.
+with $\psi \equiv \sqrt{\theta_x^2 q^2 + \theta_y^2}$.
 
 Although the total galaxy mass (baryons + dark matter) describe the macro lensing field, for the purposes of describing substructure we require being able to map the measure properties of an SIE lens onto the properties of the host dark matter halo. To do this, we relate the central stellar velocity dispersion $\sigma_v$ to the mass $M_{200}$ of the host dark matter halo. \citet{2018ApJ...859...96Z} derived a tight correlation between $\sigma_v$ and $M_{200}$, modeled as
 \begin{equation}
@@ -162,7 +143,7 @@ The spherically-symmetric deflection for an NFW perturber is given by~\citep{200
 \begin{equation}
 \phi_{r}=4 \kappa_{s} r_{s} \frac{\ln (x / 2)+\mathcal{F}(x)}{x}
 \end{equation}
-where $x = r/r_s, \kappa_s = \rho_s\,r_s/\Sigma_\mathrm{cr}$ with $\Sigma_\mathrm{cr}$ the critical surface density, and
+where $x \equiv r/r_s, \kappa_s\equiv \rho_s\,r_s/\Sigma_\mathrm{cr}$ with $\Sigma_\mathrm{cr}$ the critical surface density, and
 \begin{equation}
 \mathcal{F}(x)=\left\{\begin{array}{ll}{\frac{1}{\sqrt{x^{2}-1}} \tan ^{-1} \sqrt{x^{2}-1}} & {(x>1)} \\ {\frac{1}{\sqrt{1-x^{2}}} \tanh ^{-1} \sqrt{1-x^{2}}} & {(x<1)} \\ {1} & {(x=1).}\end{array}\right.
 \label{eq:Fx}
@@ -190,11 +171,28 @@ f_\mathrm{sub} = \frac{\int_{m_\mathrm{200, min}}^{m_\mathrm{200, max}}d\mtwo\,\
 \end{equation}
 For a given $f_\mathrm{sub}$, $\beta$ and host halo mass $M_\mathrm{200,host}$, this can be used to determine $\alpha$ in Eq.~\ref{eq:shmf}. The linear scaling of the subhalo mass function with the host halo mass $\Mtwo$ in Eq.~\ref{eq:shmf} is additionally described in~\citet{2016MNRAS.457.1208H,2017MNRAS.469.1997D}. In our fiducial setups, we take the minimum mass $m_\mathrm{200, min} = 10^7\,\Msun$ and $m_\mathrm{200, min} = 0.01\,\,M_\mathrm{200,host}$~\citep{2017MNRAS.469.1997D,2018PhRvD..97l3002H}, and corresponding fiducial substructure fraction in this range of 5\%, roughly consistent with~\citet{2018PhRvD..97l3002H,2019arXiv190504182H,2002ApJ...572...25D} within our considered mass range.
 
-With all parameters of the subhalo mass function specified, the total number $n_\mathrm{tot}$ of subhalos expected within the virial radius $\Rtwo$ of the host halo can be inferred as $\int_{m_\mathrm{200, min}}^{m_\mathrm{200, max}}d\mtwo\,\frac{dn}{d\mtwo}$. Strong lensing probes a region much smaller this scale --- the typical Einstein radii for the host deflector are much smaller than the virial radius of the host dark matter halos. In order to obtain the expected number of subhalos within the lensing observations region of interest, we scale the total number of subhalos obtained from the above procedure by the ratio of projected mass within our region of interest $\theta_\textrm{ROI}$ and the host halo mass $\Mtwo$ as follows. We assume the subhalos to be distributed in number density following the host NFW dark matter profile. In this case, the NFW enclosed mass function is $M_\mathrm{enc}(x) = \Mtwo(\ln(x/2) + \mathcal{F}(x))$~\citep{2001astro.ph..2341K}, where $x$ is the angular radius in units of the virial radius, $x\equiv \theta/\theta_{200}$ and $\mathcal{F}$ is given by Eq.~\ref{eq:Fx} above. The number of subhalos within our ROI is thus obtained as $n_\mathrm{ROI} = n_\mathrm{tot} (\ln(x_\mathrm{ROI}/2) + \mathcal{F}(x_\mathrm{ROI}))$. We conservatively take the lensing ROI to enclose a region of angular size twice the Einstein radius of the host halo, $\theta_\mathrm{ROI} = 2\theta_E$.
+With all parameters of the subhalo mass function specified, the total number $n_\mathrm{tot}$ of subhalos expected within the virial radius $\Rtwo$ of the host halo can be inferred as $\int_{m_\mathrm{200, min}}^{m_\mathrm{200, max}}d\mtwo\,\frac{dn}{d\mtwo}$. Strong lensing probes a region much smaller this scale --- the typical Einstein radii for the host deflector are much smaller than the virial radius of the host dark matter halos. In order to obtain the expected number of subhalos within the lensing observations region of interest, we scale the total number of subhalos obtained from the above procedure by the ratio of projected mass within our region of interest $\theta_\textrm{ROI}$ and the host halo mass $\Mtwo$ as follows. We assume the subhalos to be distributed in number density following the host NFW dark matter profile. In this case, the NFW enclosed mass function is $M_\mathrm{enc}(x) = \Mtwo\left[\ln(x/2) + \mathcal{F}(x)\right]$~\citep{2001astro.ph..2341K}, where $x$ is the angular radius in units of the virial radius, $x\equiv \theta/\theta_s$ and $\mathcal{F}(x)$ is given by Eq.~\ref{eq:Fx} above. The number of subhalos within our ROI is thus obtained as $n_\mathrm{ROI} = n_\mathrm{tot}\left[\ln(x_\mathrm{ROI}/2) + \mathcal{F}(x_\mathrm{ROI})\right]$. We conservatively take the lensing ROI to enclose a region of angular size twice the Einstein radius of the host halo, $\theta_\mathrm{ROI} = 2\cdot\theta_E$.
 
 Since strong lensing probes the line-of-sight distribution of subhalos within the host, their projected spatial distribution is approximately uniform within the lensing ROI~\citep{2017MNRAS.469.1997D}. We thus distribute subhalos uniformly within our ROI. The density profile of subhalos is assumed to be NFW and given by Eq.~\ref{eq:rhoNFW}, with associated lensing properties as described and the concentration inferred from the relation modeled in~\citet{2014MNRAS.442.2271S}.
 
 We finally emphasize that we do not intent to capture all of the intricacies of the subhalo distribution, such as the effects of baryonic physics, tidal distruption of subhalos in proximity to the center of the host and redshift evolution of host as well as substructure properties. Although our description can be extended to take these into account, their precise characterization and effect is still subject to large uncertainties, and our simple model above captures the essential physics for demonstration purposes.
+
+\subsection{Background source}
+
+We model the emission from background source galaxies using a S\'{e}rsic profile, with the surface brightness given by
+\begin{equation}
+f_\mathrm{src}(\theta_r)=f_{e} \exp \left\{-b_{n}\left[\left(\frac{\theta_r}{\theta_{r,e}}\right)^{1 / n}-1\right]\right\},
+\end{equation}
+where $\theta_{r,e}$ is the effective circular half-light radius, $n$ is the S\'{e}rsic index, and $b_n$ is a factor depending on $n$ that ensures that $\theta_{r,e}$ contains half the total intensity from the source galaxy, given by~\citep{1999A&A...352..447C}
+\begin{align}
+b_n \approx 2 n &- \frac{1}{3} + \frac{4}{405 n} + \frac{46}{25515 n^2} \nonumber \\ &+ \frac{131}{1148175 n^3} - \frac{2194697}{30690717750 n^4}. \nonumber
+\end{align}
+
+We assume $n=1$ for the source galaxies, corresponding to a flattened exponential profile and consistent with expectation for blue-type galaxies at the relevant redshifts. $f_{e}$ encodes the flux at half-light radius, which can be mapped onto the total flux (or magnitude) associated with a given galaxy.
+
+The total unlensed magnitude $M$ (in a given band) of a galaxy can be mapped on to $f_{e}$ as follows. For a detector with zero-point magnitude $M_0$, which specifies the magnitude of a source giving 1 count\,s$^{-1}$ in expectation, by definition the total counts are given by $S_\mathrm{tot}=10^{0.4(M-M_0)}$. Requiring the half-light radius to contain half the expected counts, for $n=1$ we have the relation $f_{e} \approx 0.526\,t_\mathrm{exp}S_\mathrm{tot} /(2\pi \theta_{r,e}^2)$ in counts\,arcsec$^{-2}$, where $t_\mathrm{exp}$ is the exposure length.
+
+Treatment of the other S\'{e}rsic parameters, in particular the total emission and half-light radius, in the context of population studies is described in Secs.~\ref{sec:observations} and~\ref{sec:populations} below.
 
 \subsection{Observational considerations}
 \label{sec:observations}
