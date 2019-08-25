@@ -1,7 +1,7 @@
 @comment{%% This BibTeX bibliography file was created using BibDesk.
 %% http://bibdesk.sourceforge.net/
 
-%% Created for Siddharth Mishra-Sharma at 2019-08-13 10:38:59 -0400 
+%% Created for Siddharth Mishra-Sharma at 2019-08-13 10:38:59 -0400
 
 
 %% Saved with string encoding Unicode (UTF-8)}
@@ -1011,6 +1011,15 @@
  year = {1983}
 }
 
+@book{1992grle.book.....S,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/1992grle.book.....S},
+ author = {{Schneider}, Peter and {Ehlers}, J{\"u}rgen and {Falco}, Emilio E.},
+ doi = {10.1007/978-3-662-03758-4},
+ title = {{Gravitational Lenses}},
+ year = {1992}
+}
+
 @article{1992MNRAS.256P..43E,
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/1992MNRAS.256P..43E},
@@ -1717,3 +1726,132 @@ interfaces and operating systems.},
  year = {2007}
 }
 
+
+@article{Hermans:2019ioj,
+      author         = "Hermans, Joeri and Begy, Volodimir and Louppe, Gilles",
+      title          = "{Likelihood-free MCMC with Approximate Likelihood
+                        Ratios}",
+      year           = "2019",
+      eprint         = "1903.04057",
+      archivePrefix  = "arXiv",
+      primaryClass   = "stat.ML",
+      SLACcitation   = "%%CITATION = ARXIV:1903.04057;%%"
+}
+
+@article{Brehmer:2019xox,
+      author         = "Brehmer, Johann and Kling, Felix and Espejo, Irina and
+                        Cranmer, Kyle",
+      title          = "{MadMiner: Machine learning-based inference for particle
+                        physics}",
+      year           = "2019",
+      eprint         = "1907.10621",
+      archivePrefix  = "arXiv",
+      primaryClass   = "hep-ph",
+      SLACcitation   = "%%CITATION = ARXIV:1907.10621;%%"
+}
+
+@article{Stoye:2018ovl,
+      author         = "Stoye, Markus and Brehmer, Johann and Louppe, Gilles and
+                        Pavez, Juan and Cranmer, Kyle",
+      title          = "{Likelihood-free inference with an improved cross-entropy
+                        estimator}",
+      year           = "2018",
+      eprint         = "1808.00973",
+      archivePrefix  = "arXiv",
+      primaryClass   = "stat.ML",
+      SLACcitation   = "%%CITATION = ARXIV:1808.00973;%%"
+}
+
+@inproceedings{he2016deep,
+  title={Deep residual learning for image recognition},
+  author={He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},
+  booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
+  pages={770--778},
+  year={2016}
+}
+
+@ARTICLE{2014arXiv1412.6980K,
+       author = {{Kingma}, Diederik P. and {Ba}, Jimmy},
+        title = "{Adam: A Method for Stochastic Optimization}",
+      journal = {arXiv e-prints},
+     keywords = {Computer Science - Machine Learning},
+         year = "2014",
+        month = "Dec",
+          eid = {arXiv:1412.6980},
+        pages = {arXiv:1412.6980},
+archivePrefix = {arXiv},
+       eprint = {1412.6980},
+ primaryClass = {cs.LG},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2014arXiv1412.6980K},
+      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+@article{Cranmer:2015bka,
+      author         = "Cranmer, Kyle and Pavez, Juan and Louppe, Gilles",
+      title          = "{Approximating Likelihood Ratios with Calibrated
+                        Discriminative  Classifiers}",
+      year           = "2015",
+      eprint         = "1506.02169",
+      archivePrefix  = "arXiv",
+      primaryClass   = "stat.AP",
+      SLACcitation   = "%%CITATION = ARXIV:1506.02169;%%"
+}
+
+
+@article{Cowan:2010js,
+      author         = "Cowan, Glen and Cranmer, Kyle and Gross, Eilam and
+                        Vitells, Ofer",
+      title          = "{Asymptotic formulae for likelihood-based tests of new
+                        physics}",
+      journal        = "Eur. Phys. J.",
+      volume         = "C71",
+      year           = "2011",
+      pages          = "1554",
+      doi            = "10.1140/epjc/s10052-011-1554-0,
+                        10.1140/epjc/s10052-013-2501-z",
+      note           = "[Erratum: Eur.\ Phys.\ J.\ C73, p.\ 2501, 2013]",
+      eprint         = "1007.1727",
+      archivePrefix  = "arXiv",
+      primaryClass   = "physics.data-an",
+      SLACcitation   = "%%CITATION = ARXIV:1007.1727;%%"
+}
+
+@article{Wilks:1938dza,
+      author         = "Wilks, S. S.",
+      title          = "{The Large-Sample Distribution of the Likelihood Ratio
+                        for Testing Composite Hypotheses}",
+      journal        = "Annals Math. Statist.",
+      volume         = "9",
+      year           = "1938",
+      number         = "1",
+      pages          = "60-62",
+      doi            = "10.1214/aoms/1177732360",
+      SLACcitation   = "%%CITATION = AASTA,9,60;%%"
+}
+
+@article{Wald,
+ ISSN = {00029947},
+ author = {Abraham Wald},
+ journal = {Transactions of the American Mathematical Society},
+ number = {3},
+ pages = {426-482},
+ publisher = {American Mathematical Society},
+ title = {Tests of Statistical Hypotheses Concerning Several Parameters When the Number of Observations is Large},
+ volume = {54},
+ year = {1943}
+}
+@article{Baldi:2016fzo,
+      author         = "Baldi, Pierre and Cranmer, Kyle and Faucett, Taylor and
+                        Sadowski, Peter and Whiteson, Daniel",
+      title          = "{Parameterized neural networks for high-energy physics}",
+      journal        = "Eur. Phys. J.",
+      volume         = "C76",
+      year           = "2016",
+      number         = "5",
+      pages          = "235",
+      doi            = "10.1140/epjc/s10052-016-4099-4",
+      eprint         = "1601.07913",
+      archivePrefix  = "arXiv",
+      primaryClass   = "hep-ex",
+      SLACcitation   = "%%CITATION = ARXIV:1601.07913;%%"
+}

@@ -114,10 +114,10 @@
 {Astropy Collaboration}, {Price-Whelan}, A.~M., {Sip{\H o}cz}, B.~M., {et~al.}
   2018, \aj, 156, 123, \doarXiv{1801.02634}, \dodoi{10.3847/1538-3881/aabc4f}
 
-\bibitem[{Baldi {et~al.}(2016)Baldi, Cranmer, Faucett, Sadowski, \&
-  Whiteson}]{Baldi:2016fzo}
-Baldi, P., Cranmer, K., Faucett, T., Sadowski, P., \& Whiteson, D. 2016, Eur.
-  Phys. J., C76, 235, \doarXiv{1601.07913},
+\bibitem[{{Baldi} {et~al.}(2016){Baldi}, {Cranmer}, {Faucett}, {Sadowski}, \&
+  {Whiteson}}]{Baldi:2016fzo}
+{Baldi}, P., {Cranmer}, K., {Faucett}, T., {Sadowski}, P., \& {Whiteson}, D.
+  2016, European Physical Journal C, 76, 235, \doarXiv{1601.07913},
   \dodoi{10.1140/epjc/s10052-016-4099-4}
 
 \bibitem[{{Bechtol} {et~al.}(2015){Bechtol}, {Drlica-Wagner}, {Balbinot},
@@ -180,9 +180,10 @@ Baldi, P., Cranmer, K., Faucett, T., Sadowski, P., \& Whiteson, D. 2016, Eur.
 ---. 2018{\natexlab{b}}, \prd, 98, 052004, \doarXiv{1805.00020},
   \dodoi{10.1103/PhysRevD.98.052004}
 
-\bibitem[{Brehmer {et~al.}(2019)Brehmer, Kling, Espejo, \&
-  Cranmer}]{Brehmer:2019xox}
-Brehmer, J., Kling, F., Espejo, I., \& Cranmer, K. 2019, \doarXiv{1907.10621}
+\bibitem[{{Brehmer} {et~al.}(2019){Brehmer}, {Kling}, {Espejo}, \&
+  {Cranmer}}]{Brehmer:2019xox}
+{Brehmer}, J., {Kling}, F., {Espejo}, I., \& {Cranmer}, K. 2019, arXiv
+  e-prints, arXiv:1907.10621, \doarXiv{1907.10621}
 
 \bibitem[{{Brehmer} {et~al.}(2018{\natexlab{c}}){Brehmer}, {Louppe}, {Pavez},
   \& {Cranmer}}]{1805.12244}
@@ -234,13 +235,16 @@ Brehmer, J., Kling, F., Espejo, I., \& Cranmer, K. 2019, \doarXiv{1907.10621}
 {Collett}, T.~E. 2015, \apj, 811, 20, \doarXiv{1507.02657},
   \dodoi{10.1088/0004-637X/811/1/20}
 
-\bibitem[{Cowan {et~al.}(2011)Cowan, Cranmer, Gross, \& Vitells}]{Cowan:2010js}
-Cowan, G., Cranmer, K., Gross, E., \& Vitells, O. 2011, Eur. Phys. J., C71,
-  1554, \doarXiv{1007.1727}, \dodoi{10.1140/epjc/s10052-011-1554-0,
-  10.1140/epjc/s10052-013-2501-z}
+\bibitem[{{Cowan} {et~al.}(2011){Cowan}, {Cranmer}, {Gross}, \&
+  {Vitells}}]{Cowan:2010js}
+{Cowan}, G., {Cranmer}, K., {Gross}, E., \& {Vitells}, O. 2011, European
+  Physical Journal C, 71, 1554, \doarXiv{1007.1727},
+  \dodoi{10.1140/epjc/s10052-011-1554-0}
 
-\bibitem[{Cranmer {et~al.}(2015)Cranmer, Pavez, \& Louppe}]{Cranmer:2015bka}
-Cranmer, K., Pavez, J., \& Louppe, G. 2015, \doarXiv{1506.02169}
+\bibitem[{{Cranmer} {et~al.}(2015){Cranmer}, {Pavez}, \&
+  {Louppe}}]{Cranmer:2015bka}
+{Cranmer}, K., {Pavez}, J., \& {Louppe}, G. 2015, arXiv e-prints,
+  arXiv:1506.02169, \doarXiv{1506.02169}
 
 \bibitem[{{Cui} {et~al.}(2017){Cui}, {Abdukerim}, {Chen}, {Chen}, {Chen},
   {Dong}, {Fang}, {Fu}, {Giboni}, {Giuliani}, {Gu}, {Gu}, {Guo}, {Guo}, {Han},
@@ -351,8 +355,10 @@ Cranmer, K., Pavez, J., \& Louppe, G. 2015, \doarXiv{1506.02169}
 He, K., Zhang, X., Ren, S., \& Sun, J. 2016, in Proceedings of the IEEE
   conference on computer vision and pattern recognition, 770--778
 
-\bibitem[{Hermans {et~al.}(2019)Hermans, Begy, \& Louppe}]{Hermans:2019ioj}
-Hermans, J., Begy, V., \& Louppe, G. 2019, \doarXiv{1903.04057}
+\bibitem[{{Hermans} {et~al.}(2019){Hermans}, {Begy}, \&
+  {Louppe}}]{Hermans:2019ioj}
+{Hermans}, J., {Begy}, V., \& {Louppe}, G. 2019, arXiv e-prints,
+  arXiv:1903.04057, \doarXiv{1903.04057}
 
 \bibitem[{{Hezaveh} {et~al.}(2016{\natexlab{a}}){Hezaveh}, {Dalal}, {Holder},
   {Kisner}, {Kuhlen}, \& {Perreault Levasseur}}]{1403.2720}
@@ -435,6 +441,10 @@ Jones, E., Oliphant, T., Peterson, P., {et~al.} 2001--, {SciPy}: Open source
 {LSST Science Collaboration}, {Abell}, P.~A., {Allison}, J., {et~al.} 2009,
   arXiv e-prints, arXiv:0912.0201, \doarXiv{0912.0201}
 
+\bibitem[{{Madau} {et~al.}(2008){Madau}, {Diemand}, \& {Kuhlen}}]{0802.2265}
+{Madau}, P., {Diemand}, J., \& {Kuhlen}, M. 2008, The Astrophysical Journal,
+  679, 1260, \doarXiv{0802.2265}, \dodoi{10.1086/587545}
+
 \bibitem[{{Navarro} {et~al.}(1996){Navarro}, {Frenk}, \&
   {White}}]{1996ApJ...462..563N}
 {Navarro}, J.~F., {Frenk}, C.~S., \& {White}, S.~D.~M. 1996, \apj, 462, 563,
@@ -486,10 +496,16 @@ Paszke, A., Gross, S., Chintala, S., {et~al.} 2017, in NIPS-W
 {Sirunyan}, A.~M., {Tumasyan}, A., {Adam}, W., {et~al.} 2017, Physics Letters
   B, 769, 520, \doarXiv{1611.03568}, \dodoi{10.1016/j.physletb.2017.02.012}
 
-\bibitem[{Stoye {et~al.}(2018)Stoye, Brehmer, Louppe, Pavez, \&
-  Cranmer}]{Stoye:2018ovl}
-Stoye, M., Brehmer, J., Louppe, G., Pavez, J., \& Cranmer, K. 2018,
-  \doarXiv{1808.00973}
+\bibitem[{{Springel} {et~al.}(2008){Springel}, {Wang}, {Vogelsberger},
+  {Ludlow}, {Jenkins}, {Helmi}, {Navarro}, {Frenk}, \& {White}}]{0809.0898}
+{Springel}, V., {Wang}, J., {Vogelsberger}, M., {et~al.} 2008, Monthly Notices
+  of the Royal Astronomical Society, 391, 1685, \doarXiv{0809.0898},
+  \dodoi{10.1111/j.1365-2966.2008.14066.x}
+
+\bibitem[{{Stoye} {et~al.}(2018){Stoye}, {Brehmer}, {Louppe}, {Pavez}, \&
+  {Cranmer}}]{Stoye:2018ovl}
+{Stoye}, M., {Brehmer}, J., {Louppe}, G., {Pavez}, J., \& {Cranmer}, K. 2018,
+  arXiv e-prints, arXiv:1808.00973, \doarXiv{1808.00973}
 
 \bibitem[{{van der Walt} {et~al.}(2011){van der Walt}, {Colbert}, \&
   {Varoquaux}}]{numpy:2011}
