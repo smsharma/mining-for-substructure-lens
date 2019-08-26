@@ -227,35 +227,37 @@ We draw the lens redshifts $z_l$ from a log-normal distribution with mean 0.56 a
 Our goal is to infer the subhalo mass function parameters from a catalog of images of observed lenses. In this section we will describe the challenges of this inference problem and our approach of simulation-based inference. For simplicity, we will use a more abstract notation, distinguishing between three sets of quantities in the lensing system:
 %
 \begin{description}
-  \item[Parameters of interest $\theta$] The vector $\theta = (\fsub, \beta)^T$ parameterizes the subhalo mass function given, our goal is to infer their values.
+  \item[Parameters of interest $\stattheta$] The vector $\stattheta = (\fsub, \beta)^T$ parameterizes the subhalo mass function given, our goal is to infer their values.
   %
-  \item[Latent variables $z$] A vector of all other unobservable random variables in the simulator. These include the mass and offset of the host galaxy, the number of subhalos in the region of interest, the position and mass of each subhalo, and the random variables related to the point spread function and Poisson fluctuations.
+  \item[Latent variables $z$] A vector of all other unobservable random variables in the simulator. These include the mass $M_{200}$, position $(\theta_x, \theta_y)$, and redshift $z_{\mathrm{host}}$ of the host galaxy, the number of subhalos in the region of interest $n_\mathrm{ROI}$, the position and mass $m_{200}$ of each subhalo, and the random variables related to the point spread function and Poisson fluctuations.
   %
   \item[Observables $x$] The observed lens images.
 \end{description}
+%
+Unfortunately, the conventions in astrophysics and statistics clash a little and can cause confusion: note the distinction between the parameters $\vartheta$ from the angular positions $\theta_x$, $\theta_y$ and the Einstein radius $\theta_E$; between the latent variables $z$ and the redshifts $z_\mathrm{source}$, $z_\mathrm{host}$; and between the observed image $x$ and the argument of the NFW profile $M_\mathrm{enc}(x)$ used in the last section.
 
-As described in the previous section, we have implemented a simulator for the lensing process in the ``forward'' direction: for given parameters $\theta$, the simulator samples latent variables $z$ and finally observed images $x \sim p(x|\theta)$. Here $p(x|\theta)$ is the probability density or likelihood function of observing a lens image $x$ given parameters $\theta$. It can be schematically written as
+As described in the previous section, we have implemented a simulator for the lensing process in the ``forward'' direction: for given parameters $\stattheta$, the simulator samples latent variables $z$ and finally observed images $x \sim p(x|\stattheta)$. Here $p(x|\stattheta)$ is the probability density or likelihood function of observing a lens image $x$ given parameters $\stattheta$. It can be schematically written as
 %
 \begin{equation}
- p(x|\theta) = \int\!\diff z \; p(x, z|\theta) \,,
+ p(x|\stattheta) = \int\!\diff z \; p(x, z|\stattheta) \,,
  \label{eq:likelihood_latent}
 \end{equation}
 %
-where we integrate over the latent variables $z$ and $p(x, z|\theta)$ is the joint likelihood of observables and latent variables:
+where we integrate over the latent variables $z$ and $p(x, z|\stattheta)$ is the joint likelihood of observables and latent variables:
 %
 \begin{multline}
-  p(x,z | \theta)
-  = p_{\mathrm{host}}(z_{\mathrm{host}}) \; \pois(n | \bar{n}_{\mathrm{ROI}}(\theta)) \\
-   \prod_i^{n} \left[ p_m \left( m_{200, i} \middle| \theta \right) \; \uniform \left( r_i \right) \right] \\
-  \times p_\mathrm{obs} \left( x \middle| f(z_{\mathrm{host}},\{(m_{200, i},r_i)\}) \right) \,.
+  p(x,z | \stattheta)
+  = p_{\mathrm{host}}(M_{200}, \theta_x, \theta_y, z_\mathrm{host}) \; \pois(n | \bar{n}_{\mathrm{ROI}}(\stattheta)) \\
+   \prod_i^{n} \left[ p_m \left( m_{200, i} \middle| \stattheta \right) \; \uniform \left( r_i \right) \right] \\
+  \times p_\mathrm{obs} \left( x \middle| f(M_{200}, \theta_x, \theta_y, z_\mathrm{host}; \{(m_{200, i},r_i)\}) \right) \,.
   \label{eq:joint_likelihood}
 \end{multline}
 %
-In this schematic form $p_{\mathrm{host}}$ summarizes the distribution of the host halo parameters $z_{\mathrm{host}}$ such as its mass, offset and redshift; $n$ is the actual number of subhalos in the region of interest,  $\bar{n}_{\mathrm{ROI}}(\theta)$ is the mean number of subhalos in the region of interest as a function of the parameters $\theta = (\fsub, \beta)^T$; $m_{200, i}$ and $r_i$ are the subhalo masses and positions; $p_m(m|\theta) = 1/n \, \diff n / \diff m_{200}$ is the normalized subhalo mass function given in Eq.~\eqref{eq:shmf}; and in the last line $p_\mathrm{obs}$ is the probability of observing an image $x$ based on the true lensed image $f(z_{\mathrm{host}},\{(m_{200, i},r_i)\})$ due to the point spread function and Poisson fluctuations.
+In this schematic form $p_{\mathrm{host}}$ summarizes the distribution of the host halo parameters $z_{\mathrm{host}}$ such as its mass, offset and redshift; $n$ is the actual number of subhalos in the region of interest,  $\bar{n}_{\mathrm{ROI}}(\stattheta)$ is the mean number of subhalos in the region of interest as a function of the parameters $\stattheta = (\fsub, \beta)^T$; $m_{200, i}$ and $r_i$ are the subhalo masses and positions; $p_m(m|\stattheta) = 1/n \, \diff n / \diff m_{200}$ is the normalized subhalo mass function given in Eq.~\eqref{eq:shmf}; and in the last line $p_\mathrm{obs}$ is the probability of observing an image $x$ based on the true lensed image $f(z_{\mathrm{host}},\{(m_{200, i},r_i)\})$ due to the point spread function and Poisson fluctuations.
 
-Most frequentist and Bayesian inference methods rely on evaluating the likelihood function $p(x|\theta)$. Unfortunately, even in our somewhat simplified simulator, each run of the simulation easily involves more than a thousand latent variables, and the integral over this enormeous space clearly cannot be computed explicitly. The likelihood function $p(x | \theta)$ is thus intractable, providing a major challenge for both frequentist and Bayesian inference. Similarly, inference with Markov Chain Monte Carlo (MCMC) methods based directly on the joint likelihood function $p(x,z | \theta)$ requires unfeasibly many simulations before converging because the latent space is so large. Systems defined through a forward simulator that does not admit a tractable likelihood are known as ``implicit models'', inference techniques for this case as ``likelihood-free inference''.
+Most frequentist and Bayesian inference methods rely on evaluating the likelihood function $p(x|\stattheta)$. Unfortunately, even in our somewhat simplified simulator, each run of the simulation easily involves more than a thousand latent variables, and the integral over this enormeous space clearly cannot be computed explicitly. The likelihood function $p(x | \stattheta)$ is thus intractable, providing a major challenge for both frequentist and Bayesian inference. Similarly, inference with Markov Chain Monte Carlo (MCMC) methods based directly on the joint likelihood function $p(x,z | \stattheta)$ requires unfeasibly many simulations before converging because the latent space is so large. Systems defined through a forward simulator that does not admit a tractable likelihood are known as ``implicit models'', inference techniques for this case as ``likelihood-free inference''.
 
-One way to tackle this issue is to reduce the high-dimensional data $x$ to lower-dimensional summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724}. The likelihood $p(v|\theta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
+One way to tackle this issue is to reduce the high-dimensional data $x$ to lower-dimensional summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724}. The likelihood $p(v|\stattheta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
 
 Instead, we follow an approach in which we approximate the likelihood function with a neural network, which has to be trained only once and can be evaluated efficiently for any parameter point and observed image. We will show how this turns the intractable integral in Eq.~\eqref{eq:likelihood_latent} into a tractable minimization problem and amortizes this marginalization. This method scales well to the expected large number of lenses expected in upcoming surveys. \JB{Add references} In particular, we use a new simulation-based inference technique introduced in \cite{1805.00013,1805.00020,1805.12244} that consists of four steps:
 %
@@ -272,24 +274,24 @@ In the remainder of this section, we will explain these four steps in detail.
 \subsection{Extracting additional information from the simulator}
 \label{sec:lfi-gold}
 
-In a first step, we generate training data by simulating a large number of observed lenses. For each lens, we first draw two parameter points from a proposal distribution, $\theta, \theta' \sim \pi(\theta)$. This proposal distribution should cover the region of interest in the parameter space, but does not have to be identical to the prior in a Bayesian inference setting, which allows us to be agnostic about the inference setup at this stage.
+In a first step, we generate training data by simulating a large number of observed lenses. For each lens, we first draw two parameter points from a proposal distribution, $\stattheta, \stattheta' \sim \pi(\stattheta)$. This proposal distribution should cover the region of interest in the parameter space, but does not have to be identical to the prior in a Bayesian inference setting, which allows us to be agnostic about the inference setup at this stage.
 
-Next, the simulator is run for the parameter point $\theta$, generating an observed image $x \sim p(x|\theta)$. In addition, we calculate and save two quantities: the joint likelihood ratio
+Next, the simulator is run for the parameter point $\stattheta$, generating an observed image $x \sim p(x|\stattheta)$. In addition, we calculate and save two quantities: the joint likelihood ratio
 %
 \begin{equation}
-  r(x,z | \theta) = \frac {p(x,z | \theta)} {p_\mathrm{ref}(x,z)}
-  \equiv \frac {p(x,z | \theta)} {\int\!\diff\tilde{\theta} \, \pi(\tilde{\theta}) \, p(x,z | \tilde{\theta}) }
+  r(x,z | \stattheta) = \frac {p(x,z | \stattheta)} {p_\mathrm{ref}(x,z)}
+  \equiv \frac {p(x,z | \stattheta)} {\int\!\diff\tilde{\stattheta} \, \pi(\tilde{\stattheta}) \, p(x,z | \tilde{\stattheta}) }
 \end{equation}
 %
 and the joint score
 %
 \begin{equation}
-  t(x, z | \theta) = \nabla_{\theta} \log p(x,z | \theta) \,.
+  t(x, z | \stattheta) = \nabla_{\stattheta} \log p(x,z | \stattheta) \,.
 \end{equation}
 %
-The joint likelihood ratio quantifies how much more or less likely a particular simulation chain including the latent variables $z$ is for the parameter point $\theta$ compared to a reference distribution. For this we choose the marginal distribution of latent variables and observables corresponding to the proposal distribution $\pi(\theta)$, which has support for every potential outcome of the simulation~\citep{Hermans:2019ioj}. The joint score is the gradient of the joint log likelihood in model parameter space and quantifies if a particular simulation chain becomes more or less likely with infinitesimal changes of the parameters of interest. Both quantities depend on the latent variables of the simulation chain.
+The joint likelihood ratio quantifies how much more or less likely a particular simulation chain including the latent variables $z$ is for the parameter point $\stattheta$ compared to a reference distribution. For this we choose the marginal distribution of latent variables and observables corresponding to the proposal distribution $\pi(\stattheta)$, which has support for every potential outcome of the simulation~\citep{Hermans:2019ioj}. The joint score is the gradient of the joint log likelihood in model parameter space and quantifies if a particular simulation chain becomes more or less likely with infinitesimal changes of the parameters of interest. Both quantities depend on the latent variables of the simulation chain.
 
-We compute the joint likelihood ratio and joint score with Eq.~\eqref{eq:joint_likelihood}. Conveniently, many steps in the simulator do not explicitly depend on the parameters of interest $\theta$ and cancel in the joint likelihood ratio and joint score, and the remaining terms can be evaluated with little overhead to the simulation code. We also calculate the joint likelihood ratio $r(x,z|\theta')$ and the joint score $t(x,z|\theta')$ for the second parameter point $\theta'$ and store the parameter points $\theta$ and $\theta'$, the simulated image $x$, as well as the joint likelihood ratios and joint scores.
+We compute the joint likelihood ratio and joint score with Eq.~\eqref{eq:joint_likelihood}. Conveniently, many steps in the simulator do not explicitly depend on the parameters of interest $\stattheta$ and cancel in the joint likelihood ratio and joint score, and the remaining terms can be evaluated with little overhead to the simulation code. We also calculate the joint likelihood ratio $r(x,z|\stattheta')$ and the joint score $t(x,z|\stattheta')$ for the second parameter point $\stattheta'$ and store the parameter points $\stattheta$ and $\stattheta'$, the simulated image $x$, as well as the joint likelihood ratios and joint scores.
 
 Our training samples consist of $10^6$ images, with parameter points chosen from a uniform range in $0.001 < \fsub < 0.2$ and $-1.5 < \beta < -0.5$.
 
@@ -297,52 +299,52 @@ Our training samples consist of $10^6$ images, with parameter points chosen from
 \subsection{Machine learning}
 \label{sec:lfi-ml}
 
-How are the joint likelihood ratio and joint score, which are conditional on the latent variables $z$, useful to learn about the likelihood function $p(x|\theta)$, which only depends on the observed lens images and the parameters of interest? Consider the functional
+How are the joint likelihood ratio and joint score, which are conditional on the latent variables $z$, useful to learn about the likelihood function $p(x|\stattheta)$, which only depends on the observed lens images and the parameters of interest? Consider the functional
 %
 \begin{multline}
-  L[g(x, \theta)] = \int\!\diff\theta\! \int\!\diff\theta'\! \int\!\diff x\! \int\!\diff z \; \pi(\theta) \; \pi(\theta') \; p(x,z|\theta) \\
+  L[g(x, \stattheta)] = \int\!\diff\stattheta\! \int\!\diff\stattheta'\! \int\!\diff x\! \int\!\diff z \; \pi(\stattheta) \; \pi(\stattheta') \; p(x,z|\stattheta) \\
     \times \Biggl[
     - s \log g  - (1 - s) \log (1 - g) - s' \log g'  - (1 - s') \log (1 - g') \\
-    + \alpha \Bigl\{ \left| t - \nabla_\theta \log \tfrac{1 - g}g \Bigr|_{\theta}  \right|^2
-    + \left| t' - \nabla_\theta \log \tfrac{1 - g}g \Bigr|_{\theta'} \right|^2 \Bigr\}
+    + \alpha \Bigl\{ \left| t - \nabla_\stattheta \log \tfrac{1 - g}g \Bigr|_{\stattheta}  \right|^2
+    + \left| t' - \nabla_\stattheta \log \tfrac{1 - g}g \Bigr|_{\stattheta'} \right|^2 \Bigr\}
    \Biggr]  \,,
    \label{eq:alices_loss}
 \end{multline}
 %
-where we have abbreviated $s \equiv s(x,z|\theta) \equiv 1 / (1 + r(x,z|\theta))$,  $s' \equiv s(x,z|\theta') \equiv 1 / (1 + r(x,z|\theta'))$, $g \equiv g(x, \theta)$, $g' \equiv g(x, \theta')$, $t = t(x,z | \theta)$, and $t' \equiv t(x,z | \theta')$ for readability. Note that the test function $g(x, \theta)$ is a function of $x$ and $\theta$ only. The first two lines are an improved version of the cross-entropy loss, in which the joint likelihood ratio is used to decrease the variance compared to the canonical cross-entropy~\cite{Stoye:2018ovl}. The last line adds gradient information, weighted by a hyperparameter $\alpha$.
+where we have abbreviated $s \equiv s(x,z|\stattheta) \equiv 1 / (1 + r(x,z|\stattheta))$,  $s' \equiv s(x,z|\stattheta') \equiv 1 / (1 + r(x,z|\stattheta'))$, $g \equiv g(x, \stattheta)$, $g' \equiv g(x, \stattheta')$, $t = t(x,z | \stattheta)$, and $t' \equiv t(x,z | \stattheta')$ for readability. Note that the test function $g(x, \stattheta)$ is a function of $x$ and $\stattheta$ only. The first two lines are an improved version of the cross-entropy loss, in which the joint likelihood ratio is used to decrease the variance compared to the canonical cross-entropy~\cite{Stoye:2018ovl}. The last line adds gradient information, weighted by a hyperparameter $\alpha$.
 
 As shown in \cite{Stoye:2018ovl}, this ``ALICES'' loss functional is minimized by the function
 %
 \begin{equation}
-  g^*(x, \theta) \equiv \argmin_g L[g(x, \theta)] = \frac 1 {1 + r(x|\theta)} \,,
+  g^*(x, \stattheta) \equiv \argmin_g L[g(x, \stattheta)] = \frac 1 {1 + r(x|\stattheta)} \,,
   \label{eq:loss_minimum}
 \end{equation}
 %
 one-to-one with the likelihood ratio function
 %
 \begin{equation}
-  r(x|\theta)
-  \equiv \frac {p(x|\theta)} {p_\mathrm{ref}(x)}
-  = \frac {1 - g^*(x, \theta)}{g^*(x, \theta)} \,.
+  r(x|\stattheta)
+  \equiv \frac {p(x|\stattheta)} {p_\mathrm{ref}(x)}
+  = \frac {1 - g^*(x, \stattheta)}{g^*(x, \stattheta)} \,.
 \end{equation}
 %
-We demonstrate the minimization of this functional explicitly in Appendix~\ref{app:variation}. This means that if we can construct the functional in Eq.~\eqref{eq:alices_loss} with the joint likelihood ratio and joint score extracted from the simulator and numerically minimize it, the resulting function lets us reconstruct the (otherwise intractable) likelihood ratio function $r(x|\theta)$! Essentially, this step lets us integrate out the dependence on latent variables $z$ from the joint likelihood ratio and score, but in a general, functional form that does not depend on a set of observed images.
+We demonstrate the minimization of this functional explicitly in Appendix~\ref{app:variation}. This means that if we can construct the functional in Eq.~\eqref{eq:alices_loss} with the joint likelihood ratio and joint score extracted from the simulator and numerically minimize it, the resulting function lets us reconstruct the (otherwise intractable) likelihood ratio function $r(x|\stattheta)$! Essentially, this step lets us integrate out the dependence on latent variables $z$ from the joint likelihood ratio and score, but in a general, functional form that does not depend on a set of observed images.
 
 This is why extraction of the joint likelihood ratio and joint score has been described with the analogy of ``mining gold'' from the simulator~\citep{1805.12244}: while calculating these quantities may require some effort and changes to the simulator code, through the minimization of a suitable functional they allow us to calculate the otherwise intractable likelihood ratio function.
 
-In practice, we implement this minimization with machine learning. A neural network plays the role of the test function $g(x, \theta)$, the integrals in Eq.~\eqref{eq:alices_loss} are approximated with a sum over training data sampled according to $\pi(\theta) \pi(\theta') p(x,z|\theta)$, and we minimize the loss numerically through a stochastic gradient descent algorithm. The neural network trained in this way provides an estimator $\hat{r}(x|\theta)$ of the likelihood ratio function that is exact in the limit of infinite training samples, sufficient network capacity, and efficient minimization. Note the ``parameterized'' structure of the network, in which a single neural network is trained to estimate the likelihood ratio over all of the parameter space, with the tested parameter point $\theta$ being an input to the network \citep{Cranmer:2015bka, Baldi:2016fzo}. This approach is more efficient than a point-by-point analysis of a grid of parameter points: it allows the network to ``borrow'' information from neighboring parameter points, benefitting from the typically smooth structure of the parameter space.
+In practice, we implement this minimization with machine learning. A neural network plays the role of the test function $g(x, \stattheta)$, the integrals in Eq.~\eqref{eq:alices_loss} are approximated with a sum over training data sampled according to $\pi(\stattheta) \pi(\stattheta') p(x,z|\stattheta)$, and we minimize the loss numerically through a stochastic gradient descent algorithm. The neural network trained in this way provides an estimator $\hat{r}(x|\stattheta)$ of the likelihood ratio function that is exact in the limit of infinite training samples, sufficient network capacity, and efficient minimization. Note the ``parameterized'' structure of the network, in which a single neural network is trained to estimate the likelihood ratio over all of the parameter space, with the tested parameter point $\stattheta$ being an input to the network \citep{Cranmer:2015bka, Baldi:2016fzo}. This approach is more efficient than a point-by-point analysis of a grid of parameter points: it allows the network to ``borrow'' information from neighboring parameter points, benefitting from the typically smooth structure of the parameter space.
 
-Given the image nature of the lensing data, we choose a convolutional network architecture based on the ResNet-18 \citep{he2016deep} implementation in PyTorch~\citep{paszke2017automatic}. The parameters $\theta$ enter as additional inputs in the fully connected layers of the network. Compared to the original ResNet-18 architecture, we add another fully connected layer at the end to ensure that the relation between parameters of interest and image data can be modeled. All inputs are normalized to zero mean and unit variance. We train the networks by minimizing the loss in Eq.~\eqref{eq:alices_loss} with $\alpha = 2 \cdot 10^{-3}$ over 100 epochs with a batch size of 128 using the Adam optimizer~\citep{2014arXiv1412.6980K}, exponentially decaying the learning rate from $3\cdot 10^{-4}$ to $3 \cdot 10^{-6}$ with early stopping. This architecture and hyperparameter configuration performed best during a rough hyperparameter scan, though for this proof-of-concept study we have not performed an exhaustive optimization.
+Given the image nature of the lensing data, we choose a convolutional network architecture based on the ResNet-18 \citep{he2016deep} implementation in PyTorch~\citep{paszke2017automatic}. The parameters $\stattheta$ enter as additional inputs in the fully connected layers of the network. Compared to the original ResNet-18 architecture, we add another fully connected layer at the end to ensure that the relation between parameters of interest and image data can be modeled. All inputs are normalized to zero mean and unit variance. We train the networks by minimizing the loss in Eq.~\eqref{eq:alices_loss} with $\alpha = 2 \cdot 10^{-3}$ over 100 epochs with a batch size of 128 using the Adam optimizer~\citep{2014arXiv1412.6980K}, exponentially decaying the learning rate from $3\cdot 10^{-4}$ to $3 \cdot 10^{-6}$ with early stopping. This architecture and hyperparameter configuration performed best during a rough hyperparameter scan, though for this proof-of-concept study we have not performed an exhaustive optimization.
 
 
 \subsection{Calibration}
 \label{sec:lfi-calibration}
 
-In reality, the neural network might not learn the likelihood ratio function $r(x|\theta)$ exactly, for instance due to limited training data or inefficient training. To make sure that our inference results are correct even in this case, we calibrate the network output with histograms~\citep{Cranmer:2015bka, 1805.00020}. For every parameter point $\theta$ that we want to test, we simulate a set of images $\{x\} \sim p(x|\theta)$ from this parameter point and calculate the network prediction $\hat{r} \equiv \hat{r}(x|\theta)$ for each image. We also simulate a set of images $\{x\} \sim p_{\mathrm{ref}}(x)$ from the reference model, that is, drawing a new parameter points from $\pi(\theta)$ for each image, and again calculate the network prediction $\hat{r}$ for each of these lenses as well. We then calculate the calibrated likelihood ratio from histograms of the network predictions as
+In reality, the neural network might not learn the likelihood ratio function $r(x|\stattheta)$ exactly, for instance due to limited training data or inefficient training. To make sure that our inference results are correct even in this case, we calibrate the network output with histograms~\citep{Cranmer:2015bka, 1805.00020}. For every parameter point $\stattheta$ that we want to test, we simulate a set of images $\{x\} \sim p(x|\stattheta)$ from this parameter point and calculate the network prediction $\hat{r} \equiv \hat{r}(x|\stattheta)$ for each image. We also simulate a set of images $\{x\} \sim p_{\mathrm{ref}}(x)$ from the reference model, that is, drawing a new parameter points from $\pi(\stattheta)$ for each image, and again calculate the network prediction $\hat{r}$ for each of these lenses as well. We then calculate the calibrated likelihood ratio from histograms of the network predictions as
 %
 \begin{equation}
-  \hat{r}_\mathrm{cal}(x|\theta)
-  = \frac {\hat{p}( \hat{r} | \theta )} {\hat{p}_\mathrm{ref}(\hat{r})}
+  \hat{r}_\mathrm{cal}(x|\stattheta)
+  = \frac {\hat{p}( \hat{r} | \stattheta )} {\hat{p}_\mathrm{ref}(\hat{r})}
 \end{equation}
 %
 where the $\hat{p}(\dots)$ denote probability densities estimated with univariate histograms.
@@ -358,20 +360,20 @@ After a neural network has been trained (and optionally calibrated) to estimate 
 For Bayesian inference, note that we can write Bayes' theorem as
 %
 \begin{align}
-  p(\theta | \{x_i\})
-  &= \frac {p(\theta) \; \prod_i p(x_i | \theta)} {\int\!\diff \tilde{\theta} \, p(\tilde{\theta}) \, \prod_i p(x_i | \tilde{\theta})} \notag \\
-  &= p(\theta) \Biggl[
-    \int\!\diff\tilde{\theta} \, p(\tilde{\theta}) \, \prod_i \frac {p(x_i | \tilde{\theta})}{p(x_i | \theta)}
+  p(\stattheta | \{x_i\})
+  &= \frac {p(\stattheta) \; \prod_i p(x_i | \stattheta)} {\int\!\diff \tilde{\stattheta} \, p(\tilde{\stattheta}) \, \prod_i p(x_i | \tilde{\stattheta})} \notag \\
+  &= p(\stattheta) \Biggl[
+    \int\!\diff\tilde{\stattheta} \, p(\tilde{\stattheta}) \, \prod_i \frac {p(x_i | \tilde{\stattheta})}{p(x_i | \stattheta)}
   \Biggr]^{-1} \notag \\
-  &\approx p(\theta) \Biggl[
-    \int\!\diff\tilde{\theta} \, p(\tilde{\theta}) \, \prod_i \frac {\hat{r}(x_i | \tilde{\theta})}{\hat{r}(x_i | \theta)}
+  &\approx p(\stattheta) \Biggl[
+    \int\!\diff\tilde{\stattheta} \, p(\tilde{\stattheta}) \, \prod_i \frac {\hat{r}(x_i | \tilde{\stattheta})}{\hat{r}(x_i | \stattheta)}
   \Biggr]^{-1} \,,
 \end{align}
 %
-where $\{x_i\}$ is the set of observed lens images and $p(\theta)$ is the prior on the parameters of interest, which may be different from the proposal distribution $\pi(\theta)$ used during the generation of training data. The posterior can thus be directly calculated given an estimator $\hat{r}$, provided that the space of the parameters of interest is low-dimensional enough to calculate the integral, or with MCMC or variational inference techniques otherwise.
+where $\{x_i\}$ is the set of observed lens images and $p(\stattheta)$ is the prior on the parameters of interest, which may be different from the proposal distribution $\pi(\stattheta)$ used during the generation of training data. The posterior can thus be directly calculated given an estimator $\hat{r}$, provided that the space of the parameters of interest is low-dimensional enough to calculate the integral, or with MCMC or variational inference techniques otherwise.
 
 \bigskip
-While our approach to inference is strongly based on the ideas in \cite{1805.00013,1805.00020,1805.12244,Stoye:2018ovl}, there are some novel features in our analysis that we would like to highlight briefly. Unlike in those earlier papers, we use a marginal model based on the proposal distribution $\pi(\theta)$ as reference model in the denominator of the likelihood ratio, which reduces numerical issues due to the joint likelihood ratio evaluating as zero or infinity substantially. It also allows us to include the ``flipped'' terms involving $s'$ and $g'$ in the loss function in Eq.~\eqref{eq:alices_loss}; we found that this new, improved version of the ALICES loss improves the sample efficiency of our algorithms. Finally, this is the first application of the ``gold mining'' idea to image data, the first combination with a convolutional network architecture, and the first use for Bayesian inference.
+While our approach to inference is strongly based on the ideas in \cite{1805.00013,1805.00020,1805.12244,Stoye:2018ovl}, there are some novel features in our analysis that we would like to highlight briefly. Unlike in those earlier papers, we use a marginal model based on the proposal distribution $\pi(\stattheta)$ as reference model in the denominator of the likelihood ratio, which reduces numerical issues due to the joint likelihood ratio evaluating as zero or infinity substantially. It also allows us to include the ``flipped'' terms involving $s'$ and $g'$ in the loss function in Eq.~\eqref{eq:alices_loss}; we found that this new, improved version of the ALICES loss improves the sample efficiency of our algorithms. Finally, this is the first application of the ``gold mining'' idea to image data, the first combination with a convolutional network architecture, and the first use for Bayesian inference.
 
 
 \section{Results}
@@ -396,7 +398,7 @@ While our approach to inference is strongly based on the ideas in \cite{1805.000
 \centering
 \includegraphics[height=0.4\textwidth]{figures/posterior_uniform}
 \includegraphics[height=0.4\textwidth]{figures/posterior_narrow}
-\caption{Expected posterior based on a uniform prior (left) or a Gaussian prior on $\beta$ with mean $-0.9$ and standard deviation $0.1$ (right). in the two-dimensional parameter space (left) and a one-dimensional slice at $\beta = -0.9$ (right). We assume $\beta = -0.9$ and $\fsub = 0.05$. \JB{So far without calibration.}}
+\caption{Expected posterior based on a uniform prior (left) or a Gaussian prior on $\beta$ with mean $-0.9$ and standard deviation $0.1$ (right) for 10 observed lenses. We assume $\beta = -0.9$ and $\fsub = 0.05$. \JB{So far without calibration.}}
 \label{fig:expected_likelihood}
 \end{figure*}
 
@@ -438,56 +440,56 @@ We thank Simon~Birrer, Christopher~Fassnacht, Daniel~Gilman, and Neal~Weiner for
 \section{Minimum of the loss functional}
 \label{app:variation}
 
-A central step in our inference technique is numerically minimizing the functional $L[g(x, \theta)]$ given in Eq.~\eqref{eq:alices_loss} to obtain an estimator for the likelihood ratio function. Here we will use calculus of variation to explicitly show that the solution given in Eq.~\eqref{eq:loss_minimum} in fact minimizes this loss.
+A central step in our inference technique is numerically minimizing the functional $L[g(x, \stattheta)]$ given in Eq.~\eqref{eq:alices_loss} to obtain an estimator for the likelihood ratio function. Here we will use calculus of variation to explicitly show that the solution given in Eq.~\eqref{eq:loss_minimum} in fact minimizes this loss.
 
 First consider the case of $\alpha = 0$, \ie the functional
 %
 \begin{align}
-  L[g(x, \theta)]
-  &= \int\!\!\diff\theta\!\!\int\!\!\diff\theta'\!\!\int\!\!\diff x\!\! \int\!\!\diff z \, \pi(\theta) \pi(\theta') p(x,z|\theta)
+  L[g(x, \stattheta)]
+  &= \int\!\!\diff\stattheta\!\!\int\!\!\diff\stattheta'\!\!\int\!\!\diff x\!\! \int\!\!\diff z \, \pi(\stattheta) \pi(\stattheta') p(x,z|\stattheta)
   \Bigl(- s \log g  - (1 - s) \log (1 - g) - s' \log g'  - (1 - s') \log (1 - g') \Bigr) \notag \\
-  &= \int\!\!\diff\theta\!\!\int\!\!\diff x
+  &= \int\!\!\diff\stattheta\!\!\int\!\!\diff x
   \underbrace{ \Biggl[
-    \int\!\!\diff z \, \pi(\theta) \, \Bigl( p(x,z|\theta) + p_{\mathrm{ref}}(x,z) \Bigr)
+    \int\!\!\diff z \, \pi(\stattheta) \, \Bigl( p(x,z|\stattheta) + p_{\mathrm{ref}}(x,z) \Bigr)
     \Bigl(- s \log g  - (1 - s) \log (1 - g) \Bigr)
   \Biggr] }_{
-  \equiv F(x,\theta)
+  \equiv F(x,\stattheta)
   } \,,
 \end{align}
 %
-where we use the shorthand notation $s \equiv s(x,z|\theta) \equiv 1 / (1 + r(x,z|\theta))$,  $s' \equiv s(x,z|\theta') \equiv 1 / (1 + r(x,z|\theta'))$, $g \equiv g(x, \theta)$, $g' \equiv g(x, \theta')$. The function $g^*(x|\theta)$ that minimizes  this functional has to satisfy
+where we use the shorthand notation $s \equiv s(x,z|\stattheta) \equiv 1 / (1 + r(x,z|\stattheta))$,  $s' \equiv s(x,z|\stattheta') \equiv 1 / (1 + r(x,z|\stattheta'))$, $g \equiv g(x, \stattheta)$, $g' \equiv g(x, \stattheta')$. The function $g^*(x|\stattheta)$ that minimizes  this functional has to satisfy
 %
 \begin{equation}
   0 \stackrel{!}{=} \frac {\delta F}{\delta g} \Biggr|_{g^*}
-  =  \int\!\!\diff z \, \pi(\theta) \Bigl( p(x,z|\theta) + p_{\mathrm{ref}}(x,z) \Bigr) \Bigl( - \frac s {g^*} + \frac {1-s}{1-g^*} \Bigr)
+  =  \int\!\!\diff z \, \pi(\stattheta) \Bigl( p(x,z|\stattheta) + p_{\mathrm{ref}}(x,z) \Bigr) \Bigl( - \frac s {g^*} + \frac {1-s}{1-g^*} \Bigr)
 \end{equation}
 %
-As long as $\pi(\theta) > 0$, this is equivalent to
+As long as $\pi(\stattheta) > 0$, this is equivalent to
 %
 \begin{equation}
-  (1-g^*) \int\!\diff z \Bigl( p(x,z|\theta) + p_{\mathrm{ref}}(x,z) \Bigr) s
-  = g^* \int\!\diff z \Bigl( p(x,z|\theta) + p_{\mathrm{ref}}(x,z) \Bigr) (1-s)
+  (1-g^*) \int\!\diff z \Bigl( p(x,z|\stattheta) + p_{\mathrm{ref}}(x,z) \Bigr) s
+  = g^* \int\!\diff z \Bigl( p(x,z|\stattheta) + p_{\mathrm{ref}}(x,z) \Bigr) (1-s)
 \end{equation}
 %
 and finally
 %
 \begin{align}
-  g^*(x | \theta)
-  &= \frac {\int\!\diff z \, \Bigl(p(x,z|\theta)+\pref(x,z)\Bigr) s(x,z|\theta)} {\int \! \diff z \, \Bigl(p(x,z|\theta)+\pref(x,z)\Bigr)} \notag \\
+  g^*(x | \stattheta)
+  &= \frac {\int\!\diff z \, \Bigl(p(x,z|\stattheta)+\pref(x,z)\Bigr) s(x,z|\stattheta)} {\int \! \diff z \, \Bigl(p(x,z|\stattheta)+\pref(x,z)\Bigr)} \notag \\
   &= \frac
-  {\int\!\diff z \, \Bigl(p(x,z|\theta) + \pref(x,z)\Bigr) \frac{1}{1+p(x,z|\theta)/p_{\mathrm{ref}}(x,z)}}
-  {\int\!\diff z \, \Bigl(p(x,z|\theta) + \pref(x,z)\Bigr)} \notag \\
-  &= \frac {\pref(x)} {p(x|\theta) + \pref(x)}
+  {\int\!\diff z \, \Bigl(p(x,z|\stattheta) + \pref(x,z)\Bigr) \frac{1}{1+p(x,z|\stattheta)/p_{\mathrm{ref}}(x,z)}}
+  {\int\!\diff z \, \Bigl(p(x,z|\stattheta) + \pref(x,z)\Bigr)} \notag \\
+  &= \frac {\pref(x)} {p(x|\stattheta) + \pref(x)}
   = \frac{1}
-  {1 + r(x|\theta)} \,,
+  {1 + r(x|\stattheta)} \,,
 \end{align}
 %
-in agreement with Eq.~\eqref{eq:loss_minimum}. Note that this result is independent of the choise of $\pi(\theta)$, as long as this proposal distribution has support at all relevant parameter points.
+in agreement with Eq.~\eqref{eq:loss_minimum}. Note that this result is independent of the choise of $\pi(\stattheta)$, as long as this proposal distribution has support at all relevant parameter points.
 
 Similarly it can be shown that the gradient term in the loss functional weighted by $\alpha$ is minimized when the gradient of the log likelihood ratio estimated by the neural network is equal to the true score,
 %
 \begin{equation}
-  \nabla_\theta \log \hat{r}(x|\theta) \equiv \nabla_\theta \log \frac {1 - g^*(x, \theta)}{g^*(x, \theta)} = \nabla_\theta \log r(x|\theta) \,.
+  \nabla_\stattheta \log \hat{r}(x|\stattheta) \equiv \nabla_\stattheta \log \frac {1 - g^*(x, \stattheta)}{g^*(x, \stattheta)} = \nabla_\stattheta \log r(x|\stattheta) \,.
 \end{equation}
 %
 We refer the reader to \citep{1805.00020} for the derivation. While not strictly necessary for the inference technique, including this term in the loss function substantially improves the sample efficiency of the algorithm, similar to how gradient information makes any fit converge faster. Varying the hyperparameter $\alpha$, we found a good performance for $\alpha \approx 2 \cdot 10^{-3}$, with the network performance being insensitive to small variations.
