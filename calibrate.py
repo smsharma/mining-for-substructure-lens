@@ -21,9 +21,12 @@ def calibrate(
     transform_to_s=False,
     equal_binning=False,
 ):
+    logging.info("Calibrating llr_%s.npy based on calibration data llr_%s_*.npy", raw_filename, calibration_filename)
+
     # Load data
     llr_raw = np.load("{}/llr_{}.npy".format(data_dir, raw_filename))
     n_grid = llr_raw.shape[0]
+    logging.info("  Found %s grid points", n_grid)
 
     llr_calibration_den = np.load(
         "{}/llr_{}_ref.npy".format(data_dir, calibration_filename)
@@ -34,7 +37,7 @@ def calibrate(
     for i in range(n_grid):
         try:
             llr_calibration_num = np.load(
-                "{}/llr_{}_theta{}.npy".format(data_dir, calibration_filename, i)
+                "{}/llr_{}_theta_{}.npy".format(data_dir, calibration_filename, i)
             )
         except FileNotFoundError:
             logging.warning("Did not find numerator calibration data for i = %s", i)
@@ -70,6 +73,8 @@ def calibrate(
     # Save results
     np.save("{}/llr_calibrated_{}.npy".format(data_dir, raw_filename), llr_cal)
 
+    logging.info("  Saved results at llr_calibrated_%s.npy", raw_filename)
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -80,7 +85,7 @@ def parse_args():
     parser.add_argument("raw", type=str, help='Sample name, like "test".')
     parser.add_argument("calibration", type=str, help="File name for results.")
     parser.add_argument(
-        "--bins", default=50, type=int, help="Number of bins in calibration histogram."
+        "--bins", default=25, type=int, help="Number of bins in calibration histogram."
     )
     parser.add_argument(
         "--dir",
@@ -97,7 +102,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
         datefmt="%H:%M",
-        level=logging.DEBUG,
+        level=logging.INFO,
     )
     logging.info("Hi!")
     args = parse_args()

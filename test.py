@@ -30,6 +30,7 @@ def evaluate(
     shuffle=False,
     small=False,
     gradx=False,
+    fine=False,
 ):
     if not os.path.exists("{}/results".format(data_dir)):
         os.mkdir("{}/results".format(data_dir))
@@ -46,7 +47,7 @@ def evaluate(
             x = x[:100]
             if aux_data is not None:
                 aux_data = aux_data[:100]
-        theta = get_grid()
+        theta = get_grid(fine=fine)
         grad_x_index = get_grid_midpoint_index()
         llr, _, grad_x = estimator.log_likelihood_ratio(
             x=x,
@@ -104,6 +105,11 @@ def parse_args():
         help="Evaluates the images on a parameter grid rather than just at the original parameter points.",
     )
     parser.add_argument(
+        "--finegrid",
+        action="store_true",
+        help="If used with --grid, uses a finer grid centered on the true point.",
+    )
+    parser.add_argument(
         "--shuffle",
         action="store_true",
         help="If --grid is not used, shuffles the theta values between the images. This can be useful to make ROC curves.",
@@ -130,7 +136,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         format="%(asctime)-5.5s %(name)-20.20s %(levelname)-7.7s %(message)s",
         datefmt="%H:%M",
-        level=logging.DEBUG,
+        level=logging.INFO,
     )
     logging.info("Hi!")
     args = parse_args()
@@ -144,5 +150,6 @@ if __name__ == "__main__":
         args.shuffle,
         args.small,
         gradx=args.grad,
+        fine=args.finegrid,
     )
     logging.info("All done! Have a nice day!")

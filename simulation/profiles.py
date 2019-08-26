@@ -1,7 +1,8 @@
 from simulation.units import *
 from scipy.special import gamma
 
-import autograd.numpy as np
+# import autograd.numpy as np
+import numpy as np
 
 
 class MassProfileSIE:

@@ -2,7 +2,8 @@ from astropy.cosmology import Planck15
 from simulation.units import *
 from simulation.profiles import MassProfileSIE, MassProfileNFW, LightProfileSersic
 
-import autograd.numpy as np
+# import autograd.numpy as np
+import numpy as np
 
 
 class LensingSim:

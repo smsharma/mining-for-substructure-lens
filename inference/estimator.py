@@ -9,9 +9,9 @@ import torch
 
 from inference.models.vgg import VGGRatioEstimator
 from inference.models.resnet import ResNetRatioEstimator
-from inference.trainer import SingleParameterizedRatioTrainer
+from inference.trainer import RatioTrainer
 from inference.utils import create_missing_folders, load_and_check, get_optimizer
-from inference.utils import get_loss, clean_r, clean_t
+from inference.utils import get_loss, clean_log_r, clean_t
 from inference.utils import restrict_samplesize
 
 logger = logging.getLogger(__name__)
@@ -51,11 +51,13 @@ class ParameterizedRatioEstimator(object):
         self,
         method,
         x,
-        y,
         theta,
+        theta_alt,
         aux=None,
-        r_xz=None,
+        log_r_xz=None,
+        log_r_xz_alt=None,
         t_xz=None,
+        t_xz_alt=None,
         alpha=1.0,
         optimizer="adam",
         n_epochs=50,
@@ -97,29 +99,36 @@ class ParameterizedRatioEstimator(object):
         # Load training data
         logger.info("Loading training data")
         theta = load_and_check(theta, memmap=False)
+        theta_alt = load_and_check(theta_alt, memmap=False)
         x = load_and_check(x, memmap=True)
-        y = load_and_check(y, memmap=False)
-        r_xz = load_and_check(r_xz, memmap=False)
+        log_r_xz = load_and_check(log_r_xz, memmap=False)
+        log_r_xz_alt = load_and_check(log_r_xz_alt, memmap=False)
         t_xz = load_and_check(t_xz, memmap=False)
+        t_xz_alt = load_and_check(t_xz_alt, memmap=False)
         aux = load_and_check(aux, memmap=False)
 
-        self._check_required_data(method, r_xz, t_xz)
+        self._check_required_data(method, log_r_xz, log_r_xz_alt, t_xz, t_xz_alt)
         if update_input_rescaling:
             self._initialize_input_transform(x, aux)
 
         # Clean up input data
-        y = y.reshape((-1, 1))
-        if r_xz is not None:
-            r_xz = r_xz.reshape((-1, 1))
+        if log_r_xz is not None:
+            log_r_xz = log_r_xz.reshape((-1, 1))
+            log_r_xz_alt = log_r_xz_alt.reshape((-1, 1))
         theta = theta.reshape((-1, 2))
-        r_xz = clean_r(r_xz)
+        theta_alt = theta_alt.reshape((-1, 2))
+        log_r_xz = clean_log_r(log_r_xz)
+        log_r_xz_alt = clean_log_r(log_r_xz_alt)
         t_xz = clean_t(t_xz)
+        t_xz_alt = clean_t(t_xz_alt)
 
         # Rescale aux, theta, and t_xz
         aux = self._transform_aux(aux)
         theta = self._transform_theta(theta)
+        theta_alt = self._transform_theta(theta_alt)
         if t_xz is not None:
             t_xz = self._transform_t_xz(t_xz)
+            t_xz_alt = self._transform_t_xz(t_xz_alt)
 
         # Infer dimensions of problem
         n_samples = x.shape[0]
@@ -158,8 +167,8 @@ class ParameterizedRatioEstimator(object):
             logger.info(
                 "Only using %s of %s training samples", limit_samplesize, n_samples
             )
-            x, theta, y, r_xz, t_xz, aux = restrict_samplesize(
-                limit_samplesize, x, theta, y, r_xz, t_xz, aux
+            x, theta, theta_alt, log_r_xz, log_r_xz_alt, t_xz, t_xz_alt, aux = restrict_samplesize(
+                limit_samplesize, x, theta, theta_alt, log_r_xz, log_r_xz_alt, t_xz, t_xz_alt, aux
             )
 
         # Check consistency of input with model
@@ -177,7 +186,7 @@ class ParameterizedRatioEstimator(object):
             )
 
         # Data
-        data = self._package_training_data(method, x, theta, y, r_xz, t_xz, aux)
+        data = self._package_training_data(method, x, theta, theta_alt, log_r_xz, log_r_xz_alt, t_xz, t_xz_alt, aux)
 
         # Losses
         loss_functions, loss_labels, loss_weights = get_loss(method, alpha)
@@ -187,7 +196,7 @@ class ParameterizedRatioEstimator(object):
 
         # Train model
         logger.info("Training model")
-        trainer = SingleParameterizedRatioTrainer(self.model, run_on_gpu=True)
+        trainer = RatioTrainer(self.model, run_on_gpu=True)
         result = trainer.train(
             data=data,
             loss_functions=loss_functions,
@@ -518,8 +527,11 @@ class ParameterizedRatioEstimator(object):
     def _count_model_parameters(self):
         return sum(p.numel() for p in self.model.parameters() if p.requires_grad)
 
-    def _initialize_input_transform(self, x, aux=None):
-        if self.rescale_inputs:
+    def _initialize_input_transform(self, x, aux=None, n_eval=1000):
+        if self.rescale_inputs and self.log_input:
+            self.x_scaling_mean = np.mean(np.log(1. + x[:n_eval]))
+            self.x_scaling_std = np.maximum(np.std(np.log(1. + x[:n_eval])), 1.0e-6)
+        elif self.rescale_inputs and (not self.log_input):
             self.x_scaling_mean = np.mean(x)
             self.x_scaling_std = np.maximum(np.std(x), 1.0e-6)
         else:
@@ -599,26 +611,28 @@ class ParameterizedRatioEstimator(object):
             self.aux_scaling_std = np.array(self.aux_scaling_std)
 
     @staticmethod
-    def _check_required_data(method, r_xz, t_xz):
-        if method in ["cascal", "alices", "rascal"] and t_xz is None:
+    def _check_required_data(method, r_xz, r_xz_alt, t_xz, t_xz_alt):
+        if method in ["cascal", "alices", "rascal"] and (t_xz is None or t_xz_alt is None):
             raise RuntimeError(
                 "Method {} requires joint score information".format(method)
             )
-        if method in ["rolr", "alices", "rascal"] and r_xz is None:
+        if method in ["rolr", "alices", "rascal"] and (r_xz is None or r_xz_alt is None):
             raise RuntimeError(
                 "Method {} requires joint likelihood ratio information".format(method)
             )
 
     @staticmethod
-    def _package_training_data(method, x, theta, y, r_xz, t_xz, aux=None):
+    def _package_training_data(method, x, theta, theta_alt, log_r_xz, log_r_xz_alt, t_xz, t_xz_alt, aux=None):
         data = OrderedDict()
         data["x"] = x
         data["theta"] = theta
-        data["y"] = y
+        data["theta_alt"] = theta_alt
         if method in ["rolr", "alice", "alices", "rascal"]:
-            data["r_xz"] = r_xz
+            data["log_r_xz"] = log_r_xz
+            data["log_r_xz_alt"] = log_r_xz_alt
         if method in ["cascal", "alices", "rascal"]:
             data["t_xz"] = t_xz
+            data["t_xz_alt"] = t_xz_alt
         if aux is not None:
             data["aux"] = aux
         return data

@@ -1,13 +1,13 @@
 #!/bin/bash
 
-cd /scratch/jb6504/StrongLensing-Inference/cluster
+cd /scratch/jb6504/recycling_strong_lensing/cluster
 
 
 ############################################################
 # Simulation
 ############################################################
 
-# sbatch --array=0-99 simulate_train.sh
+# sbatch --array=0-499 simulate_train.sh
 # sbatch --array=0-624 simulate_calibration.sh
 # sbatch simulate_calibration_ref.sh
 # sbatch --array=0-9 simulate_test.sh
@@ -17,38 +17,35 @@ cd /scratch/jb6504/StrongLensing-Inference/cluster
 # Combination
 ############################################################
 
-# sbatch combine_samples.sh # align and mass
+# sbatch combine_samples.sh
 
 
 ############################################################
 # Training
 ############################################################
 
-sbatch train_carl.sh  # align
-sbatch train_alice.sh
-sbatch train_alices.sh
-sbatch train_carl2.sh  # mass
-sbatch train_alice2.sh
-sbatch train_alices2.sh
-sbatch train_exp.sh
+# sbatch train_carl.sh
+# sbatch train_alices.sh
+# sbatch train_alpha.sh
+# sbatch train_lr.sh
+# sbatch train_sgd.sh
+# sbatch train_other.sh
+
 
 ############################################################
 # Evaluation
 ############################################################
 
-# sbatch eval_carl.sh  # align
-# sbatch eval_alice.sh
-# sbatch eval_alices.sh
-# sbatch eval_carl2.sh  # mass
-# sbatch eval_alice2.sh
-# sbatch eval_alices2.sh
-## sbatch eval_carl3.sh
-## sbatch eval_alice3.sh
-## sbatch eval_alices3.sh
+sbatch eval_carl.sh
+sbatch eval_alices.sh
+sbatch eval_alpha.sh
+sbatch eval_lr.sh
+sbatch eval_sgd.sh
+sbatch eval_other.sh
 
 
 ############################################################
 # Calibration
 ############################################################
 
-## sbatch calibrate.sh
+# sbatch calibrate.sh

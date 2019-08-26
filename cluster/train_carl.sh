@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=tr-c
-#SBATCH --output=log_train_carl.log
+#SBATCH --job-name=slr-t-c
+#SBATCH --output=log_train_carl3.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
@@ -9,10 +9,10 @@
 #SBATCH --gres=gpu:1
 
 source activate lensing
-cd /scratch/jb6504/StrongLensing-Inference/
+base=/scratch/jb6504/recycling_strong_lensing/
+cd $base/
 
-# python -u train.py carl train_fix carl_fix --dir /scratch/jb6504/StrongLensing-Inference
-# python -u train.py carl train_mass carl_mass --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py carl train_align carl_align --dir /scratch/jb6504/StrongLensing-Inference
-# python -u train.py carl train_full carl_full --dir /scratch/jb6504/StrongLensing-Inference
-# python -u train.py carl train_full carl_full_aux -z --dir /scratch/jb6504/StrongLensing-Inference
+#python -u train.py carl train_fix carl_fix --dir $base
+#python -u train.py carl train_mass carl_mass --load carl_fix --dir $base
+python -u train.py carl train_align carl_align --load carl_fix --dir $base
+#python -u train.py carl train_full carl_full --load carl_fix --dir $base
