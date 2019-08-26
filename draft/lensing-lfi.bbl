@@ -426,6 +426,11 @@ Jones, E., Oliphant, T., Peterson, P., {et~al.} 2001--, {SciPy}: Open source
 {Kingma}, D.~P., \& {Ba}, J. 2014, arXiv e-prints, arXiv:1412.6980,
   \doarXiv{1412.6980}
 
+\bibitem[{Kluyver {et~al.}(2016)Kluyver, Ragan-Kelley, P{\'e}rez, Granger,
+  Bussonnier, Frederic, Kelley, Hamrick, Grout, Corlay, Ivanov, Avila, Abdalla,
+  Willing, \& et~al.}]{Kluyver2016JupyterN}
+Kluyver, T., Ragan-Kelley, B., P{\'e}rez, F., {et~al.} 2016, in ELPUB
+
 \bibitem[{{Koposov} {et~al.}(2008){Koposov}, {Belokurov}, {Evans}, {Hewett},
   {Irwin}, {Gilmore}, {Zucker}, {Rix}, {Fellhauer}, {Bell}, \&
   {Glushkova}}]{0706.2687}
