@@ -20,8 +20,9 @@ def calibrate(
     nbins=50,
     transform_to_s=False,
     equal_binning=False,
+    filename_appendix = "",
 ):
-    logging.info("Calibrating llr_%s.npy based on calibration data llr_%s_*.npy", raw_filename, calibration_filename)
+    logging.info("Calibrating llr_%s.npy based on calibration data llr_%s_*.npy with %s bins of %s", raw_filename, calibration_filename, nbins, "s" if transform_to_s else "r")
 
     # Load data
     llr_raw = np.load("{}/llr_{}.npy".format(data_dir, raw_filename))
@@ -71,7 +72,7 @@ def calibrate(
     llr_cal = np.array(llr_cal)
 
     # Save results
-    np.save("{}/llr_calibrated_{}.npy".format(data_dir, raw_filename), llr_cal)
+    np.save("{}/llr_calibrated_{}{}.npy".format(data_dir, raw_filename, filename_appendix), llr_cal)
 
     logging.info("  Saved results at llr_calibrated_%s.npy", raw_filename)
 
@@ -83,9 +84,13 @@ def parse_args():
 
     # Main options
     parser.add_argument("raw", type=str, help='Sample name, like "test".')
-    parser.add_argument("calibration", type=str, help="File name for results.")
+    parser.add_argument("calibration", type=str)
+    parser.add_argument("--name", type=str, default="", help="File name appendix for results.")
     parser.add_argument(
         "--bins", default=25, type=int, help="Number of bins in calibration histogram."
+    )
+    parser.add_argument(
+        "-s", action="store_true", help="Histograms based on s rather than r."
     )
     parser.add_argument(
         "--dir",
@@ -106,5 +111,5 @@ if __name__ == "__main__":
     )
     logging.info("Hi!")
     args = parse_args()
-    calibrate(args.dir + "/data/results/", args.raw, args.calibration, nbins=args.bins)
+    calibrate(args.dir + "/data/results/", args.raw, args.calibration, nbins=args.bins, transform_to_s=args.s, equal_binning=args.s, filename_appendix=args.name)
     logging.info("All done! Have a nice day!")

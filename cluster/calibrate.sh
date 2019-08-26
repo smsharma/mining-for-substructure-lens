@@ -12,13 +12,9 @@ source activate lensing
 base=/scratch/jb6504/recycling_strong_lensing/
 cd $base
 
-for tag in full
-do
-    if [ "tag" = "fix" ]; then
-        modeltag=${tag}
-    else
-        modeltag=${tag}_pre
-    fi
-    python -u calibrate.py carl_${modeltag}_grid carl_calibrate_${tag} --dir $base
-    python -u calibrate.py alices_${modeltag}_grid carl_calibrate_${tag} --dir $base
-done
+python -u calibrate.py alices_full_grid alices_calibrate_full --dir $base --bins 20 --name 20bins
+python -u calibrate.py alices_full_grid alices_calibrate_full --dir $base --bins 40 --name 40bins
+python -u calibrate.py alices_full_grid alices_calibrate_full --dir $base --bins 60 --name 60bins
+python -u calibrate.py alices_full_grid alices_calibrate_full --dir $base --bins 20 -s --name 20sbins
+python -u calibrate.py alices_full_grid alices_calibrate_full --dir $base --bins 40 -s --name 40sbins
+python -u calibrate.py alices_full_grid alices_calibrate_full --dir $base --bins 60 -s --name 60sbins

@@ -230,14 +230,14 @@ Our goal is to infer the subhalo mass function parameters from a catalog of imag
 \begin{description}
   \item[Parameters of interest $\stattheta$] The vector $\stattheta = (\fsub, \beta)^T$ parameterizes the subhalo mass function given, our goal is to infer their values.
   %
-  \item[Latent variables $z$] A vector of all other unobservable random variables in the simulator. These include the mass $M_{200}$, position $(\theta_x, \theta_y)$, and redshift $z_{\mathrm{host}}$ of the host galaxy, the number of subhalos in the region of interest $n_\mathrm{ROI}$, the position and mass $m_{200}$ of each subhalo, and the random variables related to the point spread function and Poisson fluctuations.
+  \item[Latent variables $z$] A vector of all other unobservable random variables in the simulator. These include the mass $M_{200}$, position $(\theta_x, \theta_y)$, and redshift $z_\mathrm{host}$ of the host galaxy, the number of subhalos in the region of interest $n_\mathrm{ROI}$, the position and mass $m_{200}$ of each subhalo, and the random variables related to the point spread function and Poisson fluctuations.
   %
   \item[Observables $x$] The observed lens images.
 \end{description}
 %
-Unfortunately, the conventions in astrophysics and statistics clash a little and can cause confusion: note the distinction between the parameters $\vartheta$ from the angular positions $\theta_x$, $\theta_y$ and the Einstein radius $\theta_E$; between the latent variables $z$ and the redshifts $z_\mathrm{source}$, $z_\mathrm{host}$; and between the observed image $x$ and the argument of the NFW profile $M_\mathrm{enc}(x)$ used in the last section.
+Unfortunately, the same symbols are used with different meanings in astrophysics and statistics: note the difference between the parameters $\vartheta$ and the angular positions $\theta_x$, $\theta_y$ and the Einstein radius $\theta_E$; between the latent variables $z$ and the redshifts $z_\mathrm{source}$, $z_\mathrm{host}$; and between the observed image $x$ and the argument of the NFW profile $M_\mathrm{enc}(x)$ used in the last section.
 
-As described in the previous section, we have implemented a simulator for the lensing process in the ``forward'' direction: for given parameters $\stattheta$, the simulator samples latent variables $z$ and finally observed images $x \sim p(x|\stattheta)$. Here $p(x|\stattheta)$ is the probability density or likelihood function of observing a lens image $x$ given parameters $\stattheta$. It can be schematically written as
+As described above, we have implemented a simulator for the lensing process in the ``forward'' direction: for given parameters $\stattheta$, the simulator samples latent variables $z$ and finally observed images $x \sim p(x|\stattheta)$. Here $p(x|\stattheta)$ is the probability density or likelihood function of observing a lens image $x$ given parameters $\stattheta$. It can be schematically written as
 %
 \begin{equation}
  p(x|\stattheta) = \int\!\diff z \; p(x, z|\stattheta) \,,
@@ -248,19 +248,21 @@ where we integrate over the latent variables $z$ and $p(x, z|\stattheta)$ is the
 %
 \begin{multline}
   p(x,z | \stattheta)
-  = p_{\mathrm{host}}(M_{200}, \theta_x, \theta_y, z_\mathrm{host}) \; \pois(n | \bar{n}_{\mathrm{ROI}}(\stattheta)) \\
-   \prod_i^{n} \left[ p_m \left( m_{200, i} \middle| \stattheta \right) \; \uniform \left( r_i \right) \right] \\
-  \times p_\mathrm{obs} \left( x \middle| f(M_{200}, \theta_x, \theta_y, z_\mathrm{host}; \{(m_{200, i},r_i)\}) \right) \,.
+  = p_\mathrm{host}(M_{200}, \theta_x, \theta_y, z_\mathrm{host}) \\
+  \times  \pois(n_\mathrm{ROI} | \mean{n}_\mathrm{ROI}(\stattheta)) \prod_i^{n_\mathrm{ROI}} \Bigl[ p_m \! \left( m_{200, i} \middle| \stattheta \right) \; \uniform \left( r_i \right) \Bigr] \\
+  \times p_\mathrm{obs} ( x | f(M_{200}, \theta_x, \theta_y, z_\mathrm{host}; \{(m_{200, i},r_i)\})) \,.
   \label{eq:joint_likelihood}
 \end{multline}
 %
-In this schematic form $p_{\mathrm{host}}$ summarizes the distribution of the host halo parameters $z_{\mathrm{host}}$ such as its mass, offset and redshift; $n$ is the actual number of subhalos in the region of interest,  $\bar{n}_{\mathrm{ROI}}(\stattheta)$ is the mean number of subhalos in the region of interest as a function of the parameters $\stattheta = (\fsub, \beta)^T$; $m_{200, i}$ and $r_i$ are the subhalo masses and positions; $p_m(m|\stattheta) = 1/n \, \diff n / \diff m_{200}$ is the normalized subhalo mass function given in Eq.~\eqref{eq:shmf}; and in the last line $p_\mathrm{obs}$ is the probability of observing an image $x$ based on the true lensed image $f(z_{\mathrm{host}},\{(m_{200, i},r_i)\})$ due to the point spread function and Poisson fluctuations.
+Here $p_\mathrm{host}(M_{200}, \theta_x, \theta_y, z_\mathrm{host})$ is the distribution of the host halo parameters; $\mean{n}_\mathrm{ROI}(\stattheta)$ is the mean number of subhalos in the region of interest as a function of the parameters $\stattheta = (\fsub, \beta)^T$, while $n_\mathrm{ROI}$ is the actually realized number in the simulation; $m_{200, i}$ and $r_i$ are the subhalo masses and positions; $p_m(m|\stattheta) = 1/n \, \diff n / \diff m_{200}$ is the normalized subhalo mass function given in Eq.~\eqref{eq:shmf}; and in the last line $p_\mathrm{obs}$ is the probability of observing an image $x$ based on the true lensed image $f(z_\mathrm{host},\{(m_{200, i},r_i)\})$ due to the point spread function and Poisson fluctuations.
 
-Most frequentist and Bayesian inference methods rely on evaluating the likelihood function $p(x|\stattheta)$. Unfortunately, even in our somewhat simplified simulator, each run of the simulation easily involves more than a thousand latent variables, and the integral over this enormeous space clearly cannot be computed explicitly. The likelihood function $p(x | \stattheta)$ is thus intractable, providing a major challenge for both frequentist and Bayesian inference. Similarly, inference with Markov Chain Monte Carlo (MCMC) methods based directly on the joint likelihood function $p(x,z | \stattheta)$ requires unfeasibly many simulations before converging because the latent space is so large. Systems defined through a forward simulator that does not admit a tractable likelihood are known as ``implicit models'', inference techniques for this case as ``likelihood-free inference''.
+Most frequentist and Bayesian inference methods rely on evaluating the likelihood function $p(x|\stattheta)$. Unfortunately, even in our somewhat simplified simulator, each run of the simulation easily involves hundreds to thousands of latent variables, and the integral over this enormeous space clearly cannot be computed explicitly. The likelihood function $p(x | \stattheta)$ is thus intractable, providing a major challenge for both frequentist and Bayesian inference. Similarly, inference with Markov Chain Monte Carlo (MCMC) methods based directly on the joint likelihood function $p(x,z | \stattheta)$ requires unfeasibly many simulations before converging because the latent space is so large. Systems defined through a forward simulator that does not admit a tractable likelihood are known as ``implicit models'', inference techniques for this case as ``simulation-based inference'' or ``likelihood-free inference''.
 
-One way to tackle this issue is to reduce the high-dimensional data $x$ to lower-dimensional summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724}. The likelihood $p(v|\stattheta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
+One way to tackle this issue is to reduce the high-dimensional data $x$ to lower-dimensional summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724}. The likelihood $p(v|\stattheta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique~\citep{rubin1984}. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
 
-Instead, we follow an approach in which we approximate the likelihood function with a neural network, which has to be trained only once and can be evaluated efficiently for any parameter point and observed image. We will show how this turns the intractable integral in Eq.~\eqref{eq:likelihood_latent} into a tractable minimization problem and amortizes this marginalization. This method scales well to the expected large number of lenses expected in upcoming surveys~\citep{2015ApJ...811...20C,1001.2037,1003.5567}. In particular, we use a new simulation-based inference technique introduced in \cite{1805.00013,1805.00020,1805.12244} that consists of four steps:
+Instead, we follow an approach in which we approximate the likelihood function with a neural network, which has to be trained only once and can be evaluated efficiently for any parameter point and observed image~\citep{2012arXiv1212.1479F, 2014arXiv1410.8516D, 2015arXiv150203509G, 2015arXiv150505770J, Cranmer:2015bka,  2016arXiv160206701P, 2016arXiv160502226U, 2016arXiv160508803D, 2016arXiv160605328V, 2016arXiv160903499V, 2016arXiv160106759V, 2016arXiv161110242D, NIPS2016_6084, 2017arXiv170208896T, 2017arXiv170507057P, 2017arXiv170707113L, 2017arXiv171101861L, gutmann2017likelihood, 2018arXiv180400779H, 2018arXiv180507226P, 2018arXiv180509294L, DBLP:journals/corr/abs-1806-07366, 2018arXiv180703039K, 2018arXiv181001367G, 2018arXiv181009899D, Hermans:2019ioj, Alsing:2019xrx}. \JB{This is the kitchen sink of NN-based LFI. Too many?} We will show how this turns the intractable integral in Eq.~\eqref{eq:likelihood_latent} into a tractable minimization problem and amortizes this marginalization. This approach scales well to the expected large number of lenses expected in upcoming surveys.
+
+We use a simulation-based inference technique introduced in \citet{1805.00013,1805.00020,1805.12244} that extracts additional information from the simulation and uses it to improve the sample efficiency of the training of the neural network. Our inference strategy consists of four steps:
 %
 \begin{enumerate}
   \item During each run of the simulator, additional information that characterizes the subhalo population and lensing process is stored together with the simulated observed image.
@@ -281,7 +283,7 @@ Next, the simulator is run for the parameter point $\stattheta$, generating an o
 %
 \begin{equation}
   r(x,z | \stattheta) = \frac {p(x,z | \stattheta)} {p_\mathrm{ref}(x,z)}
-  \equiv \frac {p(x,z | \stattheta)} {\int\!\diff\tilde{\stattheta} \, \pi(\tilde{\stattheta}) \, p(x,z | \tilde{\stattheta}) }
+  %\equiv \frac {p(x,z | \stattheta)} {\int\!\diff\stattheta' \, \pi(\stattheta') \, p(x,z | \stattheta') }
 \end{equation}
 %
 and the joint score
@@ -290,9 +292,15 @@ and the joint score
   t(x, z | \stattheta) = \nabla_{\stattheta} \log p(x,z | \stattheta) \,.
 \end{equation}
 %
-The joint likelihood ratio quantifies how much more or less likely a particular simulation chain including the latent variables $z$ is for the parameter point $\stattheta$ compared to a reference distribution. For this we choose the marginal distribution of latent variables and observables corresponding to the proposal distribution $\pi(\stattheta)$, which has support for every potential outcome of the simulation~\citep{Hermans:2019ioj}. The joint score is the gradient of the joint log likelihood in model parameter space and quantifies if a particular simulation chain becomes more or less likely with infinitesimal changes of the parameters of interest. Both quantities depend on the latent variables of the simulation chain.
+The joint likelihood ratio quantifies how much more or less likely a particular simulation chain including the latent variables $z$ is for the parameter point $\stattheta$ compared to a reference distribution
+%
+\begin{equation}
+  \pref = \int\!\diff\stattheta' \, \pi(\stattheta') \, p(x,z | \stattheta') \,,
+\end{equation}
+%
+where we choose the marginal distribution of latent variables and observables corresponding to the proposal distribution $\pi(\stattheta)$. Unlike the distribution for a single reference parameter point, this marginal model has support for every potential outcome of the simulation~\citep{Hermans:2019ioj}. The joint score is the gradient of the joint log likelihood in model parameter space and quantifies if a particular simulation chain becomes more or less likely with infinitesimal changes of the parameters of interest. Both quantities depend on the latent variables of the simulation chain.
 
-We compute the joint likelihood ratio and joint score with Eq.~\eqref{eq:joint_likelihood}. Conveniently, many steps in the simulator do not explicitly depend on the parameters of interest $\stattheta$ and cancel in the joint likelihood ratio and joint score, and the remaining terms can be evaluated with little overhead to the simulation code. We also calculate the joint likelihood ratio $r(x,z|\stattheta')$ and the joint score $t(x,z|\stattheta')$ for the second parameter point $\stattheta'$ and store the parameter points $\stattheta$ and $\stattheta'$, the simulated image $x$, as well as the joint likelihood ratios and joint scores.
+We compute the joint likelihood ratio and joint score with Eq.~\eqref{eq:joint_likelihood}. Conveniently, the first and third line of that equation do not explicitly depend on the parameters of interest $\stattheta$ and cancel in the joint likelihood ratio and joint score; the remaining terms can be evaluated with little overhead to the simulation code. We also calculate the joint likelihood ratio $r(x,z|\stattheta')$ and the joint score $t(x,z|\stattheta')$ for the second parameter point $\stattheta'$ and store the parameter points $\stattheta$ and $\stattheta'$, the simulated image $x$, as well as the joint likelihood ratios and joint scores.
 
 Our training samples consist of $10^6$ images, with parameter points chosen from a uniform range in $0.001 < \fsub < 0.2$ and $-1.5 < \beta < -0.5$.
 
@@ -300,7 +308,7 @@ Our training samples consist of $10^6$ images, with parameter points chosen from
 \subsection{Machine learning}
 \label{sec:lfi-ml}
 
-How are the joint likelihood ratio and joint score, which are conditional on the latent variables $z$, useful to learn about the likelihood function $p(x|\stattheta)$, which only depends on the observed lens images and the parameters of interest? Consider the functional
+How are the joint likelihood ratio and joint score, which are conditional on the latent variables $z$, useful for inference based on the likelihood function $p(x|\stattheta)$, which only depends on the observed lens images and the parameters of interest? Consider the functional
 %
 \begin{multline}
   L[g(x, \stattheta)] = \int\!\diff\stattheta\! \int\!\diff\stattheta'\! \int\!\diff x\! \int\!\diff z \; \pi(\stattheta) \; \pi(\stattheta') \; p(x,z|\stattheta) \\
@@ -312,9 +320,9 @@ How are the joint likelihood ratio and joint score, which are conditional on the
    \label{eq:alices_loss}
 \end{multline}
 %
-where we have abbreviated $s \equiv s(x,z|\stattheta) \equiv 1 / (1 + r(x,z|\stattheta))$,  $s' \equiv s(x,z|\stattheta') \equiv 1 / (1 + r(x,z|\stattheta'))$, $g \equiv g(x, \stattheta)$, $g' \equiv g(x, \stattheta')$, $t = t(x,z | \stattheta)$, and $t' \equiv t(x,z | \stattheta')$ for readability. Note that the test function $g(x, \stattheta)$ is a function of $x$ and $\stattheta$ only. The first two lines are an improved version of the cross-entropy loss, in which the joint likelihood ratio is used to decrease the variance compared to the canonical cross-entropy~\cite{Stoye:2018ovl}. The last line adds gradient information, weighted by a hyperparameter $\alpha$.
+where we have abbreviated $s \equiv s(x,z|\stattheta) \equiv 1 / (1 + r(x,z|\stattheta))$,  $s' \equiv s(x,z|\stattheta') \equiv 1 / (1 + r(x,z|\stattheta'))$, $g \equiv g(x, \stattheta)$, $g' \equiv g(x, \stattheta')$, $t = t(x,z | \stattheta)$, and $t' \equiv t(x,z | \stattheta')$ for readability. Note that the test function $g(x, \stattheta)$ is a function of $x$ and $\stattheta$ only. The first two lines are an improved version of the cross-entropy loss, in which the joint likelihood ratio is used to decrease the variance compared to the canonical cross-entropy~\citep{Stoye:2018ovl}. The last line adds gradient information, weighted by a hyperparameter $\alpha$.
 
-As shown in \cite{Stoye:2018ovl}, this ``ALICES'' loss functional is minimized by the function
+As shown in \citet{Stoye:2018ovl}, this ``ALICES'' loss functional is minimized by the function
 %
 \begin{equation}
   g^*(x, \stattheta) \equiv \argmin_g L[g(x, \stattheta)] = \frac 1 {1 + r(x|\stattheta)} \,,
@@ -362,12 +370,12 @@ For Bayesian inference, note that we can write Bayes' theorem as
 %
 \begin{align}
   p(\stattheta | \{x_i\})
-  &= \frac {p(\stattheta) \; \prod_i p(x_i | \stattheta)} {\int\!\diff \tilde{\stattheta} \, p(\tilde{\stattheta}) \, \prod_i p(x_i | \tilde{\stattheta})} \notag \\
+  &= \frac {p(\stattheta) \; \prod_i p(x_i | \stattheta)} {\int\!\diff \stattheta' \, p(\stattheta') \, \prod_i p(x_i | \stattheta')} \notag \\
   &= p(\stattheta) \Biggl[
-    \int\!\diff\tilde{\stattheta} \, p(\tilde{\stattheta}) \, \prod_i \frac {p(x_i | \tilde{\stattheta})}{p(x_i | \stattheta)}
+    \int\!\diff\stattheta' \, p(\stattheta') \, \prod_i \frac {p(x_i | \stattheta')}{p(x_i | \stattheta)}
   \Biggr]^{-1} \notag \\
   &\approx p(\stattheta) \Biggl[
-    \int\!\diff\tilde{\stattheta} \, p(\tilde{\stattheta}) \, \prod_i \frac {\hat{r}(x_i | \tilde{\stattheta})}{\hat{r}(x_i | \stattheta)}
+    \int\!\diff\stattheta' \, p(\stattheta') \, \prod_i \frac {\hat{r}(x_i | \stattheta')}{\hat{r}(x_i | \stattheta)}
   \Biggr]^{-1} \,,
   \label{eq:bayesian_post}
 \end{align}
@@ -375,7 +383,7 @@ For Bayesian inference, note that we can write Bayes' theorem as
 where $\{x_i\}$ is the set of observed lens images and $p(\stattheta)$ is the prior on the parameters of interest, which may be different from the proposal distribution $\pi(\stattheta)$ used during the generation of training data. The posterior can thus be directly calculated given an estimator $\hat{r}$, provided that the space of the parameters of interest is low-dimensional enough to calculate the integral, or with MCMC or variational inference techniques otherwise.
 
 \bigskip
-While our approach to inference is strongly based on the ideas in \cite{1805.00013,1805.00020,1805.12244,Stoye:2018ovl}, there are some novel features in our analysis that we would like to highlight briefly. Unlike in those earlier papers, we use a marginal model based on the proposal distribution $\pi(\stattheta)$ as reference model in the denominator of the likelihood ratio, which reduces numerical issues due to the joint likelihood ratio evaluating as zero or infinity substantially. It also allows us to include the ``flipped'' terms involving $s'$ and $g'$ in the loss function in Eq.~\eqref{eq:alices_loss}; we found that this new, improved version of the ALICES loss improves the sample efficiency of our algorithms. Finally, this is the first application of the ``gold mining'' idea to image data, the first combination with a convolutional network architecture, and the first use for Bayesian inference. 
+While our approach to inference is strongly based on the ideas in \citet{1805.00013, 1805.00020, 1805.12244, Stoye:2018ovl}, there are some novel features in our analysis that we would like to highlight briefly. Unlike in those earlier papers, we use a marginal model based on the proposal distribution $\pi(\stattheta)$ as reference model in the denominator of the likelihood ratio, which substantially improves the numerical stability of the algorithm. This choice also allows us to include the ``flipped'' terms with $s'$ and $g'$ in the loss function in Eq.~\eqref{eq:alices_loss}; we found that this new, improved version of the ALICES loss improves the sample efficiency of our algorithms. Both of these improvements are inspired by \citet{Hermans:2019ioj}. Finally, this is the first application of the ``gold mining'' idea to image data, the first combination with a convolutional network architecture, and the first use for Bayesian inference.
 
 
 \section{Results}
@@ -429,7 +437,7 @@ With the likelihood ratio in hand, a Bayesian interpretation is easily admitted 
 
 Strong lensing offers a unique way to probe the properties and distribution of dark matter on small scales through the subtle imprint of substructure on lensed arcs. The high dimensionality of the latent space characterizing substructure within the lensing halos poses a significant challenge, however. In this paper, we have introduced a novel simulation-based method based on the ideas in~\citet{1805.00013,1805.00020,1805.12244,Stoye:2018ovl} for inferring high-level population properties characterizing the distribution of substructure in an ensemble of galaxy-galaxy strong lenses.
 
-Our results on simulated data demonstrate that such machine learning-based calibrated likelihood ratio estimators offer a promising way to analyze extended-arc strong lensing images with the goal of inferring properties of dark matter substructure. Our proposed method offers several combined advantages over established techniques. In probing the collective effect of a large number of low-mass, sub-threshold subhalos it can offer sensitivity to the faint end of the subhalo mass function where deviations from the concordance CDM paradigm are most likely to be expressed. It can naturally be applied to perform fast, principled, and concurrent analysis of a large sample of strong lenses that share a common set of hyperparameters describing the underlying substructure population properties. Furthermore, rigorous selection of lensing images out of a large sample is not necessary within our framework since images with a smaller effective arc area or low overall fidelity simply do not contribute significantly to the combined substructure analysis, and non-detections are just as valuable as detections. Finally, our analysis is performed at the level of image data, without incurring loss of information associated with dimensionality reduction. 
+Our results on simulated data demonstrate that such machine learning-based calibrated likelihood ratio estimators offer a promising way to analyze extended-arc strong lensing images with the goal of inferring properties of dark matter substructure. Our proposed method offers several combined advantages over established techniques. In probing the collective effect of a large number of low-mass, sub-threshold subhalos it can offer sensitivity to the faint end of the subhalo mass function where deviations from the concordance CDM paradigm are most likely to be expressed. It can naturally be applied to perform fast, principled, and concurrent analysis of a large sample of strong lenses that share a common set of hyperparameters describing the underlying substructure population properties. Furthermore, rigorous selection of lensing images out of a large sample is not necessary within our framework since images with a smaller effective arc area or low overall fidelity simply do not contribute significantly to the combined substructure analysis, and non-detections are just as valuable as detections. Finally, our analysis is performed at the level of image data, without incurring loss of information associated with dimensionality reduction.
 
 Although we've focused on a simple proof-of-principle example in this paper, extensions to more realistic scenarios --- including more complicated descriptions of the host, source, and substructure population as well as inclusion of line-of-sight effects --- are easily admitted within our framework. The flexibility of the proposed method allows for applications beyond substructure population inference. A large lens sample can be used to perform cosmological parameter estimation and in particular can be used to independently constrain the Hubble constant~\citep{1907.04869,1907.02533} through its sensitivity to the angular diameter distance scales in lensing systems.
 
