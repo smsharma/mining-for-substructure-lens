@@ -369,12 +369,12 @@ For Bayesian inference, note that we can write Bayes' theorem as
 %
 \begin{align}
   p(\stattheta | \{x_i\})
-  &= \frac {p(\stattheta) \; \prod_i p(x_i | \stattheta)} {\int\!\diff \tilde{\stattheta} \, p(\tilde{\stattheta}) \, \prod_i p(x_i | \tilde{\stattheta})} \notag \\
+  &= \frac {p(\stattheta) \; \prod_i p(x_i | \stattheta)} {\int\!\diff \stattheta' \, p(\stattheta') \, \prod_i p(x_i | \stattheta')} \notag \\
   &= p(\stattheta) \Biggl[
-    \int\!\diff\tilde{\stattheta} \, p(\tilde{\stattheta}) \, \prod_i \frac {p(x_i | \tilde{\stattheta})}{p(x_i | \stattheta)}
+    \int\!\diff\stattheta' \, p(\stattheta') \, \prod_i \frac {p(x_i | \stattheta')}{p(x_i | \stattheta)}
   \Biggr]^{-1} \notag \\
   &\approx p(\stattheta) \Biggl[
-    \int\!\diff\tilde{\stattheta} \, p(\tilde{\stattheta}) \, \prod_i \frac {\hat{r}(x_i | \tilde{\stattheta})}{\hat{r}(x_i | \stattheta)}
+    \int\!\diff\stattheta' \, p(\stattheta') \, \prod_i \frac {\hat{r}(x_i | \stattheta')}{\hat{r}(x_i | \stattheta)}
   \Biggr]^{-1} \,,
 \end{align}
 %
