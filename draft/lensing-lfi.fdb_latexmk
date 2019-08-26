@@ -1,15 +1,13 @@
 # Fdb version 3
-["bibtex lensing-lfi"] 1566771818 "lensing-lfi.aux" "lensing-lfi.bbl" "lensing-lfi" 1566771990
+["bibtex lensing-lfi"] 1566771818 "lensing-lfi.aux" "lensing-lfi.bbl" "lensing-lfi" 1566785842
   "./aasjournal_mod.bst" 1566599136 37505 ece19f06dd919a9848108a5e848252ab ""
-  "lensing-lfi.aux" 1566771990 25577 74e11d74bc047e5f6e73ae2eb96e3416 ""
+  "lensing-lfi.aux" 1566785842 25577 74e11d74bc047e5f6e73ae2eb96e3416 ""
   "lensing-lfi.bcf" 0 -1 0 ""
   "lensing-lfi.bib" 1566771810 91553 520565a7fa23b3a2021280b7e8e78299 ""
   (generated)
-  "lensing-lfi.bbl"
   "lensing-lfi.blg"
-["pdflatex"] 1566771989 "/Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.tex" "/Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.pdf" "lensing-lfi" 1566771990
-  "/Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.aux" 1566771990 25577 74e11d74bc047e5f6e73ae2eb96e3416 ""
-  "/Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.tex" 1566771986 55071 8283e891489046dfe7b114a642451f23 ""
+  "lensing-lfi.bbl"
+["pdflatex"] 1566785841 "lensing-lfi.tex" "lensing-lfi.pdf" "lensing-lfi" 1566785842
   "/usr/local/texlive/2016/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/adobe/helvetic/phvr.tfm" 1136768653 2504 ba6584b616b92101c768b6c4ffb32dd0 ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy5.tfm" 1246382020 1120 1e8878807317373affa7f7bba4cf2f6a ""
@@ -100,6 +98,7 @@
   "/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsopn.sty" 1459635588 4115 318a66090112f3aa3f415aeb6fe8540f ""
   "/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amstext.sty" 1456875012 2431 fe3078ec12fc30287f568596f8e0b948 ""
   "/usr/local/texlive/2016/texmf-dist/tex/latex/base/latexsym.sty" 1454284088 2854 d9a09e80ec53a1710adc74c0e8300370 ""
+  "/usr/local/texlive/2016/texmf-dist/tex/latex/base/omscmr.fd" 1454284088 2256 80ce1168fb4ce6a85583a9cf8972c013 ""
   "/usr/local/texlive/2016/texmf-dist/tex/latex/base/ulasy.fd" 1454284088 2020 d5c6fbbe41610194529ecfc3e463c559 ""
   "/usr/local/texlive/2016/texmf-dist/tex/latex/graphics-cfg/color.cfg" 1459978653 1213 620bba36b25224fa9b7e1ccb4ecb76fd ""
   "/usr/local/texlive/2016/texmf-dist/tex/latex/graphics-cfg/graphics.cfg" 1459978653 3103 f32642b1cd56c010cdfb6545539b7f0b ""
@@ -143,14 +142,14 @@
   "figures/scenarios_1d.pdf" 1566592164 17931 1b7a4875fc4266c0a900f84563320935 ""
   "figures/scenarios_2d.pdf" 1566592164 14563 3254292a5ca484a164e0fb912bbce5e5 ""
   "figures/simulations.pdf" 1566592164 87331 40d4414259b8757d16850bcce2024308 ""
-  "lensing-lfi.aux" 1566771990 25577 74e11d74bc047e5f6e73ae2eb96e3416 ""
+  "lensing-lfi.aux" 1566785842 25577 74e11d74bc047e5f6e73ae2eb96e3416 ""
   "lensing-lfi.bbl" 1566771818 30239 a23f56a610975deee9c97068cbd39da0 "bibtex lensing-lfi"
-  "lensing-lfi.tex" 1566771986 55071 8283e891489046dfe7b114a642451f23 ""
-  "lensing-lfi.toc" 1566771990 1569 0b5efa79e284a25fe8902d952a91bd6d ""
+  "lensing-lfi.tex" 1566785839 55531 933759c6653a26ea8e8e87bedcf9695c ""
+  "lensing-lfi.toc" 1566785842 1569 0b5efa79e284a25fe8902d952a91bd6d ""
   (generated)
+  "lensing-lfi.aux"
   "/Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.log"
   "lensing-lfi.toc"
-  "lensing-lfi.aux"
-  "/Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.pdf"
   "lensing-lfi.pdf"
   "lensing-lfi.log"
+  "/Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.pdf"
