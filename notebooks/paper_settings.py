@@ -1,12 +1,14 @@
+import matplotlib
 from matplotlib import pyplot as plt
 from matplotlib import gridspec
 
 import palettable
 
-
 #CMAP1 = palettable.cartocolors.sequential.Teal_7.mpl_colormap
 #CMAP2 = palettable.cartocolors.sequential.Teal_7.mpl_colormap
 #COLORS = palettable.cartocolors.sequential.Teal_4_r.mpl_colors
+
+TEXTWIDTH = 7.1014  # inches
 
 CMAP1 = palettable.cmocean.sequential.Ice_20_r.mpl_colormap
 CMAP2 = palettable.cmocean.sequential.Ice_20.mpl_colormap
@@ -17,11 +19,18 @@ COLOR_ALIGN = COLORS[2]  # "#5B4CFF"
 COLOR_FIX = COLORS[1]  # "#B7B7B7"
 COLOR_BKG = "0.7"  # "#B7B7B7"
 
-def figure(cbar=False, height=4.0,  large_margin=0.15, small_margin=0.04, cbar_sep=0.04, cbar_width=0.04):
+
+def setup():
+    matplotlib.rcParams.update({'text.usetex': True, 'font.size': 10, 'font.family': 'serif'})
+    params= {'text.latex.preamble' : [r'\usepackage{amsmath}', r'\usepackage{amssymb}']}
+    plt.rcParams.update(params)
+
+
+def figure(cbar=False, height=TEXTWIDTH*0.4,  large_margin=0.18, mid_margin=0.14, small_margin=0.05, cbar_sep=0.03, cbar_width=0.04):
     if cbar:
         width = height * (1. + cbar_sep + cbar_width + large_margin - small_margin)
         top = small_margin
-        bottom = large_margin
+        bottom = mid_margin
         left = large_margin
         right = large_margin + cbar_width + cbar_sep
         cleft = 1. - (large_margin + cbar_width) * height / width
@@ -49,7 +58,7 @@ def figure(cbar=False, height=4.0,  large_margin=0.15, small_margin=0.04, cbar_s
         left = large_margin
         right = small_margin
         top = small_margin
-        bottom = large_margin
+        bottom = mid_margin
 
         fig = plt.figure(figsize=(width, height))
         ax = plt.gca()
@@ -109,8 +118,17 @@ def grid(nx=4, ny=2, height=6., n_caxes=0, large_margin=0.02, small_margin=0.02,
     return fig, caxes
 
 
+def grid_width(nx=4, ny=2, width=TEXTWIDTH, n_caxes=0, large_margin=0.025, small_margin=0.025, sep=0.025, cbar_width=0.04):
+    left = large_margin
+    right = small_margin
+    top = small_margin
+    bottom = large_margin
+    panel_size = (1. - top - bottom - (ny - 1) * sep) / ny
+    height = width / (left + nx * panel_size + (nx - 1) * sep + right)
+    return grid(nx, ny, height, n_caxes, large_margin, small_margin, sep, cbar_width)
 
-def grid2(nx=4, ny=2, height=6., large_margin=0.15, small_margin=0.03, sep=0.03, cbar_width=0.04):
+
+def grid2(nx=4, ny=2, height=6., large_margin=0.14, small_margin=0.03, sep=0.03, cbar_width=0.06):
     # Geometry
     left = large_margin
     right = large_margin
@@ -138,3 +156,13 @@ def grid2(nx=4, ny=2, height=6., large_margin=0.15, small_margin=0.03, sep=0.03,
         hspace=hspace,
     )
     return fig, gs
+
+
+def grid2_width(nx=4, ny=2, width=TEXTWIDTH, large_margin=0.14, small_margin=0.03, sep=0.03, cbar_width=0.06):
+    left = large_margin
+    right = large_margin
+    top = small_margin
+    bottom = large_margin
+    panel_size = (1. - top - bottom - (ny - 1)*sep)/ny
+    height = width / (left + nx*panel_size + cbar_width + nx*sep + right)
+    return grid2(nx, ny, height, large_margin, small_margin, sep, cbar_width)
