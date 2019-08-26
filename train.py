@@ -26,8 +26,8 @@ def train(
     batch_size=128,
     n_epochs=50,
     optimizer="adam",
-    initial_lr=1.e-4,
-    final_lr=1.e-6,
+    initial_lr=1.0e-4,
+    final_lr=1.0e-6,
     limit_samplesize=None,
     load=None,
     zero_bias=False,
@@ -62,10 +62,12 @@ def train(
     estimator.train(
         method,
         x="{}/samples/x_{}.npy".format(data_dir, sample_name),
-        y="{}/samples/y_{}.npy".format(data_dir, sample_name),
         theta="{}/samples/theta_{}.npy".format(data_dir, sample_name),
-        r_xz="{}/samples/r_xz_{}.npy".format(data_dir, sample_name),
+        theta_alt="{}/samples/theta_alt_{}.npy".format(data_dir, sample_name),
+        log_r_xz="{}/samples/log_r_xz_{}.npy".format(data_dir, sample_name),
+        log_r_xz_alt="{}/samples/log_r_xz_alt_{}.npy".format(data_dir, sample_name),
         t_xz="{}/samples/t_xz_{}.npy".format(data_dir, sample_name),
+        t_xz_alt="{}/samples/t_xz_alt_{}.npy".format(data_dir, sample_name),
         aux=aux_data,
         alpha=alpha,
         optimizer=optimizer,
@@ -152,21 +154,18 @@ def parse_args():
         help='Optimizer. "amsgrad", "adam", and "sgd" are supported. Default: "adam".',
     )
     parser.add_argument(
-        "--batchsize",
-        type=int,
-        default=128,
-        help="Batch size. Default: 128.",
+        "--batchsize", type=int, default=128, help="Batch size. Default: 128."
     )
     parser.add_argument(
         "--lr",
         type=float,
-        default=1.e-4,
+        default=1.0e-4,
         help="Initial learning rate. Default: 0.0001",
     )
     parser.add_argument(
         "--lrdecay",
         type=float,
-        default=1.e-2,
+        default=1.0e-2,
         help="Learning rate decay (final LR / initial LR). Default: 0.01",
     )
 

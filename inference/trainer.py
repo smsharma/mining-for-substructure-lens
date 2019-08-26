@@ -563,22 +563,22 @@ class Trainer(object):
             logging.info("  {:>32s}: {:6.2f}h".format(key, value / 3600.0))
 
 
-class SingleParameterizedRatioTrainer(Trainer):
+class RatioTrainer(Trainer):
     def __init__(self, model, run_on_gpu=True, double_precision=False):
-        super(SingleParameterizedRatioTrainer, self).__init__(
+        super(RatioTrainer, self).__init__(
             model, run_on_gpu, double_precision
         )
         self.calculate_model_score = True
 
     def check_data(self, data):
         data_keys = list(data.keys())
-        if "x" not in data_keys or "theta" not in data_keys or "y" not in data_keys:
+        if "x" not in data_keys or "theta" not in data_keys or "theta_alt" not in data_keys:
             raise ValueError(
-                "Missing required information 'x', 'theta', or 'y' in training data!"
+                "Missing required information 'x', 'theta', or 'theta_alt' in training data!"
             )
 
         for key in data_keys:
-            if key not in ["x", "theta", "y", "r_xz", "t_xz", "aux"]:
+            if key not in ["x", "theta", "theta_alt", "log_r_xz", "log_r_xz_alt", "t_xz", "t_xz_alt", "aux"]:
                 logger.warning("Unknown key %s in training data! Ignoring it.", key)
 
         self.calculate_model_score = "t_xz" in data_keys
@@ -590,30 +590,46 @@ class SingleParameterizedRatioTrainer(Trainer):
     def forward_pass(self, batch_data, loss_functions):
         self._timer(start="fwd: move data")
         theta = batch_data["theta"].to(self.device, self.dtype, non_blocking=True)
+        theta_alt = batch_data["theta_alt"].to(self.device, self.dtype, non_blocking=True)
         x = batch_data["x"].to(self.device, self.dtype, non_blocking=True)
-        y = batch_data["y"].to(self.device, self.dtype, non_blocking=True)
         try:
-            r_xz = batch_data["r_xz"].to(self.device, self.dtype, non_blocking=True)
+            log_r_xz = batch_data["log_r_xz"].to(self.device, self.dtype, non_blocking=True)
         except KeyError:
-            r_xz = None
+            log_r_xz = None
+        try:
+            log_r_xz_alt = batch_data["log_r_xz_alt"].to(self.device, self.dtype, non_blocking=True)
+        except KeyError:
+            log_r_xz_alt = None
         try:
             t_xz = batch_data["t_xz"].to(self.device, self.dtype, non_blocking=True)
         except KeyError:
             t_xz = None
         try:
+            t_xz_alt = batch_data["t_xz_alt"].to(self.device, self.dtype, non_blocking=True)
+        except KeyError:
+            t_xz_alt = None
+        try:
             aux = batch_data["aux"].to(self.device, self.dtype, non_blocking=True)
         except KeyError:
             aux = None
         self._timer(stop="fwd: move data", start="fwd: check for nans")
-        self._check_for_nans("Training data", theta, x, y, aux)
-        self._check_for_nans("Augmented training data", r_xz, t_xz)
+        self._check_for_nans("Training data", theta, x, theta_alt, aux)
+        self._check_for_nans("Augmented training data", log_r_xz, log_r_xz_alt, t_xz, t_xz_alt)
         self._timer(start="fwd: model.forward", stop="fwd: check for nans")
 
         if self.calculate_model_score:
             theta.requires_grad = True
+            theta_alt.requires_grad = True
 
         s_hat, log_r_hat, t_hat, _ = self.model(
             theta,
+            x,
+            aux=aux,
+            track_score=self.calculate_model_score,
+            return_grad_x=False,
+        )
+        s_hat_alt, log_r_hat_alt, t_hat_alt, _ = self.model(
+            theta_alt,
             x,
             aux=aux,
             track_score=self.calculate_model_score,
@@ -626,7 +642,8 @@ class SingleParameterizedRatioTrainer(Trainer):
         self._timer(start="fwd: calculate losses", stop="fwd: check for nans")
 
         losses = [
-            loss_function(s_hat, log_r_hat, t_hat, y, r_xz, t_xz)
+            (loss_function(s_hat, log_r_hat, t_hat, torch.zeros_like(s_hat), log_r_xz, t_xz)
+            + loss_function(s_hat_alt, log_r_hat_alt, t_hat_alt, torch.ones_like(s_hat_alt), log_r_xz_alt, t_xz_alt))
             for loss_function in loss_functions
         ]
         self._timer(stop="fwd: calculate losses", start="fwd: check for nans")

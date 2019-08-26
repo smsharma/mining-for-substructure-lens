@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=tr-a
-#SBATCH --output=log_train_alices.log
+#SBATCH --job-name=slr-t-a
+#SBATCH --output=log_train_alices3.log
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32GB
@@ -9,9 +9,10 @@
 #SBATCH --gres=gpu:1
 
 source activate lensing
-cd /scratch/jb6504/StrongLensing-Inference/
+base=/scratch/jb6504/recycling_strong_lensing/
+cd $base/
 
-python -u train.py alices train_fix alices_fix --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py alices train_mass alices_mass_pre --load alices_fix --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py alices train_align alices_align_pre --load alices_fix --dir /scratch/jb6504/StrongLensing-Inference
-python -u train.py alices train_full alices_full_pre --load alices_fix --dir /scratch/jb6504/StrongLensing-Inference
+#python -u train.py alices train_fix alices_fix --dir $base
+#python -u train.py alices train_mass alices_mass --load alices_fix --dir $base
+python -u train.py alices train_align alices_align --load alices_fix --dir $base
+#python -u train.py alices train_full alices_full --load alices_fix --dir $base

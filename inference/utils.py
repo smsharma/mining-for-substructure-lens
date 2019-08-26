@@ -131,6 +131,11 @@ def load_and_check(filename, warning_threshold=1.0e9, memmap=False):
     else:
         data = np.load(filename)
 
+    # Change dtype
+    if not memmap:
+        data = data.astype(np.float)
+
+    # Clean data
     if memmap:
         logger.debug("Skipping NaN check for memmap-ed data")
     else:
@@ -161,11 +166,11 @@ def load_and_check(filename, warning_threshold=1.0e9, memmap=False):
     return data
 
 
-def clean_r(r, log_r_clip=20.0):
+def clean_log_r(log_r, log_r_clip=20.0):
     return np.where(
-        np.isnan(r),
-        np.exp(-log_r_clip) * np.ones_like(r),
-        np.clip(r, np.exp(-log_r_clip), np.exp(log_r_clip)),
+        np.isnan(log_r),
+        -log_r_clip * np.ones_like(log_r),
+        np.clip(log_r, -log_r_clip, log_r_clip),
     )
 
 
@@ -250,27 +255,27 @@ def create_missing_folders(folders):
 
 def get_loss(method, alpha):
     if method in ["carl"]:
-        loss_functions = [losses.ratio_xe]
+        loss_functions = [losses.xe]
         loss_weights = [1.0]
         loss_labels = ["xe"]
     elif method in ["rolr"]:
-        loss_functions = [losses.ratio_mse]
+        loss_functions = [losses.mse_r]
         loss_weights = [1.0]
         loss_labels = ["mse_r"]
     elif method == "cascal":
-        loss_functions = [losses.ratio_xe, losses.ratio_score_mse_num]
+        loss_functions = [losses.xe, losses.mse_t0]
         loss_weights = [1.0, alpha]
         loss_labels = ["xe", "mse_score"]
     elif method == "rascal":
-        loss_functions = [losses.ratio_mse, losses.ratio_score_mse_num]
+        loss_functions = [losses.mse_r, losses.mse_t0]
         loss_weights = [1.0, alpha]
         loss_labels = ["mse_r", "mse_score"]
     elif method in ["alice"]:
-        loss_functions = [losses.ratio_augmented_xe]
+        loss_functions = [losses.augmented_xe]
         loss_weights = [1.0]
         loss_labels = ["improved_xe"]
     elif method == "alices":
-        loss_functions = [losses.ratio_augmented_xe, losses.ratio_score_mse_num]
+        loss_functions = [losses.augmented_xe, losses.mse_t0]
         loss_weights = [1.0, alpha]
         loss_labels = ["improved_xe", "mse_score"]
     else:
