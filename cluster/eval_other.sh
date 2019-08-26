@@ -13,7 +13,7 @@ base=/scratch/jb6504/recycling_strong_lensing/
 cd $base
 
 tag=full
-for variation in fromscratch deep batchsize256
+for variation in batchsize64 # fromscratch deep batchsize256
 do
     modeltag=${tag}_${variation}
     echo ""
