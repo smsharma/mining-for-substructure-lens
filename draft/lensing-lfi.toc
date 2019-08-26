@@ -1,0 +1,20 @@
+\tocdepth@munge 
+\tocdepth@restore 
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}
+\contentsline {section}{\numberline {2}Strong lensing formalism and simulation set-up}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Strong lensing formalism}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Lensing host galaxy}{3}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Lensing substructure}{4}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}Background source}{5}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.5}Observational considerations}{5}{subsection.2.5}
+\contentsline {subsection}{\numberline {2.6}Population statistics of the lens and source samples}{6}{subsection.2.6}
+\contentsline {section}{\numberline {3}Statistical formalism and simulation-based inference}{6}{section.3}
+\contentsline {subsection}{\numberline {3.1}Extracting additional information from the simulator}{8}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Machine learning}{8}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Calibration}{9}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Inference}{9}{subsection.3.4}
+\contentsline {section}{\numberline {4}Results}{10}{section.4}
+\contentsline {section}{\numberline {5}Extensions}{10}{section.5}
+\contentsline {section}{\numberline {6}Conclusions}{10}{section.6}
+\contentsline {section}{\numberline {A}Minimum of the loss functional}{10}{appendix.A}
+\contentsline {section}{\numberline {B}Simplified scenarios}{12}{appendix.B}

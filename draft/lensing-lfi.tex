@@ -1,137 +1,136 @@
+% !TeX root = ./lensing-lfi.tex
+
 \documentclass[twocolumn]{aastex62}
 
 \usepackage{amsmath, amsthm, amssymb, amsfonts}
 
-\newcommand{\SMS}[1]{{\bf \color{blue}{[SM: #1]}}}
+\input{definitions}
 
-\newcommand{\acronym}[1]{{\small{#1}}}
-\newcommand{\package}[1]{\textsl{#1}}
-\newcommand{\Euclid}{\textsl{Euclid}}
-\newcommand{\lcdm}{\acronym{$\Lambda$CDM}}
-\newcommand{\kpc}{\textrm{kpc}}
-\newcommand{\Msun}{\textrm{M}_\odot}
-\newcommand{\kmps}{\textrm{km\,s}^{-1}}
-\newcommand{\zl}{z_l}
-\newcommand{\zs}{z_s}
-\newcommand{\sv}{\sigma_v}
-\newcommand{\mtwo}{m_{200}}
-\newcommand{\MMW}{M_\textrm{MW}}
-\newcommand{\Mtwo}{M_{200}}
-\newcommand{\ctwo}{c_{200}}
-\newcommand{\rtwo}{r_{200}}
-\newcommand{\Rtwo}{R_{200}}
-
-\shorttitle{Inferring dark matter substructure with likelihood-free inference}
+\shorttitle{Inferring dark matter substructure with machine learning}
 \shortauthors{Brehmer and Mishra-Sharma et al.}
-%@arxiver{}
 
 \begin{document}\sloppy\sloppypar\raggedbottom\frenchspacing
 
-\title{\textbf{%
-Mining for Substructure: \\
+\title{\textbf{
+Mining for Dark Matter Substructure: \\
 Inferring subhalo population properties from strong lenses with machine learning
 }}
 
-% \correspondingauthor{Siddharth Mishra-Sharma}
-% \email{sm8383@nyu.edu}
+\correspondingauthor{Johann Brehmer}
+\email{johann.brehmer@nyu.edu}
+\correspondingauthor{Siddharth Mishra-Sharma}
+\email{sm8383@nyu.edu}
 
-\author{Johann Brehmer}
+\author[0000-0003-3344-4209]{Johann Brehmer}
 \affil{Center for Cosmology and Particle Physics, Department of Physics, New York University, 726~Broadway, New York, NY 10003, USA}
 \affil{Center for Data Science, New York University, 60 Fifth Ave, New York, NY 10011, USA}
 
-\author{Siddharth Mishra-Sharma}
+\author[0000-0001-9088-7845]{Siddharth Mishra-Sharma}
 \affil{Center for Cosmology and Particle Physics, Department of Physics, New York University, 726~Broadway, New York, NY 10003, USA}
-\email{sm8383@nyu.edu}
 
 \author{Joeri Hermans}
-\affil{University of Li\`ege, Belgium}
+\affil{Montefiore Institute, University of Li\`ege, Belgium}
 
-\author{Gilles Louppe}
-\affil{University of Li\`ege, Belgium}
+\author[0000-0002-2082-3106]{Gilles Louppe}
+\affil{Montefiore Institute, University of Li\`ege, Belgium}
 
-\author{Kyle Cranmer}
+\author[0000-0002-5769-7094]{Kyle Cranmer}
 \affil{Center for Cosmology and Particle Physics, Department of Physics, New York University, 726~Broadway, New York, NY 10003, USA}
 \affil{Center for Data Science, New York University, 60 Fifth Ave, New York, NY 10011, USA}
 
 \begin{abstract}\noindent
-We develop methods to analyze a statistical sample of strong lenses in a principled way to look for dark matter substructure with likelihood-free inference techniques.
+The subtle and unique imprint of dark matter substructure on extended arcs in galaxy-galaxy strong lenses contains a wealth of information about the properties and distribution of dark matter on small scales and, consequently, about the underlying particle physics. Teasing out this effect poses a significant challenge however due to the high dimensionality of the underlying latent space associated with a large number of dark matter subhalos. We apply recently-developed simulation-based techniques to the problem of substructure inference in galaxy-galaxy strong lenses. By leveraging additional information extracted from the simulator, these methods can be used to train neural networks to estimate likelihood ratios associated with population-level parameters characterizing the distribution of substructure. We show through proof-of-principle application to simulated data how these methods can provide an efficient and principled way to infer substructure properties by simultaneously analyzing the large lens samples deliverable by upcoming surveys.
 \end{abstract}
 
 \keywords{%
-cosmology
-  ---
-dark matter 
-  --- 
-galaxies: statistics
-  ---
-gravitational lensing: strong
-  ---
-methods: statistical 
+strong gravitational lensing (1643)
+---
+gravitational lensing (670)
+---
+nonparametric inference (1903)
+---
+astrostatistics techniques (1886)
+---
+cosmology (343)
+---
+dark matter (353)
 }
+
+\tableofcontents{}
+
+\JB{Better way to mark a joint first authorship?}
 
 \section{Introduction}
 \label{sec:intro}
 
-\section{Strong lensing formalism}
+Dark matter (DM) accounts for nearly a quarter of the energy budget of the Universe, and pinning down its fundamental nature and interactions is one of the most pressing problems in cosmology and particle physics today. Despite an organized effort to do so through terrestrial~\citep{2018PhRvL.121k1302A,2017PhRvL.119r1302C,2017PhRvL.118b1303A}, astrophysical~\citep{2017ApJ...834..110A,2018PhRvD..98l3004C,2018PhRvL.120j1101L}, and collider searches~\citep{2019arXiv190301400A,2017PhLB..769..520S}, no conclusive evidence of interactions between the Standard Model (SM) and dark matter exists to-date.
+
+An alternative and complementary approach involves studying dark matter directly through its irreducible gravitational interactions. The concordance Cold Dark Matter (CDM) framework of non-relativistic, collisionless dark matter particles provides an excellent description of the observed distribution of matter on large scales. However, many well-motivated models predict deviations from CDM on smaller scales. Fundamental dark matter microphysical properties, such as its particle mass and self-interaction cross-section, can imprint themselves onto its macroscopic distribution in ways that can be probed by current and future experiments~\citep{2019arXiv190201055D}. As motivating examples, theories where dark matter has a significant free-streaming length would lead to a dearth of subhalos at lower masses ($\lesssim 10^9\,\mathrm{M}_\odot$)~\citep{1983ApJ...274..443B,2001ApJ...556...93B,astro-ph/0004381,0807.0622,1008.0992}, and self-interactions~\citep{1508.03339,1311.6524,1211.6426,1208.3026,1201.5892,1805.03203,1904.10539} or dissipative dynamics~\citep{1706.04195,1702.05482,1707.03829,1303.1521,1512.05349} in the dark sector would modify the structure of the inner core of subhalos as compared to CDM predictions.
+
+There exist several avenues for probing the structure of dark matter on small scales. While the detection of ultrafaint dwarf galaxies through the study of stellar overdensities and kinematics~\citep{1503.02584,0706.2687,1503.02079} can be used to make statements about the underlying dark matter properties, theoretical uncertainties in the connection between stellar and halo masses~\citep{1804.03097} and the effect of baryons on the satellite galaxy population~\citep{1812.00044,1811.11791,1701.03792,1608.01849} pose a challenge. Furthermore, suppressed star-formation in smaller halos means that there exists a threshold ($\lesssim 10^8\,\mathrm{M}_\odot$) below which subhalos are expected to be mostly dark and devoid of stars~\citep{1992MNRAS.256P..43E,1611.02281,1607.03127}. This makes studying the imprints of gravitational interaction the \emph{only} viable avenue for probing substructure at smaller scales. In this spirit, the study of perturbations to the stellar phase-space distribution in cold stellar streams~\citep{1804.06854,astro-ph/9807243,1109.6022,1303.4342,1811.03631}, and in stellar fields in the disk and halo~\citep{1711.03554} have been proposed as methods to look for low-mass subhalos through their gravitational interactions in the Milky Way.
+
+Complementary to the study of locally-induced gravitational effects, gravitational lensing has emerged as an important tool for studying the distribution of matter over a large range of scales. Locally, the use of time-domain astrometry has been proposed as a promising method to measure the distribution of local substructure through correlated, lens-induced motions on background celestial objects~\citep{2018JCAP...07..041V}. In the extragalactic regime, galaxy-scale strong lensing systems are a laboratory for studying substructure. The presence of flux-ratio anomalies in multiply-imaged quasar lenses has been used to infer the typical abundance of substructure within galaxy-scale lenses~\citep{2002ApJ...572...25D,2019arXiv190504182H,2002ApJ...572...25D}. Lensed images of extended sources have been used to find evidence for a handful of subhalos with masses $\gtrsim 10^8\,\mathrm{M}_\odot$~\citep{1601.01388,0910.0760,1201.3643}.
+
+A complementary approach relies on probing the collective effect of sub-threshold (\emph{i.e}, not individually resolvable) subhalos on extended arcs in strongly lensed systems. A particular challenge here is the high dimensionality of the latent parameter space associated with the large number of subhalos and their (potentially covariant) individual as well as population properties, a consequence of which is the intractability of the likelihood of high-level substructure parameters conditional on the data. Methods based on summary statistics~\citep{1702.00009} and studying the amplitude of spatial fluctuations on different scales through power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724} have been proposed as ways to reduce the dimensionality of the problem and enable substructure inference in a tractable way. Trans-dimensional techniques may also be able to efficiently map out the parameter space associated with multiple sub-threshold subhalos in these systems~\citep{1508.00662,1706.06111}. This class of methods is well-suited to studying dark matter substructure since they can be sensitive to the \emph{population} properties of low-mass subhalos in strongly lensed galaxies which are directly correlated with the underlying dark matter particle physics. Furthermore, near-future observatories like LSST~\citep{0912.0201,2019arXiv190201055D,1902.05141} and \Euclid~\citep{1001.0061} are expected to find tens of thousands of galaxy-galaxy strong lenses~\citep{2015ApJ...811...20C}, making substructure inference in these systems (and high-resolution followups on a subset) one of the key ways to investigate dark matter substructure and stress-test the Cold Dark Matter paradigm in the near future. This calls for methods that can efficiently analyze large samples of lensed images to infer the underlying substructure properties with minimal loss of information stemming from dimensional reduction.
+
+In this paper we apply a powerful recently-developed class of techniques for simulation-based inference~\citep{1805.00013,1805.00020,1805.12244} to the problem of extracting high-level substructure properties from an ensemble of galaxy-galaxy strong lensing images. In contrast to traditional simulation-based (or ``likelihood-free'') approaches, these methods do not rely on summary statistics and instead leverage additional information extracted from the simulator in order to train neural networks that can be used to efficiently estimate the likelihood ratio. This provides an elegant bridge between machine learning and the ubiquitous likelihood ratio, which is provably the most powerful statistic for hypothesis testing~\citep{1933RSPTA.231..289N}.
+
+This paper is organized as follows. In Sec.~\ref{sec:lensing-formalism} we briefly review the formalism of gravitational strong lensing and describe our simulation setup, including the assumptions we make about the population of lensed sources and host galaxies, the substructure population and observational parameters. In Sec.~\ref{sec:lfi-formalism} we describe the simulation-based analysis technique used and its particular application to the problem of mining substructure properties from an ensemble of extended lensed arcs. We show a proof-of-principle application of this method to simulated data in Sec.~\ref{sec:results} and comment on how these methods can be extended to more ``realistic'' scenarios in Sec.~\ref{sec:extensions}. We conclude in Sec.~\ref{sec:conclusions}.
+
+\section{Strong lensing formalism and simulation set-up}
 \label{sec:lensing-formalism}
 
-\section{Statistical formalism and likelihood-free inference}
-\label{sec:lfi-formalism}
+In strong lensing systems, the background light emission source can in general be a point-like quasar or supernova, or a faint, extended ``blue'' galaxy. The former results in multiple localized images on the lens plane rather than extended arc-like images, providing the ability to probe substructure over a limited region on the lens plane. For this reason, we focus our method towards galaxy-galaxy lenses --- systems producing images with extended arcs --- since we aim to disentangle the collective effect of a population of subhalo perturbers over multiple images. Young, blue galaxies are ubiquitous in the redshift regime $z\gtrsim1$ and dominate the faint end of the galaxy luminosity function, resulting in a much larger deliverable sample of galaxy-galaxy strong lenses compared to quadruply- and doubly-imaged quasars/supernovae.
 
-\section{Simulating a population of lenses}
-\label{sec:lens-sim}
+We now briefly review the basic strong lensing formalism before describing in turn the models for the background source, lensing galaxy and population parameters of the lens systems used in this study.
 
-In strong lensing systems, the background light emission source can in general be a point-like quasar or supernova, or a faint, extended ``blue'' galaxy. The former results in multiple localized images on the lens plane rather than extended arc-like images, providing the ability to probe substructure over a limited region on the lens plane. For this reason, we focus our method towards galaxy-galaxy lense---systems producing images with extended arcs---since we aim to disentangle the collective, sub-threshold effect of a population of subhalo perturbers over multiple images. Young, blue galaxies are uniquitous in the redshift regime $z\gtrsim1$ and dominate the faint end of the galaxy luminosity function, resulting in a much larger deliverable sample of galaxy-galaxy strong lenses compared to quadruply- and doubly-imaged quasars/supernovae.
+\subsection{Strong lensing formalism}
 
-The fact that the strong lens population is expected to be dominated by higher-redshift ($z\gtrsim1$) blue source galaxies lensed by intermediate-redshift ($z\sim 0.5$--$1$) elliptical galaxies presents significant challenges for quantifying the lens population obtainable with future observations. Specifically, planned ground-based surveys like LSST and space telescopes like \Euclid~present complementary challenges for delivering images of strong lensing systems suitable for substructure studies. LSST is expected to image in six bands, allowing efficient source selection and distinguishing source and lens emission, but at the cost of lower resolution by virtue of being a ground-based instrument. \Euclid~imaging is expected be much higher in resolution but with a single optical passband (VIS). Near-IR imaging from WFIRST may deliver a high-resolution, multi-wavelength dataset that is more suitable for substructure studies, although the lens and source populations may differ from those probed by optical telescopes. 
-
-In light of these uncertainties, we limit the scope of the present study to developing a class of methods that can be adapted to the specifications of a galaxy-galaxy strong lensing population obtained with the next generation of optical, near-IR and radio telescopes. In particular, we confine ourselves to a setting where the main methodological points can be made without detailed modeling of the detector capabilities and the deliverable lensing dataset, which is outside of the scope of the current paper.
-
-We now describe our models for the background source, lensing galaxy and population parameters of the lens systems used in this study. 
-
-\subsection{Background source}
-
-We model the emission from background source galaxies using a S\'{e}rsic profile, with the surface brightness given by
+We briefly review here the mathematical formalism behind strong lensing. For more details see, \emph{e.g.},~\cite{2001astro.ph..2341K,1992grle.book.....S}. For a mass distribution with dimensionless projected surface mass density $\kappa(\mathbf{r})=\Sigma(\mathbf{r}) / \Sigma_{\mathrm{cr}}$, where $\Sigma_{\mathrm{cr}}\equiv \frac{1}{4 \pi G_N} \frac{D_{\mathrm{s}}}{D_{\mathrm{ls}} D_{\mathrm{l}}}$ is the critical lensing surface density, the two-dimensional lensing potential is given by
 \begin{equation}
-\Sigma(r)=\Sigma_{e} \exp \left\{-b_{n}\left[\left(\frac{r}{r_{e}}\right)^{1 / n}-1\right]\right\},
+\psi(\mathbf{r})=\frac{1}{\pi} \int \diff \mathbf{r^\prime}\,\ln |\mathbf{r}-\mathbf{r^\prime}| \kappa(\mathbf{y}) .
 \end{equation}
-where $r_e$ is the effective circular half-light radius, $n$ is the S\'{e}rsic index, and $b_n$ is a factor depending on $n$ that ensures that $r_e$ contains half the total intensity from the source galaxy, given by~\citep{1999A&A...352..447C}
-\begin{align}
-b_n \approx 2 n &- \frac{1}{3} + \frac{4}{405 n} + \frac{46}{25515 n^2} \nonumber \\ &+ \frac{131}{1148175 n^3} - \frac{2194697}{30690717750 n^4}. \nonumber
-\end{align}
-
-We assume $n=1$ for the source galaxies, corresponding to a flattened exponential profile and consistent with expectation for blue-type galaxies at the relevant redshifts. $\Sigma_{e}$ encodes the flux at half-light radius, which can be mapped onto the total flux (or magnitude) associated with a given galaxy. 
-
-The total unlensed magnitude $M$ (in a given band) of a galaxy can be mapped on to $\Sigma_{e}$ as follows. For a detector with zero-point magnitude $M_0$, which specifies the magnitude of a source giving 1 count\,s$^{-1}$ in expectation, by definition the total counts are given by $S_\mathrm{tot}=10^{0.4(M-M_0)}$. Requiring the half-light radius to contain half the expected counts, for $n=1$ we have the relation $\Sigma_{e} \approx 0.526\,t_\mathrm{exp}S_\mathrm{tot} /(2\pi r_e^2)$ in counts\,arcsec$^{-2}$, where $t_\mathrm{exp}$ is the exposure length.
-
-Treatment of the other S\'{e}rsic parameters, in particular the total emission and half-light radius, in the context of population studies is described in Secs.~\ref{sec:observations} and~\ref{sec:populations} below.
+The lensed position of the source can be determined through the lens equation,
+\begin{equation}
+\mathbf{u}=\mathbf{r}-\nabla \psi(\mathbf{r})
+\end{equation}
+where $\mathbf{u}$ is the position of the source and $\nabla \psi$ is typically referred to as the deflection, which we will denote as $\boldsymbol\phi$ for brevity. For an extended source brightness profile $f_\mathrm{src}$, the final lensed image can be obtained as the the source profile evaluated on the image plane,
+\begin{equation}
+f^\prime_\mathrm{src}(\mathbf r) = f_\mathrm{src}\left(\mathbf{r}-\nabla \psi(\mathbf{r})\right).
+\end{equation}
+For a spherically symmetric, the radial deflection field is given by
+\begin{equation}
+\phi_{r}(r)=\frac{2}{r} \int_{0}^{r}\diff r^\prime\,r^\prime\,\kappa(r^\prime) =\frac{1}{\pi \Sigma_{\mathrm{cr}}} \frac{M_{\mathrm{cyl}}(r)}{r}
+\end{equation}
+where $M_{\mathrm{cyl}}(r)$ is the mass enclosed within a cylinder or radius $r$. Extension to the slightly more general case of elliptical symmetry is straightforward (see, \emph{e.g.},~\cite{2001astro.ph..2341K}).
 
 \subsection{Lensing host galaxy}
 
 Cosmological $N$-body simulations suggest that the dark matter distribution in structures at galactic scales can be well-described by a universal, spherically symmetric NFW profile. However, strong lensing probes a region of the host galaxy much smaller than the typical virial radii of galaxy-scale dark matter halo, and the mass budget here is dominated by the baryonic bulge component of the galaxy. Taking this into account, the total mass budget of the lensing host galaxy, being early-type, can be well describe by a singular isothermal ellipsoid (SIE) profile, known as the bulge-halo conspiracy since neither the dark matter nor the baryonic components are individually isothermal. The host profile is thus described as
 \begin{equation}
-\rho(x, y)=\frac{\sigma_{v}^{2}}{2 \pi G\left(x^{2} / q+q y^{2}\right)}
+\rho(\theta_x, \theta_y)=\frac{\sigma_{v}^{2}}{2 \pi G\left(\theta_x^{2} / q+q \theta_y^{2}\right)}
 \label{eq:hostprofile}
 \end{equation}
-where $\sigma_{v}$ is the central 1-D velocity dispersion of the lens galaxy and $q$ is the ellipsoid axis ratio, with $q=1$ corresponding to a spherical profile. The Einstein radius for this profile, giving the characteristic lensing scale, is given by
+where $\sigma_{v}$ is the central 1-D velocity dispersion of the lens galaxy and $q$ is the ellipsoid axis ratio, with $q=1$ corresponding to a spherical profile. We explicitly denote our angular coordinates as $\left\{\theta_x, \theta_y\right\}$. The Einstein radius for this profile, giving the characteristic lensing scale, is given by
 \begin{equation}
 \theta_{{E}}=4 \pi\left(\frac{\sigma_{v}}{c}\right)^{2} \frac{D_{l s}\left(z_{l}, z_{s}\right)}{D_{s}\left(z_{s}\right)}
 \label{eq:siethetae}
 \end{equation}
-where $D_{ls}$ and $D_s$ are respectively the angular diameter distances from the source to the lens planes and from the source plane to the observer respectively. 
+where $D_{ls}$ and $D_s$ are respectively the angular diameter distances from the source to the lens planes and from the source plane to the observer respectively.
 
 The deflection field for the SIE profile is given by~\citep{2001astro.ph..2341K}
-\begin{align} 
-\phi_{x} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tan ^{-1}\left[\frac{\sqrt{1-q^{2}} x}{\psi}\right] \\ 
-\phi_{y} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tanh ^{-1}\left[\frac{\sqrt{1-q^{2}} y}{\psi+q^{2} }\right] 
+\begin{align}
+\phi_{x} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tan ^{-1}\left[\frac{\sqrt{1-q^{2}} \theta_x}{\psi}\right] \\
+\phi_{y} &=\frac{\theta_E q}{\sqrt{1-q^{2}}} \tanh ^{-1}\left[\frac{\sqrt{1-q^{2}} \theta_y}{\psi+q^{2} }\right]
 \end{align}
-with $\psi \equiv \sqrt{x^2 q^2 + y^2}$.
+with $\psi \equiv \sqrt{\theta_x^2 q^2 + \theta_y^2}$.
 
 Although the total galaxy mass (baryons + dark matter) describe the macro lensing field, for the purposes of describing substructure we require being able to map the measure properties of an SIE lens onto the properties of the host dark matter halo. To do this, we relate the central stellar velocity dispersion $\sigma_v$ to the mass $M_{200}$ of the host dark matter halo. \citet{2018ApJ...859...96Z} derived a tight correlation between $\sigma_v$ and $M_{200}$, modeled as
 \begin{equation}
 \log\left(\frac{M_{200}}{10^{12}\,\Msun}\right) = \alpha + \beta\left(\frac{\sigma_v}{100\,\kmps}\right)
+\label{eq:sigma_v_M_200_relation}
 \end{equation}
-with $\alpha = 0.09$ and $\beta = 3.48$. % with a mean log-normal scatter of 0.13\,dex. 
+with $\alpha = 0.09$ and $\beta = 3.48$. % with a mean log-normal scatter of 0.13\,dex.
 We model the host dark matter halo with a Navarro-Frenk-White (NFW) profile~\citep{1996ApJ...462..563N,1997ApJ...490..493N}
 
 \begin{equation}
@@ -144,7 +143,7 @@ The spherically-symmetric deflection for an NFW perturber is given by~\citep{200
 \begin{equation}
 \phi_{r}=4 \kappa_{s} r_{s} \frac{\ln (x / 2)+\mathcal{F}(x)}{x}
 \end{equation}
-where $x = r/r_s, \kappa_s = \rho_s\,r_s/\Sigma_\mathrm{cr}$ with $\Sigma_\mathrm{cr}$ the critical surface density, and
+where $x \equiv r/r_s, \kappa_s\equiv \rho_s\,r_s/\Sigma_\mathrm{cr}$ with $\Sigma_\mathrm{cr}$ the critical surface density, and
 \begin{equation}
 \mathcal{F}(x)=\left\{\begin{array}{ll}{\frac{1}{\sqrt{x^{2}-1}} \tan ^{-1} \sqrt{x^{2}-1}} & {(x>1)} \\ {\frac{1}{\sqrt{1-x^{2}}} \tanh ^{-1} \sqrt{1-x^{2}}} & {(x<1)} \\ {1} & {(x=1).}\end{array}\right.
 \label{eq:Fx}
@@ -154,29 +153,45 @@ We described the population parameters we use to model the host velocity dispers
 
 \subsection{Lensing substructure}
 
-The ultimate goal of our method is to characterize the substructure population in strong lenses. Here we describe our procedure to model the substructure contribution to the lensing signal. Understaing the expected abundance of substructure in galaxies over a large range of epochs is complex undertaking and an active area of research. Properties of individual subhalos (such as their density profiles) as well as those that describe their population (such as the mass and spatial distribution) are strongly affected by their host environment, and accurately modeling all aspects of subhalo evolution and environment is beyond the scope of this paper. Instead, we use simple physically justifiable assumptions to model the substructure contributions in order to highlight the broad methodological points associated with the application of our method.
+The ultimate goal of our method is to characterize the substructure population in strong lenses. Here we describe our procedure to model the substructure contribution to the lensing signal. Understanding the expected abundance of substructure in galaxies over a large range of epochs is complex undertaking and an active area of research. Properties of individual subhalos (such as their density profiles) as well as those that describe their population (such as the mass and spatial distribution) are strongly affected by their host environment, and accurately modeling all aspects of subhalo evolution and environment is beyond the scope of this paper. Instead, we use simple physically justifiable assumptions to model the substructure contributions in order to highlight the broad methodological points associated with the application of our method.
 
- \lcdm, often called the standard model of cosmology, predicts a scale-invariant power spectrum of primordial fluctuations and the existence of substrucure over a broad range of masses with equal contribution per logarithmic mass interval. We parameterize the distribution of subhalo masses $\mtwo$ in a given host halo of mass $\Mtwo$---the subhalo mass function---as power law distribution:
+ \lcdm, often called the standard model of cosmology, predicts a scale-invariant power spectrum of primordial fluctuations and the existence of substructure over a broad range of masses with equal contribution per logarithmic mass interval. We parameterize the distribution of subhalo masses $\mtwo$ in a given host halo of mass $\Mtwo$ --- the subhalo mass function --- as a power law distribution with a linear dependence on the host halo mass,
 \begin{equation}
-\frac{M_{200,0}}{\Mtwo}\frac{dn}{d\mtwo} = \alpha\left(\frac{\mtwo}{m_{200, 0}}\right)^{\beta}
+\frac{dn}{d\mtwo} = \alpha \cdot M_\mathrm{200}\cdot\mtwo^{\beta}
 \label{eq:shmf}
 \end{equation}
-where $\alpha$ encodes the overall substructure abundance, with larger $\alpha$ corresponding to more substructure, and the slope $\beta$ encodes the relative constribution of subhalos at different masses, with more negative $\beta$ corresponding to a steeper slope with more low-mass subhalos. The normalization factors $m_{200, 0}$ and $M_{200, 0}$ are arbitrarily set to $10^9\,\Msun$ and the Milky Way mass $\MMW \simeq 1.1\times10^{12}\,\Msun$, respectively.
+where $\alpha$ encodes the overall substructure abundance, with larger $\alpha$ corresponding to more substructure, and the slope $\beta$ encodes the relative contribution of subhalos at different masses, with more negative $\beta$ corresponding to a steeper slope with more low-mass subhalos. %The normalization factors $m_{200, 0}$ and $M_{200, 0}$ are arbitrarily set to $10^9\,\Msun$ and the Milky Way mass $\MMW \simeq 1.1\times10^{12}\,\Msun$, respectively.
 
-Theory and simulations within the framework of \lcdm~predict a slope $\beta\sim-0.9$, giving a nearly scale-invariant spectrum of subhalos, which we assume in our fiducial setup. 
-
-% We follow the specifications in~\citet{2016JCAP...09..047H} in order to set the overall fiducial abundance of subhalos, normalizing $\alpha$ to give 150 subhalos in expectation between $10^{8}\,\Msun$ and $10^{10}\,\Msun$ for a Milky Way-sized host halo. 
-We parameterize the overall subhalo abundance through the mass fraction contained in subhalos, $f_\mathrm{sub}$, defined as the fraction of the total dark matter halo mass contained in bound substructure in a given mass range. We have
+Theory and simulations within the framework of \lcdm~predict a slope $\beta\sim-0.9$~\citep{0809.0898,0802.2265}, giving a nearly scale-invariant spectrum of subhalos, which we assume in our fiducial setup.
+% We follow the specifications in~\citet{2016JCAP...09..047H} in order to set the overall fiducial abundance of subhalos, normalizing $\alpha$ to give 150 subhalos in expectation between $10^{8}\,\Msun$ and $10^{10}\,\Msun$ for a Milky Way-sized host halo.
+We parameterize the overall subhalo abundance $\alpha$ through the mass fraction contained in subhalos, $f_\mathrm{sub}$, defined as the fraction of the total dark matter halo mass contained in bound substructure in a given mass range. We have
 \begin{equation}
-f_\mathrm{sub} = \frac{\int_{m_\mathrm{200, min}}^{m_\mathrm{200, max}}d\mtwo\,\mtwo\,\frac{dn}{d\mtwo}}{M_\mathrm{200,host}}
+f_\mathrm{sub} = \frac{\int_{m_\mathrm{200, min}}^{m_\mathrm{200, max}}d\mtwo\,\mtwo\,\frac{dn}{d\mtwo}}{M_\mathrm{200}}
 \end{equation}
-For a given $f_\mathrm{sub}$, $\beta$ and host halo mass $M_\mathrm{200,host}$, this can be used to determine $\alpha$ in Eq.~\ref{eq:shmf}. The linear scaling of the subhalo mass function with the host halo mass $\Mtwo$ in Eq.~\ref{eq:shmf} is additionally described in~\citet{2016MNRAS.457.1208H,2017MNRAS.469.1997D}. In our fiducial setups, we take the minimum mass $m_\mathrm{200, min} = 10^7\,\Msun$ and $m_\mathrm{200, min} = 0.01\,\,M_\mathrm{200,host}$~\citep{2017MNRAS.469.1997D,2018PhRvD..97l3002H}, and corresponding fiducial substructure fraction in this range of 5\%, roughly consistent with~\citet{2018PhRvD..97l3002H,2019arXiv190504182H,2002ApJ...572...25D} within our considered mass range.
+For a given $\left\{f_\mathrm{sub},\beta\right\}$ and host halo mass $M_\mathrm{200}$, this can be used to determine $\alpha$ in Eq.~\ref{eq:shmf}. The linear scaling of the subhalo mass function with the host halo mass $\Mtwo$ in Eq.~\ref{eq:shmf} is additionally described in~\citet{2016MNRAS.457.1208H,2017MNRAS.469.1997D}. In our fiducial setups, we take the minimum mass $m_\mathrm{200, min} = 10^7\,\Msun$ and $m_\mathrm{200, max} = 0.01\,\,M_\mathrm{200}$~\citep{2017MNRAS.469.1997D,2018PhRvD..97l3002H}, and corresponding fiducial substructure fraction in this range of 5\%, roughly consistent with~\citet{2018PhRvD..97l3002H,2019arXiv190504182H,2002ApJ...572...25D} within our considered mass range.
 
-With all parameters of the subhalo mass function specified, the total number $n_\mathrm{tot}$ of subhalos expected within the virial radius $\Rtwo$ of the host halo can be inferred as $\int_{m_\mathrm{200, min}}^{m_\mathrm{200, max}}d\mtwo\,\frac{dn}{d\mtwo}$. Strong lensing probes a region much smaller this scale---the typical Einstein radii for the host deflector are much smaller than the virial radius of the host dark matter halos. In order to obtain the expected number of subhalos within the lensing observations region of interest, we scale the total number of subhalos obtained from the above procedure by the ratio of projected mass within our region of interest $\theta_\textrm{ROI}$ and the host halo mass $\Mtwo$ as follows. We assume the subhalos to be distributed in number density following the host NFW dark matter profile. In this case, the NFW enclosed mass function is $M_\mathrm{enc}(x) = \Mtwo(\ln(x/2) + \mathcal{F}(x))$~\citep{2001astro.ph..2341K}, where $x$ is the angular radius in units of the virial radius, $x\equiv \theta/\theta_{200}$ and $\mathcal{F}$ is given by Eq.~\ref{eq:Fx} above. The number of subhalos within our ROI is thus obtained as $n_\mathrm{ROI} = n_\mathrm{tot} (\ln(x_\mathrm{ROI}/2) + \mathcal{F}(x_\mathrm{ROI}))$. We conservatively take the lensing ROI to enclose a region of angular size twice the Einstein radius of the host halo, $\theta_\mathrm{ROI} = 2\theta_E$.
+With all parameters of the subhalo mass function specified, the total number $n_\mathrm{tot}$ of subhalos expected within the virial radius $\Rtwo$ of the host halo can be inferred as $\int_{m_\mathrm{200, min}}^{m_\mathrm{200, max}}d\mtwo\,\frac{dn}{d\mtwo}$. Strong lensing probes a region much smaller this scale --- the typical Einstein radii for the host deflector are much smaller than the virial radius of the host dark matter halos. In order to obtain the expected number of subhalos within the lensing observations region of interest, we scale the total number of subhalos obtained from the above procedure by the ratio of projected mass within our region of interest $\theta_\textrm{ROI}$ and the host halo mass $\Mtwo$ as follows. We assume the subhalos to be distributed in number density following the host NFW dark matter profile. In this case, the NFW enclosed mass function is $M_\mathrm{enc}(x) = \Mtwo\left[\ln(x/2) + \mathcal{F}(x)\right]$~\citep{2001astro.ph..2341K}, where $x$ is the angular radius in units of the virial radius, $x\equiv \theta/\theta_s$ and $\mathcal{F}(x)$ is given by Eq.~\ref{eq:Fx} above. The number of subhalos within our ROI is thus obtained as $n_\mathrm{ROI} = n_\mathrm{tot}\left[\ln(x_\mathrm{ROI}/2) + \mathcal{F}(x_\mathrm{ROI})\right]$. We conservatively take the lensing ROI to enclose a region of angular size twice the Einstein radius of the host halo, $\theta_\mathrm{ROI} = 2\cdot\theta_E$.
 
 Since strong lensing probes the line-of-sight distribution of subhalos within the host, their projected spatial distribution is approximately uniform within the lensing ROI~\citep{2017MNRAS.469.1997D}. We thus distribute subhalos uniformly within our ROI. The density profile of subhalos is assumed to be NFW and given by Eq.~\ref{eq:rhoNFW}, with associated lensing properties as described and the concentration inferred from the relation modeled in~\citet{2014MNRAS.442.2271S}.
 
 We finally emphasize that we do not intent to capture all of the intricacies of the subhalo distribution, such as the effects of baryonic physics, tidal distruption of subhalos in proximity to the center of the host and redshift evolution of host as well as substructure properties. Although our description can be extended to take these into account, their precise characterization and effect is still subject to large uncertainties, and our simple model above captures the essential physics for demonstration purposes.
+
+\subsection{Background source}
+
+We model the emission from background source galaxies using a S\'{e}rsic profile, with the surface brightness given by
+\begin{equation}
+f_\mathrm{src}(\theta_r)=f_{e} \exp \left\{-b_{n}\left[\left(\frac{\theta_r}{\theta_{r,e}}\right)^{1 / n}-1\right]\right\},
+\end{equation}
+where $\theta_{r,e}$ is the effective circular half-light radius, $n$ is the S\'{e}rsic index, and $b_n$ is a factor depending on $n$ that ensures that $\theta_{r,e}$ contains half the total intensity from the source galaxy, given by~\citep{1999A&A...352..447C}
+\begin{align}
+b_n \approx 2 n &- \frac{1}{3} + \frac{4}{405 n} + \frac{46}{25515 n^2} \nonumber \\ &+ \frac{131}{1148175 n^3} - \frac{2194697}{30690717750 n^4}. \nonumber
+\end{align}
+
+We assume $n=1$ for the source galaxies, corresponding to a flattened exponential profile and consistent with expectation for blue-type galaxies at the relevant redshifts. $f_{e}$ encodes the flux at half-light radius, which can be mapped onto the total flux (or magnitude) associated with a given galaxy.
+
+The total unlensed magnitude $M$ (in a given band) of a galaxy can be mapped on to $f_{e}$ as follows. For a detector with zero-point magnitude $M_0$, which specifies the magnitude of a source giving 1 count\,s$^{-1}$ in expectation, by definition the total counts are given by $S_\mathrm{tot}=10^{0.4(M-M_0)}$. Requiring the half-light radius to contain half the expected counts, for $n=1$ we have the relation $f_{e} \approx 0.526\,t_\mathrm{exp}S_\mathrm{tot} /(2\pi \theta_{r,e}^2)$ in counts\,arcsec$^{-2}$, where $t_\mathrm{exp}$ is the exposure length.
+
+Treatment of the other S\'{e}rsic parameters, in particular the total emission and half-light radius, in the context of population studies is described in Secs.~\ref{sec:observations} and~\ref{sec:populations} below.
 
 \subsection{Observational considerations}
 \label{sec:observations}
@@ -190,31 +205,307 @@ These properties, in particular the exposure, sky background and PSF shape are e
 \subsection{Population statistics of the lens and source samples}
 \label{sec:populations}
 
-A detailed modeling of the lens population discoverable by a future survey like \Euclid~is beyond the scope of the current paper. We rely on~\citet{2015ApJ...811...20C} to describe the population properties of host lens galaxies. In particular, we assume spherical lenses, with ellipticity parameter $q=1$ in Eq.~\ref{eq:hostprofile}. We draw the central 1-D velocity dispersions $\sigma_v$ of host galaxies from a normal distribution with mean 225\,km\,s$^{-1}$ and standard deviation 50\,km\,s$^{-1}$. The results of~\citet{2018ApJ...859...96Z} are used to map the drawn $\sigma_v$ to a dark matter halo mass $\Mtwo$, and the host Einstein radius is analytically inferred with Eq.~\ref{eq:siethetae}.
+The fact that the strong lens population is expected to be dominated by higher-redshift ($z\gtrsim1$) blue source galaxies lensed by intermediate-redshift ($z\sim 0.5$--$1$) elliptical galaxies presents significant challenges for quantifying the lens population obtainable with future observations. Specifically, planned ground-based surveys like LSST and space telescopes like \Euclid~present complementary challenges for delivering images of strong lensing systems suitable for substructure studies. LSST is expected to image in six bands, allowing efficient source selection and distinguishing source and lens emission, but at the cost of lower resolution by virtue of being a ground-based instrument. \Euclid~imaging is expected be much higher in resolution but with a single optical passband (VIS). Near-IR imaging from WFIRST may deliver a high-resolution, multi-wavelength dataset that is more suitable for substructure studies, although the lens and source populations may differ from those probed by optical telescopes.
 
+% In light of these uncertainties, we limit the scope of the present study to developing a class of methods that can be adapted to the specifications of a galaxy-galaxy strong lensing population obtained with the next generation of optical, near-IR and radio telescopes. In particular, we confine ourselves to a setting where the main methodological points can be made without detailed modeling of the detector capabilities and the deliverable lensing dataset, which is outside of the scope of the current paper.
+
+In light of these uncertainties, we confine ourselves to a setting where the main methodological points can be made without detailed modeling of the detector capabilities and the deliverable lensing dataset, which is outside of the scope of the current paper. For concreteness, we simulate a sample of lenses with a simplified subset of host galaxy properties consistent with those deliverable by \Euclid~as modeled by~\citet{2015ApJ...811...20C}. In particular, we assume spherical lenses, with ellipticity parameter $q=1$ in Eq.~\ref{eq:hostprofile}. We draw the central 1-D velocity dispersions $\sigma_v$ of host galaxies from a normal distribution with mean 225\,km\,s$^{-1}$ and standard deviation 50\,km\,s$^{-1}$. Equation~\ref{eq:sigma_v_M_200_relation} the results of~\citet{2018ApJ...859...96Z} are used to map the drawn $\sigma_v$ to a dark matter halo mass $\Mtwo$, and the host Einstein radius is analytically inferred with Eq.~\ref{eq:siethetae}.
 
 We draw the lens redshifts $z_l$ from a log-normal distribution with mean 0.56 and scatter 0.25 dex, discarding lenses with $z_l > 1$ as these tend to have a small angular size over which substructure perturbations are relevant. The source offsets $\theta_x$ and $\theta_y$ are drawn from a normal distribution with zero mean and standard deviation 0.2. These are consistent with the lens sample generated from the \package{LensPop} code packaged with~\citet{2015ApJ...811...20C}.
+
+\begin{figure*}
+\centering
+\includegraphics[width=1.\textwidth]{figures/simulations}
+\caption{Simulated lenses. The cross markers show the offset of the host galaxy, its color its mass. The simulated subhalos are shown as dots, the color again indicates their masses. The greyscale images show the corresponding observed images. We show seven images randomly generated for $\fsub = 0.05$ and $\beta = -0.9$.}
+\label{fig:simulations}
+\end{figure*}
+
+
+\section{Statistical formalism and simulation-based inference}
+\label{sec:lfi-formalism}
+
+Our goal is to infer the subhalo mass function parameters from a catalog of images of observed lenses. In this section we will describe the challenges of this inference problem and our approach of simulation-based inference. For simplicity, we will use a more abstract notation, distinguishing between three sets of quantities in the lensing system:
+%
+\begin{description}
+  \item[Parameters of interest $\theta$] The vector $\theta = (\fsub, \beta)^T$ parameterizes the subhalo mass function given, our goal is to infer their values.
+  %
+  \item[Latent variables $z$] A vector of all other unobservable random variables in the simulator. These include the mass and offset of the host galaxy, the number of subhalos in the region of interest, the position and mass of each subhalo, and the random variables related to the point spread function and Poisson fluctuations.
+  %
+  \item[Observables $x$] The observed lens images.
+\end{description}
+
+As described in the previous section, we have implemented a simulator for the lensing process in the ``forward'' direction: for given parameters $\theta$, the simulator samples latent variables $z$ and finally observed images $x \sim p(x|\theta)$. Here $p(x|\theta)$ is the probability density or likelihood function of observing a lens image $x$ given parameters $\theta$. It can be schematically written as
+%
+\begin{equation}
+ p(x|\theta) = \int\!\diff z \; p(x, z|\theta) \,,
+ \label{eq:likelihood_latent}
+\end{equation}
+%
+where we integrate over the latent variables $z$ and $p(x, z|\theta)$ is the joint likelihood of observables and latent variables:
+%
+\begin{multline}
+  p(x,z | \theta)
+  = p_{\mathrm{host}}(z_{\mathrm{host}}) \; \pois(n | \bar{n}_{\mathrm{ROI}}(\theta)) \\
+   \prod_i^{n} \left[ p_m \left( m_{200, i} \middle| \theta \right) \; \uniform \left( r_i \right) \right] \\
+  \times p_\mathrm{obs} \left( x \middle| f(z_{\mathrm{host}},\{(m_{200, i},r_i)\}) \right) \,.
+  \label{eq:joint_likelihood}
+\end{multline}
+%
+In this schematic form $p_{\mathrm{host}}$ summarizes the distribution of the host halo parameters $z_{\mathrm{host}}$ such as its mass, offset and redshift; $n$ is the actual number of subhalos in the region of interest,  $\bar{n}_{\mathrm{ROI}}(\theta)$ is the mean number of subhalos in the region of interest as a function of the parameters $\theta = (\fsub, \beta)^T$; $m_{200, i}$ and $r_i$ are the subhalo masses and positions; $p_m(m|\theta) = 1/n \, \diff n / \diff m_{200}$ is the normalized subhalo mass function given in Eq.~\eqref{eq:shmf}; and in the last line $p_\mathrm{obs}$ is the probability of observing an image $x$ based on the true lensed image $f(z_{\mathrm{host}},\{(m_{200, i},r_i)\})$ due to the point spread function and Poisson fluctuations.
+
+Most frequentist and Bayesian inference methods rely on evaluating the likelihood function $p(x|\theta)$. Unfortunately, even in our somewhat simplified simulator, each run of the simulation easily involves more than a thousand latent variables, and the integral over this enormeous space clearly cannot be computed explicitly. The likelihood function $p(x | \theta)$ is thus intractable, providing a major challenge for both frequentist and Bayesian inference. Similarly, inference with Markov Chain Monte Carlo (MCMC) methods based directly on the joint likelihood function $p(x,z | \theta)$ requires unfeasibly many simulations before converging because the latent space is so large. Systems defined through a forward simulator that does not admit a tractable likelihood are known as ``implicit models'', inference techniques for this case as ``likelihood-free inference''.
+
+One way to tackle this issue is to reduce the high-dimensional data $x$ to lower-dimensional summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724}. The likelihood $p(v|\theta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
+
+Instead, we follow an approach in which we approximate the likelihood function with a neural network, which has to be trained only once and can be evaluated efficiently for any parameter point and observed image. We will show how this turns the intractable integral in Eq.~\eqref{eq:likelihood_latent} into a tractable minimization problem and amortizes this marginalization. This method scales well to the expected large number of lenses expected in upcoming surveys. \JB{Add references} In particular, we use a new simulation-based inference technique introduced in \cite{1805.00013,1805.00020,1805.12244} that consists of four steps:
+%
+\begin{enumerate}
+  \item During each run of the simulator, additional information that characterizes the subhalo population and lensing process is stored together with the simulated observed image.
+  \item This information is used to train a neural network to approximate the likelihood ratio function.
+  \item The neural network output is calibrated, ensuring that errors during training do not lead to wrong inference results.
+  \item The calibrated network output is then used in either frequentist or Bayesian inference techniques.
+\end{enumerate}
+%
+In the remainder of this section, we will explain these four steps in detail.
+
+
+\subsection{Extracting additional information from the simulator}
+\label{sec:lfi-gold}
+
+In a first step, we generate training data by simulating a large number of observed lenses. For each lens, we first draw two parameter points from a proposal distribution, $\theta, \theta' \sim \pi(\theta)$. This proposal distribution should cover the region of interest in the parameter space, but does not have to be identical to the prior in a Bayesian inference setting, which allows us to be agnostic about the inference setup at this stage.
+
+Next, the simulator is run for the parameter point $\theta$, generating an observed image $x \sim p(x|\theta)$. In addition, we calculate and save two quantities: the joint likelihood ratio
+%
+\begin{equation}
+  r(x,z | \theta) = \frac {p(x,z | \theta)} {p_\mathrm{ref}(x,z)}
+  \equiv \frac {p(x,z | \theta)} {\int\!\diff\tilde{\theta} \, \pi(\tilde{\theta}) \, p(x,z | \tilde{\theta}) }
+\end{equation}
+%
+and the joint score
+%
+\begin{equation}
+  t(x, z | \theta) = \nabla_{\theta} \log p(x,z | \theta) \,.
+\end{equation}
+%
+The joint likelihood ratio quantifies how much more or less likely a particular simulation chain including the latent variables $z$ is for the parameter point $\theta$ compared to a reference distribution. For this we choose the marginal distribution of latent variables and observables corresponding to the proposal distribution $\pi(\theta)$, which has support for every potential outcome of the simulation~\citep{Hermans:2019ioj}. The joint score is the gradient of the joint log likelihood in model parameter space and quantifies if a particular simulation chain becomes more or less likely with infinitesimal changes of the parameters of interest. Both quantities depend on the latent variables of the simulation chain.
+
+We compute the joint likelihood ratio and joint score with Eq.~\eqref{eq:joint_likelihood}. Conveniently, many steps in the simulator do not explicitly depend on the parameters of interest $\theta$ and cancel in the joint likelihood ratio and joint score, and the remaining terms can be evaluated with little overhead to the simulation code. We also calculate the joint likelihood ratio $r(x,z|\theta')$ and the joint score $t(x,z|\theta')$ for the second parameter point $\theta'$ and store the parameter points $\theta$ and $\theta'$, the simulated image $x$, as well as the joint likelihood ratios and joint scores.
+
+Our training samples consist of $10^6$ images, with parameter points chosen from a uniform range in $0.001 < \fsub < 0.2$ and $-1.5 < \beta < -0.5$.
+
+
+\subsection{Machine learning}
+\label{sec:lfi-ml}
+
+How are the joint likelihood ratio and joint score, which are conditional on the latent variables $z$, useful to learn about the likelihood function $p(x|\theta)$, which only depends on the observed lens images and the parameters of interest? Consider the functional
+%
+\begin{multline}
+  L[g(x, \theta)] = \int\!\diff\theta\! \int\!\diff\theta'\! \int\!\diff x\! \int\!\diff z \; \pi(\theta) \; \pi(\theta') \; p(x,z|\theta) \\
+    \times \Biggl[
+    - s \log g  - (1 - s) \log (1 - g) - s' \log g'  - (1 - s') \log (1 - g') \\
+    + \alpha \Bigl\{ \left| t - \nabla_\theta \log \tfrac{1 - g}g \Bigr|_{\theta}  \right|^2
+    + \left| t' - \nabla_\theta \log \tfrac{1 - g}g \Bigr|_{\theta'} \right|^2 \Bigr\}
+   \Biggr]  \,,
+   \label{eq:alices_loss}
+\end{multline}
+%
+where we have abbreviated $s \equiv s(x,z|\theta) \equiv 1 / (1 + r(x,z|\theta))$,  $s' \equiv s(x,z|\theta') \equiv 1 / (1 + r(x,z|\theta'))$, $g \equiv g(x, \theta)$, $g' \equiv g(x, \theta')$, $t = t(x,z | \theta)$, and $t' \equiv t(x,z | \theta')$ for readability. Note that the test function $g(x, \theta)$ is a function of $x$ and $\theta$ only. The first two lines are an improved version of the cross-entropy loss, in which the joint likelihood ratio is used to decrease the variance compared to the canonical cross-entropy~\cite{Stoye:2018ovl}. The last line adds gradient information, weighted by a hyperparameter $\alpha$.
+
+As shown in \cite{Stoye:2018ovl}, this ``ALICES'' loss functional is minimized by the function
+%
+\begin{equation}
+  g^*(x, \theta) \equiv \argmin_g L[g(x, \theta)] = \frac 1 {1 + r(x|\theta)} \,,
+  \label{eq:loss_minimum}
+\end{equation}
+%
+one-to-one with the likelihood ratio function
+%
+\begin{equation}
+  r(x|\theta)
+  \equiv \frac {p(x|\theta)} {p_\mathrm{ref}(x)}
+  = \frac {1 - g^*(x, \theta)}{g^*(x, \theta)} \,.
+\end{equation}
+%
+We demonstrate the minimization of this functional explicitly in Appendix~\ref{app:variation}. This means that if we can construct the functional in Eq.~\eqref{eq:alices_loss} with the joint likelihood ratio and joint score extracted from the simulator and numerically minimize it, the resulting function lets us reconstruct the (otherwise intractable) likelihood ratio function $r(x|\theta)$! Essentially, this step lets us integrate out the dependence on latent variables $z$ from the joint likelihood ratio and score, but in a general, functional form that does not depend on a set of observed images.
+
+This is why extraction of the joint likelihood ratio and joint score has been described with the analogy of ``mining gold'' from the simulator~\citep{1805.12244}: while calculating these quantities may require some effort and changes to the simulator code, through the minimization of a suitable functional they allow us to calculate the otherwise intractable likelihood ratio function.
+
+In practice, we implement this minimization with machine learning. A neural network plays the role of the test function $g(x, \theta)$, the integrals in Eq.~\eqref{eq:alices_loss} are approximated with a sum over training data sampled according to $\pi(\theta) \pi(\theta') p(x,z|\theta)$, and we minimize the loss numerically through a stochastic gradient descent algorithm. The neural network trained in this way provides an estimator $\hat{r}(x|\theta)$ of the likelihood ratio function that is exact in the limit of infinite training samples, sufficient network capacity, and efficient minimization. Note the ``parameterized'' structure of the network, in which a single neural network is trained to estimate the likelihood ratio over all of the parameter space, with the tested parameter point $\theta$ being an input to the network \citep{Cranmer:2015bka, Baldi:2016fzo}. This approach is more efficient than a point-by-point analysis of a grid of parameter points: it allows the network to ``borrow'' information from neighboring parameter points, benefitting from the typically smooth structure of the parameter space.
+
+Given the image nature of the lensing data, we choose a convolutional network architecture based on the ResNet-18 \citep{he2016deep} implementation in PyTorch~\citep{paszke2017automatic}. The parameters $\theta$ enter as additional inputs in the fully connected layers of the network. Compared to the original ResNet-18 architecture, we add another fully connected layer at the end to ensure that the relation between parameters of interest and image data can be modeled. All inputs are normalized to zero mean and unit variance. We train the networks by minimizing the loss in Eq.~\eqref{eq:alices_loss} with $\alpha = 2 \cdot 10^{-3}$ over 100 epochs with a batch size of 128 using the Adam optimizer~\citep{2014arXiv1412.6980K}, exponentially decaying the learning rate from $3\cdot 10^{-4}$ to $3 \cdot 10^{-6}$ with early stopping. This architecture and hyperparameter configuration performed best during a rough hyperparameter scan, though for this proof-of-concept study we have not performed an exhaustive optimization.
+
+
+\subsection{Calibration}
+\label{sec:lfi-calibration}
+
+In reality, the neural network might not learn the likelihood ratio function $r(x|\theta)$ exactly, for instance due to limited training data or inefficient training. To make sure that our inference results are correct even in this case, we calibrate the network output with histograms~\citep{Cranmer:2015bka, 1805.00020}. For every parameter point $\theta$ that we want to test, we simulate a set of images $\{x\} \sim p(x|\theta)$ from this parameter point and calculate the network prediction $\hat{r} \equiv \hat{r}(x|\theta)$ for each image. We also simulate a set of images $\{x\} \sim p_{\mathrm{ref}}(x)$ from the reference model, that is, drawing a new parameter points from $\pi(\theta)$ for each image, and again calculate the network prediction $\hat{r}$ for each of these lenses as well. We then calculate the calibrated likelihood ratio from histograms of the network predictions as
+%
+\begin{equation}
+  \hat{r}_\mathrm{cal}(x|\theta)
+  = \frac {\hat{p}( \hat{r} | \theta )} {\hat{p}_\mathrm{ref}(\hat{r})}
+\end{equation}
+%
+where the $\hat{p}(\dots)$ denote probability densities estimated with univariate histograms.
+
+This additional calibration stage comes with a certain computational cost that increases linearly with the number of evaluated parameter points. However, it guarantees that as long as the simulator accurately models the process, the inference results may be perfect or conservative, but not be too optimistic, even if the neural network output is substantially different from the true likelihood ratio.
+
+
+\subsection{Inference}
+\label{sec:lfi-inference}
+
+After a neural network has been trained (and optionally calibrated) to estimate the likelihood ratio function, it provides the basic ingredient to both frequentist and Bayesian inference. For frequentist hypothesis tests, the likelihood ratio provides the most powerful test statistic~\citep{1933RSPTA.231..289N}. In addition, its asymptotic properties allow us in many cases to directly translate a value of the likelihood ratio into a $p$-value and thus into exclusion limits at a given confidence level~\citep{Wilks:1938dza, Wald, Cowan:2010js}.
+
+For Bayesian inference, note that we can write Bayes' theorem as
+%
+\begin{align}
+  p(\theta | \{x_i\})
+  &= \frac {p(\theta) \; \prod_i p(x_i | \theta)} {\int\!\diff \tilde{\theta} \, p(\tilde{\theta}) \, \prod_i p(x_i | \tilde{\theta})} \notag \\
+  &= p(\theta) \Biggl[
+    \int\!\diff\tilde{\theta} \, p(\tilde{\theta}) \, \prod_i \frac {p(x_i | \tilde{\theta})}{p(x_i | \theta)}
+  \Biggr]^{-1} \notag \\
+  &\approx p(\theta) \Biggl[
+    \int\!\diff\tilde{\theta} \, p(\tilde{\theta}) \, \prod_i \frac {\hat{r}(x_i | \tilde{\theta})}{\hat{r}(x_i | \theta)}
+  \Biggr]^{-1} \,,
+\end{align}
+%
+where $\{x_i\}$ is the set of observed lens images and $p(\theta)$ is the prior on the parameters of interest, which may be different from the proposal distribution $\pi(\theta)$ used during the generation of training data. The posterior can thus be directly calculated given an estimator $\hat{r}$, provided that the space of the parameters of interest is low-dimensional enough to calculate the integral, or with MCMC or variational inference techniques otherwise.
+
+\bigskip
+While our approach to inference is strongly based on the ideas in \cite{1805.00013,1805.00020,1805.12244,Stoye:2018ovl}, there are some novel features in our analysis that we would like to highlight briefly. Unlike in those earlier papers, we use a marginal model based on the proposal distribution $\pi(\theta)$ as reference model in the denominator of the likelihood ratio, which reduces numerical issues due to the joint likelihood ratio evaluating as zero or infinity substantially. It also allows us to include the ``flipped'' terms involving $s'$ and $g'$ in the loss function in Eq.~\eqref{eq:alices_loss}; we found that this new, improved version of the ALICES loss improves the sample efficiency of our algorithms. Finally, this is the first application of the ``gold mining'' idea to image data, the first combination with a convolutional network architecture, and the first use for Bayesian inference.
+
 
 \section{Results}
 \label{sec:results}
 
+\begin{figure*}
+\centering
+\includegraphics[width=1.\textwidth]{figures/individual_lens_predictions}
+\caption{Four simulated lens images (upper panels) and the corresponding estimated likelihood maps (lower panels). The star marks the true point used to generate the images, the black line shows $95 \%$~CL contours in parameter space based on each image. \JB{So far without calibration.}}
+\label{fig:individual_predictions}
+\end{figure*}
+
+\begin{figure*}
+\centering
+\includegraphics[height=0.4\textwidth]{figures/expected_likelihood_map}
+\includegraphics[height=0.4\textwidth]{figures/expected_likelihood_slice}
+\caption{Expected likelihood ratio map assuming $\beta = -0.9$ and $\fsub = 0.05$ in the two-dimensional parameter space (left) and a one-dimensional slice at $\beta = -0.9$ (right). The lines show expected $95\%$~CL exclusion limits for 1 (dotted), 5 (dash-dotted), 20 (dashed), and 100 (solid) observed lenses. \JB{So far without calibration.}}
+\label{fig:expected_likelihood}
+\end{figure*}
+
+\begin{figure*}
+\centering
+\includegraphics[height=0.4\textwidth]{figures/posterior_uniform}
+\includegraphics[height=0.4\textwidth]{figures/posterior_narrow}
+\caption{Expected posterior based on a uniform prior (left) or a Gaussian prior on $\beta$ with mean $-0.9$ and standard deviation $0.1$ (right). in the two-dimensional parameter space (left) and a one-dimensional slice at $\beta = -0.9$ (right). We assume $\beta = -0.9$ and $\fsub = 0.05$. \JB{So far without calibration.}}
+\label{fig:expected_likelihood}
+\end{figure*}
+
+
+\section{Extensions}
+\label{sec:extensions}
+
+\begin{itemize}
+\item Multiple passbands
+\item Per-image observational properties (e.g., exposure and PSF)
+\item More complicated host and source profiles
+\item Tidal stripping of subhalos (spatial dependence of density profile/concentration and overall depression in number density)
+\item Redshift-dependence of SHMF / different degrees of knowledge about redshift
+\item Inclusion of external shear
+\item Inclusion of line-of-sight substructure
+\end{itemize}
+
 \section{Conclusions}
 \label{sec:conclusions}
 
+
 \acknowledgements
 
+We thank Simon~Birrer, Christopher~Fassnacht, Daniel~Gilman, and Neal~Weiner for useful conversations. JB and KC are partially supported by NSF awards ACI-1450310, OAC-1836650, and OAC-1841471, and the Moore-Sloan data science environment at NYU. SM is partially supported by the NSF CAREER grant PHY-1554858 and NSF grant PHY-1620727. KC is also supported through the NSF grant PHY-1505463. This work was also supported through the NYU IT High Performance Computing resources, services, and staff expertise.
 
 \software{
 \package{Astropy} \citep{2013A&A...558A..33A,2018AJ....156..123A},
 \package{IPython} \citep{PER-GRA:2007},
 \package{LensPop} \citep{2015ApJ...811...20C},
+\package{MadMiner} \citep{Brehmer:2019xox},
 \package{matplotlib} \citep{Hunter:2007},
 \package{NumPy} \citep{numpy:2011},
 \package{PyTorch} \citep{paszke2017automatic},
 \package{SciPy} \citep{Jones:2001ab}.
 }
 
-\bibliographystyle{aasjournal}
+
+\appendix
+\section{Minimum of the loss functional}
+\label{app:variation}
+
+A central step in our inference technique is numerically minimizing the functional $L[g(x, \theta)]$ given in Eq.~\eqref{eq:alices_loss} to obtain an estimator for the likelihood ratio function. Here we will use calculus of variation to explicitly show that the solution given in Eq.~\eqref{eq:loss_minimum} in fact minimizes this loss.
+
+First consider the case of $\alpha = 0$, \ie the functional
+%
+\begin{align}
+  L[g(x, \theta)]
+  &= \int\!\!\diff\theta\!\!\int\!\!\diff\theta'\!\!\int\!\!\diff x\!\! \int\!\!\diff z \, \pi(\theta) \pi(\theta') p(x,z|\theta)
+  \Bigl(- s \log g  - (1 - s) \log (1 - g) - s' \log g'  - (1 - s') \log (1 - g') \Bigr) \notag \\
+  &= \int\!\!\diff\theta\!\!\int\!\!\diff x
+  \underbrace{ \Biggl[
+    \int\!\!\diff z \, \pi(\theta) \, \Bigl( p(x,z|\theta) + p_{\mathrm{ref}}(x,z) \Bigr)
+    \Bigl(- s \log g  - (1 - s) \log (1 - g) \Bigr)
+  \Biggr] }_{
+  \equiv F(x,\theta)
+  } \,,
+\end{align}
+%
+where we use the shorthand notation $s \equiv s(x,z|\theta) \equiv 1 / (1 + r(x,z|\theta))$,  $s' \equiv s(x,z|\theta') \equiv 1 / (1 + r(x,z|\theta'))$, $g \equiv g(x, \theta)$, $g' \equiv g(x, \theta')$. The function $g^*(x|\theta)$ that minimizes  this functional has to satisfy
+%
+\begin{equation}
+  0 \stackrel{!}{=} \frac {\delta F}{\delta g} \Biggr|_{g^*}
+  =  \int\!\!\diff z \, \pi(\theta) \Bigl( p(x,z|\theta) + p_{\mathrm{ref}}(x,z) \Bigr) \Bigl( - \frac s {g^*} + \frac {1-s}{1-g^*} \Bigr)
+\end{equation}
+%
+As long as $\pi(\theta) > 0$, this is equivalent to
+%
+\begin{equation}
+  (1-g^*) \int\!\diff z \Bigl( p(x,z|\theta) + p_{\mathrm{ref}}(x,z) \Bigr) s
+  = g^* \int\!\diff z \Bigl( p(x,z|\theta) + p_{\mathrm{ref}}(x,z) \Bigr) (1-s)
+\end{equation}
+%
+and finally
+%
+\begin{align}
+  g^*(x | \theta)
+  &= \frac {\int\!\diff z \, \Bigl(p(x,z|\theta)+\pref(x,z)\Bigr) s(x,z|\theta)} {\int \! \diff z \, \Bigl(p(x,z|\theta)+\pref(x,z)\Bigr)} \notag \\
+  &= \frac
+  {\int\!\diff z \, \Bigl(p(x,z|\theta) + \pref(x,z)\Bigr) \frac{1}{1+p(x,z|\theta)/p_{\mathrm{ref}}(x,z)}}
+  {\int\!\diff z \, \Bigl(p(x,z|\theta) + \pref(x,z)\Bigr)} \notag \\
+  &= \frac {\pref(x)} {p(x|\theta) + \pref(x)}
+  = \frac{1}
+  {1 + r(x|\theta)} \,,
+\end{align}
+%
+in agreement with Eq.~\eqref{eq:loss_minimum}. Note that this result is independent of the choise of $\pi(\theta)$, as long as this proposal distribution has support at all relevant parameter points.
+
+Similarly it can be shown that the gradient term in the loss functional weighted by $\alpha$ is minimized when the gradient of the log likelihood ratio estimated by the neural network is equal to the true score,
+%
+\begin{equation}
+  \nabla_\theta \log \hat{r}(x|\theta) \equiv \nabla_\theta \log \frac {1 - g^*(x, \theta)}{g^*(x, \theta)} = \nabla_\theta \log r(x|\theta) \,.
+\end{equation}
+%
+We refer the reader to \citep{1805.00020} for the derivation. While not strictly necessary for the inference technique, including this term in the loss function substantially improves the sample efficiency of the algorithm, similar to how gradient information makes any fit converge faster. Varying the hyperparameter $\alpha$, we found a good performance for $\alpha \approx 2 \cdot 10^{-3}$, with the network performance being insensitive to small variations.
+
+
+\section{Simplified scenarios}
+
+\begin{figure*}
+\centering
+\includegraphics[height=0.4\textwidth]{figures/scenarios_2d}
+\includegraphics[height=0.4\textwidth]{figures/scenarios_1d}
+\caption{Left: Expected $95\%$~CL exclusion limits for 10 observed lenses for four different levels of complexity of the simulator. Right: expected likelihood ratio along a one-dimensional slice through the parameter space at $\beta = -0.9$ for the same four simulator scenarios. In both panels we compare the ``full'' simulator discussed in Sec.~\ref{sec:lensing-formalism}, a scenario in which the host mass is varied but the offset relative to the source is fixed at zero (``mass''), a case in which the source offset is varied but the host halo mass is fixed (``align''), and a toy scenario in which both the offset and the mass of the host halo are fixed (``fix''). The data was generated for $\beta = -0.9$ and $\fsub = 0.05$. \JB{So far without calibration.}}
+\label{fig:scenarios}
+\end{figure*}
+
+
+\bibliographystyle{aasjournal_mod}
+% \bibliographystyle{lensing-lfi}
 \bibliography{lensing-lfi}
 
 \end{document}
