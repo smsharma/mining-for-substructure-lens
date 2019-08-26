@@ -368,6 +368,7 @@ For Bayesian inference, note that we can write Bayes' theorem as
   &\approx p(\stattheta) \Biggl[
     \int\!\diff\tilde{\stattheta} \, p(\tilde{\stattheta}) \, \prod_i \frac {\hat{r}(x_i | \tilde{\stattheta})}{\hat{r}(x_i | \stattheta)}
   \Biggr]^{-1} \,,
+  \label{eq:bayesian_post}
 \end{align}
 %
 where $\{x_i\}$ is the set of observed lens images and $p(\stattheta)$ is the prior on the parameters of interest, which may be different from the proposal distribution $\pi(\stattheta)$ used during the generation of training data. The posterior can thus be directly calculated given an estimator $\hat{r}$, provided that the space of the parameters of interest is low-dimensional enough to calculate the integral, or with MCMC or variational inference techniques otherwise.
@@ -388,7 +389,7 @@ After training the neural network using simulations described in Sec.~\ref{sec:l
 \label{fig:individual_predictions}
 \end{figure*}
 
-The individual likelihood estimates can be combined in a straightforward manner into a stacked test statistic, yielding a combined analysis of an ensemble of lenses. The expected likelihood surface per-image in the asymptotic limit is shown in the left panel of Fig.~\ref{fig:expected_likelihood}, with the 1-D slice corresponding to $\beta = -0.9$ shown in the right panel. The 95\% CL expected exclusion limits for 1, 5, 20, and 100 lenses are shown using the dotted, dash-dotted, dashed, and solid lines respectively. A larger observed lens sample provides a tighter constraint on substructure properties.
+The individual likelihood estimates can be combined in a straightforward manner into a stacked test statistic, yielding a combined analysis of an ensemble of lenses. The expected likelihood surface per-image in the asymptotic limit is shown in the left panel of Fig.~\ref{fig:expected_likelihood}, with the 1-D slice corresponding to $\beta = -0.9$ shown in the right panel. The 95\% CL expected exclusion limits for 1, 5, 20, and 100 lenses are shown using the dotted, dash-dotted, dashed, and solid lines respectively. A larger observed lens sample provides a tighter constraint on substructure properties. The procedure can easily be extended to an arbitrarily large collection of lenses, providing an unbiased estimate of the underlying substructure properties.
 
 \begin{figure*}
 \centering
@@ -398,12 +399,14 @@ The individual likelihood estimates can be combined in a straightforward manner 
 \label{fig:expected_likelihood}
 \end{figure*}
 
+With the likelihood ratio in hand, a Bayesian interpretation is easily admitted using Eq.~\ref{eq:bayesian_post}. In Fig.~\ref{fig:bayesian_post} we show the derived posteriors, assuming either a uniform prior (left panel) or a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ (right panel) on the slope $\beta$. The latter is intended to capture a prior belief on the slope consistent with the Cold Dark Matter scenario and results in a posterior density that is more constrained around the true point.
+
 \begin{figure*}
 \centering
 \includegraphics[height=0.4\textwidth]{figures/posterior_uniform}
 \includegraphics[height=0.4\textwidth]{figures/posterior_narrow}
 \caption{Expected posterior based on a uniform prior (left) or a Gaussian prior on $\beta$ with mean $-0.9$ and standard deviation $0.1$ (right) for 10 observed lenses. We assume $\beta = -0.9$ and $\fsub = 0.05$. \JB{So far without calibration.}}
-\label{fig:expected_likelihood}
+\label{fig:bayesian_post}
 \end{figure*}
 
 
