@@ -55,6 +55,11 @@
 {Albert}, A., {Anderson}, B., {Bechtol}, K., {et~al.} 2017, \apj, 834, 110,
   \doarXiv{1611.03184}, \dodoi{10.3847/1538-4357/834/2/110}
 
+\bibitem[{Alsing {et~al.}(2019)Alsing, Charnock, Feeney, \&
+  Wandelt}]{Alsing:2019xrx}
+Alsing, J., Charnock, T., Feeney, S., \& Wandelt, B. 2019,
+  \doarXiv{1903.00007}, \dodoi{10.1093/mnras/stz1960}
+
 \bibitem[{{Aprile} {et~al.}(2018){Aprile}, {Aalbers}, {Agostini}, {Alfonsi},
   {Althueser}, {Amaro}, {Anthony}, {Arneodo}, {Baudis}, {Bauermeister},
   {Benabderrahmane}, {Berger}, {Breur}, {Brown}, {Brown}, {Brown}, {Bruenner},
@@ -228,6 +233,11 @@
 {Chatterjee}, S., \& {Koopmans}, L. V.~E. 2018, \mnras, 474, 1762,
   \doarXiv{1710.03075}, \dodoi{10.1093/mnras/stx2674}
 
+\bibitem[{Chen {et~al.}(2018)Chen, Rubanova, Bettencourt, \&
+  Duvenaud}]{DBLP:journals/corr/abs-1806-07366}
+Chen, T.~Q., Rubanova, Y., Bettencourt, J., \& Duvenaud, D.~K. 2018, CoRR,
+  abs/1806.07366, \doarXiv{1806.07366}
+
 \bibitem[{{Ciotti} \& {Bertin}(1999)}]{1999A&A...352..447C}
 {Ciotti}, L., \& {Bertin}, G. 1999, \aap, 352, 447
 
@@ -296,6 +306,20 @@
   {Vogelsberger}, M. 2018, \prd, 98, 103517, \doarXiv{1809.00004},
   \dodoi{10.1103/PhysRevD.98.103517}
 
+\bibitem[{{Dinev} \& {Gutmann}(2018)}]{2018arXiv181009899D}
+{Dinev}, T., \& {Gutmann}, M.~U. 2018, arXiv e-prints, arXiv:1810.09899,
+  \doarXiv{1810.09899}
+
+\bibitem[{{Dinh} {et~al.}(2014){Dinh}, {Krueger}, \&
+  {Bengio}}]{2014arXiv1410.8516D}
+{Dinh}, L., {Krueger}, D., \& {Bengio}, Y. 2014, ArXiv e-prints,
+  \doarXiv{1410.8516}
+
+\bibitem[{{Dinh} {et~al.}(2016){Dinh}, {Sohl-Dickstein}, \&
+  {Bengio}}]{2016arXiv160508803D}
+{Dinh}, L., {Sohl-Dickstein}, J., \& {Bengio}, S. 2016, ArXiv e-prints,
+  \doarXiv{1605.08803}
+
 \bibitem[{{Drlica-Wagner} {et~al.}(2019){Drlica-Wagner}, {Mao}, {Adhikari},
   {Armstrong}, {Banerjee}, {Banik}, {Bechtol}, {Bird}, {Boddy}, {Bonaca},
   {Bovy}, {Buckley}, {Bulbul}, {Chang}, {Chapline}, {Cohen-Tanugi}, {Cuoco},
@@ -316,6 +340,11 @@
 {Drlica-Wagner}, A., {Mao}, Y.-Y., {Adhikari}, S., {et~al.} 2019, arXiv
   e-prints, arXiv:1902.01055, \doarXiv{1902.01055}
 
+\bibitem[{{Dutta} {et~al.}(2016){Dutta}, {Corander}, {Kaski}, \&
+  {Gutmann}}]{2016arXiv161110242D}
+{Dutta}, R., {Corander}, J., {Kaski}, S., \& {Gutmann}, M.~U. 2016, ArXiv
+  e-prints, \doarXiv{1611.10242}
+
 \bibitem[{{Efstathiou}(1992)}]{1992MNRAS.256P..43E}
 {Efstathiou}, G. 1992, \mnras, 256, 43P, \dodoi{10.1093/mnras/256.1.43P}
 
@@ -327,6 +356,10 @@
 \bibitem[{{Fan} {et~al.}(2013){Fan}, {Katz}, {Randall}, \& {Reece}}]{1303.1521}
 {Fan}, J., {Katz}, A., {Randall}, L., \& {Reece}, M. 2013, Physics of the Dark
   Universe, 2, 139, \doarXiv{1303.1521}, \dodoi{10.1016/j.dark.2013.07.001}
+
+\bibitem[{{Fan} {et~al.}(2012){Fan}, {Nott}, \& {Sisson}}]{2012arXiv1212.1479F}
+{Fan}, Y., {Nott}, D.~J., \& {Sisson}, S.~A. 2012, ArXiv e-prints,
+  \doarXiv{1212.1479}
 
 \bibitem[{{Fitts} {et~al.}(2017){Fitts}, {Boylan-Kolchin}, {Elbert}, {Bullock},
   {Hopkins}, {O{\~n}orbe}, {Wetzel}, {Wheeler}, {Faucher-Gigu{\`e}re},
@@ -345,6 +378,21 @@
   {Quataert}, {Sanderson}, {Graus}, \& {Kelley}}]{1701.03792}
 {Garrison-Kimmel}, S., {Wetzel}, A., {Bullock}, J.~S., {et~al.} 2017, \mnras,
   471, 1709, \doarXiv{1701.03792}, \dodoi{10.1093/mnras/stx1710}
+
+\bibitem[{{Germain} {et~al.}(2015){Germain}, {Gregor}, {Murray}, \&
+  {Larochelle}}]{2015arXiv150203509G}
+{Germain}, M., {Gregor}, K., {Murray}, I., \& {Larochelle}, H. 2015, ArXiv
+  e-prints, \doarXiv{1502.03509}
+
+\bibitem[{{Grathwohl} {et~al.}(2018){Grathwohl}, {Chen}, {Bettencourt},
+  {Sutskever}, \& {Duvenaud}}]{2018arXiv181001367G}
+{Grathwohl}, W., {Chen}, R.~T.~Q., {Bettencourt}, J., {Sutskever}, I., \&
+  {Duvenaud}, D. 2018, ArXiv e-prints, \doarXiv{1810.01367}
+
+\bibitem[{Gutmann {et~al.}(2017)Gutmann, Dutta, Kaski, \&
+  Corander}]{gutmann2017likelihood}
+Gutmann, M.~U., Dutta, R., Kaski, S., \& Corander, J. 2017, Statistics and
+  Computing, 1
 
 \bibitem[{{Han} {et~al.}(2016){Han}, {Cole}, {Frenk}, \&
   {Jing}}]{2016MNRAS.457.1208H}
@@ -382,8 +430,17 @@ He, K., Zhang, X., Ren, S., \& Sun, J. 2016, in Proceedings of the IEEE
 {Hsueh}, J.-W., {Enzi}, W., {Vegetti}, S., {et~al.} 2019, arXiv e-prints,
   arXiv:1905.04182, \doarXiv{1905.04182}
 
+\bibitem[{{Huang} {et~al.}(2018){Huang}, {Krueger}, {Lacoste}, \&
+  {Courville}}]{2018arXiv180400779H}
+{Huang}, C.-W., {Krueger}, D., {Lacoste}, A., \& {Courville}, A. 2018, ArXiv
+  e-prints, \doarXiv{1804.00779}
+
 \bibitem[{Hunter(2007)}]{Hunter:2007}
 Hunter, J.~D. 2007, Computing In Science \& Engineering, 9, 90
+
+\bibitem[{{Jimenez Rezende} \& {Mohamed}(2015)}]{2015arXiv150505770J}
+{Jimenez Rezende}, D., \& {Mohamed}, S. 2015, ArXiv e-prints,
+  \doarXiv{1505.05770}
 
 \bibitem[{{Johnston} {et~al.}(1999){Johnston}, {Zhao}, {Spergel}, \&
   {Hernquist}}]{astro-ph/9807243}
@@ -418,6 +475,10 @@ Jones, E., Oliphant, T., Peterson, P., {et~al.} 2001--, {SciPy}: Open source
 {Kingma}, D.~P., \& {Ba}, J. 2014, arXiv e-prints, arXiv:1412.6980,
   \doarXiv{1412.6980}
 
+\bibitem[{{Kingma} \& {Dhariwal}(2018)}]{2018arXiv180703039K}
+{Kingma}, D.~P., \& {Dhariwal}, P. 2018, arXiv e-prints, arXiv:1807.03039,
+  \doarXiv{1807.03039}
+
 \bibitem[{{Koposov} {et~al.}(2008){Koposov}, {Belokurov}, {Evans}, {Hewett},
   {Irwin}, {Gilmore}, {Zucker}, {Rix}, {Fellhauer}, {Bell}, \&
   {Glushkova}}]{0706.2687}
@@ -435,11 +496,24 @@ Jones, E., Oliphant, T., Peterson, P., {et~al.} 2001--, {SciPy}: Open source
   \prl, 120, 101101, \doarXiv{1708.09385},
   \dodoi{10.1103/PhysRevLett.120.101101}
 
+\bibitem[{{Louppe} \& {Cranmer}(2017)}]{2017arXiv170707113L}
+{Louppe}, G., \& {Cranmer}, K. 2017, ArXiv e-prints, \doarXiv{1707.07113}
+
 \bibitem[{{LSST Science Collaboration} {et~al.}(2009){LSST Science
   Collaboration}, {Abell}, {Allison}, {Anderson}, {Andrew}, {Angel}, {Armus},
   {Arnett}, {Asztalos}, {Axelrod}, \& et~al.}]{0912.0201}
 {LSST Science Collaboration}, {Abell}, P.~A., {Allison}, J., {et~al.} 2009,
   arXiv e-prints, arXiv:0912.0201, \doarXiv{0912.0201}
+
+\bibitem[{{Lueckmann} {et~al.}(2018){Lueckmann}, {Bassetto}, {Karaletsos}, \&
+  {Macke}}]{2018arXiv180509294L}
+{Lueckmann}, J.-M., {Bassetto}, G., {Karaletsos}, T., \& {Macke}, J.~H. 2018,
+  arXiv e-prints, arXiv:1805.09294, \doarXiv{1805.09294}
+
+\bibitem[{{Lueckmann} {et~al.}(2017){Lueckmann}, {Goncalves}, {Bassetto},
+  {{\"O}cal}, {Nonnenmacher}, \& {Macke}}]{2017arXiv171101861L}
+{Lueckmann}, J.-M., {Goncalves}, P.~J., {Bassetto}, G., {et~al.} 2017, arXiv
+  e-prints, arXiv:1711.01861, \doarXiv{1711.01861}
 
 \bibitem[{{Madau} {et~al.}(2008){Madau}, {Diemand}, \& {Kuhlen}}]{0802.2265}
 {Madau}, P., {Diemand}, J., \& {Kuhlen}, M. 2008, The Astrophysical Journal,
@@ -457,6 +531,23 @@ Jones, E., Oliphant, T., Peterson, P., {et~al.} 2001--, {SciPy}: Open source
 \bibitem[{{Neyman} \& {Pearson}(1933)}]{1933RSPTA.231..289N}
 {Neyman}, J., \& {Pearson}, E.~S. 1933, Philosophical Transactions of the Royal
   Society of London Series A, 231, 289, \dodoi{10.1098/rsta.1933.0009}
+
+\bibitem[{{Paige} \& {Wood}(2016)}]{2016arXiv160206701P}
+{Paige}, B., \& {Wood}, F. 2016, ArXiv e-prints, \doarXiv{1602.06701}
+
+\bibitem[{Papamakarios \& Murray(2016)}]{NIPS2016_6084}
+Papamakarios, G., \& Murray, I. 2016, in Advances in Neural Information
+  Processing Systems, 1028--1036
+
+\bibitem[{{Papamakarios} {et~al.}(2017){Papamakarios}, {Pavlakou}, \&
+  {Murray}}]{2017arXiv170507057P}
+{Papamakarios}, G., {Pavlakou}, T., \& {Murray}, I. 2017, ArXiv e-prints,
+  \doarXiv{1705.07057}
+
+\bibitem[{{Papamakarios} {et~al.}(2018){Papamakarios}, {Sterratt}, \&
+  {Murray}}]{2018arXiv180507226P}
+{Papamakarios}, G., {Sterratt}, D.~C., \& {Murray}, I. 2018, ArXiv e-prints,
+  \doarXiv{1805.07226}
 
 \bibitem[{Paszke {et~al.}(2017)Paszke, Gross, Chintala, Chanan, Yang, DeVito,
   Lin, Desmaison, Antiga, \& Lerer}]{paszke2017automatic}
@@ -480,6 +571,9 @@ Paszke, A., Gross, S., Chintala, S., {et~al.} 2017, in NIPS-W
   {Scaramella}, {Weller}, \& {Euclid Imaging Consortium}}]{1001.0061}
 {Refregier}, A., {Amara}, A., {Kitching}, T.~D., {et~al.} 2010, arXiv e-prints,
   arXiv:1001.0061, \doarXiv{1001.0061}
+
+\bibitem[{Rubin(1984)}]{rubin1984}
+Rubin, D.~B. 1984, Ann. Statist., 12, 1151, \dodoi{10.1214/aos/1176346785}
 
 \bibitem[{{S{\'a}nchez-Conde} \& {Prada}(2014)}]{2014MNRAS.442.2271S}
 {S{\'a}nchez-Conde}, M.~A., \& {Prada}, F. 2014, \mnras, 442, 2271,
@@ -506,6 +600,33 @@ Paszke, A., Gross, S., Chintala, S., {et~al.} 2017, in NIPS-W
   {Cranmer}}]{Stoye:2018ovl}
 {Stoye}, M., {Brehmer}, J., {Louppe}, G., {Pavez}, J., \& {Cranmer}, K. 2018,
   arXiv e-prints, arXiv:1808.00973, \doarXiv{1808.00973}
+
+\bibitem[{Tran {et~al.}(2017)Tran, Ranganath, \& Blei}]{2017arXiv170208896T}
+Tran, D., Ranganath, R., \& Blei, D. 2017, in Advances in Neural Information
+  Processing Systems 30, ed. I.~Guyon, U.~V. Luxburg, S.~Bengio, H.~Wallach,
+  R.~Fergus, S.~Vishwanathan, \& R.~Garnett, 5523--5533
+
+\bibitem[{{Uria} {et~al.}(2016){Uria}, {C{\^o}t{\'e}}, {Gregor}, {Murray}, \&
+  {Larochelle}}]{2016arXiv160502226U}
+{Uria}, B., {C{\^o}t{\'e}}, M.-A., {Gregor}, K., {Murray}, I., \& {Larochelle},
+  H. 2016, ArXiv e-prints, \doarXiv{1605.02226}
+
+\bibitem[{{van den Oord} {et~al.}(2016{\natexlab{a}}){van den Oord},
+  {Kalchbrenner}, \& {Kavukcuoglu}}]{2016arXiv160106759V}
+{van den Oord}, A., {Kalchbrenner}, N., \& {Kavukcuoglu}, K.
+  2016{\natexlab{a}}, ArXiv e-prints, \doarXiv{1601.06759}
+
+\bibitem[{{van den Oord} {et~al.}(2016{\natexlab{b}}){van den Oord},
+  {Kalchbrenner}, {Vinyals}, {Espeholt}, {Graves}, \&
+  {Kavukcuoglu}}]{2016arXiv160605328V}
+{van den Oord}, A., {Kalchbrenner}, N., {Vinyals}, O., {et~al.}
+  2016{\natexlab{b}}, ArXiv e-prints, \doarXiv{1606.05328}
+
+\bibitem[{{van den Oord} {et~al.}(2016{\natexlab{c}}){van den Oord},
+  {Dieleman}, {Zen}, {Simonyan}, {Vinyals}, {Graves}, {Kalchbrenner}, {Senior},
+  \& {Kavukcuoglu}}]{2016arXiv160903499V}
+{van den Oord}, A., {Dieleman}, S., {Zen}, H., {et~al.} 2016{\natexlab{c}},
+  ArXiv e-prints, \doarXiv{1609.03499}
 
 \bibitem[{{van der Walt} {et~al.}(2011){van der Walt}, {Colbert}, \&
   {Varoquaux}}]{numpy:2011}

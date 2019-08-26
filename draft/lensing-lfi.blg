@@ -1,49 +1,51 @@
-This is BibTeX, Version 0.99d (TeX Live 2016)
-Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+This is BibTeX, Version 0.99d (TeX Live 2017)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: lensing-lfi.aux
 The style file: aasjournal_mod.bst
 Database file #1: lensing-lfi.bib
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Warning--empty journal in Alsing:2019xrx
 Warning--empty publisher in 1992grle.book.....S
-You've used 96 entries,
+Warning--empty publisher in 2017arXiv170208896T
+You've used 122 entries,
             3166 wiz_defined-function locations,
-            1307 strings with 39503 characters,
-and the built_in function-call counts, 56399 in all, are:
-= -- 4096
-> -- 5312
-< -- 24
-+ -- 1775
-- -- 1895
-* -- 5771
-:= -- 10371
-add.period$ -- 97
-call.type$ -- 96
-change.case$ -- 563
-chr.to.int$ -- 93
-cite$ -- 97
-duplicate$ -- 1719
-empty$ -- 3028
-format.name$ -- 1998
-if$ -- 11223
-int.to.chr$ -- 4
+            1454 strings with 44483 characters,
+and the built_in function-call counts, 68481 in all, are:
+= -- 5157
+> -- 6186
+< -- 31
++ -- 2071
+- -- 2221
+* -- 6803
+:= -- 12518
+add.period$ -- 123
+call.type$ -- 122
+change.case$ -- 726
+chr.to.int$ -- 117
+cite$ -- 125
+duplicate$ -- 2189
+empty$ -- 3758
+format.name$ -- 2356
+if$ -- 13670
+int.to.chr$ -- 6
 int.to.str$ -- 0
-missing$ -- 93
-newline$ -- 297
-num.names$ -- 384
-pop$ -- 658
+missing$ -- 117
+newline$ -- 375
+num.names$ -- 489
+pop$ -- 898
 preamble$ -- 1
-purify$ -- 563
+purify$ -- 726
 quote$ -- 0
-skip$ -- 1554
+skip$ -- 1924
 stack$ -- 0
-substring$ -- 2341
-swap$ -- 13
+substring$ -- 2816
+swap$ -- 36
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 861
-warning$ -- 1
-while$ -- 365
+type$ -- 1095
+warning$ -- 3
+while$ -- 455
 width$ -- 0
-write$ -- 1106
-(There was 1 warning)
+write$ -- 1367
+(There were 3 warnings)

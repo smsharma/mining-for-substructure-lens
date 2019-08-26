@@ -12,9 +12,9 @@
 \contentsline {subsection}{\numberline {3.1}Extracting additional information from the simulator}{8}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}Machine learning}{8}{subsection.3.2}
 \contentsline {subsection}{\numberline {3.3}Calibration}{9}{subsection.3.3}
-\contentsline {subsection}{\numberline {3.4}Inference}{9}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.4}Inference}{10}{subsection.3.4}
 \contentsline {section}{\numberline {4}Results}{10}{section.4}
 \contentsline {section}{\numberline {5}Extensions}{10}{section.5}
-\contentsline {section}{\numberline {6}Conclusions}{10}{section.6}
+\contentsline {section}{\numberline {6}Conclusions}{11}{section.6}
 \contentsline {section}{\numberline {A}Minimum of the loss functional}{12}{appendix.A}
 \contentsline {section}{\numberline {B}Simplified scenarios}{13}{appendix.B}
