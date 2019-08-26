@@ -137,6 +137,10 @@ data/
 !/simulation/data/sim_mvgauss.npz
 
 # Tex
+*.aux
+*.bbl
+*.blg
+*.toc
 *.bak
 *.fdb_latexmk
 *.fls
