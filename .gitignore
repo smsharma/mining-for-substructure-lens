@@ -138,7 +138,6 @@ data/
 
 # Tex
 *.bak
-*.bst
 *.fdb_latexmk
 *.fls
 *.log
