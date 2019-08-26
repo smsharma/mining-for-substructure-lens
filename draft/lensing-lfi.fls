@@ -92,6 +92,12 @@ INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsopn.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsopn.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/amscls/amsthm.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/amscls/amsthm.sty
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/fontawesome.sty
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/fontawesome.sty
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/fontawesomesymbols-generic.tex
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/fontawesomesymbols-generic.tex
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/fontawesomesymbols-pdftex.tex
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/fontawesomesymbols-pdftex.tex
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/definitions.tex
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/definitions.tex
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.aux
@@ -140,6 +146,9 @@ INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam1
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/ufontawesometwo.fd
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/ufontawesometwo.fd
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/fontawesome/FontAwesome--fontawesometwo.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmcsc10.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmbx8.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
@@ -202,6 +211,8 @@ INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/scen
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.bbl
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.bbl
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.aux
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/enc/dvips/fontawesome/fontawesometwo.enc
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/fontawesome/FontAwesome.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb
