@@ -192,8 +192,9 @@
 
 \bibitem[{{Brennan} {et~al.}(2019){Brennan}, {Benson}, {Cyr-Racine}, {Keeton},
   {Moustakas}, \& {Pullen}}]{1808.03501}
-{Brennan}, S., {Benson}, A.~J., {Cyr-Racine}, F.-Y., {et~al.} 2019, \mnras,
-  2044, \doarXiv{1808.03501}, \dodoi{10.1093/mnras/stz1607}
+{Brennan}, S., {Benson}, A.~J., {Cyr-Racine}, F.-Y., {et~al.} 2019, Monthly
+  Notices of the Royal Astronomical Society, 488, 5085,
+  \dodoi{10.1093/mnras/stz1607}
 
 \bibitem[{{Brewer} {et~al.}(2016){Brewer}, {Huijser}, \& {Lewis}}]{1508.00662}
 {Brewer}, B.~J., {Huijser}, D., \& {Lewis}, G.~F. 2016, \mnras, 455, 1819,
@@ -227,6 +228,13 @@
 \bibitem[{{Chatterjee} \& {Koopmans}(2018)}]{1710.03075}
 {Chatterjee}, S., \& {Koopmans}, L. V.~E. 2018, \mnras, 474, 1762,
   \doarXiv{1710.03075}, \dodoi{10.1093/mnras/stx2674}
+
+\bibitem[{{Chen} {et~al.}(2019){Chen}, {Fassnacht}, {Suyu}, {Rusu}, {Chan},
+  {Wong}, {Auger}, {Hilbert}, {Bonvin}, {Birrer}, {Millon}, {Koopmans},
+  {Lagattuta}, {McKean}, {Vegetti}, {Courbin}, {Ding}, {Halkola}, {Jee},
+  {Shajib}, {Sluse}, {Sonnenfeld}, \& {Treu}}]{1907.02533}
+{Chen}, G. C.~F., {Fassnacht}, C.~D., {Suyu}, S.~H., {et~al.} 2019, arXiv
+  e-prints, arXiv:1907.02533, \doarXiv{1907.02533}
 
 \bibitem[{{Ciotti} \& {Bertin}(1999)}]{1999A&A...352..447C}
 {Ciotti}, L., \& {Bertin}, G. 1999, \aap, 352, 447
@@ -458,6 +466,11 @@ Jones, E., Oliphant, T., Peterson, P., {et~al.} 2001--, {SciPy}: Open source
 {Neyman}, J., \& {Pearson}, E.~S. 1933, Philosophical Transactions of the Royal
   Society of London Series A, 231, 289, \dodoi{10.1098/rsta.1933.0009}
 
+\bibitem[{{Oguri} \& {Marshall}(2010)}]{1001.2037}
+{Oguri}, M., \& {Marshall}, P.~J. 2010, Monthly Notices of the Royal
+  Astronomical Society, 405, 2579, \doarXiv{1001.2037},
+  \dodoi{10.1111/j.1365-2966.2010.16639.x}
+
 \bibitem[{Paszke {et~al.}(2017)Paszke, Gross, Chintala, Chanan, Yang, DeVito,
   Lin, Desmaison, Antiga, \& Lerer}]{paszke2017automatic}
 Paszke, A., Gross, S., Chintala, S., {et~al.} 2017, in NIPS-W
@@ -506,6 +519,10 @@ Paszke, A., Gross, S., Chintala, S., {et~al.} 2017, in NIPS-W
   {Cranmer}}]{Stoye:2018ovl}
 {Stoye}, M., {Brehmer}, J., {Louppe}, G., {Pavez}, J., \& {Cranmer}, K. 2018,
   arXiv e-prints, arXiv:1808.00973, \doarXiv{1808.00973}
+
+\bibitem[{{Treu}(2010)}]{1003.5567}
+{Treu}, T. 2010, Annual Review of Astronomy and Astrophysics, 48, 87,
+  \doarXiv{1003.5567}, \dodoi{10.1146/annurev-astro-081309-130924}
 
 \bibitem[{{van der Walt} {et~al.}(2011){van der Walt}, {Colbert}, \&
   {Varoquaux}}]{numpy:2011}
@@ -561,6 +578,14 @@ Wald, A. 1943, Transactions of the American Mathematical Society, 54, 426
 \bibitem[{Wilks(1938)}]{Wilks:1938dza}
 Wilks, S.~S. 1938, Annals Math. Statist., 9, 60,
   \dodoi{10.1214/aoms/1177732360}
+
+\bibitem[{{Wong} {et~al.}(2019){Wong}, {Suyu}, {Chen}, {Rusu}, {Millon},
+  {Sluse}, {Bonvin}, {Fassnacht}, {Taubenberger}, {Auger}, {Birrer}, {Chan},
+  {Courbin}, {Hilbert}, {Tihhonova}, {Treu}, {Agnello}, {Ding}, {Jee},
+  {Komatsu}, {Shajib}, {Sonnenfeld}, {Bland ford}, {Koopmans}, {Marshall}, \&
+  {Meylan}}]{1907.04869}
+{Wong}, K.~C., {Suyu}, S.~H., {Chen}, G. C.~F., {et~al.} 2019, arXiv e-prints,
+  arXiv:1907.04869, \doarXiv{1907.04869}
 
 \bibitem[{{Zahid} {et~al.}(2018){Zahid}, {Sohn}, \&
   {Geller}}]{2018ApJ...859...96Z}
