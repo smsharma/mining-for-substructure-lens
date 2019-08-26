@@ -422,15 +422,32 @@ With the likelihood ratio in hand, a Bayesian interpretation is easily admitted 
 \section{Extensions}
 \label{sec:extensions}
 
-\begin{itemize}
-\item Multiple passbands
-\item Per-image observational properties (e.g., exposure and PSF)
-\item More complicated host and source profiles
-\item Tidal stripping of subhalos (spatial dependence of density profile/concentration and overall depression in number density)
-\item Redshift-dependence of SHMF / different degrees of knowledge about redshift
-\item Inclusion of external shear
-\item Inclusion of line-of-sight substructure
-\end{itemize}
+% \begin{itemize}
+% \item Multiple passbands
+% \item Per-image observational properties (e.g., exposure and PSF)
+% \item More complicated host and source profiles
+% \item Tidal stripping of subhalos (spatial dependence of density profile/concentration and overall depression in number density)
+% \item Redshift-dependence of SHMF / different degrees of knowledge about redshift
+% \item Inclusion of external shear
+% \item Inclusion of line-of-sight substructure
+% \end{itemize}
+
+For this proof-of-concept analysis our lensing simulation makes a number of simplifying assumptions. We will now discuss how our simulation and inference method can be extended to a realistic state-of-the-art model of strong lensing, and how these changes will affect the results.
+
+First, we currently fix all properties of the background source. It is straightforward to instead draw the mass, profile, and redshift from suitable distributions. The most realistic description might be given by generative models trained on real galaxies, which we could easily use within our code.
+
+Similarly, the lens properties can be made more realistic by relaxing the restriction to spherical host halos and including more complicated profiles. A realistic simulator should also model the tidal stripping of subhalos, which entails drawing the positions of the subhalos in three dimensions rather than just in two. We can also add external shear. Our subhalo mass function in Eq.~\eqref{eq:shmf} is independent of the lens redshift, but can easily be extended to include this dependency.
+
+All of these effects are straightforward to implement in our setup. They only require modifications to the simulation code. The inference algorithm is unaffected: since these extensions do not explicitly depend on the parameters of interest, the likelihood terms associated with them cancel in the calculation of the joint likelihood ratio and the joint score. Nevertheless, these changes affect the final observed image and therefore also the true likelihood function; the variance of the joint likelihood ratio and score could therefore increase, requiring larger training samples before the network converges to the correct likelihood ratio function.
+
+With these extensions, the redshift of the background source and the lens will play a more important role. Since these redshifts are observable, it is likely that we can improve the performance of the inference algorithm by using this information. We can treat both the source and lens redshift, potentially with added noise to model imperfect observations, as additional observables. The input to the neural networks then consists of the observed lens image, the measured redshifts, and the tested parameter point. Except for a simple modification of the network architecture, the inference algorithm remains unchanged.
+
+Including line-of-sight substructure is somewhat more involved. Its mass function depends on the parameters of interest, which requires a modification of the calculation of the joint likelihood ratio and joint score. Structurally this is identical to our current modeling of subhalos within the lens. Since the number of halos along the line of sight is expected to be substantially smaller than the number of subhalos, we expect that these additional factors in the joint likelihood ratio and joint score will not slow down the overall simulation significantly, and will not increase the variance of the inference techniques too much. In fact, since the line-of-sight substructure is sensitive to the parameters of interest, it is part of the signal rather than a nuisance and has the potential to improve the sensitivity of the measurement to $\fsub$ and $\beta$.
+
+Realistic observations do not have a uniform exposure and PSF over all lenses. These effects can be modeled in the simulator. In this case we envision a normalization of the network input to a unit exposure. Providing the exposure and parameters of the PSF as additional inputs to the network is likely to improve performance in this case. Multiple passbands can also be modeled, the ResNet architecture is commonly used with images with three color channels and can be easily extended to a larger number.
+
+While the implementation of these extensions in our simulation and inference code is feasible, estimating the sensitivity of such a realistic analysis is beyond the scope of this paper. While most of the changes are likely to reduce the information that can be extracted from the lens image, providing the redshifts as additional input, using multiple passbands, and line-of-sight substructure sensitive to the same parameters might in fact provide additional information.
+
 
 \section{Conclusions}
 \label{sec:conclusions}
