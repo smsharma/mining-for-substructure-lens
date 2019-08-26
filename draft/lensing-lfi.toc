@@ -16,5 +16,5 @@
 \contentsline {section}{\numberline {4}Results}{10}{section.4}
 \contentsline {section}{\numberline {5}Extensions}{10}{section.5}
 \contentsline {section}{\numberline {6}Conclusions}{10}{section.6}
-\contentsline {section}{\numberline {A}Minimum of the loss functional}{10}{appendix.A}
+\contentsline {section}{\numberline {A}Minimum of the loss functional}{12}{appendix.A}
 \contentsline {section}{\numberline {B}Simplified scenarios}{13}{appendix.B}
