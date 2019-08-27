@@ -1,10 +1,12 @@
 @comment{%% This BibTeX bibliography file was created using BibDesk.
 %% http://bibdesk.sourceforge.net/
 
-%% Created for Siddharth Mishra-Sharma at 2019-08-13 10:38:59 -0400
+%% Created for Siddharth Mishra-Sharma at 2019-08-26 15:09:12 -0400
 
 
 %% Saved with string encoding Unicode (UTF-8)}
+
+@comment{%% This BibTeX bibliography file was created using BibDesk. %% http://bibdesk.sourceforge.net/  %% Created for Siddharth Mishra-Sharma at 2019-08-13 10:38:59 -0400   %% Saved with string encoding Unicode (UTF-8)}
 
 @comment{%% This BibTeX bibliography file was created using BibDesk. %% http://bibdesk.sourceforge.net/  %% Created for Siddharth Mishra-Sharma at 2019-05-28 10:49:07 -0400    %% Saved with string encoding Unicode (UTF-8)}
 
@@ -34,6 +36,7 @@
  adsurl = {https://ui.adsabs.harvard.edu/abs/2008ApJ...679.1260M},
  archiveprefix = {arXiv},
  author = {{Madau}, Piero and {Diemand}, J{\"u}rg and {Kuhlen}, Michael},
+ bdsk-url-1 = {https://doi.org/10.1086/587545},
  doi = {10.1086/587545},
  eprint = {0802.2265},
  journal = {The Astrophysical Journal},
@@ -71,9 +74,8 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2008MNRAS.391.1685S},
  archiveprefix = {arXiv},
- author = {{Springel}, V. and {Wang}, J. and {Vogelsberger}, M. and {Ludlow}, A. and
-{Jenkins}, A. and {Helmi}, A. and {Navarro}, J.~F. and {Frenk}, C.~S. and
-{White}, S.~D.~M.},
+ author = {{Springel}, V. and {Wang}, J. and {Vogelsberger}, M. and {Ludlow}, A. and {Jenkins}, A. and {Helmi}, A. and {Navarro}, J.~F. and {Frenk}, C.~S. and {White}, S.~D.~M.},
+ bdsk-url-1 = {https://doi.org/10.1111/j.1365-2966.2008.14066.x},
  doi = {10.1111/j.1365-2966.2008.14066.x},
  eprint = {0809.0898},
  journal = {Monthly Notices of the Royal Astronomical Society},
@@ -110,10 +112,7 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2009arXiv0912.0201L},
  archiveprefix = {arXiv},
- author = {{LSST Science Collaboration} and {Abell}, Paul A. and {Allison}, Julius and
-{Anderson}, Scott F. and {Andrew}, John R. and {Angel}, J. Roger P. and
-{Armus}, Lee and {Arnett}, David and {Asztalos}, S.~J. and
-{Axelrod}, Tim S. and et al.},
+ author = {{LSST Science Collaboration} and {Abell}, Paul A. and {Allison}, Julius and {Anderson}, Scott F. and {Andrew}, John R. and {Angel}, J. Roger P. and {Armus}, Lee and {Arnett}, David and {Asztalos}, S.~J. and {Axelrod}, Tim S. and et al.},
  eid = {arXiv:0912.0201},
  eprint = {0912.0201},
  journal = {arXiv e-prints},
@@ -129,9 +128,7 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2010arXiv1001.0061R},
  archiveprefix = {arXiv},
- author = {{Refregier}, A. and {Amara}, A. and {Kitching}, T.~D. and {Rassat}, A. and
-{Scaramella}, R. and {Weller}, J. and
-{Euclid Imaging Consortium}, for the},
+ author = {{Refregier}, A. and {Amara}, A. and {Kitching}, T.~D. and {Rassat}, A. and {Scaramella}, R. and {Weller}, J. and {Euclid Imaging Consortium}, for the},
  eid = {arXiv:1001.0061},
  eprint = {1001.0061},
  journal = {arXiv e-prints},
@@ -140,6 +137,43 @@
  pages = {arXiv:1001.0061},
  primaryclass = {astro-ph.IM},
  title = {{Euclid Imaging Consortium Science Book}},
+ year = {2010}
+}
+
+@article{1001.2037,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2010MNRAS.405.2579O},
+ archiveprefix = {arXiv},
+ author = {{Oguri}, Masamune and {Marshall}, Philip J.},
+ bdsk-url-1 = {https://doi.org/10.1111/j.1365-2966.2010.16639.x},
+ doi = {10.1111/j.1365-2966.2010.16639.x},
+ eprint = {1001.2037},
+ journal = {Monthly Notices of the Royal Astronomical Society},
+ keywords = {gravitational lensing: strong, cosmological parameters, cosmology: theory, Astrophysics - Cosmology and Nongalactic Astrophysics},
+ month = {Jul},
+ number = {4},
+ pages = {2579-2593},
+ primaryclass = {astro-ph.CO},
+ title = {{Gravitationally lensed quasars and supernovae in future wide-field optical imaging surveys}},
+ volume = {405},
+ year = {2010}
+}
+
+@article{1003.5567,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2010ARA&A..48...87T},
+ archiveprefix = {arXiv},
+ author = {{Treu}, Tommaso},
+ bdsk-url-1 = {https://doi.org/10.1146/annurev-astro-081309-130924},
+ doi = {10.1146/annurev-astro-081309-130924},
+ eprint = {1003.5567},
+ journal = {Annual Review of Astronomy and Astrophysics},
+ keywords = {Astrophysics - Cosmology and Nongalactic Astrophysics},
+ month = {Sep},
+ pages = {87-125},
+ primaryclass = {astro-ph.CO},
+ title = {{Strong Lensing by Galaxies}},
+ volume = {48},
  year = {2010}
 }
 
@@ -790,8 +824,8 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2018PhRvL.121k1801B},
  archiveprefix = {arXiv},
- author = {{Brehmer}, Johann and {Cranmer}, Kyle and {Louppe}, Gilles and
-{Pavez}, Juan},
+ author = {{Brehmer}, Johann and {Cranmer}, Kyle and {Louppe}, Gilles and {Pavez}, Juan},
+ bdsk-url-1 = {https://doi.org/10.1103/PhysRevLett.121.111801},
  doi = {10.1103/PhysRevLett.121.111801},
  eid = {111801},
  eprint = {1805.00013},
@@ -810,8 +844,8 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2018PhRvD..98e2004B},
  archiveprefix = {arXiv},
- author = {{Brehmer}, Johann and {Cranmer}, Kyle and {Louppe}, Gilles and
-{Pavez}, Juan},
+ author = {{Brehmer}, Johann and {Cranmer}, Kyle and {Louppe}, Gilles and {Pavez}, Juan},
+ bdsk-url-1 = {https://doi.org/10.1103/PhysRevD.98.052004},
  doi = {10.1103/PhysRevD.98.052004},
  eid = {052004},
  eprint = {1805.00020},
@@ -849,8 +883,7 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2018arXiv180512244B},
  archiveprefix = {arXiv},
- author = {{Brehmer}, Johann and {Louppe}, Gilles and {Pavez}, Juan and
-{Cranmer}, Kyle},
+ author = {{Brehmer}, Johann and {Louppe}, Gilles and {Pavez}, Juan and {Cranmer}, Kyle},
  eid = {arXiv:1805.12244},
  eprint = {1805.12244},
  journal = {arXiv e-prints},
@@ -885,9 +918,8 @@
 @article{1808.03501,
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2019MNRAS.488.5085B},
- author = {{Brennan}, Sean and {Benson}, Andrew J. and {Cyr-Racine}, Francis-Yan and
-{Keeton}, Charles R. and {Moustakas}, Leonidas A. and
-{Pullen}, Anthony R.},
+ author = {{Brennan}, Sean and {Benson}, Andrew J. and {Cyr-Racine}, Francis-Yan and {Keeton}, Charles R. and {Moustakas}, Leonidas A. and {Pullen}, Anthony R.},
+ bdsk-url-1 = {https://doi.org/10.1093/mnras/stz1607},
  doi = {10.1093/mnras/stz1607},
  journal = {Monthly Notices of the Royal Astronomical Society},
  keywords = {gravitational lensing: strong, galaxies: structure, dark matter},
@@ -975,9 +1007,7 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2019arXiv190205141V},
  archiveprefix = {arXiv},
- author = {{Verma}, Aprajita and {Collett}, Thomas and {Smith}, Graham P. and
-{Strong Lensing Science Collaboration} and
-{the DESC Strong Lensing Science Working Group}},
+ author = {{Verma}, Aprajita and {Collett}, Thomas and {Smith}, Graham P. and {Strong Lensing Science Collaboration} and {the DESC Strong Lensing Science Working Group}},
  eid = {arXiv:1902.05141},
  eprint = {1902.05141},
  journal = {arXiv e-prints},
@@ -1025,14 +1055,7 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2019arXiv190702533C},
  archiveprefix = {arXiv},
- author = {{Chen}, Geoff C. -F. and {Fassnacht}, Christopher D. and
-{Suyu}, Sherry. H. and {Rusu}, Cristian E. and {Chan}, James H.~H. and
-{Wong}, Kenneth C. and {Auger}, Matthew W. and {Hilbert}, Stefan and
-{Bonvin}, Vivien and {Birrer}, Simon and {Millon}, Martin and
-{Koopmans}, Leon V.~E. and {Lagattuta}, David J. and {McKean}, John P. and
-{Vegetti}, Simona and {Courbin}, Frederic and {Ding}, Xuheng and
-{Halkola}, Aleksi and {Jee}, Inh and {Shajib}, Anowar J. and
-{Sluse}, Dominique and {Sonnenfeld}, Alessandro and {Treu}, Tommaso},
+ author = {{Chen}, Geoff C. -F. and {Fassnacht}, Christopher D. and {Suyu}, Sherry. H. and {Rusu}, Cristian E. and {Chan}, James H.~H. and {Wong}, Kenneth C. and {Auger}, Matthew W. and {Hilbert}, Stefan and {Bonvin}, Vivien and {Birrer}, Simon and {Millon}, Martin and {Koopmans}, Leon V.~E. and {Lagattuta}, David J. and {McKean}, John P. and {Vegetti}, Simona and {Courbin}, Frederic and {Ding}, Xuheng and {Halkola}, Aleksi and {Jee}, Inh and {Shajib}, Anowar J. and {Sluse}, Dominique and {Sonnenfeld}, Alessandro and {Treu}, Tommaso},
  eid = {arXiv:1907.02533},
  eprint = {1907.02533},
  journal = {arXiv e-prints},
@@ -1048,16 +1071,7 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2019arXiv190704869W},
  archiveprefix = {arXiv},
- author = {{Wong}, Kenneth C. and {Suyu}, Sherry H. and {Chen}, Geoff C. -F. and
-{Rusu}, Cristian E. and {Millon}, Martin and {Sluse}, Dominique and
-{Bonvin}, Vivien and {Fassnacht}, Christopher D. and
-{Taubenberger}, Stefan and {Auger}, Matthew W. and {Birrer}, Simon and
-{Chan}, James H.~H. and {Courbin}, Frederic and {Hilbert}, Stefan and
-{Tihhonova}, Olga and {Treu}, Tommaso and {Agnello}, Adriano and
-{Ding}, Xuheng and {Jee}, Inh and {Komatsu}, Eiichiro and
-{Shajib}, Anowar J. and {Sonnenfeld}, Alessandro and {Bland
-ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
-{Meylan}, Georges},
+ author = {{Wong}, Kenneth C. and {Suyu}, Sherry H. and {Chen}, Geoff C. -F. and {Rusu}, Cristian E. and {Millon}, Martin and {Sluse}, Dominique and {Bonvin}, Vivien and {Fassnacht}, Christopher D. and {Taubenberger}, Stefan and {Auger}, Matthew W. and {Birrer}, Simon and {Chan}, James H.~H. and {Courbin}, Frederic and {Hilbert}, Stefan and {Tihhonova}, Olga and {Treu}, Tommaso and {Agnello}, Adriano and {Ding}, Xuheng and {Jee}, Inh and {Komatsu}, Eiichiro and {Shajib}, Anowar J. and {Sonnenfeld}, Alessandro and {Bland ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and {Meylan}, Georges},
  eid = {arXiv:1907.04869},
  eprint = {1907.04869},
  journal = {arXiv e-prints},
@@ -1073,6 +1087,7 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/1933RSPTA.231..289N},
  author = {{Neyman}, J. and {Pearson}, E.~S.},
+ bdsk-url-1 = {https://doi.org/10.1098/rsta.1933.0009},
  doi = {10.1098/rsta.1933.0009},
  journal = {Philosophical Transactions of the Royal Society of London Series A},
  month = {Jan},
@@ -1080,6 +1095,18 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  title = {{On the Problem of the Most Efficient Tests of Statistical Hypotheses}},
  volume = {231},
  year = {1933}
+}
+
+@article{1963BAAA....6...41S,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/1963BAAA....6...41S},
+ author = {{S{\'e}rsic}, J.~L.},
+ journal = {Boletin de la Asociacion Argentina de Astronomia La Plata Argentina},
+ month = {Jan},
+ pages = {41},
+ title = {{Influence of the atmospheric and instrumental dispersion on the brightness distribution in a galaxy}},
+ volume = {6},
+ year = {1963}
 }
 
 @article{1983ApJ...274..443B,
@@ -1101,6 +1128,7 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/1992grle.book.....S},
  author = {{Schneider}, Peter and {Ehlers}, J{\"u}rgen and {Falco}, Emilio E.},
+ bdsk-url-1 = {https://doi.org/10.1007/978-3-662-03758-4},
  doi = {10.1007/978-3-662-03758-4},
  title = {{Gravitational Lenses}},
  year = {1992}
@@ -1230,6 +1258,20 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  year = {2002}
 }
 
+@article{2012arXiv1212.1479F,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2012arXiv1212.1479F},
+ archiveprefix = {arXiv},
+ author = {{Fan}, Y. and {Nott}, D.~J. and {Sisson}, S.~A.},
+ eprint = {1212.1479},
+ journal = {ArXiv e-prints},
+ keywords = {Statistics - Computation, Statistics - Methodology},
+ month = {December},
+ primaryclass = {stat.CO},
+ title = {{Approximate Bayesian Computation via Regression Density Estimation}},
+ year = {2012}
+}
+
 @article{2013A&A...558A..33A,
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {http://adsabs.harvard.edu/abs/2013A%26A...558A..33A},
@@ -1249,6 +1291,20 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  title = {{Astropy: A community Python package for astronomy}},
  volume = {558},
  year = {2013}
+}
+
+@article{2014arXiv1410.8516D,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2014arXiv1410.8516D},
+ archiveprefix = {arXiv},
+ author = {{Dinh}, L. and {Krueger}, D. and {Bengio}, Y.},
+ eprint = {1410.8516},
+ journal = {ArXiv e-prints},
+ keywords = {Computer Science - Learning},
+ month = {October},
+ primaryclass = {cs.LG},
+ title = {{NICE: Non-linear Independent Components Estimation}},
+ year = {2014}
 }
 
 @article{2014arXiv1412.6980K,
@@ -1305,6 +1361,140 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  title = {{The Population of Galaxy-Galaxy Strong Lenses in Forthcoming Optical Imaging Surveys}},
  volume = {811},
  year = {2015}
+}
+
+@article{2015arXiv150203509G,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2015arXiv150203509G},
+ archiveprefix = {arXiv},
+ author = {{Germain}, M. and {Gregor}, K. and {Murray}, I. and {Larochelle}, H.
+},
+ eprint = {1502.03509},
+ journal = {ArXiv e-prints},
+ keywords = {Computer Science - Machine Learning, Computer Science - Neural and Evolutionary Computing, Statistics - Machine Learning},
+ month = {February},
+ title = {{MADE: Masked Autoencoder for Distribution Estimation}},
+ year = {2015}
+}
+
+@article{2015arXiv150505770J,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2015arXiv150505770J},
+ archiveprefix = {arXiv},
+ author = {{Jimenez Rezende}, D. and {Mohamed}, S.},
+ eprint = {1505.05770},
+ journal = {ArXiv e-prints},
+ keywords = {Statistics - Machine Learning, Computer Science - Artificial Intelligence, Computer Science - Learning, Statistics - Computation, Statistics - Methodology},
+ month = {May},
+ primaryclass = {stat.ML},
+ title = {{Variational Inference with Normalizing Flows}},
+ year = {2015}
+}
+
+@article{2016arXiv160106759V,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160106759V},
+ archiveprefix = {arXiv},
+ author = {{van den Oord}, A. and {Kalchbrenner}, N. and {Kavukcuoglu}, K.
+},
+ eprint = {1601.06759},
+ journal = {ArXiv e-prints},
+ keywords = {Computer Science - Computer Vision and Pattern Recognition, Computer Science - Learning, Computer Science - Neural and Evolutionary Computing},
+ month = {January},
+ primaryclass = {cs.CV},
+ title = {{Pixel Recurrent Neural Networks}},
+ year = {2016}
+}
+
+@article{2016arXiv160206701P,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160206701P},
+ archiveprefix = {arXiv},
+ author = {{Paige}, B. and {Wood}, F.},
+ eprint = {1602.06701},
+ journal = {ArXiv e-prints},
+ keywords = {Statistics - Machine Learning},
+ month = {February},
+ primaryclass = {stat.ML},
+ title = {{Inference Networks for Sequential Monte Carlo in Graphical Models}},
+ year = {2016}
+}
+
+@article{2016arXiv160502226U,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160502226U},
+ archiveprefix = {arXiv},
+ author = {{Uria}, B. and {C{\^o}t{\'e}}, M.-A. and {Gregor}, K. and {Murray}, I. and
+{Larochelle}, H.},
+ eprint = {1605.02226},
+ journal = {ArXiv e-prints},
+ keywords = {Computer Science - Learning},
+ month = {May},
+ primaryclass = {cs.LG},
+ title = {{Neural Autoregressive Distribution Estimation}},
+ year = {2016}
+}
+
+@article{2016arXiv160508803D,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160508803D},
+ archiveprefix = {arXiv},
+ author = {{Dinh}, L. and {Sohl-Dickstein}, J. and {Bengio}, S.},
+ eprint = {1605.08803},
+ journal = {ArXiv e-prints},
+ keywords = {Computer Science - Learning, Computer Science - Artificial Intelligence, Computer Science - Neural and Evolutionary Computing, Statistics - Machine Learning},
+ month = {May},
+ primaryclass = {cs.LG},
+ title = {{Density estimation using Real NVP}},
+ year = {2016}
+}
+
+@article{2016arXiv160605328V,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160605328V},
+ archiveprefix = {arXiv},
+ author = {{van den Oord}, A. and {Kalchbrenner}, N. and {Vinyals}, O. and
+{Espeholt}, L. and {Graves}, A. and {Kavukcuoglu}, K.},
+ eprint = {1606.05328},
+ journal = {ArXiv e-prints},
+ keywords = {Computer Science - Computer Vision and Pattern Recognition, Computer Science - Learning},
+ month = {June},
+ primaryclass = {cs.CV},
+ title = {{Conditional Image Generation with PixelCNN Decoders}},
+ year = {2016}
+}
+
+@article{2016arXiv160903499V,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160903499V},
+ archiveprefix = {arXiv},
+ author = {{van den Oord}, A. and {Dieleman}, S. and {Zen}, H. and {Simonyan}, K. and
+{Vinyals}, O. and {Graves}, A. and {Kalchbrenner}, N. and {Senior}, A. and
+{Kavukcuoglu}, K.},
+ eprint = {1609.03499},
+ journal = {ArXiv e-prints},
+ keywords = {Computer Science - Sound, Computer Science - Learning},
+ month = {September},
+ primaryclass = {cs.SD},
+ title = {{WaveNet: A Generative Model for Raw Audio}},
+ year = {2016}
+}
+
+@article{2016arXiv161110242D,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2016arXiv161110242T},
+ archiveprefix = {arXiv},
+ author = {{Thomas}, Owen and {Dutta}, Ritabrata and {Corander}, Jukka and
+{Kaski}, Samuel and {Gutmann}, Michael U.},
+ eid = {arXiv:1611.10242},
+ eprint = {1611.10242},
+ journal = {arXiv e-prints},
+ keywords = {Statistics - Machine Learning, Statistics - Computation, Statistics - Methodology},
+ month = {Nov},
+ pages = {arXiv:1611.10242},
+ primaryclass = {stat.ML},
+ title = {{Likelihood-free inference by ratio estimation}},
+ year = {2016}
 }
 
 @article{2016JCAP...09..047H,
@@ -1365,6 +1555,61 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  primaryclass = {astro-ph.HE},
  title = {{Searching for Dark Matter Annihilation in Recently Discovered Milky Way Satellites with Fermi-Lat}},
  volume = {834},
+ year = {2017}
+}
+
+@incollection{2017arXiv170208896T,
+ author = {Tran, Dustin and Ranganath, Rajesh and Blei, David},
+ booktitle = {Advances in Neural Information Processing Systems 30},
+ editor = {I. Guyon and U. V. Luxburg and S. Bengio and H. Wallach and R. Fergus and S. Vishwanathan and R. Garnett},
+ pages = {5523--5533},
+ title = {Hierarchical Implicit Models and Likelihood-Free Variational Inference},
+ year = {2017}
+}
+
+@article{2017arXiv170507057P,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170507057P},
+ archiveprefix = {arXiv},
+ author = {{Papamakarios}, G. and {Pavlakou}, T. and {Murray}, I.},
+ eprint = {1705.07057},
+ journal = {ArXiv e-prints},
+ keywords = {Statistics - Machine Learning, Computer Science - Learning},
+ month = {May},
+ primaryclass = {stat.ML},
+ title = {{Masked Autoregressive Flow for Density Estimation}},
+ year = {2017}
+}
+
+@article{2017arXiv170707113L,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2017arXiv170707113L},
+ archiveprefix = {arXiv},
+ author = {{Louppe}, G. and {Cranmer}, K.},
+ eprint = {1707.07113},
+ journal = {ArXiv e-prints},
+ keywords = {Statistics - Machine Learning, Computer Science - Learning},
+ month = {July},
+ primaryclass = {stat.ML},
+ title = {{Adversarial Variational Optimization of Non-Differentiable Simulators}},
+ year = {2017}
+}
+
+@article{2017arXiv171101861L,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2017arXiv171101861L},
+ archiveprefix = {arXiv},
+ author = {{Lueckmann}, Jan-Matthis and {Goncalves}, Pedro J. and
+{Bassetto}, Giacomo and {{\"O}cal}, Kaan and {Nonnenmacher}, Marcel and
+{Macke}, Jakob H.},
+ eid = {arXiv:1711.01861},
+ eprint = {1711.01861},
+ journal = {arXiv e-prints},
+ keywords = {Statistics - Machine Learning},
+ month = {Nov},
+ pages = {arXiv:1711.01861},
+ primaryclass = {stat.ML},
+ title = {{Flexible statistical inference for mechanistic models of neural dynamics}},
  year = {2017}
 }
 
@@ -1519,6 +1764,97 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  pages = {arXiv:1802.03609},
  primaryclass = {astro-ph.GA},
  title = {{The Strong Gravitational Lens Finding Challenge}},
+ year = {2018}
+}
+
+@article{2018arXiv180400779H,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2018arXiv180400779H},
+ archiveprefix = {arXiv},
+ author = {{Huang}, C.-W. and {Krueger}, D. and {Lacoste}, A. and {Courville}, A.
+},
+ eprint = {1804.00779},
+ journal = {ArXiv e-prints},
+ keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
+ month = {April},
+ title = {{Neural Autoregressive Flows}},
+ year = {2018}
+}
+
+@article{2018arXiv180507226P,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2018arXiv180507226P},
+ archiveprefix = {arXiv},
+ author = {{Papamakarios}, G. and {Sterratt}, D.~C. and {Murray}, I.},
+ eprint = {1805.07226},
+ journal = {ArXiv e-prints},
+ keywords = {Statistics - Machine Learning, Computer Science - Learning},
+ month = {May},
+ primaryclass = {stat.ML},
+ title = {{Sequential Neural Likelihood: Fast Likelihood-free Inference with Autoregressive Flows}},
+ year = {2018}
+}
+
+@article{2018arXiv180509294L,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2018arXiv180509294L},
+ archiveprefix = {arXiv},
+ author = {{Lueckmann}, Jan-Matthis and {Bassetto}, Giacomo and
+{Karaletsos}, Theofanis and {Macke}, Jakob H.},
+ eid = {arXiv:1805.09294},
+ eprint = {1805.09294},
+ journal = {arXiv e-prints},
+ keywords = {Statistics - Machine Learning, Computer Science - Machine Learning},
+ month = {May},
+ pages = {arXiv:1805.09294},
+ primaryclass = {stat.ML},
+ title = {{Likelihood-free inference with emulator networks}},
+ year = {2018}
+}
+
+@article{2018arXiv180703039K,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2018arXiv180703039K},
+ archiveprefix = {arXiv},
+ author = {{Kingma}, Diederik P. and {Dhariwal}, Prafulla},
+ eid = {arXiv:1807.03039},
+ eprint = {1807.03039},
+ journal = {arXiv e-prints},
+ keywords = {Statistics - Machine Learning, Computer Science - Artificial Intelligence, Computer Science - Machine Learning},
+ month = {Jul},
+ pages = {arXiv:1807.03039},
+ primaryclass = {stat.ML},
+ title = {{Glow: Generative Flow with Invertible 1x1 Convolutions}},
+ year = {2018}
+}
+
+@article{2018arXiv181001367G,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {http://adsabs.harvard.edu/abs/2018arXiv181001367G},
+ archiveprefix = {arXiv},
+ author = {{Grathwohl}, W. and {Chen}, R.~T.~Q. and {Bettencourt}, J. and
+{Sutskever}, I. and {Duvenaud}, D.},
+ eprint = {1810.01367},
+ journal = {ArXiv e-prints},
+ keywords = {Computer Science - Machine Learning, Computer Science - Computer Vision and Pattern Recognition, Statistics - Machine Learning},
+ month = {October},
+ title = {{FFJORD: Free-form Continuous Dynamics for Scalable Reversible Generative Models}},
+ year = {2018}
+}
+
+@article{2018arXiv181009899D,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2018arXiv181009899D},
+ archiveprefix = {arXiv},
+ author = {{Dinev}, Traiko and {Gutmann}, Michael U.},
+ eid = {arXiv:1810.09899},
+ eprint = {1810.09899},
+ journal = {arXiv e-prints},
+ keywords = {Statistics - Machine Learning, Computer Science - Machine Learning, Statistics - Computation, Statistics - Methodology},
+ month = {Oct},
+ pages = {arXiv:1810.09899},
+ primaryclass = {stat.ML},
+ title = {{Dynamic Likelihood-free Inference via Ratio Estimation (DIRE)}},
  year = {2018}
 }
 
@@ -1700,6 +2036,67 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  year = {2019}
 }
 
+@article{2019arXiv190507488G,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2019arXiv190507488G},
+ archiveprefix = {arXiv},
+ author = {{Greenberg}, David S. and {Nonnenmacher}, Marcel and {Macke}, Jakob H.},
+ eid = {arXiv:1905.07488},
+ eprint = {1905.07488},
+ journal = {arXiv e-prints},
+ keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
+ month = {May},
+ pages = {arXiv:1905.07488},
+ primaryclass = {cs.LG},
+ title = {{Automatic Posterior Transformation for Likelihood-Free Inference}},
+ year = {2019}
+}
+
+@article{Alsing:2017var,
+ archiveprefix = {arXiv},
+ author = {Alsing, Justin and Wandelt, Benjamin},
+ doi = {10.1093/mnrasl/sly029},
+ eprint = {1712.00012},
+ journal = {Mon. Not. Roy. Astron. Soc.},
+ number = {1},
+ pages = {L60-L64},
+ primaryclass = {astro-ph.CO},
+ slaccitation = {%%CITATION = ARXIV:1712.00012;%%},
+ title = {{Generalized massive optimal data compression}},
+ volume = {476},
+ year = {2018}
+}
+
+@article{Alsing:2019dvb,
+ archiveprefix = {arXiv},
+ author = {Alsing, Justin and Wandelt, Benjamin},
+ eprint = {1903.01473},
+ primaryclass = {astro-ph.CO},
+ slaccitation = {%%CITATION = ARXIV:1903.01473;%%},
+ title = {{Nuisance hardened data compression for fast
+likelihood-free inference}},
+ year = {2019}
+}
+
+@article{Alsing:2019xrx,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2019MNRAS.488.4440A},
+ archiveprefix = {arXiv},
+ author = {{Alsing}, Justin and {Charnock}, Tom and {Feeney}, Stephen and {Wand
+elt}, Benjamin},
+ doi = {10.1093/mnras/stz1960},
+ eprint = {1903.00007},
+ journal = {Monthly Notices of the Royal Astronomical Society},
+ keywords = {data analysis: methods, Astrophysics - Cosmology and Nongalactic Astrophysics},
+ month = {Sep},
+ number = {3},
+ pages = {4440-4458},
+ primaryclass = {astro-ph.CO},
+ title = {{Fast likelihood-free cosmology with neural density estimators and active learning}},
+ volume = {488},
+ year = {2019}
+}
+
 @article{astro-ph/0003365,
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2000PhRvL..85.1158H},
@@ -1761,8 +2158,8 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2016EPJC...76..235B},
  archiveprefix = {arXiv},
- author = {{Baldi}, Pierre and {Cranmer}, Kyle and {Faucett}, Taylor and
-{Sadowski}, Peter and {Whiteson}, Daniel},
+ author = {{Baldi}, Pierre and {Cranmer}, Kyle and {Faucett}, Taylor and {Sadowski}, Peter and {Whiteson}, Daniel},
+ bdsk-url-1 = {https://doi.org/10.1140/epjc/s10052-016-4099-4},
  doi = {10.1140/epjc/s10052-016-4099-4},
  eid = {235},
  eprint = {1601.07913},
@@ -1777,12 +2174,22 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  year = {2016}
 }
 
+@article{beaumont2002approximate,
+ author = {Beaumont, Mark A and Zhang, Wenyang and Balding, David J},
+ journal = {Genetics},
+ number = {4},
+ pages = {2025--2035},
+ publisher = {Genetics Soc America},
+ title = {Approximate Bayesian computation in population genetics},
+ volume = {162},
+ year = {2002}
+}
+
 @article{Brehmer:2019xox,
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2019arXiv190710621B},
  archiveprefix = {arXiv},
- author = {{Brehmer}, Johann and {Kling}, Felix and {Espejo}, Irina and
-{Cranmer}, Kyle},
+ author = {{Brehmer}, Johann and {Kling}, Felix and {Espejo}, Irina and {Cranmer}, Kyle},
  eid = {arXiv:1907.10621},
  eprint = {1907.10621},
  journal = {arXiv e-prints},
@@ -1794,11 +2201,29 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  year = {2019}
 }
 
+@article{Charnock:2018ogm,
+ archiveprefix = {arXiv},
+ author = {Charnock, Tom and Lavaux, Guilhem and Wandelt, Benjamin
+D.},
+ doi = {10.1103/PhysRevD.97.083004},
+ eprint = {1802.03537},
+ journal = {Phys. Rev.},
+ number = {8},
+ pages = {083004},
+ primaryclass = {astro-ph.IM},
+ slaccitation = {%%CITATION = ARXIV:1802.03537;%%},
+ title = {{Automatic physical inference with information maximizing
+neural networks}},
+ volume = {D97},
+ year = {2018}
+}
+
 @article{Cowan:2010js,
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2011EPJC...71.1554C},
  archiveprefix = {arXiv},
  author = {{Cowan}, Glen and {Cranmer}, Kyle and {Gross}, Eilam and {Vitells}, Ofer},
+ bdsk-url-1 = {https://doi.org/10.1140/epjc/s10052-011-1554-0},
  doi = {10.1140/epjc/s10052-011-1554-0},
  eid = {1554},
  eprint = {1007.1727},
@@ -1826,6 +2251,42 @@ ford}, Roger D. and {Koopmans}, Leon V.~E. and {Marshall}, Philip J. and
  primaryclass = {stat.AP},
  title = {{Approximating Likelihood Ratios with Calibrated Discriminative Classifiers}},
  year = {2015}
+}
+
+@article{Cranmer:2016lzt,
+ author = {Cranmer, Kyle and Louppe, Gilles},
+ doi = {10.5281/zenodo.198541},
+ journal = {J. Brief Ideas},
+ slaccitation = {%%CITATION = INSPIRE-1503115;%%},
+ title = {{Unifying generative models and exact likelihood-free
+inference with conditional bijections}},
+ year = {2016}
+}
+
+@article{DBLP:journals/corr/abs-1806-07366,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2018arXiv180607366C},
+ archiveprefix = {arXiv},
+ author = {{Chen}, Ricky T.~Q. and {Rubanova}, Yulia and {Bettencourt}, Jesse and
+{Duvenaud}, David},
+ eid = {arXiv:1806.07366},
+ eprint = {1806.07366},
+ journal = {arXiv e-prints},
+ keywords = {Computer Science - Machine Learning, Computer Science - Artificial Intelligence, Statistics - Machine Learning},
+ month = {Jun},
+ pages = {arXiv:1806.07366},
+ primaryclass = {cs.LG},
+ title = {{Neural Ordinary Differential Equations}},
+ year = {2018}
+}
+
+@article{gutmann2017likelihood,
+ author = {Gutmann, Michael U and Dutta, Ritabrata and Kaski, Samuel and Corander, Jukka},
+ journal = {Statistics and Computing},
+ pages = {1--15},
+ publisher = {Springer},
+ title = {Likelihood-free inference via classification},
+ year = {2017}
 }
 
 @inproceedings{he2016deep,
@@ -1873,11 +2334,63 @@ interfaces and operating systems.},
  author = {Eric Jones and Travis Oliphant and Pearu Peterson and others},
  bdsk-url-1 = {http://www.scipy.org/},
  date-added = {2019-04-11 22:40:10 -0400},
- date-modified = {2019-04-11 22:40:10 -0400},
- note = {[Online; accessed <today>]},
+ date-modified = {2019-08-26 14:35:08 -0400},
+ note = {[Online; accessed August 26, 2019]},
  title = {{SciPy}: Open source scientific tools for {Python}},
  url = {http://www.scipy.org/},
  year = {2001--}
+}
+
+@inproceedings{Kluyver2016JupyterN,
+ author = {Thomas Kluyver and Benjamin Ragan-Kelley and Fernando P{\'e}rez and Brian E. Granger and Matthias Bussonnier and Jonathan Frederic and Kyle Kelley and Jessica B. Hamrick and Jason Grout and Sylvain Corlay and Paul Ivanov and Dami{\'a}n Avila and Safia Abdalla and Carol Willing and et al.},
+ booktitle = {ELPUB},
+ date-added = {2019-08-26 15:09:08 -0400},
+ date-modified = {2019-08-26 15:09:08 -0400},
+ title = {Jupyter Notebooks - a publishing format for reproducible computational workflows},
+ year = {2016}
+}
+
+@inproceedings{le2017inference,
+ address = {Fort Lauderdale, FL, USA},
+ arxiv = {https://arxiv.org/abs/1610.09900},
+ author = {Le, Tuan Anh and Baydin and Atilim Gunes Baydin and Wood, Frank},
+ booktitle = {Proceedings of the 20th International Conference on Artificial Intelligence and Statistics (AISTATS)},
+ file = {../assets/pdf/le2017inference.pdf},
+ link = {http://proceedings.mlr.press/v54/},
+ pages = {1338--1348},
+ publisher = {PMLR},
+ series = {Proceedings of Machine Learning Research},
+ title = {Inference Compilation and Universal Probabilistic Programming},
+ volume = {54},
+ year = {2017}
+}
+
+@article{marin2012approximate,
+ author = {Marin, Jean-Michel and Pudlo, Pierre and Robert, Christian P and Ryder, Robin J},
+ journal = {Statistics and Computing},
+ pages = {1--14},
+ publisher = {Springer Netherlands},
+ title = {Approximate Bayesian computational methods},
+ year = {2012}
+}
+
+@article{marjoram2003markov,
+ author = {Marjoram, Paul and Molitor, John and Plagnol, Vincent and Tavar{\'e}, Simon},
+ journal = {Proceedings of the National Academy of Sciences},
+ number = {26},
+ pages = {15324--15328},
+ publisher = {National Acad Sciences},
+ title = {Markov chain Monte Carlo without likelihoods},
+ volume = {100},
+ year = {2003}
+}
+
+@inproceedings{NIPS2016_6084,
+ author = {Papamakarios, George and Murray, Iain},
+ booktitle = {Advances in Neural Information Processing Systems},
+ pages = {1028--1036},
+ title = {Fast $\varepsilon$-free inference of simulation models with Bayesian conditional density estimation},
+ year = {2016}
 }
 
 @article{numpy:2011,
@@ -1923,12 +2436,44 @@ interfaces and operating systems.},
  year = {2007}
 }
 
+@article{rubin1984,
+ author = {Rubin, Donald B.},
+ doi = {10.1214/aos/1176346785},
+ fjournal = {The Annals of Statistics},
+ journal = {Ann. Statist.},
+ month = {12},
+ number = {4},
+ pages = {1151--1172},
+ publisher = {The Institute of Mathematical Statistics},
+ title = {Bayesianly Justifiable and Relevant Frequency Calculations for the Applied Statistician},
+ url = {https://doi.org/10.1214/aos/1176346785},
+ volume = {12},
+ year = {1984}
+}
+
+@article{sisson2007sequential,
+ author = {Sisson, Scott A and Fan, Yanan and Tanaka, Mark M},
+ journal = {Proceedings of the National Academy of Sciences},
+ number = {6},
+ pages = {1760--1765},
+ publisher = {National Acad Sciences},
+ title = {Sequential monte carlo without likelihoods},
+ volume = {104},
+ year = {2007}
+}
+
+@book{sisson2011likelihood,
+ author = {Sisson, Scott A and Fan, Yanan},
+ publisher = {Chapman \& Hall/CRC, New York.[839]},
+ title = {Likelihood-free MCMC},
+ year = {2011}
+}
+
 @article{Stoye:2018ovl,
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2018arXiv180800973S},
  archiveprefix = {arXiv},
- author = {{Stoye}, Markus and {Brehmer}, Johann and {Louppe}, Gilles and
-{Pavez}, Juan and {Cranmer}, Kyle},
+ author = {{Stoye}, Markus and {Brehmer}, Johann and {Louppe}, Gilles and {Pavez}, Juan and {Cranmer}, Kyle},
  eid = {arXiv:1808.00973},
  eprint = {1808.00973},
  journal = {arXiv e-prints},
@@ -1938,6 +2483,28 @@ interfaces and operating systems.},
  primaryclass = {stat.ML},
  title = {{Likelihood-free inference with an improved cross-entropy estimator}},
  year = {2018}
+}
+
+@article{tabak2010density,
+ author = {Tabak, Esteban G and Vanden-Eijnden, Eric and others},
+ journal = {Communications in Mathematical Sciences},
+ number = {1},
+ pages = {217--233},
+ publisher = {International Press of Boston},
+ title = {Density estimation by dual ascent of the log-likelihood},
+ volume = {8},
+ year = {2010}
+}
+
+@article{tabak2013family,
+ author = {Tabak, EG and Turner, Cristina V},
+ journal = {Communications on Pure and Applied Mathematics},
+ number = {2},
+ pages = {145--164},
+ publisher = {Wiley Online Library},
+ title = {A family of nonparametric density estimation algorithms},
+ volume = {66},
+ year = {2013}
 }
 
 @article{Wald,
@@ -1963,5 +2530,13 @@ interfaces and operating systems.},
 for Testing Composite Hypotheses}},
  volume = {9},
  year = {1938}
+}
+
+@inproceedings{wood-aistats-2014,
+ author = {Wood, Frank and van de Meent, Jan Willem and Mansinghka, Vikash},
+ booktitle = {Proceedings of the 17th International conference on Artificial Intelligence and Statistics},
+ pages = {1024-1032},
+ title = {A New Approach to Probabilistic Programming Inference},
+ year = {2014}
 }
 
