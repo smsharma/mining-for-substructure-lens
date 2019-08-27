@@ -20,5 +20,5 @@ do
     echo ""
     echo "Evaluating ${modeltag} on calibration sample $i"
     echo ""
-    python -u test.py alices_${modeltag} calibrate_${tag}_theta${SLURM_ARRAY_TASK_ID} alices_${modeltag}_calibrate_theta${SLURM_ARRAY_TASK_ID} --dir $base
+    python -u test.py alices_${modeltag} calibrate_${tag}_theta${SLURM_ARRAY_TASK_ID} alices_${modeltag}_calibrate_theta${SLURM_ARRAY_TASK_ID} --igrid $i --dir $base
 done

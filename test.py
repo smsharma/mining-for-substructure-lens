@@ -31,6 +31,7 @@ def evaluate(
     small=False,
     gradx=False,
     fine=False,
+    i_theta_grid=None,
 ):
     if not os.path.exists("{}/results".format(data_dir)):
         os.mkdir("{}/results".format(data_dir))
@@ -63,7 +64,11 @@ def evaluate(
         aux_data, n_aux = load_aux(
             "{}/samples/z_{}.npy".format(data_dir, sample_filename), aux
         )
-        theta = np.load("{}/samples/theta_{}.npy".format(data_dir, sample_filename))
+        if i_theta_grid is not None:
+            theta = np.asarray([get_grid_point(i_theta_grid) for _ in range(x)])
+            logging.info("Determined grid theta %s = %s", i_theta_grid, theta[0])
+        else:
+            theta = np.load("{}/samples/theta_{}.npy".format(data_dir, sample_filename))
         if shuffle:
             np.random.shuffle(theta)
 
@@ -128,6 +133,10 @@ def parse_args():
         "--small", action="store_true", help="Restricts evaluation to first 100 images."
     )
     parser.add_argument("--grad", action="store_true", help="Evaluate gradients wrt x.")
+    parser.add_argument(
+        "--igrid",
+        type=int, default=None,
+    )
 
     return parser.parse_args()
 
@@ -151,5 +160,6 @@ if __name__ == "__main__":
         args.small,
         gradx=args.grad,
         fine=args.finegrid,
+        i_theta_grid=args.igrid
     )
     logging.info("All done! Have a nice day!")
