@@ -401,7 +401,7 @@ While our approach to inference is strongly based on the ideas in \citet{1805.00
 \begin{figure*}[t!]
 \centering
 \includegraphics[width=1.\textwidth]{figures/individual_lens_predictions}
-\caption{Four simulated lens images (upper panels) and the corresponding estimated likelihood maps (lower panels). The star marks the true point used to generate the images, the black line shows $95 \%$~CL contours in parameter space based on each image. \JB{So far without calibration.}}
+\caption{Four simulated lens images (upper panels) and the corresponding estimated likelihood maps (lower panels). The star marks the true point used to generate the images, the black line shows $95 \%$~CL contours in parameter space based on each image. \JB{Noise comes from limited statistics in calibration. Should we a) show uncalibrated images here, b) explain the noise, or c) pass everything through a GP to make it more visually appealing?}}
 \label{fig:individual_predictions}
 \end{figure*}
 
@@ -413,7 +413,7 @@ Several interesting features can already be seen here. The 95\% CL contours cont
 \centering
 \includegraphics[height=0.4\textwidth]{figures/expected_likelihood_map}
 \includegraphics[height=0.4\textwidth]{figures/expected_likelihood_slice}
-\caption{Expected likelihood ratio map assuming $\beta = -0.9$ and $\fsub = 0.05$ in the two-dimensional parameter space (left) and a one-dimensional slice at $\beta = -0.9$ (right). The lines show expected $95\%$~CL exclusion limits for 1 (dotted), 5 (dash-dotted), 20 (dashed), and 100 (solid) observed lenses. \JB{So far without calibration.}}
+\caption{Expected likelihood ratio map assuming $\beta = -0.9$ and $\fsub = 0.05$ in the two-dimensional parameter space (left) and a one-dimensional slice at $\beta = -0.9$ (right). The lines show expected $95\%$~CL exclusion limits for 1 (dotted), 5 (dash-dotted), 20 (dashed), and 100 (solid) observed lenses.}
 \label{fig:expected_likelihood}
 \end{figure*}
 
@@ -443,7 +443,7 @@ For the proof-of-concept analysis presented here our lensing simulation makes a 
 \centering
 \includegraphics[height=0.4\textwidth]{figures/posterior_uniform}
 \includegraphics[height=0.4\textwidth]{figures/posterior_narrow}
-\caption{Expected posterior based on a uniform prior (left) or a Gaussian prior on $\beta$ with mean $-0.9$ and standard deviation $0.1$ (right) for 20 observed lenses. The lines show a $95\%$ credible interval. We assume $\beta = -0.9$ and $\fsub = 0.05$. \JB{So far without calibration.}}
+\caption{Expected posterior based on a uniform prior (left) or a Gaussian prior on $\beta$ with mean $-0.9$ and standard deviation $0.1$ (right) for 100 observed lenses. The lines show a $95\%$ credible interval. We assume $\beta = -0.9$ and $\fsub = 0.05$.}
 \label{fig:bayesian_post}
 \end{figure*}
 
@@ -555,7 +555,7 @@ We refer the reader to \citep{1805.00020} for the derivation. While not strictly
 \centering
 \includegraphics[height=0.4\textwidth]{figures/scenarios_2d}
 \includegraphics[height=0.4\textwidth]{figures/scenarios_1d}
-\caption{Left: Expected $95\%$~CL exclusion limits for 10 observed lenses for four different levels of complexity of the simulator. Right: expected likelihood ratio along a one-dimensional slice through the parameter space at $\beta = -0.9$ for the same four simulator scenarios. In both panels we compare the ``full'' simulator discussed in Sec.~\ref{sec:lensing-formalism}, a scenario in which the host mass is varied but the offset relative to the source is fixed at zero (``mass''), a case in which the source offset is varied but the host halo mass is fixed (``align''), and a toy scenario in which both the offset and the mass of the host halo are fixed (``fix''). The data was generated for $\beta = -0.9$ and $\fsub = 0.05$.}
+\caption{Left: Expected $95\%$~CL exclusion limits for 5 observed lenses for four different levels of complexity of the simulator. Right: expected likelihood ratio along a one-dimensional slice through the parameter space at $\beta = -0.9$ for the same four simulator scenarios. In both panels we compare the ``full'' simulator discussed in Sec.~\ref{sec:lensing-formalism}, a scenario in which the host mass is varied but the offset relative to the source is fixed at zero (``mass''), a case in which the source offset is varied but the host halo mass is fixed (``align''), and a toy scenario in which both the offset and the mass of the host halo are fixed (``fix''). The data was generated for $\beta = -0.9$ and $\fsub = 0.05$.}
 \label{fig:scenarios}
 \end{figure*}
 
