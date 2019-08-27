@@ -15,7 +15,7 @@ def check(filename):
         return -1
 
 
-for i in range(625):
+for i in range(17,21):
     # Check that files exist
 
     n_old = check(BASE + FILENAME_OLD.format(i))
