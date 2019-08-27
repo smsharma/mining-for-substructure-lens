@@ -12,6 +12,25 @@
 
 @string{june = {June}}
 
+@article{0705.0682,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2009JCAP...01..015B},
+ archiveprefix = {arXiv},
+ author = {{Baltz}, Edward A. and {Marshall}, Phil and {Oguri}, Masamune},
+ doi = {10.1088/1475-7516/2009/01/015},
+ eid = {015},
+ eprint = {0705.0682},
+ journal = {Journal of Cosmology and Astro-Particle Physics},
+ keywords = {Astrophysics},
+ month = {Jan},
+ number = {1},
+ pages = {015},
+ primaryclass = {astro-ph},
+ title = {{Analytic models of plausible gravitational lens potentials}},
+ volume = {2009},
+ year = {2009}
+}
+
 @article{0706.2687,
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2008ApJ...686..279K},
@@ -411,6 +430,25 @@
  year = {2015}
 }
 
+@article{1504.07629,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2015ApJ...813..102B},
+ archiveprefix = {arXiv},
+ author = {{Birrer}, Simon and {Amara}, Adam and {Refregier}, Alexandre},
+ doi = {10.1088/0004-637X/813/2/102},
+ eid = {102},
+ eprint = {1504.07629},
+ journal = {The Astrophysical Journal},
+ keywords = {cosmological parameters, distance scale, gravitational lensing: strong, methods: numerical, Astrophysics - Cosmology and Nongalactic Astrophysics},
+ month = {Nov},
+ number = {2},
+ pages = {102},
+ primaryclass = {astro-ph.CO},
+ title = {{Gravitational Lens Modeling with Basis Sets}},
+ volume = {813},
+ year = {2015}
+}
+
 @article{1506.01724,
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2016PhRvD..94d3505C},
@@ -507,6 +545,25 @@
  title = {{Detection of Lensing Substructure Using ALMA Observations of the Dusty Galaxy SDP.81}},
  volume = {823},
  year = {2016}
+}
+
+@article{1603.04057,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2017MNRAS.466.4974M},
+ archiveprefix = {arXiv},
+ author = {{Molin{\'e}}, {\'A}ngeles and {S{\'a}nchez-Conde}, Miguel A. and
+{Palomares-Ruiz}, Sergio and {Prada}, Francisco},
+ doi = {10.1093/mnras/stx026},
+ eprint = {1603.04057},
+ journal = {Monthly Notices of the Royal Astronomical Society},
+ keywords = {galaxies: haloes, cosmology: theory, dark matter, Astrophysics - Cosmology and Nongalactic Astrophysics},
+ month = {Apr},
+ number = {4},
+ pages = {4974-4990},
+ primaryclass = {astro-ph.CO},
+ title = {{Characterization of subhalo structural properties and implications for dark matter annihilation signals}},
+ volume = {466},
+ year = {2017}
 }
 
 @article{1607.03127,
@@ -743,6 +800,24 @@
  year = {2018}
 }
 
+@article{1708.07377,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2018MNRAS.478.4738N},
+ archiveprefix = {arXiv},
+ author = {{Nightingale}, J.~W. and {Dye}, S. and {Massey}, Richard J.},
+ doi = {10.1093/mnras/sty1264},
+ eprint = {1708.07377},
+ journal = {Monthly Notices of the Royal Astronomical Society},
+ keywords = {gravitational lensing, galaxy: structure, methods: data analysis, Astrophysics - Cosmology and Nongalactic Astrophysics, Astrophysics - Astrophysics of Galaxies, Astrophysics - Instrumentation and Methods for Astrophysics},
+ month = {Aug},
+ number = {4},
+ pages = {4738-4784},
+ primaryclass = {astro-ph.CO},
+ title = {{AutoLens: automated modeling of a strong lens's light, mass, and source}},
+ volume = {478},
+ year = {2018}
+}
+
 @article{1710.03075,
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2018MNRAS.474.1762C},
@@ -779,6 +854,23 @@
  primaryclass = {astro-ph.GA},
  title = {{Stellar Wakes from Dark Matter Subhalos}},
  volume = {120},
+ year = {2018}
+}
+
+@article{1803.09746,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2018PDU....22..189B},
+ archiveprefix = {arXiv},
+ author = {{Birrer}, Simon and {Amara}, Adam},
+ doi = {10.1016/j.dark.2018.11.002},
+ eprint = {1803.09746},
+ journal = {Physics of the Dark Universe},
+ keywords = {Gravitational lensing, Software, Image simulations, Astrophysics - Cosmology and Nongalactic Astrophysics},
+ month = {Dec},
+ pages = {189-201},
+ primaryclass = {astro-ph.CO},
+ title = {{lenstronomy: Multi-purpose gravitational lens modelling software package}},
+ volume = {22},
  year = {2018}
 }
 
@@ -1003,6 +1095,25 @@
  year = {2018}
 }
 
+@article{1901.01359,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2019arXiv190101359M},
+ archiveprefix = {arXiv},
+ author = {{Morningstar}, Warren R. and {Perreault Levasseur}, Laurence and
+{Hezaveh}, Yashar D. and {Blandford}, Roger and {Marshall}, Phil and
+{Putzky}, Patrick and {Rueter}, Thomas D. and {Wechsler}, Risa and
+{Welling}, Max},
+ eid = {arXiv:1901.01359},
+ eprint = {1901.01359},
+ journal = {arXiv e-prints},
+ keywords = {Astrophysics - Instrumentation and Methods for Astrophysics, Astrophysics - Cosmology and Nongalactic Astrophysics, Astrophysics - Astrophysics of Galaxies},
+ month = {Jan},
+ pages = {arXiv:1901.01359},
+ primaryclass = {astro-ph.IM},
+ title = {{Data-Driven Reconstruction of Gravitationally Lensed Galaxies using Recurrent Inference Machines}},
+ year = {2019}
+}
+
 @article{1902.05141,
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2019arXiv190205141V},
@@ -1186,6 +1297,24 @@
  year = {1997}
 }
 
+@article{1997MNRAS.292..673S,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/1997MNRAS.292..673S},
+ archiveprefix = {arXiv},
+ author = {{Schneider}, Peter},
+ doi = {10.1093/mnras/292.3.673},
+ eprint = {astro-ph/9706185},
+ journal = {Monthly Notices of the Royal Astronomical Society},
+ keywords = {Gravitational Lenses, Dark Matter, Mass Distribution, Hubble Constant, Computational Astrophysics, Poisson Equation, Equivalence, Time Lag, Transformations (Mathematics), Cosmology, Astrophysics, GRAVITATION, DARK MATTER, GRAVITATIONAL LENSING, LARGE-SCALE STRUCTURE OF UNIVERSE, Astrophysics},
+ month = {Dec},
+ number = {3},
+ pages = {673-678},
+ primaryclass = {astro-ph},
+ title = {{The cosmological lens equation and the equivalent single-plane gravitational lens}},
+ volume = {292},
+ year = {1997}
+}
+
 @article{1999A&A...352..447C,
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {http://adsabs.harvard.edu/abs/1999A%26A...352..447C},
@@ -1256,6 +1385,24 @@
  title = {{Direct Detection of Cold Dark Matter Substructure}},
  volume = {572},
  year = {2002}
+}
+
+@article{2003ApJ...590..673W,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2003ApJ...590..673W},
+ archiveprefix = {arXiv},
+ author = {{Warren}, S.~J. and {Dye}, S.},
+ doi = {10.1086/375132},
+ eprint = {astro-ph/0302587},
+ journal = {The Astrophysical Journal},
+ keywords = {Cosmology: Gravitational Lensing, Astrophysics},
+ month = {Jun},
+ number = {2},
+ pages = {673-682},
+ primaryclass = {astro-ph},
+ title = {{Semilinear Gravitational Lens Inversion}},
+ volume = {590},
+ year = {2003}
 }
 
 @article{2012arXiv1212.1479F,
@@ -1367,8 +1514,7 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {http://adsabs.harvard.edu/abs/2015arXiv150203509G},
  archiveprefix = {arXiv},
- author = {{Germain}, M. and {Gregor}, K. and {Murray}, I. and {Larochelle}, H.
-},
+ author = {{Germain}, M. and {Gregor}, K. and {Murray}, I. and {Larochelle}, H.},
  eprint = {1502.03509},
  journal = {ArXiv e-prints},
  keywords = {Computer Science - Machine Learning, Computer Science - Neural and Evolutionary Computing, Statistics - Machine Learning},
@@ -1395,8 +1541,7 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160106759V},
  archiveprefix = {arXiv},
- author = {{van den Oord}, A. and {Kalchbrenner}, N. and {Kavukcuoglu}, K.
-},
+ author = {{van den Oord}, A. and {Kalchbrenner}, N. and {Kavukcuoglu}, K.},
  eprint = {1601.06759},
  journal = {ArXiv e-prints},
  keywords = {Computer Science - Computer Vision and Pattern Recognition, Computer Science - Learning, Computer Science - Neural and Evolutionary Computing},
@@ -1522,15 +1667,14 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {https://ui.adsabs.harvard.edu/abs/2016MNRAS.457.1208H},
  archiveprefix = {arXiv},
- author = {{Han}, Jiaxin and {Cole}, Shaun and {Frenk}, Carlos S. and {Jing}, Yipeng},
- bdsk-url-1 = {https://doi.org/10.1093/mnras/stv2900},
- date-added = {2019-04-11 21:23:32 -0400},
- date-modified = {2019-04-11 21:23:32 -0400},
+ author = {{Han}, Jiaxin and {Cole}, Shaun and {Frenk}, Carlos S. and
+{Jing}, Yipeng},
  doi = {10.1093/mnras/stv2900},
  eprint = {1509.02175},
- journal = {\mnras},
+ journal = {Monthly Notices of the Royal Astronomical Society},
  keywords = {galaxies: haloes, dark matter, Astrophysics - Cosmology and Nongalactic Astrophysics, Astrophysics - Astrophysics of Galaxies},
  month = {Apr},
+ number = {2},
  pages = {1208-1223},
  primaryclass = {astro-ph.CO},
  title = {{A unified model for the spatial and mass distribution of subhaloes}},
@@ -1771,8 +1915,7 @@
  adsnote = {Provided by the SAO/NASA Astrophysics Data System},
  adsurl = {http://adsabs.harvard.edu/abs/2018arXiv180400779H},
  archiveprefix = {arXiv},
- author = {{Huang}, C.-W. and {Krueger}, D. and {Lacoste}, A. and {Courville}, A.
-},
+ author = {{Huang}, C.-W. and {Krueger}, D. and {Lacoste}, A. and {Courville}, A.},
  eprint = {1804.00779},
  journal = {ArXiv e-prints},
  keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
@@ -1885,13 +2028,10 @@
  adsurl = {https://ui.adsabs.harvard.edu/abs/2018PhRvD..97l3002H},
  archiveprefix = {arXiv},
  author = {{Hiroshima}, Nagisa and {Ando}, Shin'ichiro and {Ishiyama}, Tomoaki},
- bdsk-url-1 = {https://doi.org/10.1103/PhysRevD.97.123002},
- date-added = {2019-05-28 10:44:50 -0400},
- date-modified = {2019-05-28 10:44:50 -0400},
  doi = {10.1103/PhysRevD.97.123002},
  eid = {123002},
  eprint = {1803.07691},
- journal = {\prd},
+ journal = {Physical Review D},
  keywords = {Astrophysics - Cosmology and Nongalactic Astrophysics, Astrophysics - High Energy Astrophysical Phenomena},
  month = {Jun},
  number = {12},
@@ -2133,6 +2273,43 @@ elt}, Benjamin},
  title = {{Halo Cores and Phase-Space Densities: Observational Constraints on Dark Matter Physics and Structure Formation}},
  volume = {561},
  year = {2001}
+}
+
+@article{astro-ph/0601493,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/2006MNRAS.371..983S},
+ archiveprefix = {arXiv},
+ author = {{Suyu}, S.~H. and {Marshall}, P.~J. and {Hobson}, M.~P. and {Bland
+ford}, R.~D.},
+ doi = {10.1111/j.1365-2966.2006.10733.x},
+ eprint = {astro-ph/0601493},
+ journal = {Monthly Notices of the Royal Astronomical Society},
+ keywords = {gravitational lensing: methods: data analysis, gravitational lensing, methods: data analysis, Astrophysics},
+ month = {Sep},
+ number = {2},
+ pages = {983-998},
+ primaryclass = {astro-ph},
+ title = {{A Bayesian analysis of regularized source inversions in gravitational lensing}},
+ volume = {371},
+ year = {2006}
+}
+
+@article{astro-ph/9610163,
+ adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+ adsurl = {https://ui.adsabs.harvard.edu/abs/1997ApJ...482..604K},
+ archiveprefix = {arXiv},
+ author = {{Keeton}, C.~R. and {Kochanek}, C.~S. and {Seljak}, U.},
+ doi = {10.1086/304172},
+ eprint = {astro-ph/9610163},
+ journal = {The Astrophysical Journal},
+ keywords = {Cosmology: Theory, Galaxies: Elliptical and Lenticular, cD, Cosmology: Gravitational Lensing, Astrophysics},
+ month = {Jun},
+ number = {2},
+ pages = {604-620},
+ primaryclass = {astro-ph},
+ title = {{Shear and Ellipticity in Gravitational Lenses}},
+ volume = {482},
+ year = {1997}
 }
 
 @article{astro-ph/9807243,
