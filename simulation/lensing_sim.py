@@ -57,13 +57,17 @@ class LensingSim:
 
         self.pix_area = ((self.theta_x_lims[1] - self.theta_x_lims[0]) / self.n_x) * ((self.theta_y_lims[1] - self.theta_y_lims[0]) / self.n_y)
 
-    def lensed_image(self):
+    def lensed_image(self, return_deflection_maps=False):
         """ Get strongly lensed image
         """
 
         # Get lensing potential gradients
 
         x_d, y_d = np.zeros((self.n_x, self.n_y)), np.zeros((self.n_x, self.n_y))
+
+        if return_deflection_maps:
+            x_d_host, y_d_host = np.zeros((self.n_x, self.n_y)), np.zeros((self.n_x, self.n_y))
+            x_d_sub, y_d_sub = np.zeros((self.n_x, self.n_y)), np.zeros((self.n_x, self.n_y))
 
         for lens_dict in self.lenses_list:
             if lens_dict["profile"] == "SIE":
@@ -83,8 +87,18 @@ class LensingSim:
                 ).deflection(self.x, self.y)
             else:
                 raise Exception("Unknown lens profile specification!")
+
             x_d += _x_d
             y_d += _y_d
+            if return_deflection_maps and lens_dict["profile"] == "SIE":
+                x_d_host += _x_d
+                y_d_host += _y_d
+            elif return_deflection_maps and lens_dict["profile"] == "NFW":
+                x_d_sub += _x_d
+                y_d_sub += _y_d
+
+        if return_deflection_maps:
+            return (x_d, y_d), (x_d_host, y_d_host), (x_d_sub, y_d_sub), (self.x.flatten()**2 + self.y.flatten()**2)**2
 
         # Evaluate source image on deflected lens plane to get lensed image
 
