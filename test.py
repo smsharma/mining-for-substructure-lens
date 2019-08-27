@@ -65,7 +65,7 @@ def evaluate(
             "{}/samples/z_{}.npy".format(data_dir, sample_filename), aux
         )
         if i_theta_grid is not None:
-            theta = np.asarray([get_grid_point(i_theta_grid) for _ in range(x)])
+            theta = np.asarray([get_grid_point(i_theta_grid) for _ in range(x.shape[0])])
             logging.info("Determined grid theta %s = %s", i_theta_grid, theta[0])
         else:
             theta = np.load("{}/samples/theta_{}.npy".format(data_dir, sample_filename))
