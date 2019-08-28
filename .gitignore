@@ -142,6 +142,7 @@ data/
 *.blg
 *.toc
 *.bak
+*.bib.bak
 *.fdb_latexmk
 *.fls
 *.log
