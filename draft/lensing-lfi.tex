@@ -401,7 +401,7 @@ While our approach to inference is strongly based on the ideas in \citet{1805.00
 \section{Results}
 \label{sec:results}
 
-\begin{figure*}[t!]
+\begin{figure*}
 \centering
 \includegraphics[width=1.\textwidth]{figures/individual_lens_predictions}
 \caption{Four simulated lens images (upper panels) and the corresponding likelihood ratio maps estimated by the network (lower panels, without calibration). The star marks the true point used to generate the images, the black line shows $95 \%$~CL contours in parameter space based on each image.}
@@ -411,6 +411,8 @@ While our approach to inference is strongly based on the ideas in \citet{1805.00
 After training the neural network using simulations described in Sec.~\ref{sec:lensing-formalism} and the formalism described in Sec.~\ref{sec:lfi-formalism}, we can run the inference step on a given ensemble of images to extract the likelihood ratio estimates $\hat r(x | \vartheta)$ associated with the substructure parameters of interest $\{f_\mathrm{sub}, \beta\}$. We start by illustrating in Fig.~\ref{fig:individual_predictions} inference on individual simulated lensed images realizing substructure corresponding to benchmark parameters $\beta = -0.9$ and $\fsub = 0.05$. The top row shows example simulated images, with the corresponding inferred 2-D likelihood surfaces shown in the bottom row. The true parameter point is marked with a star and the 95\% confidence limit (CL) contours are shown.
 
 Several interesting features can already be seen here. The 95\% CL contours contain the true parameter point, with the overall likelihood surface being strongly correlated with the given image. A smaller projected surface area of the lensed arc, resulting from a smaller host halo or a larger offset between the host and source centers, generally results in a flatter likelihood surface. This is expected, since a smaller host galaxy will contain relatively less substructure, and a smaller host or larger relative offset will result in a smaller effective arc area over which the substructure can imprint itself. The third column of Fig.~\ref{fig:individual_predictions} shows an example of such a system. In contrast, the second and last columns show systems with a relatively massive host and a small offset, producing a symmetric image with a larger effective arc surface area over which the effects of substructure can be discerned. This results in ``peakier'' inferred likelihood surface, corresponding to a higher sensitivity to $\fsub$ and $\beta$.
+
+The individual likelihood estimates can be combined in a straightforward manner into a stacked test statistic, yielding a combined analysis of an ensemble of lenses. The expected likelihood surface per-image in the asymptotic limit is shown in Fig.~\ref{fig:expected_likelihood_2d}, with the 1-D slice corresponding to $\beta = -0.9$ shown in Fig.~\ref{fig:expected_likelihood_1d}. The 95\% CL expected exclusion limits for 5, 20, and 100 lenses are shown using the dotted, dashed, and solid lines respectively. The procedure can easily be extended to an arbitrarily large collection of lenses, providing an unbiased estimate of the underlying substructure properties.
 
 \begin{figure}
 \centering
@@ -426,9 +428,7 @@ Several interesting features can already be seen here. The 95\% CL contours cont
 \label{fig:expected_likelihood_1d}
 \end{figure}
 
-The individual likelihood estimates can be combined in a straightforward manner into a stacked test statistic, yielding a combined analysis of an ensemble of lenses. The expected likelihood surface per-image in the asymptotic limit is shown in Fig.~\ref{fig:expected_likelihood_2d}, with the 1-D slice corresponding to $\beta = -0.9$ shown in Fig.~\ref{fig:expected_likelihood_1d}. The 95\% CL expected exclusion limits for 5, 20, and 100 lenses are shown using the dotted, dashed, and solid lines respectively. The procedure can easily be extended to an arbitrarily large collection of lenses, providing an unbiased estimate of the underlying substructure properties.
-
-We find that, at least within the simplifying assumptions of our simulator, an analysis of a few tens of lenses is already sensitive to the overall substructure abundance parameterized by $\fsub$. A larger observed lens sample provides a tighter constraint on substructure properties. Approximately 100 lens images are required to resolve $\beta$. The expected exclusion contours are centered around the true values, confirming that our inference methods yield unbiased results. Note the ``banana'' shape of the expected exclusion limits, which approximately traces the deflection due to the substructure. We demonstrate this in Fig.~\ref{fig:banana}, where we show the expected approximate deflection
+We find that, at least within the simplifying assumptions of our simulator, an analysis of a few tens of lenses is already sensitive to the overall substructure abundance parameterized by $\fsub$. A larger observed lens sample provides a tighter constraint on substructure properties. Approximately 100 lens images are required to begin resolving $\beta$. The expected exclusion contours are centered around the true values, confirming that our inference methods yield unbiased results. Note the ``banana'' shape of the expected exclusion limits, which approximately traces the deflection due to the substructure. We demonstrate this in Fig.~\ref{fig:banana}, where we show the expected approximate deflection
 %
 \begin{equation}
   \tilde{\phi}_r = \sum_{\text{subhalos}} 4 \kappa_s r_s \,,
