@@ -192,12 +192,12 @@ INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/expe
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/expected_likelihood_slice.pdf
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/expected_likelihood_slice.pdf
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/expected_likelihood_slice.pdf
-INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/posterior_uniform.pdf
-INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/posterior_uniform.pdf
-INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/posterior_uniform.pdf
-INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/posterior_narrow.pdf
-INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/posterior_narrow.pdf
-INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/posterior_narrow.pdf
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/warum_ist_die_banane_krumm.pdf
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/warum_ist_die_banane_krumm.pdf
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/warum_ist_die_banane_krumm.pdf
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/posterior.pdf
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/posterior.pdf
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/posterior.pdf
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmti12.tfm
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/scenarios_2d.pdf
@@ -218,6 +218,7 @@ INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb
