@@ -433,19 +433,12 @@ The individual likelihood estimates can be combined in a straightforward manner 
 \end{figure*}
 
 
-We find that, at least within the simplifying assumptions of our simulator, an analysis of a few tens of lenses is already sensitive to the overall substructure abundance parameterized by $\fsub$. A larger observed lens sample provides a tighter constraint on substructure properties. Approximately 100 lens images are required to begin resolving $\beta$. The expected exclusion contours are centered around the true values, confirming that our inference methods yield unbiased results. Note the ``banana'' shape of the expected exclusion limits, which approximately traces the total deflection contributed by substructure. We demonstrate this in Fig.~\ref{fig:banana}, where we show a proxy for the total subhalo-induced deflection,
-%
-\begin{equation}
-  \tilde{\phi}_r = \sum_{\text{subhalos}} 4 \kappa_s r_s \,,
-  \label{eq:approximate_deflection}
-\end{equation}
-%
-equal to the space-independent part of Eq.~\eqref{eq:nfw_deflection}, and compare it to the expected exclusion limits. We note that this comparison is schematic, as the subtle effects of substructure over a wide range of masses (which our method is sensitive to) cannot be quantified through a single number (the total deflection, here).
+We find that, at least within the simplifying assumptions of our simulator, an analysis of a few tens of lenses is already sensitive to the overall substructure abundance parameterized by $\fsub$. A larger observed lens sample provides a tighter constraint on substructure properties. Approximately 100 lens images are required to begin resolving $\beta$. The expected exclusion contours are centered around the true values, confirming that our inference methods yield unbiased results. Note the ``banana'' shape of the expected exclusion limits, which approximately traces the total deflection contributed by substructure. We demonstrate this in Fig.~\ref{fig:banana}, where we show a proxy for the total subhalo-induced deflection, $\sum_{\text{subhalos}} 4 \kappa_s r_s$, equal to the space-independent part of Eq.~\eqref{eq:nfw_deflection}, and compare it to the expected exclusion limits. We note that this comparison is schematic, as the subtle effects of substructure over a wide range of masses (which our method is sensitive to) cannot be quantified through a single number (the total deflection, here).
 
 \begin{figure}
 \centering
 \includegraphics[height=0.4\textwidth]{figures/warum_ist_die_banane_krumm}  % yeah, why is it?
-\caption{Expected approximate deflection $\tilde{\phi}_r$ as defined in Eq.~\ref{eq:approximate_deflection} as a function of $\fsub$ and $\beta$. The solid white lines show contours of constant $\tilde{\phi}_r$, while the dotted black lines show the expected exclusion limits from the left panel of Fig.~\ref{fig:expected_likelihood}.}
+\caption{Expected proxy for the total subhalo-induced deflection, see Eq.~\ref{eq:nfw_deflection}, as a function of $\fsub$ and $\beta$. The solid white lines show contours of constant deflection, while the dotted black lines show the expected exclusion limits from the left panel of Fig.~\ref{fig:expected_likelihood}.}
 \label{fig:banana}
 \end{figure}
 
