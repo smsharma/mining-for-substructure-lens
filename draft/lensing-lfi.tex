@@ -366,7 +366,7 @@ where the $\hat{p}(\dots)$ denote probability densities estimated with univariat
 
 This additional calibration stage comes with a certain computational cost that increases linearly with the number of evaluated parameter points. However, it guarantees that as long as the simulator accurately models the process, the inference results will be perfect or conservative, but not be too optimistic, even if the neural network output is substantially different from the true likelihood ratio. As a compromise, the calibration procedure can be used only at selected parameter points, serving as a cross-check of the fidelity of the network output.
 
-We will show results both without and with calibration. Where calibration is used, it is based on histograms with 60 bins, with bin boundaries determined automatically to match the distribution of likelihood ratios.
+We will show results both without and with calibration. Where calibration is used, it is based on histograms with 50 bins, with bin boundaries determined automatically to match the distribution of likelihood ratios.
 
 
 \subsection{Inference}
