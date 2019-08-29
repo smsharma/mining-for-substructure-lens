@@ -92,6 +92,8 @@ INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsopn.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsopn.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/amscls/amsthm.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/amscls/amsthm.sty
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/tools/xspace.sty
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/tools/xspace.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/fontawesome.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/fontawesome.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/fontawesomesymbols-generic.tex
