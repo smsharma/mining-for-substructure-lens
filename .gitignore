@@ -135,6 +135,7 @@ venv.bak/
 data/
 !/simulation/data
 !/simulation/data/sim_mvgauss.npz
+*.pickle
 
 # Tex
 *.aux
