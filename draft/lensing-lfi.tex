@@ -216,7 +216,7 @@ The fact that the strong lens population is expected to be dominated by higher-r
 
 In light of these uncertainties, we confine ourselves to a setting where the main methodological points can be made without detailed modeling of the detector capabilities and the deliverable lensing dataset, which is outside of the scope of the current paper. For concreteness, we simulate a sample of lenses with a simplified subset of host galaxy properties consistent with those deliverable by \Euclid~as modeled by~\citet{2015ApJ...811...20C}. In particular, we assume spherical lenses, with ellipticity parameter $q=1$ in Eq.~\eqref{eq:hostprofile}. We draw the central 1-D velocity dispersions $\sigma_v$ of host galaxies from a normal distribution with mean 225\,km\,s$^{-1}$ and standard deviation 50\,km\,s$^{-1}$. Following \citet{2018ApJ...859...96Z}, Eq.~\eqref{eq:sigma_v_M_200_relation} is used to map the drawn $\sigma_v$ to a dark matter halo mass $\Mtwo$, and the host Einstein radius is analytically inferred with Eq.~\eqref{eq:siethetae}.
 
-We draw the lens redshifts $z_l$ from a log-normal distribution with mean 0.56 and scatter 0.25 dex, discarding lenses with $z_l > 1$ as these tend to have a small angular size over which substructure perturbations are relevant. The source redshift is fixed at $z_s = 1.5$, its offsets $\theta_x$ and $\theta_y$ are drawn from a normal distribution with zero mean and standard deviation 0.2. These choices are consistent with the lens sample generated from the \package{LensPop} code packaged with~\citet{2015ApJ...811...20C}.
+We draw the lens redshifts $z_l$ from a log-normal distribution with mean 0.56 and scatter 0.25 dex, discarding lenses with $z_l > 1$ as these tend to have a small angular size over which substructure perturbations are relevant. The source redshift is fixed at $z_s = 1.5$, its offsets $\theta_x$ and $\theta_y$ are drawn from a normal distribution with zero mean and standard deviation 0.2. These choices are consistent with the lens sample generated from the \package{LensPop} code packaged with~\citet{2015ApJ...811...20C}. We show a sample of simulated lensed images with these settings in Fig.~\ref{fig:simulations}.
 
 \begin{figure*}
 \centering
@@ -366,7 +366,7 @@ where the $\hat{p}(\dots)$ denote probability densities estimated with univariat
 
 This additional calibration stage comes with a certain computational cost that increases linearly with the number of evaluated parameter points. However, it guarantees that as long as the simulator accurately models the process, the inference results will be perfect or conservative, but not be too optimistic, even if the neural network output is substantially different from the true likelihood ratio. As a compromise, the calibration procedure can be used only at selected parameter points, serving as a cross-check of the fidelity of the network output.
 
-We will show results both without and with calibration. Where calibration is used, it is based on histograms with 60 bins, with bin boundaries determined automatically to match the distribution of likelihood ratios.
+We will show results both without and with calibration. Where calibration is used, it is based on histograms with 50 bins, with bin boundaries determined automatically to match the distribution of likelihood ratios.
 
 
 \subsection{Inference}
@@ -433,26 +433,18 @@ The individual likelihood estimates can be combined in a straightforward manner 
 \end{figure*}
 
 
-We find that, at least within the simplifying assumptions of our simulator, an analysis of a few tens of lenses is already sensitive to the overall substructure abundance parameterized by $\fsub$. A larger observed lens sample provides a tighter constraint on substructure properties. Approximately 100 lens images are required to begin resolving $\beta$. The expected exclusion contours are centered around the true values, confirming that our inference methods yield unbiased results. Note the ``banana'' shape of the expected exclusion limits, which approximately traces the total deflection contributed by substructure. We demonstrate this in Fig.~\ref{fig:banana}, where we show a proxy for the total subhalo-induced deflection,
-%
-\begin{equation}
-  \tilde{\phi}_r = \sum_{\text{subhalos}} 4 \kappa_s r_s \,,
-  \label{eq:approximate_deflection}
-\end{equation}
-%
-equal to the space-independent part of Eq.~\eqref{eq:nfw_deflection}, and compare it to the expected exclusion limits. We note that this comparison is schematic, as the subtle effects of substructure over a wide range of masses (which our method is sensitive to) cannot be quantified through a single number (the total deflection, here).
+We find that, at least within the simplifying assumptions of our simulator, an analysis of a few tens of lenses is already sensitive to the overall substructure abundance parameterized by $\fsub$. A larger observed lens sample provides a tighter constraint on substructure properties. Approximately 100 lens images are required to begin resolving $\beta$. The expected exclusion contours are centered around the true values, confirming that our inference methods yield unbiased results. Note the ``banana'' shape of the expected exclusion limits, which approximately traces the total deflection contributed by substructure. We demonstrate this in Fig.~\ref{fig:banana}, where we show a proxy for the total subhalo-induced deflection, $\sum_{\text{subhalos}} 4 \kappa_s r_s$, equal to the space-independent part of Eq.~\eqref{eq:nfw_deflection}, and compare it to the expected exclusion limits. We note that this comparison is schematic, as the subtle effects of substructure over a wide range of masses (which our method is sensitive to) cannot be quantified through a single number (the total deflection, here).
 
 \begin{figure}
 \centering
 \includegraphics[height=0.4\textwidth]{figures/warum_ist_die_banane_krumm}  % yeah, why is it?
-\caption{Expected approximate deflection $\tilde{\phi}_r$ as defined∫ in Eq.~\ref{eq:approximate_deflection} as a function of $\fsub$ and $\beta$. The solid white lines show contours of constant $\tilde{\phi}_r$, while the dotted black lines show the expected exclusion limits from the left panel of Fig.~\ref{fig:expected_likelihood}.}
+\caption{Expected proxy for the total subhalo-induced deflection, see Eq.~\ref{eq:nfw_deflection}, as a function of $\fsub$ and $\beta$. The solid white lines show contours of constant deflection, while the dotted black lines show the expected exclusion limits from the left panel of Fig.~\ref{fig:expected_likelihood}.}
 \label{fig:banana}
 \end{figure}
 
 With the likelihood ratio in hand, a Bayesian interpretation is easily admitted using Eq.~\eqref{eq:bayesian_post}. In Fig.~\ref{fig:bayesian_post} we show the derived posterior, assuming
 % either a uniform prior between $0.001$ and $0.2$ on $\fsub$ times
 a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ on the slope $\beta$. This choice is intended to capture a prior expectation on the subhalo mass function slope consistent with the Cold Dark Matter scenario~\citep{0809.0898,0802.2265}. As expected from the likelihood maps, we find a posterior density peaked around the true point.
-
 
 \section{Extensions}
 \label{sec:extensions}
