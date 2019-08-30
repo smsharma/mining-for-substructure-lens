@@ -40,17 +40,17 @@ The subtle and unique imprint of dark matter substructure on extended arcs in st
 \end{abstract}
 
 \keywords{%
-strong gravitational lensing (1643)
----
-gravitational lensing (670)
----
-nonparametric inference (1903)
----
 astrostatistics techniques (1886)
 ---
 cosmology (343)
 ---
 dark matter (353)
+---
+gravitational lensing (670)
+---
+nonparametric inference (1903)
+---
+strong gravitational lensing (1643)
 }
 
 \tableofcontents{}
@@ -64,9 +64,13 @@ An alternative and complementary approach involves studying dark matter directly
 
 There exist several avenues for probing the distribution of dark matter on small scales. While the detection of ultrafaint dwarf galaxies through the study of stellar overdensities and kinematics~\citep{1503.02584,0706.2687,1503.02079} can be used to make statements about the underlying dark matter properties, theoretical uncertainties in the connection between stellar and halo masses~\citep{1809.05542,1804.03097} and the effect of baryons on the satellite galaxy population~\citep{1812.00044,1811.11791,1701.03792,1608.01849} pose a challenge. Furthermore, suppressed star-formation in smaller halos means that there exists a threshold ($\lesssim 10^8\,\mathrm{M}_\odot$) below which subhalos are expected to be mostly dark and devoid of baryonic activity~\citep{1992MNRAS.256P..43E,1611.02281,1607.03127}. This makes studying the imprints of gravitational interaction the \emph{only} viable avenue for probing substructure at smaller scales. In this spirit, the study of subhalo-induced perturbations to the kinematic phase-space distribution in cold stellar streams~\citep{1804.06854,astro-ph/9807243,1109.6022,1303.4342,1811.03631}, and in Galactic stellar fields~\citep{1711.03554} have been proposed as methods to look for low-mass subhalos through their gravitational interactions in the Milky Way.
 
-Complementary to the study of locally-induced gravitational effects, gravitational lensing has emerged as an important tool for studying the distribution of matter over a large range of scales. Locally, the use of time-domain astrometry has been proposed as a promising method to measure the distribution of local substructure through correlated, lens-induced motions of background celestial objects due to foreground subhalos~\citep{2018JCAP...07..041V}. In the extragalactic regime, galaxy-scale strong lensing systems are a laboratory for studying substructure. The presence of flux-ratio anomalies in multiply-imaged quasar lenses has been used to infer the typical abundance of substructure within galaxy-scale lenses~\citep{2002ApJ...572...25D,2019arXiv190504182H,2002ApJ...572...25D} and lensed images of extended sources have been used to find evidence for a handful of subhalos with masses $\gtrsim 10^8\,\mathrm{M}_\odot$~\citep{1601.01388,0910.0760,1201.3643}.
+Complementary to the study of locally-induced gravitational effects, gravitational lensing has emerged as an important tool for studying the distribution of matter over a large range of scales. Locally, the use of time-domain astrometry has been proposed as a promising method to measure the distribution of local substructure through correlated, lens-induced motions of background celestial objects due to foreground subhalos~\citep{2018JCAP...07..041V}. In the extragalactic regime, galaxy-scale strong lensing systems are a laboratory for studying substructure. The presence of flux-ratio anomalies in multiply-imaged quasar lenses has been used to infer the typical abundance of substructure within galaxy-scale lenses~\citep{2002ApJ...572...25D,2019arXiv190504182H,2002ApJ...572...25D} and lensed images of extended sources have been used to find evidence for a handful of subhalos with masses $\gtrsim 10^8\,\mathrm{M}_\odot$~\citep{1601.01388,0910.0760,1201.3643}. \SM{Issues with this approach re: mass function characterization (PCAT paper)}
 
-Another approach relies on probing the collective effect of sub-threshold (\ie, not individually resolvable) subhalos on extended arcs in strongly lensed systems. A particular challenge here is the high dimensionality of the latent parameter space associated with the large number of subhalos and their individual as well as population properties, an immediate consequence of which is the intractability of calculating the likelihood of high-level substructure parameters conditional on data. Methods based on summary statistics~\citep{1702.00009} and studying the amplitude of spatial fluctuations on different scales through power spectrum decomposition~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724} have been proposed as ways to reduce the dimensionality of the problem and enable substructure inference in a tractable way. Trans-dimensional techniques, in particular probabilistic cataloging~\citep{1508.00662,1706.06111}, may also be able to efficiently map out the parameter space associated with multiple sub-threshold subhalos in these systems. This class of methods is well-suited to studying dark matter substructure since they can be sensitive to the \emph{population} properties of low-mass subhalos in strongly lensed galaxies which are directly correlated with the underlying dark matter particle physics. Furthermore, near-future observatories like DES~\citep{1601.00329}, LSST~\citep{0912.0201,2019arXiv190201055D,1902.05141}, and \Euclid~\citep{1001.0061} are expected to find hundreds to thousands of galaxy-galaxy strong lenses~\citep{2015ApJ...811...20C,1001.2037,1003.5567}, making substructure inference in these systems (and high-resolution followups on a subset) one of the key avenues for investigating dark matter substructure and stress-testing the Cold Dark Matter paradigm in the near future. This calls for methods that can efficiently analyze large samples of lensed images to infer the underlying substructure properties with minimal loss of information stemming from dimensional reduction.
+Another approach relies on probing the collective effect of sub-threshold (\ie, not individually resolvable) subhalos on extended arcs in strongly lensed systems. A particular challenge here is the high dimensionality of the latent parameter space associated with the large number of subhalos and their individual as well as population properties, an immediate consequence of which is the intractability of calculating the likelihood of high-level substructure parameters conditional on data. Methods based on summary statistics~\citep{1702.00009} and studying the amplitude of spatial fluctuations on different scales through power spectrum decomposition~\citep{1403.2720,1809.00004,1707.04590,1806.07897,1808.03501,1710.03075,1506.01724} have been proposed as ways to reduce the dimensionality of the problem and enable substructure inference in a tractable way. 
+
+Trans-dimensional techniques, in particular probabilistic cataloging~\citep{1508.00662,1706.06111}, may also be able to efficiently map out the parameter space associated with multiple sub-threshold subhalos in these systems. \SM{How PCAT can derives mass function} \SM{and potential issues with this approach if goal is high-level population.}
+
+This class of methods is well-suited to studying dark matter substructure since they can be sensitive to the \emph{population} properties of low-mass subhalos in strongly lensed galaxies which are directly correlated with the underlying dark matter particle physics. Furthermore, near-future observatories like DES~\citep{1601.00329}, LSST~\citep{0912.0201,2019arXiv190201055D,1902.05141}, and \Euclid~\citep{1001.0061} are expected to find hundreds to thousands of galaxy-galaxy strong lenses~\citep{2015ApJ...811...20C,1001.2037,1003.5567}, making substructure inference in these systems (and high-resolution followups on a subset) one of the key avenues for investigating dark matter substructure and stress-testing the Cold Dark Matter paradigm in the near future. This calls for methods that can efficiently analyze large samples of lensed images to infer the underlying substructure properties with minimal loss of information stemming from dimensional reduction.
 
 In recent years, a large number of methods have been developed that train neural networks to estimate the likelihood function, likelihood ratio function, or posterior~\citep{2012arXiv1212.1479F, 2014arXiv1410.8516D, 2015arXiv150203509G, 2015arXiv150505770J, Cranmer:2015bka,  2016arXiv160206701P, 2016arXiv160502226U, 2016arXiv160508803D, 2016arXiv160605328V, 2016arXiv160903499V, 2016arXiv160106759V, 2016arXiv161110242D, NIPS2016_6084, 2017arXiv170208896T, 2017arXiv170507057P, 2017arXiv170707113L, 2017arXiv171101861L, gutmann2017likelihood, 2018arXiv180400779H, 2018arXiv180507226P, 2018arXiv180509294L, DBLP:journals/corr/abs-1806-07366, 2018arXiv180703039K, 2018arXiv181001367G, 2018arXiv181009899D, Hermans:2019ioj, Alsing:2019xrx}.  In contrast to traditional simulation-based (or ``likelihood-free'') approaches, these methods do not rely on summary statistics and instead learn to extract information directly from the full input data, which in our case corresponds to the observed lensed images. These approaches let us to amortize the computational cost of the inference: after an upfront simulation and training phase, inference for any observed lens image is efficient, enabling a stacked analysis of a large number of observations.
 
@@ -298,7 +302,7 @@ and the joint score
 The joint likelihood ratio quantifies how much more or less likely a particular simulation chain including the latent variables $z$ is for the parameter point $\stattheta$ compared to a reference distribution
 %
 \begin{equation}
-  \pref = \int\!\diff\stattheta' \, \pi(\stattheta') \, p(x,z | \stattheta') \,,
+  \pref(x,z) = \int\!\diff\stattheta' \, \pi(\stattheta') \, p(x,z | \stattheta') \,,
 \end{equation}
 %
 where we choose the marginal distribution of latent variables and observables corresponding to the proposal distribution $\pi(\stattheta)$. Unlike the distribution for a single reference parameter point, this marginal model has support for every potential outcome of the simulation~\citep{Hermans:2019ioj}. The joint score is the gradient of the joint log likelihood in model parameter space and quantifies if a particular simulation chain becomes more or less likely under infinitesimal changes of the parameters of interest. Both quantities depend on the latent variables of the simulation chain.
@@ -486,7 +490,7 @@ Although we have focused on a simple proof-of-principle example in this paper, e
 
 In conclusion, we suggest a powerful new machine learning-based method that has the potential to characterize the properties of dark matter substructure within an ensemble of strong lenses and in the Universe at large. The introduction of our method coincides with the dawn of a new era in observational cosmology, when ongoing and upcoming surveys---\eg, DES, LSST, \Euclid, and WFIRST---are expected to observe and deliver images of thousands of strong lensing systems which will contain the subtle imprint of dark matter substructure and with it, potentially, signatures of new physics.
 
-The code used to obtain the results in this study is available at \url{https://github.com/smsharma/StrongLensing-Inference}\href{https://github.com/smsharma/StrongLensing-Inference}.
+The code used to obtain the results in this paper is available at \url{https://github.com/smsharma/StrongLensing-Inference}\href{https://github.com/smsharma/StrongLensing-Inference}.
 
 
 \acknowledgements
@@ -583,7 +587,6 @@ The expected confidence limits for 5 observed lens images in the three simplifie
 
 
 \bibliographystyle{aasjournal_mod}
-% \bibliographystyle{lensing-lfi}
 \bibliography{lensing-lfi}
 
 \end{document}
