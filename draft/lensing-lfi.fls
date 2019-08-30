@@ -169,8 +169,8 @@ INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.toc
 OUTPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.toc
 INPUT /usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map
-INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmsl10.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmcsc10.tfm
+INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmsl10.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmbx7.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmbx5.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmmib10.tfm
