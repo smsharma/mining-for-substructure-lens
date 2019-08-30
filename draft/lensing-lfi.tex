@@ -412,20 +412,6 @@ Several interesting features can already be seen in these results. The 95\% CL c
 
 The individual likelihood estimates can be combined in a straightforward manner into a joint-likelihood test statistic, yielding a combined analysis of an ensemble of lenses. The expected likelihood surface per-image in the asymptotic limit is shown in the left panel of Fig.~\ref{fig:expected_likelihood}, with the 1-D slice corresponding to $\beta = -0.9$ shown in the right panel. The 95\% CL expected exclusion limits for 5, 20, and 100 lenses are shown using the dotted, dashed, and solid lines respectively. The procedure can easily be extended to an arbitrarily large collection of lenses, providing an unbiased estimate of the underlying substructure properties.
 
-% \begin{figure}
-% \centering
-% \includegraphics[height=0.4\textwidth]{figures/expected_likelihood_map}
-% \caption{Expected per-lens likelihood ratio map assuming $\beta = -0.9$ and $\fsub = 0.05$ in the two-dimensional parameter space. The lines show expected $95\%$~CL exclusion limits for 5 (dotted), 20 (dashed), and 100 (solid) observed lenses. While the colormap shows the network output without calibration, the lines include the calibration procedure described in Sec.~\ref{sec:lfi-calibration}.}
-% \label{fig:expected_likelihood_2d}
-% \end{figure}
-
-% \begin{figure}
-% \centering
-% \includegraphics[height=0.4\textwidth]{figures/expected_likelihood_slice}
-% \caption{Expected per-lens likelihood ratio along a one-dimensional slice at $\beta = -0.9$.}
-% \label{fig:expected_likelihood_1d}
-% \end{figure}
-
 \begin{figure*}
   \centering
   \includegraphics[height=0.4\textwidth]{figures/expected_likelihood_map}
@@ -434,18 +420,16 @@ The individual likelihood estimates can be combined in a straightforward manner 
   \label{fig:expected_likelihood}
 \end{figure*}
 
-
 We find that, at least within the simplifying assumptions of our simulator, an analysis of a few tens of lenses is already sensitive to the overall substructure abundance parameterized by $\fsub$. A larger observed lens sample provides a tighter constraint on substructure properties. Approximately 100 lens images are required to begin resolving $\beta$. The expected exclusion contours are centered around the true values, confirming that our inference methods yield unbiased results. Note the ``banana'' shape of the expected exclusion limits, which approximately traces the total deflection contributed by substructure. We demonstrate this in Fig.~\ref{fig:banana}, where we show a proxy for the total subhalo-induced deflection, $\sum_{\text{subhalos}} 4 \kappa_s r_s$, equal to the space-independent part of Eq.~\eqref{eq:nfw_deflection}, and compare it to the expected exclusion limits. We note that this comparison is schematic, as the subtle effects of substructure over a wide range of masses (which our method is sensitive to) cannot be quantified through a single number (the total deflection, here).
 
 \begin{figure}
 \centering
 \includegraphics[height=0.4\textwidth]{figures/warum_ist_die_banane_krumm}  % yeah, why is it?
-\caption{Expected proxy for the total subhalo-induced deflection, see Eq.~\ref{eq:nfw_deflection}, as a function of $\fsub$ and $\beta$. The solid white lines show contours of constant deflection, while the dotted black lines show the expected exclusion limits from the left panel of Fig.~\ref{fig:expected_likelihood}.}
+\caption{Expected proxy for the total subhalo-induced deflection (see Eq.~\ref{eq:nfw_deflection}) as a function of $\fsub$ and $\beta$. The solid white lines show contours of constant deflection, while the dotted black lines show the expected exclusion limits from the left panel of Fig.~\ref{fig:expected_likelihood}.}
 \label{fig:banana}
 \end{figure}
 
-With the likelihood ratio in hand, a Bayesian interpretation is easily admitted using Eq.~\eqref{eq:bayesian_post}. In Fig.~\ref{fig:bayesian_post} we show the derived posterior, assuming
-a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ on the slope $\beta$. This choice is intended to capture a prior expectation on the subhalo mass function slope consistent with the Cold Dark Matter scenario~\citep{0809.0898,0802.2265}. As expected from the likelihood maps, we find a posterior density peaked around the true point.
+With the likelihood ratio in hand, a Bayesian interpretation is easily admitted using Eq.~\eqref{eq:bayesian_post}. In the left panel of Fig.~\ref{fig:bayesian_post} we show the derived posterior, assuming a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ on the slope $\beta$. This choice is intended to capture a prior expectation on the subhalo mass function slope consistent with the Cold Dark Matter scenario~\citep{0809.0898,0802.2265}. As expected from the likelihood maps, we find a posterior density peaked around the true point. The correspond inferred subhalo mass function per host halo mass marginalized over the host halo properties is shown in the right panel of Fig.~\ref{fig:bayesian_post}. The point-wise mean (solid line) and 68/95\% credible intervals (light and blue bands) are shown. Excellent correspondence with the true simulated subhalo mass function (dotted line, also marginalized over the hos halo properties) can be seen.
 
 \section{Extensions}
 \label{sec:extensions}
@@ -458,7 +442,7 @@ First, we currently fix all properties of the background source as described in 
 \centering
 \includegraphics[height=0.4\textwidth]{figures/posterior}
 \includegraphics[height=0.4\textwidth]{figures/shmf}
-\caption{(Left) Expected posterior and $95\%$ credible regions on subhalo mass function parameters for 100 observed lenses. The mock observations are generated for $\fsub = 0.05$ and $\beta = -0.9$. We assume a uniform prior on $\fsub$ and a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ for $\beta$. (Right) The point-wise mean as well as 68\% and 95\% credible intervals of the subhalo mass function per host halo mass.}
+\caption{(Left) Expected posterior and $95\%$ credible regions on subhalo mass function parameters for 100 observed lenses. The mock observations are generated for $\fsub = 0.05$ and $\beta = -0.9$. We assume a uniform prior on $\fsub$ and a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ for $\beta$. (Right) The point-wise mean (solid line) as well as 68\% and 95\% credible intervals (light/blue bands) of the subhalo mass function per host halo mass, marginalized over the host halo properties. The true simulated subhalo mass function is shown as the dotted line.}
 \label{fig:bayesian_post}
 \end{figure*}
 
