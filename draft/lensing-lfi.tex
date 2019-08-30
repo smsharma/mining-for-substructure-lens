@@ -455,12 +455,13 @@ For the proof-of-concept analysis presented here our lensing simulation makes a 
 
 First, we currently fix all properties of the background source as described in Sec.~\ref{sec:source}. It is straightforward to instead draw and marginalize over the parameters associated with a chosen parameterization for the source light distribution, with Gaussian and S\'{e}rsic~\citep{1963BAAA....6...41S} profile models being common choices. For high-fidelity images (\eg, those obtainable by targeted followups or interferometric imaging) more complicated features in the background galaxies such as outflows and dust-obscured regions may not be adequately captured by such a parameterization and could introduce degeneracies with the effects of substructure. Alternative parameterizations using shapelet basis sets~\citep{1803.09746, 1504.07629}, and methods based on regularized linear inversion on grids~\citep{1708.07377, astro-ph/0601493,2003ApJ...590..673W} have been introduced as ways to model more complicated source features. For our purposes, generative\,/\,data-driven modeling of background galaxies could easily be interfaced with our pipeline to account for the variation in structure of the background source~\citep{1901.01359}.
 
-\begin{figure}
+\begin{figure*}
 \centering
 \includegraphics[height=0.4\textwidth]{figures/posterior}
-\caption{Expected posterior and $95\%$ credible regions for 100 observed lenses. The mock observations are generated for $\fsub = 0.05$ and $\beta = -0.9$. We assume a uniform prior on $\fsub$ and a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ for $\beta$.}
+\includegraphics[height=0.4\textwidth]{figures/shmf}
+\caption{Left: Expected posterior and $95\%$ credible regions on subhalo mass function parameters for 100 observed lenses. The mock observations are generated for $\fsub = 0.05$ and $\beta = -0.9$. We assume a uniform prior on $\fsub$ and a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ for $\beta$. Right: The pointwise median as well as 68\% and 95\% credible intervals of the subhalo mass function per host halo mass.}
 \label{fig:bayesian_post}
-\end{figure}
+\end{figure*}
 
 Similarly, the host lens (and associated host dark matter halo) model can be made more realistic by relaxing the restriction to spherical host halos and including more complicated profiles than the Singular Isothermal Sphere considered here, drawing and marginalizing over additional host parameters as required. External shear, which models the fact that the local large-scale structure environment of the host galaxy can induce an additional overall deflection field in a preferred direction, can similarly be parameterized~\citep{1997MNRAS.292..673S,astro-ph/9610163} and marginalized over.
 
