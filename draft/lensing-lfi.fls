@@ -92,6 +92,8 @@ INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsopn.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsopn.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/amscls/amsthm.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/amscls/amsthm.sty
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/tools/xspace.sty
+INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/tools/xspace.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/fontawesome.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/fontawesome.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/fontawesome/fontawesomesymbols-generic.tex
@@ -198,6 +200,9 @@ INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/waru
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/posterior.pdf
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/posterior.pdf
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/posterior.pdf
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/shmf.pdf
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/shmf.pdf
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/shmf.pdf
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/cm/cmti12.tfm
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/scenarios_2d.pdf
