@@ -428,8 +428,10 @@ We find that, at least within the simplifying assumptions of our simulator, an a
 
 \begin{figure*}[t!]
   \centering
-  \includegraphics[height=0.4\textwidth]{figures/expected_likelihood_map}
-  \includegraphics[height=0.4\textwidth]{figures/expected_likelihood_slice}
+  \includegraphics[height=0.4\textwidth]{figures/expected_likelihood_map}%
+  \hspace*{0.075\textwidth}%
+  \includegraphics[height=0.4\textwidth]{figures/expected_likelihood_slice}%
+  \hspace*{0.052\textwidth}%
   \caption{The expected per-lens likelihood ratio map assuming $\beta = -0.9$ and $\fsub = 0.05$ in the two-dimensional parameter space (left) and along a one-dimensional slice at $\beta = -0.9$ (right). The lines show expected $95\%$~CL exclusion limits for 5 (dotted), 20 (dashed), and 100 (solid) observed lenses. While the colormap shows the network output without calibration, the lines include the calibration procedure described in Sec.~\ref{sec:lfi-calibration}.}
   \label{fig:expected_likelihood}
 \end{figure*}
@@ -447,8 +449,10 @@ The corresponding inferred subhalo mass function per host halo mass, marginalize
 
 \begin{figure*}[t!]
 \centering
-\includegraphics[height=0.4\textwidth]{figures/posterior}
-\includegraphics[height=0.4\textwidth]{figures/shmf}
+\includegraphics[height=0.4\textwidth]{figures/posterior}%
+\hspace*{0.075\textwidth}%
+\includegraphics[height=0.4\textwidth]{figures/shmf}%
+\hspace*{0.052\textwidth}%
 \caption{Left: Expected posterior and $95\%$ credible regions on subhalo mass function parameters for 100 observed lenses. The mock observations are generated for $\fsub = 0.05$ and $\beta = -0.9$. We assume a uniform prior on $\fsub$ and a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ for $\beta$. Right: Corresponding inferred subhalo mass function, marginalized over the host halo properties. We show the point-wise mean (solid line) as well as point-wise 68\% and 95\% credible intervals (cyan\,/\,blue bands) of the subhalo mass function per host halo mass. The true simulated subhalo mass function for $\fsub = 0.05$ and $\beta = -0.9$ is shown as the dotted line.}
 \label{fig:bayesian_post}
 \end{figure*}
@@ -572,9 +576,11 @@ We refer the reader to \citet{1805.00020} for the derivation. While not strictly
 
 \begin{figure*}
 \centering
-\includegraphics[height=0.4\textwidth]{figures/scenarios_2d}
-\includegraphics[height=0.4\textwidth]{figures/scenarios_1d}
-\caption{(Left) The expected $95\%$~CL exclusion limits for 5 observed lenses for four different levels of complexity of the simulator. (Right) The expected likelihood ratio along a one-dimensional slice through the parameter space at $\beta = -0.9$ for the same four simulator scenarios. In both panels we compare the ``full'' simulator discussed in Sec.~\ref{sec:lensing-formalism}, a scenario in which the host mass is varied but the offset relative to the source is fixed at zero (``mass''), a case in which the source offset is varied but the host halo mass is fixed (``align''), and a toy scenario in which both the offset and the mass of the host halo are fixed (``fix''). The data was generated for $\beta = -0.9$ and $\fsub = 0.05$.}
+\includegraphics[height=0.4\textwidth]{figures/scenarios_2d}%%
+\hspace*{0.052\textwidth}\hspace*{0.075\textwidth}%
+\includegraphics[height=0.4\textwidth]{figures/scenarios_1d}%
+\hspace*{0.052\textwidth}%
+\caption{Left: The expected $95\%$~CL exclusion limits for 5 observed lenses for four different levels of complexity of the simulator. Right: The expected likelihood ratio along a one-dimensional slice through the parameter space at $\beta = -0.9$ for the same four simulator scenarios. In both panels we compare the ``full'' simulator discussed in Sec.~\ref{sec:lensing-formalism}, a scenario in which the host mass is varied but the offset relative to the source is fixed at zero (``mass''), a case in which the source offset is varied but the host halo mass is fixed (``align''), and a toy scenario in which both the offset and the mass of the host halo are fixed (``fix''). The data was generated for $\beta = -0.9$ and $\fsub = 0.05$.}
 \label{fig:scenarios}
 \end{figure*}
 
