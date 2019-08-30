@@ -166,3 +166,39 @@ def grid2_width(nx=4, ny=2, width=TEXTWIDTH, large_margin=0.14, small_margin=0.0
     panel_size = (1. - top - bottom - (ny - 1)*sep)/ny
     height = width / (left + nx*panel_size + cbar_width + nx*sep + right)
     return grid2(nx, ny, height, large_margin, small_margin, sep, cbar_width)
+
+
+
+
+def two_figures(height=TEXTWIDTH*0.4,  large_margin=0.18, small_margin=0.05, sep=0.21,):
+    # Geometry (in multiples of height)
+    left = large_margin
+    right = small_margin
+    top = small_margin
+    bottom = large_margin
+    panel_size = 1. - top - bottom
+
+    # Absolute width
+    width = height*(left + 2*panel_size+ sep + right)
+
+    # wspace and hspace are complicated beasts
+    avg_width_abs = height*panel_size
+    avg_height_abs = height*panel_size
+    wspace = sep * height / avg_width_abs
+    hspace = sep * height / avg_height_abs
+
+    # Set up figure
+    fig = plt.figure(figsize=(width, height))
+    plt.subplots_adjust(
+        left=left * height / width,
+        right=1. - right * height / width,
+        bottom=bottom,
+        top=1. - top,
+        wspace=wspace,
+        hspace=hspace,
+    )
+
+    ax_left = plt.subplot(1,2,1)
+    ax_right = plt.subplot(1,2,2)
+
+    return fig, ax_left, ax_right
