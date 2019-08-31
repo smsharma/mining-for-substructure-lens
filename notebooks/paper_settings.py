@@ -202,3 +202,64 @@ def two_figures(height=TEXTWIDTH*0.4,  large_margin=0.18, small_margin=0.05, sep
     ax_right = plt.subplot(1,2,2)
 
     return fig, ax_left, ax_right
+
+
+def animated_special(height=TEXTWIDTH*0.4, large_margin=0.18, mid_margin=0.14, small_margin=0.05):
+    # Geometry (in multiples of height)
+    left = large_margin
+    right = small_margin
+    top = small_margin
+    bottom = large_margin
+    panel_size = 1. - top - bottom
+    sep1 = small_margin + large_margin
+    sep2 = small_margin * 2
+
+    # Absolute width
+    width = height*(left + 3*panel_size + sep1 + sep2 + right)
+
+    # Set up figure
+    fig = plt.figure(figsize=(width, height))
+
+    # Two left axes
+    ax_left = fig.add_axes([left*height/width, bottom, panel_size*height/width, panel_size])
+    ax_middle = fig.add_axes([(left + panel_size + sep1)*height/width, bottom, panel_size*height/width, panel_size])
+
+    # Space for images
+    images_left = (left + 2*panel_size + sep1 + sep2)*height/width
+    images_bottom = bottom
+    images_width = panel_size*height/width
+    images_height = panel_size
+
+    return fig, ax_left, ax_middle, (images_left, images_bottom, images_width, images_height)
+
+
+def add_image_to_roster(fig, axes, total_coords, sep_fraction=0.08):
+    total_left, total_bottom, total_width, total_height = total_coords
+
+    n = len(axes)
+    rearrange_all = n in [int(x**2) for x in range(2,100)]
+    n_side = max(int(n**0.5) + 1, 2)
+
+    def _coords(i):
+        ix = i % n_side
+        iy = i // n_side
+
+        panel_width = total_width / (n_side + (n_side - 1) * sep_fraction)
+        left = total_left + ix * panel_width * (1.0 + sep_fraction)
+        width = panel_width
+        panel_height = total_height / (n_side + (n_side - 1) * sep_fraction)
+        bottom = total_bottom + (n_side - iy - 1) * panel_height * (1.0 + sep_fraction)
+        height = panel_height
+
+        return [left, bottom, width, height]
+
+    if rearrange_all:
+        axes_new = []
+        for i, ax in enumerate(axes):
+            axes_new.append(fig.add_axes(_coords(i)))
+            axes_new[-1].axis('off')
+    else:
+        axes_new = axes
+    axes_new.append(fig.add_axes(_coords(n)))
+    axes_new[-1].axis('off')
+    return axes_new
