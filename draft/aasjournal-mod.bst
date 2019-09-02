@@ -1,20 +1,5 @@
-%% AASJournal.bst June 3, 2019
 %%
-%% Revision 1.18 2019/6/3 Amy Hendrickson
-%% Took out `v' preceding version number in @misc
-%%
-%% Rewrote format.pid to implement this precedence:
-%% if doi, print that, if eprint print that, if neither
-%% and there is a url, use the url
-
-%% Took out format.url output generally because it is included in format.pid,
-%% so undesirable to call for it a second time.
-
-%%
-%% Revision 1.17 2019/3/15 Amy Hendrickson
-%% Added DOI to every field where format.url was found. Kept format.url in case
-%% it is needed.
-%%
+%% $Log: aasjournal.bst $
 
 %% Revision 1.16 2017/10/26 Amy Hendrickson
 %% `url' only active when used in misc
@@ -368,6 +353,7 @@ FUNCTION {bbl.page}
 
 FUNCTION {bbl.chapter}
 { "Ch." }
+%{ "chap." }
 
 FUNCTION {bbl.techrep}
 { "Tech. Rep." }
@@ -706,8 +692,8 @@ FUNCTION {format.eprint}
     { archivePrefix empty$
         { "" }
         { archivePrefix "arXiv" =
-        {new.block "\doarXiv{" eprint * "}" * }
-        {new.block "\doeprint{" eprint * "}" * }
+        {"\doarXiv{" eprint * "}" * }
+        {"\doeprint{" eprint * "}" * }
         if$}
       if$
     }
@@ -729,11 +715,8 @@ FUNCTION {format.doi}
 
 FUNCTION {format.pid}
 { doi empty$
-{eprint empty$ 
-     { url empty$ 
-       { "" }
-       { format.url }
-     if$}
+  {eprint empty$ 
+     { "" }
      { format.eprint }
     if$}
   { format.doi }
@@ -1180,17 +1163,18 @@ FUNCTION {article}
   crossref missing$
     { journal
       "journal" output.check
-       format.vol.num.pages output
-     }
-     { format.article.crossref output.nonnull
-       format.pages output
-     }
+      format.vol.num.pages output
+    }
+    { format.article.crossref output.nonnull
+      format.pages output
+    }
   if$
   pages empty$
     'skip$
     { format.journal.pages }
   if$
-  format.pid output
+  format.eprint output
+  format.doi output
   fin.entry
 }
 
@@ -1225,6 +1209,7 @@ FUNCTION {book}
 %  if$
   format.pages output
   format.pid output
+  format.url output
   fin.entry
 }
 
@@ -1239,6 +1224,7 @@ FUNCTION {booklet}
   howpublished output
   address output
   format.pid output
+  format.url output
   fin.entry
 }
 
@@ -1275,7 +1261,7 @@ FUNCTION {inbook}
 %    }
 %  if$
   format.pages "pages" output.check
-  format.pid output
+  format.url output
   fin.entry
 }
 
@@ -1300,7 +1286,7 @@ FUNCTION {incollection}
 %    }
 %  if$
   format.pages "pages" output.check
-  format.pid output
+  format.url output
   fin.entry
 }
 
@@ -1328,12 +1314,11 @@ FUNCTION {inproceedings}
 %    }
 %  if$
   format.pages output
-  format.pid output
+  format.url output
   fin.entry
 }
 
 FUNCTION {conference} { inproceedings }
-
 
 FUNCTION {manual}
 { output.bibitem
@@ -1347,6 +1332,7 @@ FUNCTION {manual}
   organization output
   address output
   format.pid output
+%%  format.url output
   fin.entry
 }
 
@@ -1362,6 +1348,7 @@ FUNCTION {mastersthesis}
   school "school" output.check
   address output
   format.pid output
+  format.url output
   fin.entry
 }
 
@@ -1377,7 +1364,7 @@ FUNCTION {misc}
 %% new
   version empty$
         'skip$
- {bbl.version version * output}
+ { version output}
  if$
 %%
   howpublished output
@@ -1386,6 +1373,7 @@ FUNCTION {misc}
    {format.aaspublisher}
    if$
   format.pid output
+  format.url output
   fin.entry
 }
 
@@ -1401,6 +1389,7 @@ FUNCTION {phdthesis}
   school "school" output.check
   address output
   format.pid output
+  format.url output
   fin.entry
 }
 
@@ -1433,7 +1422,7 @@ FUNCTION {proceedings}
 %  organization output
 %  publisher output
   format.pages output
-  format.pid output
+  format.url output
   fin.entry
 }
 
@@ -1449,6 +1438,7 @@ FUNCTION {techreport}
   institution "institution" output.check
   address output
   format.pid output
+%%  format.url output
   fin.entry
 }
 
@@ -1461,6 +1451,7 @@ FUNCTION {unpublished}
   date.block
 %  format.title "title" output.check
   format.pid output
+%%  format.url output
   fin.entry
 }
 
@@ -1606,6 +1597,7 @@ FUNCTION {sort.format.names}
     }
   if$
 }
+
 
 FUNCTION {sort.format.title}
 { 't :=
@@ -1779,7 +1771,7 @@ FUNCTION {begin.bib}
   write$ newline$
   "\providecommand{\doeprint}[1]{\href{http://ascl.net/#1}{\nolinkurl{http://ascl.net/#1}}}"
   write$ newline$
-  "\providecommand{\doarXiv}[1]{\href{https://arxiv.org/abs/#1}{\nolinkurl{https://arxiv.org/abs/#1}}}"
+  "\providecommand{\doarXiv}[1]{arXiv:~\href{https://arxiv.org/abs/#1}{\nolinkurl{#1}}}"
   write$ newline$
 }
 
