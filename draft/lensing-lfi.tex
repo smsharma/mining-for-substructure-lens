@@ -166,7 +166,7 @@ where $\theta_{r,e}$ is the effective circular half-light radius, $n$ is the S\'
 b_n \approx 2 n &- \frac{1}{3} + \frac{4}{405 n} + \frac{46}{25515 n^2} \nonumber \\ &+ \frac{131}{1148175 n^3} - \frac{2194697}{30690717750 n^4}. \nonumber
 \end{align}
 
-We assume $n=1$ for the source galaxies, corresponding to a flattened exponential profile and consistent with expectation for blue-type galaxies at the relevant redshifts. $f_{e}$ encodes the flux at half-light radius, which can be inferred from the total flux (or magnitude) associated with a given galaxy as follows. For a detector with zero-point magnitude $M_0$, which specifies the magnitude of a source giving 1 count\,s$^{-1}$ in expectation, by definition the total counts are given by $S_\mathrm{tot}=10^{0.4(M-M_0)}$. Requiring the half-light radius to contain half the expected counts, for $n=1$ we have the relation $f_{e} \approx 0.526\,t_\mathrm{exp}S_\mathrm{tot} /(2\pi \theta_{r,e}^2)$ in counts\,arcsec$^{-2}$, where $t_\mathrm{exp}$ is the exposure length.
+We assume $n=1$ for the source galaxies, corresponding to a flattened exponential profile and consistent with expectation for blue-type galaxies at the relevant redshifts. $f_{e}$ encodes the flux at half-light radius, which can be inferred from the total flux (or magnitude) associated with a given galaxy as follows. For a detector with zero-point magnitude $M_0$, which specifies the magnitude of a source giving 1 count\,s$^{-1}$ in expectation, by definition the total counts are given by $S_\mathrm{tot}=10^{0.4(M-M_0)}$. Requiring the half-light radius to contain half the expected counts, for $n=1$ we have the relation $f_{e} \approx 0.526\,t_\mathrm{exp}S_\mathrm{tot} /(2\pi \theta_{r,e}^2)$ in counts\,arcsec$^{-2}$, where $t_\mathrm{exp}$ is the exposure time.
 
 The treatment of the other S\'{e}rsic parameters, in particular the total emission and half-light radius, in the context of population studies is described in Section~\ref{sec:populations} below.
 
@@ -224,7 +224,7 @@ In light of these uncertainties, we confine ourselves to a setting where the mai
 \label{fig:simulations}
 \end{figure*}
 
-We draw the lens redshifts $z_l$ from a log-normal distribution with mean 0.56 and scatter 0.25 dex, discarding lenses with $z_l > 1$ as these tend to have a small angular size over which substructure perturbations are relevant. The source redshift is fixed at $z_s = 1.5$, its offsets $\theta_x$ and $\theta_y$ are drawn from a normal distribution with zero mean and standard deviation 0.2. These choices are consistent with the lens sample generated from the \package{LensPop} code packaged with~\citet{2015ApJ...811...20C}. We show a sample of simulated lensed images with these settings in Figure~\ref{fig:simulations}.
+We draw the lens redshifts $z_l$ from a log-normal distribution with mean 0.56 and scatter 0.25 dex, discarding lenses with $z_l > 1$ as these tend to have a small angular size over which substructure perturbations are relevant. The source redshift is fixed at $z_s = 1.5$, its offsets $\Delta\theta_x$ and $\Delta\theta_y$ are drawn from a normal distribution with zero mean and standard deviation 0.2. These choices are consistent with the lens sample generated from the \package{LensPop} code packaged with~\citet{2015ApJ...811...20C}. We show a sample of simulated lensed images with these settings in Figure~\ref{fig:simulations}.
 
 
 \section{Statistical formalism and simulation-based inference}
@@ -453,7 +453,7 @@ The corresponding inferred subhalo mass function (SHMF) per host halo mass, marg
 \hspace*{0.075\textwidth}%
 \includegraphics[height=0.4\textwidth]{figures/shmf}%
 \hspace*{0.052\textwidth}%
-\caption{Left: Expected posterior and $95\%$ credible regions on subhalo mass function parameters for 100 observed lenses. The mock observations are generated for $\fsub = 0.05$ and $\beta = -0.9$. We assume a uniform prior on $\fsub$ and a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ for $\beta$. Right: Corresponding inferred subhalo mass function, marginalized over the host halo properties. We show the point-wise mean (solid line) as well as point-wise 68\% and 95\% credible intervals (cyan\,/\,blue bands) of the subhalo mass function per host halo mass. The true simulated subhalo mass function for $\fsub = 0.05$ and $\beta = -0.9$ is shown as the dotted line.}
+\caption{Left: Expected posterior and $95\%$ credible regions on subhalo mass function parameters for 100 observed lenses. The mock observations are generated for $\fsub = 0.05$ and $\beta = -0.9$. We assume a uniform prior on $\fsub$ and a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ for $\beta$. Right: Corresponding inferred subhalo mass function, marginalized over the host halo properties. We show the point-wise mean (solid line) as well as point-wise 68\,/\,95\% credible intervals (cyan\,/\,blue bands) of the subhalo mass function per host halo mass. The true simulated subhalo mass function for $\fsub = 0.05$ and $\beta = -0.9$ is shown as the dotted line.}
 \label{fig:bayesian_post}
 \end{figure*}
 
