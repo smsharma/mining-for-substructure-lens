@@ -4,8 +4,8 @@ INPUT /usr/local/texlive/2016/texmf-dist/web2c/texmf.cnf
 INPUT /usr/local/texlive/2016/texmf-var/web2c/pdftex/pdflatex.fmt
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.tex
 OUTPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.log
-INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/aastex62.cls
-INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/aastex62.cls
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/aastex63.cls
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/aastex63.cls
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/revtex/revtex4-1.cls
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/revtex/revtex4-1.cls
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/revtex/revtex4-1.cls
@@ -117,7 +117,14 @@ INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/hyperref/nameref.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/hyperref/nameref.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 INPUT /usr/local/texlive/2016/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.out
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.out
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.out
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.out
 OUTPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.pdf
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.out
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.out
+OUTPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.out
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 INPUT /usr/local/texlive/2016/texmf-dist/tex/latex/base/ulasy.fd
@@ -214,6 +221,8 @@ INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/figures/scen
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.bbl
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.bbl
 INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.aux
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.out
+INPUT /Users/smsharma/PycharmProjects/StrongLensing-Inference/draft/lensing-lfi.out
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/enc/dvips/fontawesome/fontawesometwo.enc
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/fontawesome/FontAwesome.pfb
 INPUT /usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
