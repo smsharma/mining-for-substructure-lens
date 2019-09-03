@@ -59,10 +59,6 @@ def shuffle_and_combine(dir, input_samples, output_sample, regex=False):
             logging.warning("  No matching input samples found!")
             return
 
-    # Clean samples
-    # for input_sample in input_samples:
-    #     remove_infs_and_nans(folder, filenames, input_sample)
-
     # Combine samples
     n_samples = None
     permutation = None
@@ -167,7 +163,7 @@ def remove_infs_and_nans(folder, filenames, input_sample):
 def parse_args():
     # Parse arguments
     parser = argparse.ArgumentParser(
-        description="Strong lensing experiments: combining samples"
+        description="Combines multiple separate simulated samples"
     )
 
     parser.add_argument("output", help='Combined sample label (like "train" or "test")')

@@ -79,7 +79,7 @@ def calibrate(
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Strong lensing experiments: evaluation"
+        description="Calibrates network output"
     )
 
     # Main options
