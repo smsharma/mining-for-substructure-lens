@@ -5,8 +5,9 @@ Code repository for the paper
 by Johann Brehmer, Siddarth Mishra-Sharma, Joeri Hermans, Gilles Louppe, and Kyle Cranmer.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Dark matter](https://img.shields.io/badge/Matter-Dark-black.svg)](./)
 
-![Visualization of Bayesian inference on substructure properties.](figures/live_inference_with_images_small.gif)
+![Visualization of Bayesian inference on substructure properties.](figures/live_inference_with_images_reverse_small.gif)
 
 
 ## Abstract

@@ -204,7 +204,7 @@ def two_figures(height=TEXTWIDTH*0.4,  large_margin=0.18, small_margin=0.05, sep
     return fig, ax_left, ax_right
 
 
-def animated_special(height=TEXTWIDTH*0.4, large_margin=0.18, mid_margin=0.14, small_margin=0.05):
+def animated_special(height=TEXTWIDTH*0.4, large_margin=0.18, mid_margin=0.14, small_margin=0.05, flipped=False):
     # Geometry (in multiples of height)
     left = large_margin
     right = small_margin
@@ -220,15 +220,30 @@ def animated_special(height=TEXTWIDTH*0.4, large_margin=0.18, mid_margin=0.14, s
     # Set up figure
     fig = plt.figure(figsize=(width, height))
 
-    # Two left axes
-    ax_left = fig.add_axes([left*height/width, bottom, panel_size*height/width, panel_size])
-    ax_middle = fig.add_axes([(left + panel_size + sep1)*height/width, bottom, panel_size*height/width, panel_size])
+    if flipped:
+        left = small_margin
+        sep2 = small_margin + large_margin
 
-    # Space for images
-    images_left = (left + 2*panel_size + sep1 + sep2)*height/width
-    images_bottom = bottom
-    images_width = panel_size*height/width
-    images_height = panel_size
+        # Two left axes
+        ax_left = fig.add_axes([(left + 2*panel_size + sep1 + sep2)*height/width, bottom, panel_size*height/width, panel_size])
+        ax_middle = fig.add_axes([(left + panel_size + sep1)*height/width, bottom, panel_size*height/width, panel_size])
+
+        # Space for images
+        images_left = left*height/width
+        images_bottom = bottom
+        images_width = panel_size*height/width
+        images_height = panel_size
+
+    else:
+        # Two left axes
+        ax_left = fig.add_axes([left*height/width, bottom, panel_size*height/width, panel_size])
+        ax_middle = fig.add_axes([(left + panel_size + sep1)*height/width, bottom, panel_size*height/width, panel_size])
+
+        # Space for images
+        images_left = (left + 2*panel_size + sep1 + sep2)*height/width
+        images_bottom = bottom
+        images_width = panel_size*height/width
+        images_height = panel_size
 
     return fig, ax_left, ax_middle, (images_left, images_bottom, images_width, images_height)
 
