@@ -37,11 +37,4 @@ do
     echo ""
     python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_grid --grid --dir $base
 
-#    echo ""
-#    echo ""
-#    echo ""
-#    echo "Evaluating ${modeltag} on point sample / fine param grid"
-#    echo ""
-#    python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_finegrid --grid --finegrid --dir $base
-
 done

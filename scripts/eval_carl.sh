@@ -37,32 +37,4 @@ do
     echo ""
     python -u test.py carl_${modeltag} test_${tag}_point carl_${modeltag}_grid --grid --dir $base
 
-#    echo ""
-#    echo ""
-#    echo ""
-#    echo "Evaluating ${modeltag} on point sample / fine param grid"
-#    echo ""
-#    python -u test.py carl_${modeltag} test_${tag}_point carl_${modeltag}_finegrid --grid --finegrid --dir $base
-
 done
-
-#for tag in full
-#do
-#    for i in {0..624}
-#    do
-#        echo ""
-#        echo ""
-#        echo ""
-#        echo "Evaluating ${modeltag} on calibration sample $i"
-#        echo ""
-#        python -u test.py carl_${modeltag} calibrate_${tag}_theta$i carl_${modeltag}_calibrate_theta$i --dir $base
-#    done
-#
-#    echo ""
-#    echo ""
-#    echo ""
-#    echo "Evaluating ${modeltag} on reference calibration sample"
-#    echo ""
-#    python -u test.py carl_${modeltag} calibrate_${tag}_ref carl_${modeltag}_calibrate_ref --dir $base
-#
-#done

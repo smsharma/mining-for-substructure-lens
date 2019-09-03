@@ -153,9 +153,7 @@ def save(data_dir, name, data):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Strong lensing experiments: simulation"
-    )
+    parser = argparse.ArgumentParser(description="Main high-level script that starts the strong lensing simulations")
 
     parser.add_argument(
         "--test", action="store_true", help="Generate test rather than train data."

@@ -28,6 +28,9 @@ def augmented_data(
     return_dx_dm=False,
     roi_size=2.,
 ):
+    """ Wraps around the population simulation, starts the simulation with parameters drawn from the prior and
+    "mines the gold" appropriately """
+
     # Input
     if (f_sub is None or beta is None) and n_images is None:
         raise ValueError("Either f_sub and beta or n_images have to be different from None")

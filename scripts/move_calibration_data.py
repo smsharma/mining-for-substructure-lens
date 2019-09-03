@@ -16,8 +16,6 @@ def check(filename):
 
 
 for i in range(17,21):
-    # Check that files exist
-
     n_old = check(BASE + FILENAME_OLD.format(i))
     n_new = check(BASE + FILENAME_NEW.format(i))
     n = max(n_old, n_new)

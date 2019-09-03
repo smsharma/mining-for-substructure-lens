@@ -97,7 +97,7 @@ def load_aux(filename, aux=False):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Strong lensing experiments: evaluation"
+        description="High-level evaluation script"
     )
 
     # Main options

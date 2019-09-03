@@ -94,7 +94,7 @@ def load_aux(filename, aux=False):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Strong lensing experiments: simulation"
+        description="High-level script for the training of the neural likelihood ratio estimators"
     )
 
     # Main options

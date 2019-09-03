@@ -25,7 +25,8 @@ signatures of dark matter substructure.
 
 ## Results
 
-In [figures/](figures/) we collect the figures shown in the paper, as well as a few additional plots and animations:
+In [figures/](figures/) we collect the figures shown in the paper. The folder also contains a few additional plots and
+animations:
 
 - [deflection_maps.pdf](figures/deflection_maps.pdf) shows an example simulated lens including the subhalos,
 the deflection map from the host halo, and the deflection map from all subhalos combined.
@@ -37,7 +38,7 @@ population-level parameters with successive simulated observations.
 subhalo mass function with successive simulated observations.
 - [live_inference_both.gif](figures/live_inference_both.gif) and
 [live_inference_with_images.gif](figures/live_inference_with_images.gif) combine the evolution of both posteriors,
-the latter also shows the simulated observed lensed images.
+the latter (shown at the top of this readme) also includes the simulated observed lensed images.
 
 
 ## Code
@@ -68,3 +69,4 @@ If you use this code, please cite our paper:
 ```
 (TBA)
 ```
+

@@ -6,7 +6,6 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=16GB
 #SBATCH --time=5-00:00:00
-# #SBATCH --gres=gpu:1
 
 source activate lensing
 cd /scratch/jb6504/StrongLensing-Inference/

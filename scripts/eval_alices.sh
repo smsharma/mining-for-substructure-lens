@@ -12,7 +12,6 @@ source activate lensing
 base=/scratch/jb6504/recycling_strong_lensing/
 cd $base
 
-# What to do
 for tag in fix mass align full
 do
     modeltag=${tag}
@@ -36,12 +35,5 @@ do
     echo "Evaluating ${modeltag} on point sample / param grid"
     echo ""
     python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_grid --grid --dir $base
-
-#    echo ""
-#    echo ""
-#    echo ""
-#    echo "Evaluating ${modeltag} on point sample / fine param grid"
-#    echo ""
-#    python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_finegrid --grid --finegrid --dir $base
 
 done

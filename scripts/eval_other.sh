@@ -13,7 +13,7 @@ base=/scratch/jb6504/recycling_strong_lensing/
 cd $base
 
 tag=full
-for variation in batchsize64 # fromscratch deep batchsize256
+for variation in batchsize64 fromscratch deep batchsize256
 do
     modeltag=${tag}_${variation}
     echo ""
@@ -36,12 +36,5 @@ do
     echo "Evaluating ${modeltag} on point sample / param grid"
     echo ""
     python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_grid --grid --dir $base
-
-#    echo ""
-#    echo ""
-#    echo ""
-#    echo "Evaluating ${modeltag} on point sample / fine param grid"
-#    echo ""
-#    python -u test.py alices_${modeltag} test_${tag}_point alices_${modeltag}_finegrid --grid --finegrid --dir $base
 
 done
