@@ -384,7 +384,7 @@ After a neural network has been trained (and optionally calibrated) to estimate 
 For frequentist hypothesis tests, the most powerful test statistic to distinguish two parameter points $\theta_0$ and $\theta_1$ is the likelihood ratio~\citep{1933RSPTA.231..289N}
 %
 \begin{equation}
-    \frac{p_\mathrm{combined}(\{x\}|\theta_0)}{p_\mathrm{combined}(\{x\}|\theta_1)} = \prod_{i} \frac{r(x_i | \theta_0)}{r(x_i | \theta_0)} \approx \prod_{i} \frac{\hat{r}(x_i | \theta_0)}{\hat{r}(x_i | \theta_0)} ],,
+    \frac{p_\mathrm{combined}(\{x\}|\theta_0)}{p_\mathrm{combined}(\{x\}|\theta_1)} = \prod_{i} \frac{r(x_i | \theta_0)}{r(x_i | \theta_1)} \approx \prod_{i} \frac{\hat{r}(x_i | \theta_0)}{\hat{r}(x_i | \theta_1)} \,,
 \end{equation}
 %
 where in the last step we have replaced the exact likelihood ratio with the estimation from the (calibrated) neural network. In addition, the asymptotic properties of the likelihood ratio allow us in many cases to directly translate a value of the likelihood ratio into a $p$-value and thus into exclusion limits at a given confidence level~\citep{Wilks:1938dza, Wald, Cowan:2010js}.
