@@ -2,7 +2,7 @@
 
 Code repository for the paper
 [**Mining for Dark Matter Substructure: Inferring subhalo population properties from strong lenses with machine learning**](http://https://arxiv.org/abs/1909.XXXXX)
-by Johann Brehmer, Siddarth Mishra-Sharma, Joeri Hermans, Gilles Louppe, and Kyle Cranmer.
+by Johann Brehmer, Siddharth Mishra-Sharma, Joeri Hermans, Gilles Louppe, and Kyle Cranmer.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Dark matter](https://img.shields.io/badge/Matter-Dark-black.svg)](./)
