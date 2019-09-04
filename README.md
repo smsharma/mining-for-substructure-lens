@@ -1,11 +1,10 @@
 # Inferring dark matter substructure with machine learning
 
 Code repository for the paper
-[**Mining for Dark Matter Substructure: Inferring subhalo population properties from strong lenses with machine learning**](http://https://arxiv.org/abs/1909.XXXXX)
+**Mining for Dark Matter Substructure: Inferring subhalo population properties from strong lenses with machine learning**
 by Johann Brehmer, Siddharth Mishra-Sharma, Joeri Hermans, Gilles Louppe, and Kyle Cranmer.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Dark matter](https://img.shields.io/badge/Matter-Dark-black.svg)](./)
 
 ![Visualization of Bayesian inference on substructure properties.](figures/live_inference_with_images_reverse_small.gif)
 
@@ -14,14 +13,14 @@ by Johann Brehmer, Siddharth Mishra-Sharma, Joeri Hermans, Gilles Louppe, and Ky
 
 The subtle and unique imprint of dark matter substructure on extended arcs in strong lensing systems contains a wealth
 of information about the properties and distribution of dark matter on small scales and, consequently, about the
-underlying particle physics. However, teasing out this effect poses a significant challenge since for realistic
-simulations the likelihood function of population-level parameters is intractable. We apply recently-developed
-simulation-based techniques to the problem of substructure inference in galaxy-galaxy strong lenses. By leveraging
-additional information extracted from the simulator, neural networks are trained to estimate likelihood ratios
-associated with population-level parameters characterizing substructure. We show through proof-of-principle application
-to simulated data that these methods can provide an efficient and principled way to concurrently analyze an ensemble of
-strong lenses, and can be used to mine the large sample of lensing images deliverable by near-future surveys for
-signatures of dark matter substructure.
+underlying particle physics. However, teasing out this effect poses a significant challenge since the likelihood
+function for realistic simulations of population-level parameters is intractable. We apply recently-developed
+simulation-based inference techniques to the problem of substructure inference in galaxy-galaxy strong lenses. By
+leveraging additional information extracted from the simulator, neural networks are efficiently trained to estimate
+likelihood ratios associated with population-level parameters characterizing substructure. Through proof-of-principle
+application to simulated data, we show that these methods can provide an efficient and principled way to
+simultaneously analyze an ensemble of strong lenses, and can be used to mine the large sample of lensing images
+deliverable by near-future surveys for signatures of dark matter substructure.
 
 
 ## Results
@@ -62,12 +61,6 @@ collect the actual calls we used (on a HPC environment) during this project.
 Generally, the simulation code resides in [simulation](simulation/), while the inference code is in the
 [inference](inference/) folder. Notebooks in [notebooks](notebooks/) contain the plotting code.
 
-
-## References
-
-If you use this code, please cite our paper:
-
-```
-(TBA)
-```
-
+**Note**: Internally the code uses a different convention for the SHMF slope `beta` than in the paper. The relation is
+`beta_code = beta_paper - 1`, so the fiducial value `beta = -0.9` from the paper is internally represented as
+`beta = -1.9`.
