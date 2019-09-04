@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2019 Johann Brehmer, Siddarth Mishra-Sharma, Joeri Hermans, Gilles Louppe, and Kyle Cranmer
+Copyright (c) 2019 Johann Brehmer, Siddharth Mishra-Sharma, Joeri Hermans, Gilles Louppe, and Kyle Cranmer
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
