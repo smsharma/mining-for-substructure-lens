@@ -221,7 +221,7 @@ In light of these uncertainties, we confine ourselves to a setting where the mai
 \begin{figure*}
 \centering
 \includegraphics[width=1.\textwidth]{figures/simulations}
-\caption{A sample of simulated lenses. The cross markers show the offset between the host and source centers, the color corresponding to the virial mass of the host dark matter halo. The simulated subhalos are shown as dots, the color again indicates their masses. The greyscale images show the corresponding observed images. We show seven images randomly generated for $\fsub = 0.05$ and $\beta = -0.9$. \codelink{1_simulations}}
+\caption{A sample of simulated lenses. The cross markers show the offset between the host and source centers, the color corresponding to the virial mass of the host dark matter halo. The simulated subhalos are shown as dots, the color again indicates their masses. The greyscale images show the corresponding observed images. We show seven images randomly generated for $\fsub = 0.05$ and $\beta = -0.9$. \nblink{1_simulations}}
 \label{fig:simulations}
 \end{figure*}
 
@@ -407,7 +407,7 @@ While our approach to inference is strongly based on the ideas in \citet{1805.00
 \begin{figure*}[t!]
 \centering
 \includegraphics[width=1.\textwidth]{figures/individual_lens_predictions}
-\caption{Four simulated lens images (upper panels) and the corresponding likelihood ratio maps estimated by the network (lower panels, without calibration). The star marks the true point used to generate the images, the black line shows $95 \%$~CL contours in parameter space based on each image.  \codelink{2_inference_per_image}}
+\caption{Four simulated lens images (upper panels) and the corresponding likelihood ratio maps estimated by the network (lower panels, without calibration). The star marks the true point used to generate the images, the black line shows $95 \%$~CL contours in parameter space based on each image.  \nblink{2_inference_per_image}}
 \label{fig:individual_predictions}
 \end{figure*}
 
@@ -425,7 +425,7 @@ We find that, at least within the simplifying assumptions of our simulator, an a
   \hspace*{0.075\textwidth}%
   \includegraphics[height=0.4\textwidth]{figures/expected_likelihood_slice}%
   \hspace*{0.052\textwidth}%
-  \caption{The expected per-lens likelihood ratio map assuming $\beta = -0.9$ and $\fsub = 0.05$ in the two-dimensional parameter space (left) and along a one-dimensional slice at $\beta = -0.9$ (right). The lines show expected $95\%$~CL exclusion limits for 5 (dotted), 20 (dashed), and 100 (solid) observed lenses. While the colormap shows the network output without calibration, the lines include the calibration procedure described in Section~\ref{sec:lfi-calibration}. \codelink{3_6_expected_likelihood_map}}
+  \caption{The expected per-lens likelihood ratio map assuming $\beta = -0.9$ and $\fsub = 0.05$ in the two-dimensional parameter space (left) and along a one-dimensional slice at $\beta = -0.9$ (right). The lines show expected $95\%$~CL exclusion limits for 5 (dotted), 20 (dashed), and 100 (solid) observed lenses. While the colormap shows the network output without calibration, the lines include the calibration procedure described in Section~\ref{sec:lfi-calibration}. \nblink{3_6_expected_likelihood_map}}
   \label{fig:expected_likelihood}
 \end{figure*}
 
@@ -434,7 +434,7 @@ With the likelihood ratio in hand, a Bayesian interpretation is easily admitted 
 \begin{figure}
 \centering
 \includegraphics[height=0.4\textwidth]{figures/warum_ist_die_banane_krumm}  % yeah, why is it?
-\caption{Expected proxy for the total subhalo-induced deflection (see Equation~\eqref{eq:nfw_deflection}) as a function of $\fsub$ and $\beta$. The solid white lines show contours of constant deflection, while the dotted black lines show the expected exclusion limits from the left panel of Figure~\ref{fig:expected_likelihood}. \codelink{4_understand_the_banana}}
+\caption{Expected proxy for the total subhalo-induced deflection (see Equation~\eqref{eq:nfw_deflection}) as a function of $\fsub$ and $\beta$. The solid white lines show contours of constant deflection, while the dotted black lines show the expected exclusion limits from the left panel of Figure~\ref{fig:expected_likelihood}. \nblink{4_understand_the_banana}}
 \label{fig:banana}
 \end{figure}
 
@@ -446,7 +446,7 @@ The corresponding inferred subhalo mass function (SHMF) per host halo mass, marg
 \hspace*{0.075\textwidth}%
 \includegraphics[height=0.4\textwidth]{figures/shmf}%
 \hspace*{0.052\textwidth}%
-\caption{Left: Expected posterior and $95\%$ credible region on subhalo mass function parameters for 100 observed lenses. The mock observations are generated for $\fsub = 0.05$ and $\beta = -0.9$. We assume a uniform prior on $\fsub$ and a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ for $\beta$. \codelink{5_Bayesian_inference} Right: Corresponding inferred subhalo mass function, marginalized over the host halo properties. We show the point-wise mean (solid line) as well as point-wise 68\,/\,95\% credible intervals (cyan\,/\,blue bands) of the subhalo mass function per host halo mass. The true simulated subhalo mass function for $\fsub = 0.05$ and $\beta = -0.9$ is shown as the dotted line. We provide additional results online a uniform prior and an animation that shows the evolution of the posterior with successive observations at. \codelink{5_posterior_SHMF} \animlink{live_inference_with_images_reverse_small}}
+\caption{Left: Expected posterior and $95\%$ credible region on subhalo mass function parameters for 100 observed lenses. The mock observations are generated for $\fsub = 0.05$ and $\beta = -0.9$. We assume a uniform prior on $\fsub$ and a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ for $\beta$. \nblink{5_Bayesian_inference} Right: Corresponding inferred subhalo mass function, marginalized over the host halo properties. We show the point-wise mean (solid line) as well as point-wise 68\,/\,95\% credible intervals (cyan\,/\,blue bands) of the subhalo mass function per host halo mass. The true simulated subhalo mass function for $\fsub = 0.05$ and $\beta = -0.9$ is shown as the dotted line. We provide additional results online a uniform prior and an animation that shows the evolution of the posterior with successive observations at. \nblink{5_posterior_SHMF} \animlink{live_inference_with_images_reverse_small}}
 \label{fig:bayesian_post}
 \end{figure*}
 
@@ -573,7 +573,7 @@ We refer the reader to \citet{1805.00020} for the derivation. While not strictly
 \hspace*{0.052\textwidth}\hspace*{0.075\textwidth}%
 \includegraphics[height=0.4\textwidth]{figures/scenarios_1d}%
 \hspace*{0.052\textwidth}%
-\caption{Left: The expected $95\%$~CL exclusion limits for 5 observed lenses for four different levels of complexity of the simulator. Right: The expected likelihood ratio along a one-dimensional slice through the parameter space at $\beta = -0.9$ for the same four simulator scenarios. In both panels we compare the ``full'' simulator discussed in Section~\ref{sec:lensing-formalism}, a scenario in which the host mass is varied but the offset relative to the source is fixed at zero (``mass''), a case in which the source offset is varied but the host halo mass is fixed (``align''), and a toy scenario in which both the offset and the mass of the host halo are fixed (``fix''). The data was generated for $\beta = -0.9$ and $\fsub = 0.05$. \codelink{3_6_expected_likelihood_map}}
+\caption{Left: The expected $95\%$~CL exclusion limits for 5 observed lenses for four different levels of complexity of the simulator. Right: The expected likelihood ratio along a one-dimensional slice through the parameter space at $\beta = -0.9$ for the same four simulator scenarios. In both panels we compare the ``full'' simulator discussed in Section~\ref{sec:lensing-formalism}, a scenario in which the host mass is varied but the offset relative to the source is fixed at zero (``mass''), a case in which the source offset is varied but the host halo mass is fixed (``align''), and a toy scenario in which both the offset and the mass of the host halo are fixed (``fix''). The data was generated for $\beta = -0.9$ and $\fsub = 0.05$. \nblink{3_6_expected_likelihood_map}}
 \label{fig:scenarios}
 \end{figure*}
 
