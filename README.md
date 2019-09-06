@@ -5,6 +5,8 @@ Code repository for the paper
 by Johann Brehmer, Siddharth Mishra-Sharma, Joeri Hermans, Gilles Louppe, and Kyle Cranmer.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Dark matter](https://img.shields.io/badge/Matter-Dark-black.svg)](./)
+[![arXiv](https://img.shields.io/badge/arXiv-1909.02005%20-green.svg)](https://arxiv.org/abs/1909.02005)
 
 ![Visualization of Bayesian inference on substructure properties.](figures/live_inference_with_images_reverse_small.gif)
 
@@ -64,3 +66,24 @@ Generally, the simulation code resides in [simulation](simulation/), while the i
 **Note**: Internally the code uses a different convention for the SHMF slope `beta` than in the paper. The relation is
 `beta_code = beta_paper - 1`, so the fiducial value `beta = -0.9` from the paper is internally represented as
 `beta = -1.9`.
+
+## References
+
+If you use this code, please cite our paper:
+
+```
+@article{Brehmer:2019jyt,
+      author         = "Brehmer, Johann and Mishra-Sharma, Siddharth and Hermans,
+                        Joeri and Louppe, Gilles and Cranmer, Kyle",
+      title          = "{Mining for Dark Matter Substructure: Inferring subhalo
+                        population properties from strong lenses with machine
+                        learning}",
+      year           = "2019",
+      eprint         = "1909.02005",
+      archivePrefix  = "arXiv",
+      primaryClass   = "astro-ph.CO",
+      SLACcitation   = "%%CITATION = ARXIV:1909.02005;%%"
+}
+```
+
+The inference method is based on [1805.00013](https://arxiv.org/abs/1805.00013), [1805.00020](https://arxiv.org/abs/1805.00020), [1805.12244](https://arxiv.org/abs/1805.12244), and [1808.00973](https://arxiv.org/abs/1808.00973).
