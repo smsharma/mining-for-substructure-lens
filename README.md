@@ -6,7 +6,7 @@ by Johann Brehmer, Siddharth Mishra-Sharma, Joeri Hermans, Gilles Louppe, and Ky
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Dark matter](https://img.shields.io/badge/Matter-Dark-black.svg)](./)
-[![arXiv](https://img.shields.io/badge/arXiv-1707.05326%20-green.svg)](https://arxiv.org/abs/1707.05326)
+[![arXiv](https://img.shields.io/badge/arXiv-1909.02005%20-green.svg)](https://arxiv.org/abs/1909.02005)
 
 ![Visualization of Bayesian inference on substructure properties.](figures/live_inference_with_images_reverse_small.gif)
 
