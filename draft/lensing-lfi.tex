@@ -267,7 +267,9 @@ Standard frequentist and Bayesian inference methods rely on evaluating the likel
 
 One way to tackle this issue is to estimate the density for observables $x$ from samples from the simulator, where the latent variables $z$ are marginalized by the sampling procedure. But traditional density estimation techniques require reducing the dimensionality of $x$ with summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1506.01724,1707.04590,1710.03075,1809.00004,1806.07897,1808.03501}. The likelihood $p(v|\stattheta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique~\citep{rubin1984}. Substructure inference in quasar and extended-arc lenses using ABC techniques was explored in~\citet{1712.04945} and~\citet{1702.00009}, respectively. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
 
-Instead, the likelihood function or density can be approximated without any compression to summary statistics with a neural network, which has to be trained only once and can be evaluated efficiently for any parameter point and observed image. Similarly, one can train a neural network to estimate the likelihood \emph{ratio} for a fixed observation $x$ between two different hypotheses or parameter points. We will show how this turns the intractable integral in Equation~\eqref{eq:likelihood_latent} into a tractable minimization problem and amortizes the marginalization over $z$. This approach scales well to the expected large number of lenses expected in upcoming surveys~\citep{1001.2037,1003.5567,2015ApJ...811...20C}. Since the full image is used as input, no information is lost due to dimensionality reduction.
+Instead, the likelihood function or density can be approximated without any compression to summary statistics with a neural network, which has to be trained only once and can be evaluated efficiently for any parameter point and observed image. Similarly, one can train a neural network to estimate the likelihood \emph{ratio} for a fixed observation $x$ between two different hypotheses or parameter points. We will show how this turns the intractable integral in Equation~\eqref{eq:likelihood_latent} into a tractable minimization problem and amortizes the marginalization over $z$. This approach scales well to the expected large number of lenses expected in upcoming surveys~\citep{1001.2037,1003.5567,2015ApJ...811...20C}. Since the full image is used as input, 
+%no information is lost due to dimensionality reduction.
+there is no loss of information from a dimensionality reduction to summary statistics.
 
 We use a simulation-based inference technique introduced in \citet{1805.00013,1805.00020,1805.12244} that extracts additional information from the simulation and uses it to improve the sample efficiency of the training of the neural network. Our inference strategy consists of four steps:
 %
@@ -279,6 +281,7 @@ We use a simulation-based inference technique introduced in \citet{1805.00013,18
 \end{enumerate}
 %
 In the remainder of this section, we will explain these four steps in detail.
+
 
 \subsection{Extracting additional information from the simulator}
 \label{sec:lfi-gold}
@@ -354,7 +357,7 @@ Given the image nature of the lensing data, we choose a convolutional network ar
 \subsection{Calibration}
 \label{sec:lfi-calibration}
 
-In reality, the neural network might not learn the likelihood ratio function $r(x|\stattheta)$ exactly, for instance due to limited training data or inefficient training. To make sure that our inference results are correct even in this case, we calibrate the network output with histograms~\citep{Cranmer:2015bka, 1805.00020}. For every parameter point $\stattheta$ that we want to test, we simulate a set of images $\{x\} \sim p(x|\stattheta)$ from this parameter point and calculate the network prediction $\hat{r} \equiv \hat{r}(x|\stattheta)$ for each image. We also simulate a set of images $\{x\} \sim p_{\mathrm{ref}}(x)$ from the reference model, again calculating the network prediction $\hat{r}$ for each lens. The calibrated likelihood ratio is then calculated from histograms of the network predictions as
+With a finite data set and\,/\,or imperfect training, the neural network might not learn the likelihood ratio function $r(x|\stattheta)$ exactly, for instance due to limited training data or inefficient training. To make sure that our inference results are correct even in this case, we calibrate the network output with histograms~\citep{Cranmer:2015bka, 1805.00020}. For every parameter point $\stattheta$ that we want to test, we simulate a set of images $\{x\} \sim p(x|\stattheta)$ from this parameter point and calculate the network prediction $\hat{r} \equiv \hat{r}(x|\stattheta)$ for each image. We also simulate a set of images $\{x\} \sim p_{\mathrm{ref}}(x)$ from the reference model, again calculating the network prediction $\hat{r}$ for each lens. The calibrated likelihood ratio is then calculated from histograms of the network predictions as
 %
 \begin{equation}
   \hat{r}_\mathrm{cal}(x|\stattheta)
@@ -365,7 +368,7 @@ where the $\hat{p}(\cdot)$ denote probability densities estimated with univariat
 
 This additional calibration stage comes with a certain computational cost that increases linearly with the number of evaluated parameter points. However, it guarantees that as long as the simulator accurately models the process, the inference results will be perfect or conservative, but not too optimistic, even if the neural network output is substantially different from the true likelihood ratio.
 
-We will show results both without and with calibration. Where calibration is used, it is based on histograms with 50 bins, with bin boundaries determined automatically to match the distribution of likelihood ratios.
+We will show results both without and with calibration. Where calibration is used, it is based on histograms with 50 bins, with bin boundaries determined automatically to match the distribution of likelihood ratios. Testing variations of the number of bins and bin boundary determination, we found that our results are robust to variations of the number of bins between 30 and 80.
 
 \subsection{Inference}
 \label{sec:lfi-inference}
