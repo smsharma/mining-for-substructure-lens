@@ -38,7 +38,7 @@ Inferring subhalo population properties from strong lenses with machine learning
 \affiliation{Center for Data Science, New York University, 60 Fifth Ave, New York, NY 10011, USA}
 
 \begin{abstract}\noindent
-The subtle and unique imprint of dark matter substructure on extended arcs in strong lensing systems contains a wealth of information about the properties and distribution of dark matter on small scales and, consequently, about the underlying particle physics. However, teasing out this effect poses a significant challenge since the likelihood function for realistic simulations of population-level parameters is intractable. We apply recently-developed simulation-based inference techniques to the problem of substructure inference in galaxy-galaxy strong lenses. By leveraging additional information extracted from the simulator, neural networks are efficiently trained to estimate likelihood ratios associated with population-level parameters characterizing substructure. Through proof-of-principle application to simulated data, we show that these methods can provide an efficient and principled way to simultaneously analyze an ensemble of strong lenses, and can be used to mine the large sample of lensing images deliverable by near-future surveys for signatures of dark matter substructure. We find that, within our simplified modeling framework, analyzing a sample of around a hundred lenses can already pin down the overall abundance of substructure within lensing galaxies to a precision of $\mathcal{O}(10)$\% with greater sensitivity expected from a larger lens sample. \href{https://github.com/smsharma/StrongLensing-Inference}{\faGithub}
+The subtle and unique imprint of dark matter substructure on extended arcs in strong lensing systems contains a wealth of information about the properties and distribution of dark matter on small scales and, consequently, about the underlying particle physics. However, teasing out this effect poses a significant challenge since the likelihood function for realistic simulations of population-level parameters is intractable. We apply recently-developed simulation-based inference techniques to the problem of substructure inference in galaxy-galaxy strong lenses. By leveraging additional information extracted from the simulator, neural networks are efficiently trained to estimate likelihood ratios associated with population-level parameters characterizing substructure. Through proof-of-principle application to simulated data, we show that these methods can provide an efficient and principled way to simultaneously analyze an ensemble of strong lenses, and can be used to mine the large sample of lensing images deliverable by near-future surveys for signatures of dark matter substructure. \href{https://github.com/smsharma/StrongLensing-Inference}{\faGithub}
 \end{abstract}
 
 \keywords{
@@ -54,6 +54,8 @@ nonparametric inference (1903)
 ---
 strong gravitational lensing (1643)
 }
+
+\tableofcontents{}
 
 \section{Introduction}
 \label{sec:intro}
@@ -126,6 +128,7 @@ where $\sigma_{v}$ is the central 1-D velocity dispersion of the lens galaxy and
 \label{eq:siethetae}
 \end{equation}
 where $z_\mathrm{l}$ and $z_\mathrm{s}$ are respectively the lens and source redshifts. We use the cosmology from~\citet{1502.01589} to compute cosmological distances throughout this paper.
+
 
 The deflection field for the SIE profile is given by~\citep{2001astro.ph..2341K}
 \begin{align}
@@ -267,9 +270,7 @@ Standard frequentist and Bayesian inference methods rely on evaluating the likel
 
 One way to tackle this issue is to estimate the density for observables $x$ from samples from the simulator, where the latent variables $z$ are marginalized by the sampling procedure. But traditional density estimation techniques require reducing the dimensionality of $x$ with summary statistics $v(x)$, for instance based on power spectra~\citep{1403.2720,1506.01724,1707.04590,1710.03075,1809.00004,1806.07897,1808.03501}. The likelihood $p(v|\stattheta)$ in the space of summary statistics can either be explicitly estimated through density estimation techniques such as histograms, kernel density estimation, or Gaussian processes, or replaced by a rejection probability in an Approximate Bayesian Computation (ABC) technique~\citep{rubin1984}. Substructure inference in quasar and extended-arc lenses using ABC techniques was explored in~\citet{1712.04945} and~\citet{1702.00009}, respectively. While the compression to summary statistics makes the analysis tractable, it typically loses information and hence reduces the statistical power of the analysis.
 
-Instead, the likelihood function or density can be approximated without any compression to summary statistics with a neural network, which has to be trained only once and can be evaluated efficiently for any parameter point and observed image. Similarly, one can train a neural network to estimate the likelihood \emph{ratio} for a fixed observation $x$ between two different hypotheses or parameter points. We will show how this turns the intractable integral in Equation~\eqref{eq:likelihood_latent} into a tractable minimization problem and amortizes the marginalization over $z$. This approach scales well to the expected large number of lenses expected in upcoming surveys~\citep{1001.2037,1003.5567,2015ApJ...811...20C}. Since the full image is used as input, 
-%no information is lost due to dimensionality reduction.
-there is no loss of information from a dimensionality reduction to summary statistics.
+Instead, the likelihood function or density can be approximated without any compression to summary statistics with a neural network, which has to be trained only once and can be evaluated efficiently for any parameter point and observed image. Similarly, one can train a neural network to estimate the likelihood \emph{ratio} for a fixed observation $x$ between two different hypotheses or parameter points. We will show how this turns the intractable integral in Equation~\eqref{eq:likelihood_latent} into a tractable minimization problem and amortizes the marginalization over $z$. This approach scales well to the expected large number of lenses expected in upcoming surveys~\citep{1001.2037,1003.5567,2015ApJ...811...20C}. Since the full image is used as input, there is no loss of information from a dimensionality reduction to summary statistics.
 
 We use a simulation-based inference technique introduced in \citet{1805.00013,1805.00020,1805.12244} that extracts additional information from the simulation and uses it to improve the sample efficiency of the training of the neural network. Our inference strategy consists of four steps:
 %
@@ -292,7 +293,6 @@ Next, the simulator is run for the parameter point $\stattheta$, generating an o
 %
 \begin{equation}
   r(x,z | \stattheta) = \frac {p(x,z | \stattheta)} {p_\mathrm{ref}(x,z)}
-  %\equiv \frac {p(x,z | \stattheta)} {\int\!\diff\stattheta' \, \pi(\stattheta') \, p(x,z | \stattheta') }
 \end{equation}
 %
 and the joint score
@@ -368,7 +368,7 @@ where the $\hat{p}(\cdot)$ denote probability densities estimated with univariat
 
 This additional calibration stage comes with a certain computational cost that increases linearly with the number of evaluated parameter points. However, it guarantees that as long as the simulator accurately models the process, the inference results will be perfect or conservative, but not too optimistic, even if the neural network output is substantially different from the true likelihood ratio.
 
-We will show results both without and with calibration. Where calibration is used, it is based on histograms with 50 bins, with bin boundaries determined automatically to match the distribution of likelihood ratios. Testing variations of the number of bins and bin boundary determination, we found that our results are robust to variations of the number of bins between 30 and 80. \\
+We will show results both without and with calibration. Where calibration is used, it is based on histograms with 50 bins, with bin boundaries determined automatically to match the distribution of likelihood ratios. Testing variations of the number of bins and bin boundary determination, we found that our results are robust to variations of the number of bins between 30 and 80.
 
 \subsection{Inference}
 \label{sec:lfi-inference}
@@ -457,13 +457,13 @@ Similarly, the host lens (and associated host dark matter halo) model can be mad
 A realistic simulator should also model the dynamical evolution of subhalos~\citep{2017MNRAS.469.1997D}. Effects associated with tidal disruption due to the large gradient of the galactic potential towards the center of the host galaxy are expected to deplete the fraction of mass bound in substructures there, leading to a depressed overall subhalo abundance~\citep{2016MNRAS.457.1208H} with profile properties (\eg, concentration~\citep{1603.04057} and a truncation radius~\citep{0705.0682}) that depend on the distance from the host center. This could easily be implemented within our framework by drawing 3-D positions for the subhalos from the host center and assigning properties consistent with more involved modeling. Our subhalo mass function in Equation~\eqref{eq:shmf} is independent of the lens redshift, but can easily be extended to include this dependency~\citep{2017MNRAS.469.1997D,2018PhRvD..97l3002H}. A more complicated dependence on the host halo than the linear one assumed in Equation~\eqref{eq:shmf} is also easily admitted.
 
 \begin{figure*}
-  \centering
-  \includegraphics[height=0.4\textwidth]{figures/posterior}%
-  \hspace*{0.075\textwidth}%
-  \includegraphics[height=0.4\textwidth]{figures/shmf}%
-  \hspace*{0.052\textwidth}%
-  \caption{Left: Expected posterior and $95\%$ credible region on subhalo mass function parameters for 100 observed lenses. The mock observations are generated for $\fsub = 0.05$ and $\beta = -0.9$. We assume a uniform prior on $\fsub$ and a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ for $\beta$. \nblink{5_Bayesian_inference} Right: Corresponding inferred subhalo mass function, marginalized over the host halo properties. We show the point-wise mean (solid line) as well as point-wise 68\,/\,95\% credible intervals (cyan\,/\,blue bands) of the subhalo mass function per host halo mass. The true simulated subhalo mass function for $\fsub = 0.05$ and $\beta = -0.9$ is shown as the dotted line. An animation showing the evolution of the substructure parameter and mass function posteriors as the number of lenses analyzed is increased can be found at \animlink{live_inference_with_images_reverse_small}. \nblink{5_posterior_SHMF}}
-  \label{fig:bayesian_post}
+\centering
+\includegraphics[height=0.4\textwidth]{figures/posterior}%
+\hspace*{0.075\textwidth}%
+\includegraphics[height=0.4\textwidth]{figures/shmf}%
+\hspace*{0.052\textwidth}%
+\caption{Left: Expected posterior and $95\%$ credible region on subhalo mass function parameters for 100 observed lenses. The mock observations are generated for $\fsub = 0.05$ and $\beta = -0.9$. We assume a uniform prior on $\fsub$ and a Gaussian prior with mean $-0.9$ and standard deviation $0.1$ for $\beta$. \nblink{5_Bayesian_inference} Right: Corresponding inferred subhalo mass function, marginalized over the host halo properties. We show the point-wise mean (solid line) as well as point-wise 68\,/\,95\% credible intervals (cyan\,/\,blue bands) of the subhalo mass function per host halo mass. The true simulated subhalo mass function for $\fsub = 0.05$ and $\beta = -0.9$ is shown as the dotted line. An animation showing the evolution of the substructure parameter and mass function posteriors as the number of lenses analyzed is increased can be found at \animlink{live_inference_with_images_reverse_small}. \nblink{5_posterior_SHMF}}
+\label{fig:bayesian_post}
 \end{figure*}
 
 All of these effects are straightforward to implement in our setup and only require modifications to the simulation code. The inference algorithm is unaffected; since these extensions do not explicitly depend on the parameters of interest, the likelihood terms associated with them cancel in the calculation of the joint likelihood ratio and the joint score. Nevertheless, these changes affect the final observed image and therefore also the true likelihood function; the variance of the joint likelihood ratio and score could therefore increase, requiring larger training samples before the network converges to the correct likelihood ratio function.
